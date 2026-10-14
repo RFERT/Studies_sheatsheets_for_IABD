@@ -80,6 +80,10 @@ add("math", "matière", "Mathématiques pour la Data & l'IA",
 add("rust", "matière", "Rust", "matieres/rust/rust-cursus.html", "langage système")
 add("portal", "page", "Améliorations & feuille de route", "ameliorations.html",
     "roadmap idées compétences pro git docker ci cd mlops")
+add("portal", "page", "Ouvrir le site sur mon téléphone (guide mobile)", "guide-mobile.html",
+    "mobile téléphone smartphone samsung serveur local github pages hors-ligne installer")
+add("portal", "page", "Publier mon site avec GitHub Pages (guide)", "guide-github-pages.html",
+    "github pages git publier déployer en ligne hébergement gratuit url site web push commit vs code progression locale localstorage privée chaque utilisateur")
 
 # Dé-duplication (title+url)
 seen, uniq = set(), []

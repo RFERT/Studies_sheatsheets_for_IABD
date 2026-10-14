@@ -121,6 +121,71 @@ function progressBar(pct, color) {
   return `<div class="pbar"><span style="width:${pct}%;background:${color || "var(--accent)"}"></span></div>`;
 }
 
+/* ---------- Streak de révision (jours consécutifs) ---------- */
+const STREAK_KEY = "esgi-streak";
+function dstr(d) {
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function getStreak() {
+  try { return JSON.parse(localStorage.getItem(STREAK_KEY)) || { last: null, count: 0, best: 0 }; }
+  catch (e) { return { last: null, count: 0, best: 0 }; }
+}
+function updateStreak() {
+  const s = getStreak();
+  const today = dstr(new Date());
+  if (s.last !== today) {
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    s.count = (s.last === dstr(y)) ? (s.count || 0) + 1 : 1;
+    s.last = today;
+  }
+  s.best = Math.max(s.best || 0, s.count);
+  try { localStorage.setItem(STREAK_KEY, JSON.stringify(s)); } catch (e) {}
+  return s;
+}
+
+/* ---------- Favoris / marque-pages ---------- */
+const FAV_KEY = "cmd-favorites";
+function getFavorites() {
+  try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+  catch (e) { return []; }
+}
+function removeFavorite(url) {
+  const favs = getFavorites().filter((f) => f.url !== url);
+  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+}
+
+/* ---------- Export / Import de la progression ---------- */
+function exportProgress() {
+  const store = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    store[k] = localStorage.getItem(k);
+  }
+  const data = { _app: "esgi-portal", _v: 1, _date: new Date().toISOString(), store };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "progression-esgi-" + dstr(new Date()) + ".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function importProgress(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); } catch (e) { data = null; }
+    if (!data || data._app !== "esgi-portal" || !data.store) {
+      alert("Fichier invalide. Choisis un export « progression-esgi-….json » de ce site.");
+      return;
+    }
+    if (!confirm("Importer cette progression ? Elle remplacera la progression actuelle de cet appareil.")) return;
+    Object.keys(data.store).forEach((k) => localStorage.setItem(k, data.store[k]));
+    alert("Progression importée ✅");
+    location.reload();
+  };
+  reader.readAsText(file);
+}
+
 function renderDashboard() {
   const host = document.getElementById("dashboard");
   if (!host) return;
@@ -129,11 +194,27 @@ function renderDashboard() {
     ? Math.round(tracked.reduce((a, { pr }) => a + pr.pct, 0) / tracked.length)
     : 0;
   const started = tracked.some(({ pr }) => pr.done > 0);
+  const st = getStreak();
+
+  let resume = "";
+  try {
+    const last = JSON.parse(localStorage.getItem("cmd-last-module"));
+    if (last && last.url && last.title) {
+      resume = `<a class="resume" href="${last.url}">
+        <span class="resume-ic">▶️</span>
+        <span class="resume-txt"><b>Reprendre où j'en étais</b><span>${last.title}</span></span>
+        <span class="resume-go">Continuer →</span></a>`;
+    }
+  } catch (e) {}
 
   const ring = `
     <div class="ring" style="--p:${gpct}">
       <div class="ring-in"><div class="ring-pct">${gpct}<small>%</small></div><div class="ring-lbl">global</div></div>
     </div>`;
+
+  const streakChip = st.count > 0
+    ? `<div class="streak" title="Jours de révision consécutifs">🔥 ${st.count} j${st.best > st.count ? ` · record ${st.best}` : ""}</div>`
+    : "";
 
   const rows = tracked.map(({ s, pr }) => `
     <a class="dash-row" href="${s.href}">
@@ -149,24 +230,56 @@ function renderDashboard() {
     ? `Continue sur ta lancée 👊 — ta progression est enregistrée <b>localement</b> sur cet appareil.`
     : `Commence un module : ta progression (modules terminés, quiz répondus) s'affichera ici automatiquement. 💪`;
 
+  const favs = getFavorites();
+  const favBlock = favs.length ? `
+    <div class="favs">
+      <h3>⭐ Mes favoris</h3>
+      <div class="fav-list">
+        ${favs.map((f) => `<div class="fav-item">
+          <a href="${f.url}">${f.title}</a>
+          <button class="fav-del" data-url="${f.url}" title="Retirer des favoris" aria-label="Retirer">✕</button>
+        </div>`).join("")}
+      </div>
+    </div>` : "";
+
   host.innerHTML = `
+    ${resume}
     <div class="dash">
-      <div class="dash-ring">${ring}
-        <button class="btn dash-reset" id="dash-reset" title="Effacer ma progression locale">↺ Réinitialiser</button>
+      <div class="dash-ring">${ring}${streakChip}
+        <div class="dash-actions">
+          <button class="btn" id="dash-export" title="Télécharger ma progression (fichier .json)">⬇️ Exporter</button>
+          <button class="btn" id="dash-import" title="Charger une progression depuis un fichier .json">⬆️ Importer</button>
+          <button class="btn dash-reset" id="dash-reset" title="Effacer ma progression locale">↺ Réinitialiser</button>
+        </div>
+        <input type="file" id="dash-file" accept="application/json,.json" hidden />
       </div>
       <div class="dash-list">
         ${rows}
         <p class="dash-hint">${hint}</p>
       </div>
-    </div>`;
+    </div>
+    ${favBlock}`;
 
   const rst = document.getElementById("dash-reset");
   if (rst) rst.addEventListener("click", () => {
     if (!confirm("Effacer toute ta progression enregistrée sur cet appareil ?")) return;
     tracked.forEach(({ s }) => localStorage.removeItem(s.progress.key));
+    localStorage.removeItem("cmd-last-module");
     renderDashboard();
     renderSubjects();
   });
+  const exp = document.getElementById("dash-export");
+  if (exp) exp.addEventListener("click", exportProgress);
+  const imp = document.getElementById("dash-import");
+  const file = document.getElementById("dash-file");
+  if (imp && file) {
+    imp.addEventListener("click", () => file.click());
+    file.addEventListener("change", () => { if (file.files[0]) importProgress(file.files[0]); });
+  }
+  host.querySelectorAll(".fav-del").forEach((b) => b.addEventListener("click", () => {
+    removeFavorite(b.getAttribute("data-url"));
+    renderDashboard();
+  }));
 }
 
 /* ---------- Recherche globale ---------- */
@@ -260,6 +373,14 @@ function initSearch() {
   });
 }
 
+/* ---------- Favicon emoji (évite le 404, petite touche) ---------- */
+function setFavicon(emoji) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">${emoji}</text></svg>`;
+  let link = document.querySelector('link[rel="icon"]');
+  if (!link) { link = document.createElement("link"); link.rel = "icon"; document.head.appendChild(link); }
+  link.href = "data:image/svg+xml," + encodeURIComponent(svg);
+}
+
 /* ---------- Thème ---------- */
 const THEME_KEY = "esgi-portal-theme";
 function applyTheme(t) {
@@ -269,7 +390,12 @@ function applyTheme(t) {
   if (btn) btn.textContent = t === "light" ? "🌙 Sombre" : "☀️ Clair";
 }
 function initTheme() {
-  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+  let saved = localStorage.getItem(THEME_KEY);
+  if (!saved) {
+    saved = (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches)
+      ? "light" : "dark";
+  }
+  applyTheme(saved);
   const btn = document.getElementById("theme-toggle");
   if (btn) btn.addEventListener("click", () => {
     const cur = document.documentElement.getAttribute("data-theme");
@@ -320,7 +446,9 @@ function renderSubjects() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  setFavicon("🎓");
   initTheme();
+  updateStreak();
   renderDashboard();
   renderSubjects();
   initSearch();

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Publier mon site avec GitHub Pages — Guide complet</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+  <style>
+    .guide { max-width: 880px; margin: 0 auto; padding: 10px 28px 40px; }
+    .method, .step { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px 24px; margin: 18px 0; box-shadow: var(--shadow); }
+    .method h3, .step h3 { margin: 0 0 8px; font-size: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+    .b-best { background: color-mix(in srgb, #27e0b0 22%, transparent); color: #6fe9cd; border: 1px solid #27e0b0; }
+    .b-easy { background: color-mix(in srgb, #6c8cff 22%, transparent); color: #a9bcff; border: 1px solid #6c8cff; }
+    .b-adv  { background: color-mix(in srgb, #ffb454 22%, transparent); color: #ffcf8f; border: 1px solid #ffb454; }
+    .method p, .step p, .method li, .step li { color: var(--text-soft); }
+    .method ol, .step ol, .method ul, .step ul { padding-left: 20px; margin: 10px 0; }
+    .method li, .step li { margin: 8px 0; }
+    code { font-family: "Cascadia Code", ui-monospace, Menlo, Consolas, monospace;
+      background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; font-size: 13px; }
+    .cmd { font-family: "Cascadia Code", ui-monospace, Menlo, Consolas, monospace;
+      display: block; background: var(--bg-elev); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; margin: 10px 0; color: var(--text);
+      font-size: 13.5px; overflow-x: auto; white-space: pre; line-height: 1.7; }
+    .cmd .c { color: var(--muted); }
+    .tip { color: var(--muted); font-size: 14px; }
+    .analogy { border-left: 4px solid var(--accent); background: var(--bg-elev);
+      border-radius: 0 12px 12px 0; padding: 12px 18px; margin: 14px 0; color: var(--text-soft); }
+    .toc-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 20px; margin: 16px 0; }
+    .toc-box a { display: inline-block; margin: 4px 10px 4px 0; }
+    table.cmp { width: 100%; border-collapse: collapse; margin: 8px 0; }
+    table.cmp th, table.cmp td { border: 1px solid var(--border); padding: 9px 12px; text-align: left; font-size: 14px; }
+    table.cmp th { background: var(--bg-elev); }
+    .pill-link { display:inline-block; font-size:13px; padding:5px 12px; border-radius:999px;
+      border:1px solid var(--border); background:var(--bg-elev); color:var(--text-soft); margin:4px 6px 0 0; }
+    @media (max-width: 560px) {
+      .guide { padding: 6px 16px 32px; }
+      .method, .step { padding: 16px 16px; }
+      .method h3, .step h3 { font-size: 17px; }
+      .cmd { font-size: 12.5px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🌐</span> <span>GitHub Pages<small>publier ton site gratuitement</small></span></div>
+    <div class="spacer"></div>
+    <a class="btn" href="guide-mobile.html">📱 Mobile</a>
+    <a class="btn" href="index.html">← Portail</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero" style="padding-bottom:6px">
+    <span class="eyebrow">Guide complet · débutant</span>
+    <h1>Mettre ton site en ligne 🌐</h1>
+    <p>De « je n'y connais rien » à « mon site est accessible partout dans le monde, gratuitement ». On avance pas à pas, sans jargon.</p>
+  </div>
+
+  <div class="guide">
+
+    <div class="toc-box">
+      <b>Au programme :</b>
+      <a href="#quoi">1. C'est quoi ?</a>
+      <a href="#pourquoi">2. Pourquoi c'est parfait ici</a>
+      <a href="#prereq">3. Prérequis</a>
+      <a href="#methodeA">4. Méthode simple (VS Code)</a>
+      <a href="#methodeB">5. Méthode ligne de commande</a>
+      <a href="#activer">6. Activer Pages</a>
+      <a href="#maj">7. Mettre à jour</a>
+      <a href="#secu">8. Public, privé &amp; sécurité</a>
+      <a href="#progression-locale">🔐 Progression locale</a>
+      <a href="#depannage">9. Dépannage</a>
+      <a href="#plus">10. Pour aller plus loin</a>
+    </div>
+
+    <!-- 1 -->
+    <div class="step" id="quoi">
+      <h3>1. C'est quoi, au juste ?</h3>
+      <p>Trois mots reviennent souvent, voici la différence :</p>
+      <ul>
+        <li><b>Git</b> : un outil qui enregistre l'<b>historique</b> de tes fichiers (comme un « Ctrl+S » géant avec machine à remonter le temps). Il tourne sur <b>ton PC</b>.</li>
+        <li><b>GitHub</b> : un site web qui <b>héberge</b> tes dossiers Git (appelés <b>dépôts</b> / <i>repos</i>) dans le cloud, pour les sauvegarder et les partager.</li>
+        <li><b>GitHub Pages</b> : une fonction <b>gratuite</b> de GitHub qui transforme un dépôt contenant des fichiers web (HTML/CSS/JS) en <b>vrai site internet</b>, avec une adresse publique en <code>https://</code>.</li>
+      </ul>
+      <div class="analogy">🏠 <b>Analogie :</b> Git = ton brouillon avec toutes les versions ; GitHub = le coffre-fort en ligne où tu ranges le brouillon ; GitHub Pages = la vitrine qui affiche ton travail au monde entier.</div>
+    </div>
+
+    <!-- 2 -->
+    <div class="step" id="pourquoi">
+      <h3>2. Pourquoi c'est <em>parfait</em> pour ce site</h3>
+      <ul>
+        <li>✅ <b>100 % gratuit</b> et sans pub.</li>
+        <li>✅ Ton site est <b>statique</b> (juste HTML/CSS/JS) — exactement ce que GitHub Pages sait servir.</li>
+        <li>✅ <b>Accessible partout</b> : PC, téléphone, dans les transports, sans allumer ton ordi.</li>
+        <li>✅ <b>HTTPS automatique</b> → toutes les fonctions marchent (progression, recherche, thème), contrairement à <code>file://</code> sur mobile.</li>
+        <li>✅ <b>Ta progression reste privée</b> : elle est enregistrée dans <b>ton propre navigateur</b>, pas sur le serveur (voir plus bas).</li>
+        <li>✅ <b>URL stable</b> que tu peux mettre en favori ou ajouter à l'écran d'accueil.</li>
+        <li>✅ <b>Mise à jour en 1 commande</b> : tu modifies, tu « pushes », le site se met à jour tout seul.</li>
+      </ul>
+    </div>
+
+    <!-- 3 -->
+    <div class="step" id="prereq">
+      <h3>3. Ce dont tu as besoin (prérequis)</h3>
+      <ol>
+        <li>Un <b>compte GitHub</b> gratuit → <a class="pill-link" href="https://github.com/signup" target="_blank">github.com/signup</a></li>
+        <li><b>Git</b> installé, ou plus simple : <b>VS Code</b> (que tu utilises déjà) ou <b>GitHub Desktop</b>.
+          <a class="pill-link" href="https://git-scm.com/downloads" target="_blank">Git</a>
+          <a class="pill-link" href="https://desktop.github.com/" target="_blank">GitHub Desktop</a>
+        </li>
+        <li>Ton dossier de cours — <b>c'est déjà un dépôt Git</b>, une bonne partie du travail est faite. 🎉</li>
+      </ol>
+      <p class="tip">Tu es sur Windows : tout ce qui suit fonctionne tel quel.</p>
+    </div>
+
+    <!-- 4 -->
+    <div class="method" id="methodeA">
+      <h3>4. Méthode simple — avec VS Code <span class="badge b-best">★ Recommandé débutant</span></h3>
+      <p>La plus rapide : VS Code crée le dépôt sur GitHub <b>et</b> envoie tes fichiers en quelques clics.</p>
+      <ol>
+        <li>Ouvre le dossier du site dans <b>VS Code</b>.</li>
+        <li>Icône <b>Source Control</b> dans la barre de gauche (les trois ronds reliés, ou <code>Ctrl+Shift+G</code>).</li>
+        <li>S'il reste des changements : écris un petit message (ex. <i>« Première publication »</i>) puis clique <b>Commit</b> (valide « Yes » s'il propose de tout ajouter).</li>
+        <li>Clique <b>Publish Branch</b> → choisis <b>« Publish to GitHub public repository »</b>.
+          Connecte ton compte GitHub si demandé.</li>
+        <li>C'est poussé en ligne ! Un lien vers ton dépôt GitHub apparaît. Passe à l'étape <a href="#activer">6. Activer Pages</a>.</li>
+      </ol>
+      <p class="tip">💡 <b>GitHub Desktop</b> fait pareil : « Add existing repository » → « Publish repository ».</p>
+    </div>
+
+    <!-- 5 -->
+    <div class="method" id="methodeB">
+      <h3>5. Méthode ligne de commande <span class="badge b-adv">pour comprendre les coulisses</span></h3>
+      <p>Dans un terminal <b>ouvert dans le dossier du site</b>. Crée d'abord un dépôt <b>vide</b> sur GitHub (bouton <b>New</b> → nomme-le p. ex. <code>Studies_sheatsheets_for_IABD</code>, <b>sans</b> cocher « Add a README »).</p>
+      <span class="cmd"><span class="c"># 1. Enregistrer l'état actuel</span>
+git add .
+git commit -m "Première publication du site de cours"
+
+<span class="c"># 2. Nommer la branche principale "main"</span>
+git branch -M main
+
+<span class="c"># 3. Relier ton dossier au dépôt GitHub (remplace TON-PSEUDO)</span>
+git remote add origin https://github.com/TON-PSEUDO/Studies_sheatsheets_for_IABD.git
+
+<span class="c"># 4. Envoyer le tout en ligne</span>
+git push -u origin main</span>
+      <p class="tip">Si Git répond <code>remote origin already exists</code>, ton dossier est déjà relié : saute l'étape 3 et fais directement <code>git push -u origin main</code>. Au besoin : <code>git remote -v</code> pour voir où ça pointe.</p>
+    </div>
+
+    <!-- 6 -->
+    <div class="step" id="activer">
+      <h3>6. Activer GitHub Pages ⚡</h3>
+      <ol>
+        <li>Sur <b>github.com</b>, ouvre ton dépôt.</li>
+        <li>Onglet <b>Settings</b> (⚙️, en haut à droite).</li>
+        <li>Menu de gauche → <b>Pages</b>.</li>
+        <li>Section <b>« Build and deployment »</b> → <b>Source</b> : choisis <b>« Deploy from a branch »</b>.</li>
+        <li>Juste en dessous : branche <b>main</b>, dossier <b>/ (root)</b>, puis <b>Save</b>.</li>
+        <li>Patiente ~1 à 2 minutes (GitHub construit le site). Rafraîchis la page : une bannière affiche
+          <b>« Your site is live at … »</b> avec ton URL :</li>
+      </ol>
+      <span class="cmd">https://TON-PSEUDO.github.io/Studies_sheatsheets_for_IABD/</span>
+      <p>Ouvre cette adresse sur ton PC <b>et</b> sur ton téléphone → ajoute-la à l'écran d'accueil pour une icône type app. 🎉</p>
+    </div>
+
+    <!-- 7 -->
+    <div class="step" id="maj">
+      <h3>7. Mettre à jour le site (le quotidien)</h3>
+      <p>Dès que tu modifies un cours, tu renvoies les changements et le site se met à jour <b>tout seul</b> en ~1 min :</p>
+      <span class="cmd"><span class="c"># après avoir modifié des fichiers</span>
+git add .
+git commit -m "Ajout du cours de Python"
+git push</span>
+      <p>Dans VS Code, c'est le même geste : <b>Commit</b> puis <b>Sync / Push</b> (l'icône ↻ en bas à gauche). Pas besoin de retoucher les réglages Pages : ils restent actifs.</p>
+      <div class="analogy">🔁 <b>Le réflexe :</b> <code>add</code> (je sélectionne) → <code>commit</code> (je valide avec un message) → <code>push</code> (j'envoie). C'est tout le workflow Git du quotidien.</div>
+    </div>
+
+    <!-- 8 -->
+    <div class="step" id="secu">
+      <h3>8. Dépôt public, privé &amp; sécurité 🔒</h3>
+      <table class="cmp">
+        <tr><th>Choix</th><th>Ce que ça implique</th></tr>
+        <tr><td><b>Repo public</b></td><td>Le plus simple. Code et site visibles par tous. Parfait pour des cours — et ça fait un joli <b>portfolio</b> !</td></tr>
+        <tr><td><b>Repo privé</b></td><td>Le code reste caché, mais avec un compte gratuit <b>le site publié reste public</b> (le masquer nécessite GitHub Enterprise). Bref : ne compte pas sur Pages pour « cacher » le contenu.</td></tr>
+      </table>
+      <ul>
+        <li>⚠️ <b>Ne mets jamais de secret</b> (mot de passe, clé d'API, token) dans un dépôt : considère tout comme potentiellement public.</li>
+        <li>✅ Ici, aucun risque : ce sont des cours. Un repo public est recommandé.</li>
+      </ul>
+    </div>
+
+    <!-- Progression locale -->
+    <div class="step" id="progression-locale">
+      <h3>🔐 Et ma progression ? Elle reste <em>privée et locale</em></h3>
+      <p>Même si le site est <b>public</b>, ta progression, elle, ne l'est <b>jamais</b>. Voici pourquoi :</p>
+      <ul>
+        <li><b>Rien n'est envoyé sur le serveur.</b> GitHub Pages ne fait que <i>servir</i> des fichiers ; il ne reçoit aucune donnée en retour. Il n'y a pas de base de données.</li>
+        <li><b>Tout est stocké dans ton navigateur</b>, via une mémoire appelée <code>localStorage</code> : modules terminés, quiz répondus, dernier module visité, thème clair/sombre.</li>
+        <li><b>Chaque visiteur a donc SA propre progression.</b> Sur le même site public, toi, un camarade et un inconnu voyez chacun <b>uniquement vos propres</b> données — elles ne se mélangent pas et ne sont pas visibles par les autres.</li>
+      </ul>
+      <div class="analogy">🧠 <b>Analogie :</b> le site public est comme un <b>manuel identique</b> distribué à tout le monde ; tes <b>annotations au crayon</b> (ta progression) restent dans <b>ton exemplaire</b>, dans ta poche. Personne d'autre ne les voit.</div>
+      <p>À retenir, côté pratique :</p>
+      <table class="cmp">
+        <tr><th>Situation</th><th>Ta progression…</th></tr>
+        <tr><td>Tu reviens sur le <b>même navigateur</b> (PC ou tél)</td><td>✅ est bien conservée, automatiquement.</td></tr>
+        <tr><td>Tu passes du <b>PC au téléphone</b> (ou changes de navigateur)</td><td>⚠️ repart de zéro : chaque navigateur a sa propre mémoire.</td></tr>
+        <tr><td>Tu vides le cache / navigues en <b>navigation privée</b></td><td>⚠️ peut être effacée (c'est le propre du mode privé).</td></tr>
+      </table>
+      <p class="tip">💡 C'est pour « passer d'un appareil à l'autre » qu'un futur <b>export / import de la progression</b> (petit fichier JSON) est prévu dans la <a href="ameliorations.html">feuille de route</a>. Et le bouton <b>↺ Réinitialiser</b> du portail efface, lui, uniquement <b>ta</b> progression locale.</p>
+    </div>
+
+    <!-- 9 -->
+    <div class="step" id="depannage">
+      <h3>9. Dépannage (les pièges classiques)</h3>
+      <ul>
+        <li><b>Page 404 / « There isn't a GitHub Pages site here »</b> → attends 2 min, vérifie que la source est bien <b>main / root</b>, et que <code>index.html</code> est à la racine du dépôt.</li>
+        <li><b>Un cours s'ouvre en local mais pas en ligne</b> → c'est presque toujours une <b>casse de nom de fichier</b>. Les serveurs GitHub sont sous Linux : <code>Module1.html</code> ≠ <code>module1.html</code>. Garde des noms <b>minuscules et cohérents</b> (c'est déjà le cas ici).</li>
+        <li><b>Styles/scripts qui ne chargent pas</b> → utilise des <b>chemins relatifs</b> (<code>assets/portal.css</code>), pas de <code>C:\…</code> ni de <code>/</code> au début. Ton site respecte déjà cette règle. 👍</li>
+        <li><b>Mes changements ne s'affichent pas</b> → vérifie que le <code>push</code> est bien parti, attends le build, puis force le rafraîchissement (<code>Ctrl+F5</code>).</li>
+        <li><b>Un fichier ou dossier commençant par <code>_</code> est ignoré</b> → GitHub Pages passe par Jekyll. Un fichier <code>.nojekyll</code> à la racine désactive ce comportement (déjà ajouté dans ton dépôt).</li>
+      </ul>
+    </div>
+
+    <!-- 10 -->
+    <div class="step" id="plus">
+      <h3>10. Pour aller plus loin (bonus)</h3>
+      <ul>
+        <li><b>Déploiement par GitHub Actions</b> : au lieu de « Deploy from a branch », un workflow automatique (utile pour des sites qui se « construisent »). Noté dans la <a href="ameliorations.html">feuille de route</a>.</li>
+        <li><b>Nom de domaine perso</b> (ex. <code>cours.mondomaine.fr</code>) : réglage <b>Custom domain</b> + un fichier <code>CNAME</code>.</li>
+        <li><b>Alternatives</b> tout aussi gratuites : Netlify, Vercel, Cloudflare Pages (glisser-déposer ou connexion au repo).</li>
+      </ul>
+      <div class="method" style="margin-top:14px">
+        <h3>📚 Sources officielles</h3>
+        <a class="pill-link" href="https://pages.github.com/" target="_blank">pages.github.com (démarrage)</a>
+        <a class="pill-link" href="https://docs.github.com/fr/pages" target="_blank">Documentation GitHub Pages (FR)</a>
+        <a class="pill-link" href="https://docs.github.com/fr/get-started/start-your-journey/hello-world" target="_blank">Git &amp; GitHub : Hello World</a>
+        <a class="pill-link" href="https://code.visualstudio.com/docs/sourcecontrol/overview" target="_blank">Source Control dans VS Code</a>
+      </div>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🧭 En résumé (3 phrases)</span>
+      <p>1) Tu envoies ton dossier sur GitHub (<b>push</b>). 2) Tu actives <b>Settings → Pages → branche main / root</b>. 3) GitHub te donne une <b>URL publique</b> que tu ouvres sur ton téléphone. Pour toute modif future : <code>commit</code> + <code>push</code>, et le site se met à jour seul.</p>
+    </div>
+
+  </div>
+
+  <div class="footer">Guide GitHub Pages · <a href="guide-mobile.html">← accès mobile</a> · <a href="index.html">retour au portail</a> · publie partout 💙</div>
+
+  <script>
+    (function(){
+      var TK="esgi-portal-theme";
+      function t(x){document.documentElement.setAttribute("data-theme",x);localStorage.setItem(TK,x);var b=document.getElementById("theme-toggle");if(b)b.textContent=x==="light"?"🌙 Sombre":"☀️ Clair";}
+      var saved=localStorage.getItem(TK);
+      if(!saved){saved=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";}
+      t(saved);
+      document.getElementById("theme-toggle").addEventListener("click",function(){t(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+      var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">🌐</text></svg>';
+      var l=document.createElement("link");l.rel="icon";l.href="data:image/svg+xml,"+encodeURIComponent(svg);document.head.appendChild(l);
+    })();
+  </script>
+</body>
+</html>

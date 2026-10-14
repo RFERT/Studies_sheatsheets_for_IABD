@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Ouvrir le site sur mon téléphone — Guide</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+  <style>
+    .guide { max-width: 860px; margin: 0 auto; padding: 10px 28px 40px; }
+    .method { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px 24px; margin: 18px 0; box-shadow: var(--shadow); }
+    .method h3 { margin: 0 0 6px; font-size: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+    .b-best { background: color-mix(in srgb, #27e0b0 22%, transparent); color: #6fe9cd; border: 1px solid #27e0b0; }
+    .b-easy { background: color-mix(in srgb, #6c8cff 22%, transparent); color: #a9bcff; border: 1px solid #6c8cff; }
+    .b-adv  { background: color-mix(in srgb, #ffb454 22%, transparent); color: #ffcf8f; border: 1px solid #ffb454; }
+    .method p { color: var(--text-soft); }
+    .method ol { color: var(--text-soft); padding-left: 20px; margin: 10px 0; }
+    .method li { margin: 8px 0; }
+    code, .cmd { font-family: "Cascadia Code", ui-monospace, Menlo, Consolas, monospace; }
+    .cmd { display: block; background: var(--bg-elev); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 14px; margin: 8px 0; color: var(--text);
+      font-size: 14px; overflow-x: auto; white-space: pre; }
+    .tip { color: var(--muted); font-size: 14px; }
+    @media (max-width: 560px) {
+      .guide { padding: 6px 16px 32px; }
+      .method { padding: 16px 16px; }
+      .method h3 { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">📱</span> <span>Accès mobile<small>ouvrir le site sur ton téléphone</small></span></div>
+    <div class="spacer"></div>
+    <a class="btn" href="index.html">← Portail</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero" style="padding-bottom:6px">
+    <span class="eyebrow">Guide</span>
+    <h1>Réviser sur ton téléphone 📱</h1>
+    <p>Trois façons d'ouvrir ce site sur ton Samsung — de la plus simple à la plus complète. Le site est 100&nbsp;% hors-ligne (aucune donnée envoyée).</p>
+  </div>
+
+  <div class="guide">
+
+    <div class="method">
+      <h3>1. Le serveur local <span class="badge b-best">★ Recommandé</span></h3>
+      <p>Ton PC sert les fichiers, ton téléphone les lit via le Wi-Fi. <b>Toutes les fonctions marchent</b> (progression, recherche, thème) et aucune connexion Internet n'est nécessaire.</p>
+      <ol>
+        <li><b>PC et téléphone sur le même Wi-Fi.</b></li>
+        <li>Sur le PC, ouvre un terminal <b>dans le dossier du site</b> et lance :
+          <span class="cmd">python -m http.server 8000</span>
+        </li>
+        <li>Trouve l'adresse IP locale du PC : tape <code>ipconfig</code> (Windows) et repère
+          « Adresse IPv4 », par ex. <code>192.168.1.23</code>.</li>
+        <li>Sur le téléphone, ouvre le navigateur et va sur :
+          <span class="cmd">http://192.168.1.23:8000</span>
+          (remplace par ton IP). 🎉</li>
+      </ol>
+      <p class="tip">Astuce : si ça ne charge pas, autorise Python dans le pare-feu Windows, ou vérifie que le réseau Wi-Fi est en profil « Privé ».</p>
+    </div>
+
+    <div class="method">
+      <h3>2. Mettre en ligne (GitHub Pages) <span class="badge b-best">★ Pratique partout</span></h3>
+      <p>Comme le dossier est déjà un dépôt Git, tu peux le publier gratuitement et y accéder <b>depuis n'importe où</b>, sans PC allumé — idéal dans les transports.</p>
+      <ol>
+        <li>Pousse le dépôt sur GitHub (repo <b>public</b> ou privé).</li>
+        <li>Sur GitHub : <b>Settings → Pages</b>.</li>
+        <li>« Build and deployment » → Source : <b>Deploy from a branch</b>, branche <code>main</code>, dossier <code>/root</code>, puis <b>Save</b>.</li>
+        <li>Après ~1 min, l'URL <code>https://&lt;ton-pseudo&gt;.github.io/&lt;repo&gt;/</code> ouvre le portail sur le téléphone.</li>
+      </ol>
+      <p class="tip">👉 Pas à l'aise avec Git/GitHub ? Suis le <a href="guide-github-pages.html">guide complet GitHub Pages</a> (pas à pas, pour débutant). Bonus : ajoute la page à l'écran d'accueil (voir plus bas) pour une icône comme une vraie app.</p>
+    </div>
+
+    <div class="method">
+      <h3>3. Copier les fichiers directement <span class="badge b-easy">Le plus simple</span></h3>
+      <p>Sans PC ni réseau : on transfère le dossier sur le téléphone et on ouvre la page.</p>
+      <ol>
+        <li>Copie le dossier complet <code>Studies_sheatsheets_for_IABD</code> sur le téléphone
+          (câble USB, Google Drive, ou une clé USB-C).</li>
+        <li>Avec un gestionnaire de fichiers, ouvre <code>index.html</code> avec un navigateur
+          (Chrome, ou une app type « HTML Viewer »).</li>
+      </ol>
+      <p class="tip">Limite : certains navigateurs mobiles bloquent les fichiers locaux (<code>file://</code>), ce qui peut désactiver la recherche ou la sauvegarde de progression. Si tu rencontres ça, préfère la méthode 1 ou 2.</p>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">📌 Ajouter à l'écran d'accueil (icône « app »)</span>
+      <p>Dans Chrome mobile : menu <b>⋮</b> → <b>Ajouter à l'écran d'accueil</b>. Tu obtiens une icône 🎓 qui ouvre le portail en plein écran, comme une application.</p>
+    </div>
+
+    <div class="callout">
+      <span class="label">💡 Quelle méthode choisir ?</span>
+      <p><b>À la maison, PC allumé</b> → méthode 1 (serveur local). <b>En déplacement</b> → méthode 2 (GitHub Pages). <b>Dépannage rapide sans réseau</b> → méthode 3.</p>
+    </div>
+
+  </div>
+
+  <div class="footer">Guide d'accès mobile · <a href="index.html">retour au portail</a> · révise partout 💙</div>
+
+  <script>
+    (function(){
+      var TK="esgi-portal-theme";
+      function t(x){document.documentElement.setAttribute("data-theme",x);localStorage.setItem(TK,x);var b=document.getElementById("theme-toggle");if(b)b.textContent=x==="light"?"🌙 Sombre":"☀️ Clair";}
+      var saved=localStorage.getItem(TK);
+      if(!saved){saved=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";}
+      t(saved);
+      document.getElementById("theme-toggle").addEventListener("click",function(){t(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+      var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">📱</text></svg>';
+      var l=document.createElement("link");l.rel="icon";l.href="data:image/svg+xml,"+encodeURIComponent(svg);document.head.appendChild(l);
+    })();
+  </script>
+</body>
+</html>

@@ -400,6 +400,21 @@ ul.keys li::before { content: "✦"; position: absolute; left: 6px; color: var(-
 /* Confort tactile général : éviter le zoom surprise, lisibilité formules */
 mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
 
+/* ---------- Temps de lecture ---------- */
+.readtime { display: inline-block; font-size: 13px; color: var(--muted);
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 999px;
+  padding: 3px 12px; margin: 2px 0 14px; }
+
+/* ---------- Bouton retour en haut ---------- */
+.to-top { position: fixed; right: 18px; bottom: 18px; z-index: 60;
+  right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
+  width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--border);
+  background: var(--primary); color: #fff; font-size: 22px; line-height: 1; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35); opacity: 0; transform: translateY(12px);
+  pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; }
+.to-top.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.to-top:hover { filter: brightness(1.1); }
+
 /* ================= IMPRESSION / EXPORT PDF ================= */
 @media print {
   html, body { background: #fff !important; color: #000 !important; }

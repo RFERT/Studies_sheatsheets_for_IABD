@@ -32,6 +32,7 @@
   <header class="topbar">
     <div class="brand"><span class="logo">🚀</span> <span>Améliorations<small>feuille de route évolutive</small></span></div>
     <div class="spacer"></div>
+    <a class="btn" href="guide-mobile.html">📱 Mobile</a>
     <a class="btn" href="index.html">← Portail</a>
     <button class="btn" id="theme-toggle">☀️ Clair</button>
   </header>
@@ -43,36 +44,62 @@
   </div>
 
   <div class="rm">
+    <div class="panel" style="border-color:var(--accent); margin-bottom:22px">
+      <h3>✅ Déjà en place</h3>
+      <div class="tagrow">
+        <span class="t">📈 Tableau de bord de progression</span>
+        <span class="t">🔎 Recherche globale</span>
+        <span class="t">🖨️ Export PDF</span>
+        <span class="t">⬇️⬆️ Export / import de progression</span>
+        <span class="t">🔥 Streak de révision</span>
+        <span class="t">⭐ Favoris / marque-pages</span>
+        <span class="t">▶️ Reprendre où j'en étais</span>
+        <span class="t">📱 Guide d'accès mobile</span>
+        <span class="t">🌐 Guide GitHub Pages</span>
+        <span class="t">⏱️ Temps de lecture</span>
+        <span class="t">↑ Retour en haut</span>
+        <span class="t">🌗 Thème auto (système)</span>
+        <span class="t">🎓 Favicons</span>
+        <span class="t">🔀 Versionnage Git</span>
+        <span class="t">📲 Responsive S26 Ultra</span>
+      </div>
+    </div>
+
     <h2 style="margin-top:10px">🛠️ Fonctionnalités du site</h2>
     <p class="sub" style="color:var(--muted)">Priorités : <span class="prio p1">haute</span> <span class="prio p2">moyenne</span> <span class="prio p3">bonus</span></p>
     <div class="cols">
       <div class="panel">
         <h3>🎯 Suivi &amp; révision</h3>
         <ul>
-          <li><b>Tableau de bord de progression</b> global (matières terminées, quiz réussis) <span class="prio p3">✅ fait</span></li>
-          <li><b>Répétition espacée</b> (flashcards, rappels J+1/J+3/J+7) <span class="prio p1">haute</span></li>
+          <li><b>Répétition espacée</b> (flashcards, algo SM-2, rappels J+1/J+3/J+7) <span class="prio p1">haute</span></li>
           <li><b>Mode examen chronométré</b> avec score et correction <span class="prio p2">moyenne</span></li>
-          <li><b>Recherche globale</b> dans tous les cours <span class="prio p3">✅ fait</span></li>
-          <li><b>Favoris / marque-pages</b> de sections <span class="prio p3">bonus</span></li>
+          <li><b>Objectifs hebdomadaires</b> &amp; petits rappels (notifications navigateur) <span class="prio p2">moyenne</span></li>
+          <li><b>Calendrier de révision</b> (heatmap d'activité façon GitHub) <span class="prio p3">bonus</span></li>
+          <li><b>Minuteur Pomodoro</b> intégré aux sessions de révision <span class="prio p3">bonus</span></li>
+          <li><b>Stats par notion</b> : repérer automatiquement les points faibles <span class="prio p3">bonus</span></li>
         </ul>
       </div>
       <div class="panel">
         <h3>💻 Interactivité</h3>
         <ul>
           <li><b>Éditeur de code exécutable</b> (Rust Playground, Pyodide pour Python) <span class="prio p1">haute</span></li>
-          <li><b>Quiz générés aléatoirement</b> + banque de questions <span class="prio p2">moyenne</span></li>
+          <li><b>Quiz générés aléatoirement</b> + banque de questions mélangées <span class="prio p2">moyenne</span></li>
           <li><b>Visualisations interactives</b> (graphes, matrices, descente de gradient animée) <span class="prio p2">moyenne</span></li>
+          <li><b>Occlusion / cartes à trous</b> : masquer puis révéler les réponses <span class="prio p3">bonus</span></li>
+          <li><b>Glossaire interactif</b> : définition au survol des termes clés <span class="prio p3">bonus</span></li>
           <li><b>Coloration syntaxique</b> avancée (Prism/Highlight.js) <span class="prio p3">bonus</span></li>
         </ul>
       </div>
       <div class="panel">
         <h3>🏗️ Technique &amp; qualité</h3>
         <ul>
+          <li><b>PWA</b> (consultation hors-ligne, installable sur le téléphone) <span class="prio p2">moyenne</span></li>
+          <li><b>MathJax/KaTeX en local</b> (pas de dépendance réseau) <span class="prio p2">moyenne</span></li>
           <li><b>Design system partagé</b> unifié entre toutes les matières <span class="prio p2">moyenne</span></li>
-          <li><b>Export PDF</b> propre de chaque cours/fiche <span class="prio p3">✅ fait (maths + portail)</span></li>
-          <li><b>PWA</b> (consultation hors-ligne, installable) <span class="prio p3">bonus</span></li>
-          <li><b>MathJax/KaTeX en local</b> (pas de dépendance réseau) <span class="prio p3">bonus</span></li>
-          <li><b>Versionnage Git</b> du dossier pour historiser les cours <span class="prio p3">✅ fait</span></li>
+          <li><b>Déploiement GitHub Pages</b> automatisé (GitHub Actions) <span class="prio p3">bonus</span></li>
+          <li><b>Vérificateur de liens</b> (script anti-régression) <span class="prio p3">bonus</span></li>
+          <li><b>Accessibilité</b> (contrastes AA, navigation clavier complète) <span class="prio p3">bonus</span></li>
+          <li><b>Thème personnalisable</b> (choisir sa couleur d'accent) <span class="prio p3">bonus</span></li>
         </ul>
       </div>
     </div>
