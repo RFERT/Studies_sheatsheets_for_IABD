@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 6 — Théorie des graphes : Parcours, Chemins &amp; PageRank</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 6</div>
+    <h1>Module 6 — Théorie des graphes</h1>
+    <p class="subtitle">Modéliser des réseaux : relations, connexions, flux. Des réseaux sociaux au web, des systèmes de recommandation aux Knowledge Graphs, le graphe est LA structure de la donnée connectée.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Connaître le vocabulaire des graphes ; représenter un graphe (matrice/liste) ; parcourir (BFS/DFS) ; calculer plus courts chemins ; comprendre centralité et PageRank ; relier aux applications Data.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#def">Vocabulaire</a></li>
+        <li><a href="#repr">Représentations</a></li>
+        <li><a href="#parcours">Parcours BFS &amp; DFS</a></li>
+        <li><a href="#chemins">Plus courts chemins</a></li>
+        <li><a href="#central">Centralité &amp; PageRank</a></li>
+        <li><a href="#special">Graphes particuliers</a></li>
+        <li><a href="#data">Domaines &amp; métiers</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section class="block" id="def">
+      <h2>1. Vocabulaire</h2>
+      <div class="callout def">
+        <span class="label">Définitions</span>
+        Un <strong>graphe</strong> \(G=(V,E)\) a des <strong>sommets</strong> (vertices \(V\)) et des <strong>arêtes</strong> (edges \(E\)).
+        <ul>
+          <li><strong>Orienté</strong> (arcs \(x\to y\)) vs <strong>non orienté</strong> (arêtes \(x\!-\!y\)).</li>
+          <li><strong>Pondéré</strong> : chaque arête a un poids (distance, coût, force).</li>
+          <li><strong>Degré</strong> d'un sommet : nombre d'arêtes incidentes (en orienté : degré entrant/sortant).</li>
+          <li><strong>Chemin</strong> : suite d'arêtes ; <strong>cycle</strong> : chemin qui revient au départ.</li>
+          <li><strong>Connexe</strong> : il existe un chemin entre toute paire de sommets.</li>
+        </ul>
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        Réseau social : sommets = personnes, arêtes = amitiés (non orienté) ou « follow » (orienté). Web : pages + hyperliens. Un <strong>graphe de connaissances</strong> (Knowledge Graph) relie des entités.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Sur Twitter/X, « A suit B » (mais pas forcément l'inverse) se modélise par un graphe…</div>
+        <div class="options">
+          <div class="opt">non orienté</div>
+          <div class="opt">orienté</div>
+          <div class="opt">sans arêtes</div>
+          <div class="opt">complet</div>
+        </div>
+        <div class="feedback" data-explain="« Suivre » est asymétrique : A→B n'implique pas B→A. C'est un graphe orienté (arcs). L'amitié Facebook, elle, est non orientée."></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="repr">
+      <h2>2. Représentations</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Représentation</th><th>Idée</th><th>Mémoire</th><th>Bon pour</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Matrice d'adjacence</strong></td><td>\(A_{ij}=1\) si arête \(i\!\to\!j\)</td><td>\(O(V^2)\)</td><td>graphes denses, calculs matriciels</td></tr>
+            <tr><td><strong>Liste d'adjacence</strong></td><td>pour chaque sommet, ses voisins</td><td>\(O(V+E)\)</td><td>graphes creux (réels)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout theorem">
+        <span class="label">Astuce matricielle ⭐</span>
+        Si \(A\) est la matrice d'adjacence, alors \((A^k)_{ij}\) = nombre de chemins de longueur exactement \(k\) de \(i\) à \(j\). (Lien direct avec le Module 2 et la composition de relations du Module 1 !)
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Pour un réseau social réel (très creux, peu de connexions par personne), on préfère…</div>
+        <div class="options">
+          <div class="opt">la matrice d'adjacence (O(V²))</div>
+          <div class="opt">ne rien stocker</div>
+          <div class="opt">la liste d'adjacence (O(V+E))</div>
+          <div class="opt">un tableau 1D</div>
+        </div>
+        <div class="feedback" data-explain="Un graphe creux a E ≪ V². La liste d'adjacence (O(V+E)) économise énormément de mémoire vs la matrice (O(V²)) pleine de zéros."></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="parcours">
+      <h2>3. Parcours : BFS &amp; DFS</h2>
+      <div class="callout def">
+        <span class="label">Deux stratégies</span>
+        <ul>
+          <li><strong>BFS</strong> (largeur, file/queue) : explore par « cercles » concentriques. Trouve le plus court chemin en nombre d'arêtes. Complexité \(O(V+E)\).</li>
+          <li><strong>DFS</strong> (profondeur, pile/stack ou récursion) : plonge aussi loin que possible avant de reculer. Utile pour cycles, composantes, tri topologique. \(O(V+E)\).</li>
+        </ul>
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> <span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien</span>
+        BFS : « amis à distance 2 », recommandations de proximité, crawling web par niveaux. DFS : détection de cycles (dépendances), ordonnancement (DAG du Module 1), exploration.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Pour trouver le plus court chemin en nombre d'arêtes (graphe non pondéré), on utilise…</div>
+        <div class="options">
+          <div class="opt">BFS (parcours en largeur)</div>
+          <div class="opt">DFS (parcours en profondeur)</div>
+          <div class="opt">un tri</div>
+          <div class="opt">PageRank</div>
+        </div>
+        <div class="feedback" data-explain="BFS explore par distances croissantes : le premier moment où l'on atteint un sommet correspond au plus court chemin en nombre d'arêtes."></div>
+      </div>
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.2</strong></div>
+        <div class="qtext">Quelle structure de données est au cœur de BFS ?</div>
+        <div class="options">
+          <div class="opt">une pile (LIFO)</div>
+          <div class="opt">un arbre binaire</div>
+          <div class="opt">une table de hachage</div>
+          <div class="opt">une file (FIFO)</div>
+        </div>
+        <div class="feedback" data-explain="BFS utilise une FILE (FIFO) pour traiter les sommets dans l'ordre de découverte. DFS utilise une PILE (LIFO) ou la récursion."></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="chemins">
+      <h2>4. Plus courts chemins (pondérés)</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Algorithme</th><th>Résout</th><th>Contrainte</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dijkstra</strong></td><td>plus court chemin depuis une source</td><td>poids ≥ 0</td></tr>
+            <tr><td><strong>Bellman-Ford</strong></td><td>idem, gère poids négatifs</td><td>plus lent</td></tr>
+            <tr><td><strong>Floyd-Warshall</strong></td><td>tous les couples</td><td>\(O(V^3)\)</td></tr>
+            <tr><td><strong>A*</strong></td><td>plus court chemin avec heuristique</td><td>jeux, GPS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        GPS/itinéraires (Dijkstra/A*), routage réseau, logistique, détection d'arbitrage financier (Bellman-Ford avec poids = −log(taux)).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Pour un GPS avec des distances toutes positives, l'algorithme classique est…</div>
+        <div class="options">
+          <div class="opt">BFS</div>
+          <div class="opt">Dijkstra</div>
+          <div class="opt">tri topologique</div>
+          <div class="opt">PageRank</div>
+        </div>
+        <div class="feedback" data-explain="Dijkstra calcule le plus court chemin pondéré avec des poids ≥ 0 (distances/temps). A* l'améliore avec une heuristique (distance à vol d'oiseau)."></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="central">
+      <h2>5. Centralité &amp; PageRank ⭐</h2>
+      <div class="callout def">
+        <span class="label">Mesures de centralité (qui est « important » ?)</span>
+        <ul>
+          <li><strong>Degré</strong> : nombre de connexions (populaire).</li>
+          <li><strong>Intermédiarité</strong> (betweenness) : fréquence d'apparition sur les plus courts chemins (pont).</li>
+          <li><strong>Proximité</strong> (closeness) : proche de tous les autres.</li>
+          <li><strong>PageRank</strong> : importance récursive (être pointé par des pages importantes).</li>
+        </ul>
+      </div>
+      <div class="callout theorem">
+        <span class="label">PageRank — l'idée de Google</span>
+        Une page est importante si des pages importantes pointent vers elle. Mathématiquement, le vecteur PageRank \(\mathbf r\) vérifie \(\mathbf r = M\mathbf r\) : c'est le <strong>vecteur propre dominant</strong> (valeur propre 1) de la matrice de transition \(M\) (lien Module 2 !). On le calcule en itérant \(\mathbf r \leftarrow M\mathbf r\) (power iteration).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> <span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien</span>
+        PageRank (recherche web, à l'échelle de milliards de pages, calculé via MapReduce). Centralité : détection d'influenceurs, de comptes frauduleux, de nœuds critiques. <strong>GNN</strong> (Graph Neural Networks) : deep learning sur graphes (reco, molécules, fraude).
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Mathématiquement, le vecteur PageRank est…</div>
+        <div class="options">
+          <div class="opt">la moyenne des degrés</div>
+          <div class="opt">le plus court chemin</div>
+          <div class="opt">le vecteur propre dominant de la matrice de transition</div>
+          <div class="opt">un tri des pages</div>
+        </div>
+        <div class="feedback" data-explain="PageRank résout r=Mr : c'est le vecteur propre associé à la valeur propre 1, calculé par itérations successives (power iteration). D'où le lien fort avec l'algèbre linéaire."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.2</strong></div>
+        <div class="qtext">Un sommet à forte « intermédiarité » (betweenness) est…</div>
+        <div class="options">
+          <div class="opt">un pont par lequel passent beaucoup de plus courts chemins</div>
+          <div class="opt">celui qui a le plus d'amis</div>
+          <div class="opt">toujours isolé</div>
+          <div class="opt">sans importance</div>
+        </div>
+        <div class="feedback" data-explain="La betweenness mesure combien de plus courts chemins passent par un sommet. Fort = rôle de pont/goulot (couper ce nœud fragmente le réseau)."></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="special">
+      <h2>6. Graphes particuliers</h2>
+      <ul class="keys">
+        <li><strong>Arbre</strong> : graphe connexe sans cycle (\(V-1\) arêtes). Base des hiérarchies, index, arbres de décision.</li>
+        <li><strong>DAG</strong> : orienté sans cycle = ordre partiel (Module 1). Pipelines, dépendances.</li>
+        <li><strong>Graphe biparti</strong> : deux groupes, arêtes seulement entre groupes (utilisateurs↔produits). Base de la reco.</li>
+        <li><strong>Graphe complet</strong> \(K_n\) : toutes les paires reliées (\(\binom n2\) arêtes).</li>
+      </ul>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">Un graphe « utilisateurs ↔ produits » (achats) est un bon exemple de graphe…</div>
+        <div class="options">
+          <div class="opt">complet</div>
+          <div class="opt">biparti</div>
+          <div class="opt">arbre</div>
+          <div class="opt">cyclique</div>
+        </div>
+        <div class="feedback" data-explain="Deux types de sommets (users, produits) avec arêtes uniquement entre les deux groupes = graphe biparti. C'est la structure des systèmes de recommandation."></div>
+      </div>
+    </section>
+
+    <!-- DATA & MÉTIERS -->
+    <section class="block" id="data">
+      <h2>7. Domaines, usages &amp; métiers</h2>
+      <div class="legend">
+        <span class="domain data"><span class="dot"></span>DATA</span>
+        <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+        <span class="domain ia"><span class="dot"></span>IA</span>
+      </div>
+      <div class="jobs">
+        <div class="jhead">💼 Usages concrets</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Notion</th><th>Domaine</th><th>Usage</th><th>Métiers</th></tr></thead>
+            <tbody>
+              <tr><td>BFS/DFS</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Exploration, cycles, recommandation proche</td><td>Data Engineer, Dev</td></tr>
+              <tr><td>Plus courts chemins</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>GPS, routage, logistique</td><td>OR / Optimisation, Dev</td></tr>
+              <tr><td>PageRank/Centralité</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Ranking web, influence, fraude</td><td>Data Scientist, Analyst</td></tr>
+              <tr><td>Graphe biparti</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Systèmes de recommandation</td><td>ML Engineer</td></tr>
+              <tr><td>GNN</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Deep learning sur graphes</td><td>Research / ML Eng.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Th%C3%A9orie_des_graphes" target="_blank">Théorie des graphes</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/PageRank" target="_blank">PageRank</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Algorithme_de_Dijkstra" target="_blank">Dijkstra</a>
+        <a class="pill-link" href="https://networkx.org/" target="_blank">NetworkX (Python)</a>
+      </div>
+    </section>
+
+    <!-- EXOS -->
+    <section class="block" id="exos">
+      <h2>8. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Degrés</h3>
+      <p>Un graphe non orienté a 5 sommets et 7 arêtes. Que vaut la somme des degrés ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Lemme des poignées de main : la somme des degrés = 2 × (nombre d'arêtes) = 2×7 = <strong>14</strong>. (Chaque arête compte dans 2 degrés.)</p>
+      </details>
+
+      <h3>Exercice 2 — Chemins (matrice)</h3>
+      <p>Pourquoi \((A^2)_{ij}\) donne-t-il le nombre de chemins de longueur 2 de \(i\) à \(j\) ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\((A^2)_{ij}=\sum_k A_{ik}A_{kj}\). Le terme \(A_{ik}A_{kj}\) vaut 1 ssi il y a une arête \(i\to k\) ET \(k\to j\), i.e. un chemin \(i\to k\to j\). La somme compte tous les intermédiaires \(k\) : c'est le nombre de chemins de longueur 2.</p>
+      </details>
+
+      <h3>Exercice 3 — PageRank (⭐)</h3>
+      <p>Pourquoi ajoute-t-on un « facteur d'amortissement » (damping, ~0,85) dans PageRank ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Pour modéliser un surfeur qui, avec proba 15 %, saute vers une page aléatoire (au lieu de suivre un lien). Cela évite les « pièges » (pages sans lien sortant, composantes isolées) et garantit l'existence/unicité du vecteur propre (matrice stochastique irréductible → théorème de Perron-Frobenius).</p>
+      </details>
+
+      <h3>Exercice 4 — Arbre (⭐⭐)</h3>
+      <p>Montre qu'un arbre à \(n\) sommets a exactement \(n-1\) arêtes.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Par récurrence (Module 0 !). <strong>Base</strong> : 1 sommet, 0 arête ✔. <strong>Hérédité</strong> : un arbre à \(n+1\) sommets possède au moins une feuille (sommet de degré 1) ; la retirer donne un arbre à \(n\) sommets, qui a \(n-1\) arêtes par hypothèse. En remettant la feuille et son arête : \(n\) arêtes = \((n+1)-1\) ✔.</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="6">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-6-graphes.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-5-optimisation.html"><div class="dir">← Précédent</div><div class="ttl">Module 5 · Optimisation</div></a>
+      <a class="next" href="module-7-discret-complexite.html"><div class="dir">Suivant →</div><div class="ttl">Module 7 · Discret &amp; Complexité</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 6 — Théorie des graphes · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Maths pour la Data, le Big Data & l'IA — Cours interactif</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../../index.html">← Tous mes cours</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero">
+    <h1>Rattrapage → Opérationnel</h1>
+    <p>Un parcours complet et interactif de mathématiques pour le <strong>Big Data</strong>, la <strong>Data Science</strong> et l'<strong>IA</strong>. Pensé pour un niveau 3ᵉ année : on part des bases et on va jusqu'au niveau partiel. Cours illustrés, quiz, exercices corrigés et fiches de révision téléchargeables.</p>
+    <div class="legend">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+      <span style="color:var(--muted)">← chaque notion est étiquetée par domaine, avec ses usages &amp; métiers</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+
+      <a class="card module" href="modules/module-0-fondations.html" data-module-card="0">
+        <div class="num">Module 0 · Fondations</div>
+        <h3>Logique, ensembles &amp; preuves</h3>
+        <p>Le langage mathématique : propositions, quantificateurs, ensembles, fonctions, récurrence. Indispensable pour tout le reste.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Logique</span><span class="tag">Ensembles</span><span class="tag">Preuves</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-1-relations-binaires.html" data-module-card="1">
+        <div class="num">Module 1 · Relations binaires ⭐</div>
+        <h3>Équivalence, ordre &amp; treillis</h3>
+        <p>Réflexivité, symétrie, transitivité, classes d'équivalence, partitions, ordres partiels, diagrammes de Hasse, clôtures.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Équivalence</span><span class="tag">Ordre</span><span class="tag">Hasse</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-2-algebre-lineaire.html" data-module-card="2">
+        <div class="num">Module 2 · Algèbre linéaire</div>
+        <h3>Vecteurs, matrices, SVD &amp; PCA</h3>
+        <p>Le cœur du Machine Learning : espaces vectoriels, valeurs propres, décomposition, réduction de dimension.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Matrices</span><span class="tag">PCA</span><span class="tag">SVD</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-3-probabilites.html" data-module-card="3">
+        <div class="num">Module 3 · Probabilités</div>
+        <h3>Variables aléatoires &amp; Bayes</h3>
+        <p>Lois usuelles, espérance, variance, théorème de Bayes, loi des grands nombres, théorème central limite.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Bayes</span><span class="tag">Lois</span><span class="tag">TCL</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-4-statistiques.html" data-module-card="4">
+        <div class="num">Module 4 · Statistiques</div>
+        <h3>Estimation, tests &amp; régression</h3>
+        <p>Intervalles de confiance, tests d'hypothèses, maximum de vraisemblance, régression linéaire.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Tests</span><span class="tag">MLE</span><span class="tag">Régression</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-5-optimisation.html" data-module-card="5">
+        <div class="num">Module 5 · Analyse &amp; Optimisation</div>
+        <h3>Gradient &amp; descente de gradient</h3>
+        <p>Dérivées, gradient, Hessienne, convexité, descente de gradient : comment un modèle « apprend ».</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Gradient</span><span class="tag">Convexité</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-6-graphes.html" data-module-card="6">
+        <div class="num">Module 6 · Théorie des graphes</div>
+        <h3>Parcours, chemins &amp; PageRank</h3>
+        <p>Graphes, parcours BFS/DFS, plus courts chemins, centralité, PageRank.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Graphes</span><span class="tag">PageRank</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-7-discret-complexite.html" data-module-card="7">
+        <div class="num">Module 7 · Discret &amp; Complexité</div>
+        <h3>Combinatoire &amp; Big-O</h3>
+        <p>Dénombrement, principe des tiroirs, notation asymptotique, complexité et passage à l'échelle.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Combinatoire</span><span class="tag">Big-O</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-8-information.html" data-module-card="8">
+        <div class="num">Module 8 · Théorie de l'information</div>
+        <h3>Entropie &amp; cross-entropy</h3>
+        <p>Entropie de Shannon, information mutuelle, divergence KL, entropie croisée (fonctions de perte).</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Entropie</span><span class="tag">KL</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-9-big-data.html" data-module-card="9">
+        <div class="num">Module 9 · Maths du Big Data ⭐</div>
+        <h3>Hashing, Bloom, MinHash, LSH</h3>
+        <p>Structures probabilistes, algorithmes de streaming, similarité à grande échelle, logique MapReduce.</p>
+        <div class="domains"><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain data"><span class="dot"></span>DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Bloom</span><span class="tag">LSH</span><span class="tag">Streaming</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+    </div>
+
+    <a class="card module" href="modules/examen-blanc-final.html" style="display:block;margin-top:22px;border-color:var(--accent-2);text-align:center" data-module-card="exam">
+      <div class="num" style="color:var(--accent-2)">🎓 Évaluation finale</div>
+      <h3>📝 Examen blanc final — Partiel type</h3>
+      <p>Toutes notions mélangées (Modules 0 à 9) : 20 QCM + 5 exercices rédigés + 1 problème Data transversal. Barème /80, corrigés détaillés et auto-évaluation. Mets-toi en conditions réelles !</p>
+      <div class="domains" style="justify-content:center"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+      <div class="status ready">● Disponible · 2h conseillées</div>
+    </a>
+      <span class="label">💡 Comment utiliser ce cours</span>
+      Lis chaque module dans l'ordre, fais les <strong>quiz</strong> au fil de l'eau (feedback immédiat), essaie les <strong>exercices</strong> avant de déplier la solution, puis télécharge la <strong>fiche de révision</strong> en Markdown. Ta progression et ton thème sont sauvegardés dans ton navigateur.
+    </div>
+  </div>
+
+  <div class="footer">
+    Cours interactif de mathématiques pour la Data · construit pas à pas · bonne révision 💙
+  </div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

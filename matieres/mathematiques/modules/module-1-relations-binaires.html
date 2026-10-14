@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 1 — Relations binaires : Équivalence, Ordre &amp; Treillis</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+      svg: { fontCache: "global" }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 1</div>
+    <h1>Module 1 — Relations binaires ⭐</h1>
+    <p class="subtitle">Comment relier les éléments d'un ensemble entre eux. Ce module structure énormément d'informatique : bases de données, clustering, ordonnancement, graphes, treillis de concepts. Un grand classique de partiel.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs du module</span>
+      Reconnaître et démontrer les propriétés d'une relation (réflexivité, symétrie, antisymétrie, transitivité) ; manier les relations d'équivalence (classes, partitions, quotient) ; manier les relations d'ordre (Hasse, éléments remarquables, treillis) ; calculer composition, inverse et clôtures.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#def">Définition &amp; représentations</a></li>
+        <li><a href="#props">Les propriétés fondamentales</a></li>
+        <li><a href="#equiv">Relations d'équivalence</a></li>
+        <li><a href="#ordre">Relations d'ordre</a></li>
+        <li><a href="#treillis">Treillis (lattices)</a></li>
+        <li><a href="#ops">Opérations &amp; clôtures</a></li>
+        <li><a href="#data">Applications Data / IA</a></li>
+        <li><a href="#exos">Exercices de synthèse</a></li>
+      </ol>
+    </div>
+
+    <!-- ========== SECTION 1 ========== -->
+    <section class="block" id="def">
+      <h2>1. Définition &amp; représentations</h2>
+      <div class="callout def">
+        <span class="label">Définition — Relation binaire</span>
+        Une <strong>relation binaire</strong> \(\mathcal{R}\) sur un ensemble \(E\) est un sous-ensemble du produit cartésien : \(\mathcal{R} \subseteq E \times E\). On écrit \(x\,\mathcal{R}\,y\) (lire « \(x\) est en relation avec \(y\) ») pour dire \((x,y) \in \mathcal{R}\).
+      </div>
+      <p>Exemples : « \(\leq\) » sur \(\mathbb{R}\), « divise » sur \(\mathbb{N}\), « a le même âge que » sur une population, « suit » sur un réseau social.</p>
+
+      <h3>Trois façons de représenter une relation</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Représentation</th><th>Idée</th><th>Utile pour</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Ensemble de couples</strong></td><td>Lister les \((x,y)\in\mathcal R\)</td><td>Petits exemples, définitions</td></tr>
+            <tr><td><strong>Matrice booléenne</strong> \(M\)</td><td>\(M_{ij}=1\) si \(x_i\,\mathcal R\,x_j\), sinon 0</td><td>Calculs, clôtures, ordinateur</td></tr>
+            <tr><td><strong>Graphe orienté</strong></td><td>Un arc \(x\to y\) si \(x\,\mathcal R\,y\)</td><td>Visualisation, intuition</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout example">
+        <span class="label">Exemple — relation « divise » sur \(\{1,2,3,6\}\)</span>
+        <p>\(\mathcal R = \{(1,1),(2,2),(3,3),(6,6),(1,2),(1,3),(1,6),(2,6),(3,6)\}\). Matrice (lignes/colonnes dans l'ordre 1,2,3,6) :</p>
+        <pre class="matrix">     1  2  3  6
+ 1 [ 1  1  1  1 ]
+ 2 [ 0  1  0  1 ]
+ 3 [ 0  0  1  1 ]
+ 6 [ 0  0  0  1 ]</pre>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 2 ========== -->
+    <section class="block" id="props">
+      <h2>2. Les propriétés fondamentales</h2>
+      <p>Tout le module repose sur ces propriétés. Apprends-les avec leur « lecture graphe/matrice ».</p>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Propriété</th><th>Définition formelle</th><th>Lecture intuitive</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Réflexive</strong></td><td>\(\forall x,\; x\,\mathcal R\,x\)</td><td>Boucle sur chaque sommet / diagonale de \(M\) = 1</td></tr>
+            <tr><td><strong>Irréflexive</strong></td><td>\(\forall x,\; \neg(x\,\mathcal R\,x)\)</td><td>Aucune boucle / diagonale = 0</td></tr>
+            <tr><td><strong>Symétrique</strong></td><td>\(\forall x,y,\; x\mathcal R y \Rightarrow y\mathcal R x\)</td><td>Arcs toujours à double sens / \(M=M^{\top}\)</td></tr>
+            <tr><td><strong>Antisymétrique</strong></td><td>\((x\mathcal R y \wedge y\mathcal R x)\Rightarrow x=y\)</td><td>Jamais deux sens entre points distincts</td></tr>
+            <tr><td><strong>Asymétrique</strong></td><td>\(x\mathcal R y \Rightarrow \neg(y\mathcal R x)\)</td><td>Antisymétrique + irréflexive</td></tr>
+            <tr><td><strong>Transitive</strong></td><td>\((x\mathcal R y \wedge y\mathcal R z)\Rightarrow x\mathcal R z\)</td><td>Tout « raccourci » existe déjà</td></tr>
+            <tr><td><strong>Totale (complète)</strong></td><td>\(\forall x,y,\; x\mathcal R y \vee y\mathcal R x\)</td><td>Deux éléments sont toujours comparables</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warning">
+        <span class="label">Antisymétrique ≠ « non symétrique » !</span>
+        <p>Antisymétrie n'interdit pas \(x\mathcal R x\) ; elle interdit seulement d'avoir \(x\mathcal R y\) <em>et</em> \(y\mathcal R x\) avec \(x\neq y\). Une relation peut être <strong>à la fois</strong> symétrique et antisymétrique : c'est le cas de l'égalité \(=\) (uniquement des couples \((x,x)\)).</p>
+      </div>
+
+      <div class="callout example">
+        <span class="label">Exemple résolu — prouver la transitivité</span>
+        <p>Montrons que « divise » (\(a\mid b\)) est transitive sur \(\mathbb N\). Supposons \(a\mid b\) et \(b\mid c\). Alors \(b = ka\) et \(c = k'b\) pour des entiers \(k,k'\). Donc \(c = k'(ka) = (k'k)a\), d'où \(a\mid c\). ∎</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">La relation « \(\leq\) » sur \(\mathbb{R}\) est réflexive, antisymétrique, transitive et totale. Est-elle symétrique ?</div>
+        <div class="options">
+          <div class="opt">Oui, toujours</div>
+          <div class="opt">Oui car \(x\leq x\)</div>
+          <div class="opt">Non : \(2\leq 3\) mais \(3\not\leq 2\)</div>
+          <div class="opt">La question n'a pas de sens</div>
+        </div>
+        <div class="feedback" data-explain="La symétrie exigerait que \(x\leq y \Rightarrow y\leq x\), ce qui est faux dès que \(x<y\). \(\leq\) est antisymétrique, pas symétrique."></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.2</strong></div>
+        <div class="qtext">Une relation dont la matrice booléenne vérifie \(M = M^{\top}\) (symétrique en tant que matrice) est forcément…</div>
+        <div class="options">
+          <div class="opt">symétrique</div>
+          <div class="opt">réflexive</div>
+          <div class="opt">transitive</div>
+          <div class="opt">antisymétrique</div>
+        </div>
+        <div class="feedback" data-explain="\(M=M^{\top}\) signifie \(M_{ij}=M_{ji}\), soit \(x_i\mathcal R x_j \Leftrightarrow x_j\mathcal R x_i\) : c'est exactement la symétrie. Les autres propriétés sont indépendantes."></div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 3 ========== -->
+    <section class="block" id="equiv">
+      <h2>3. Relations d'équivalence</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        Une relation \(\mathcal R\) sur \(E\) est une <strong>relation d'équivalence</strong> si elle est à la fois <strong>R</strong>éflexive, <strong>S</strong>ymétrique et <strong>T</strong>ransitive (moyen mnémotechnique : <strong>RST</strong>). On note souvent \(\sim\).
+      </div>
+      <p>Intuition : « \(\sim\) » regroupe les éléments <em>indiscernables</em> pour un certain critère (même couleur, même reste, même classe…).</p>
+
+      <div class="callout def">
+        <span class="label">Classe d'équivalence</span>
+        La <strong>classe</strong> de \(x\) est \(\;[x] = \{\, y \in E \;:\; y \sim x \,\}\). C'est l'ensemble de tous les éléments équivalents à \(x\). N'importe quel élément de la classe peut la <em>représenter</em>.
+      </div>
+
+      <div class="callout theorem">
+        <span class="label">Théorème fondamental (équivalence ⇔ partition)</span>
+        Les classes d'équivalence d'une relation \(\sim\) sur \(E\) forment une <strong>partition</strong> de \(E\) : elles sont non vides, deux à deux disjointes, et leur union vaut \(E\). Réciproquement, toute partition de \(E\) définit une unique relation d'équivalence (« être dans le même paquet »). <strong>Équivalence et partition, c'est la même chose vue de deux côtés.</strong>
+      </div>
+
+      <div class="callout def">
+        <span class="label">Ensemble quotient</span>
+        L'ensemble des classes est le <strong>quotient</strong> \(E/\!\sim\; = \{\,[x] : x\in E\,\}\). Passer au quotient = « fusionner » les éléments équivalents en un seul point.
+      </div>
+
+      <div class="callout example">
+        <span class="label">Exemple roi — congruence modulo \(n\)</span>
+        <p>Sur \(\mathbb Z\), on pose \(a \equiv b \pmod{n} \Leftrightarrow n \mid (a-b)\). C'est une relation d'équivalence (RST).</p>
+        <p>Pour \(n=3\), les classes sont \([0]=\{\dots,-3,0,3,6\dots\}\), \([1]=\{\dots,-2,1,4\dots\}\), \([2]=\{\dots,-1,2,5\dots\}\). Le quotient \(\mathbb Z/3\mathbb Z = \{[0],[1],[2]\}\) a 3 éléments — c'est la base de l'arithmétique modulaire (hachage, cryptographie, codes correcteurs).</p>
+      </div>
+
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA</span>
+        <strong>Un clustering est une partition</strong> — donc une relation d'équivalence « être dans le même cluster ». La <strong>déduplication</strong> d'enregistrements regroupe en classes les doublons (« même entité réelle »). Le <strong>sharding</strong> par \(\text{clé} \bmod n\) répartit les données selon des classes de congruence.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Combien de classes d'équivalence possède la congruence modulo 7 sur \(\mathbb Z\) ?</div>
+        <div class="options">
+          <div class="opt">Une infinité</div>
+          <div class="opt">7</div>
+          <div class="opt">14</div>
+          <div class="opt">6</div>
+        </div>
+        <div class="feedback" data-explain="Les restes possibles de la division par 7 sont \(0,1,2,3,4,5,6\) : exactement 7 classes, \(\mathbb Z/7\mathbb Z\)."></div>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.2</strong></div>
+        <div class="qtext">Pourquoi la relation « \(x\) et \(y\) ont un ami commun » sur un réseau social n'est-elle (en général) pas une relation d'équivalence ?</div>
+        <div class="options">
+          <div class="opt">Elle n'est pas réflexive</div>
+          <div class="opt">Elle n'est pas symétrique</div>
+          <div class="opt">Elle n'a pas de classes</div>
+          <div class="opt">Elle n'est pas transitive</div>
+        </div>
+        <div class="feedback" data-explain="Si A et B ont un ami commun, et B et C ont un ami commun, A et C n'en ont pas forcément : la transitivité tombe. (Elle est bien symétrique, et réflexive si l'on se considère son propre ami.)"></div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 4 ========== -->
+    <section class="block" id="ordre">
+      <h2>4. Relations d'ordre</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        Une relation \(\preceq\) sur \(E\) est une <strong>relation d'ordre</strong> (partiel) si elle est <strong>R</strong>éflexive, <strong>A</strong>nti­symétrique et <strong>T</strong>ransitive (mnémo : <strong>RAT</strong>). Le couple \((E,\preceq)\) est un <strong>ensemble ordonné</strong> (poset).
+      </div>
+      <ul class="keys">
+        <li><strong>Ordre total</strong> : en plus, deux éléments sont toujours comparables (\(\forall x,y,\; x\preceq y \vee y\preceq x\)). Ex : \(\leq\) sur \(\mathbb R\).</li>
+        <li><strong>Ordre partiel</strong> : certains éléments sont <em>incomparables</em>. Ex : l'inclusion \(\subseteq\) (\(\{1\}\) et \(\{2\}\) ne sont pas comparables), ou « divise » sur \(\mathbb N\).</li>
+      </ul>
+
+      <div class="callout theorem">
+        <span class="label">Équivalence vs Ordre — le seul changement</span>
+        <p>On passe de l'un à l'autre en changeant <strong>une seule</strong> propriété au milieu du « R_T » :</p>
+        <p>Équivalence = R + <strong>Symétrie</strong> + T &nbsp;•&nbsp; Ordre = R + <strong>Antisymétrie</strong> + T.</p>
+        Symétrie « ferme des boucles » (regroupe) ; antisymétrie « donne un sens » (hiérarchise).
+      </div>
+
+      <h3>Éléments remarquables d'un ordre</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Minimal</strong></td><td>\(m\) tel qu'aucun \(x\neq m\) ne vérifie \(x\prec m\) (rien en dessous)</td></tr>
+            <tr><td><strong>Maximal</strong></td><td>\(M\) tel qu'aucun \(x\neq M\) ne vérifie \(M\prec x\) (rien au dessus)</td></tr>
+            <tr><td><strong>Minimum</strong> (plus petit)</td><td>\(m\preceq x\) pour <em>tout</em> \(x\) — unique s'il existe</td></tr>
+            <tr><td><strong>Maximum</strong> (plus grand)</td><td>\(x\preceq M\) pour <em>tout</em> \(x\) — unique s'il existe</td></tr>
+            <tr><td><strong>Majorant</strong> de \(A\)</td><td>\(M\) tel que \(\forall a\in A,\; a\preceq M\)</td></tr>
+            <tr><td><strong>Borne sup</strong> \(\sup A\)</td><td>Le plus petit des majorants de \(A\)</td></tr>
+            <tr><td><strong>Borne inf</strong> \(\inf A\)</td><td>Le plus grand des minorants de \(A\)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warning">
+        <span class="label">Minimal ≠ Minimum</span>
+        Un ordre partiel peut avoir <strong>plusieurs</strong> éléments minimaux mais <strong>aucun</strong> minimum. Ex : sur \(\{2,3,4,9\}\) ordonné par « divise », \(2\) et \(3\) sont tous deux minimaux (aucun diviseur strict dans l'ensemble), mais il n'y a pas de minimum (pas d'élément qui divise tous les autres).
+      </div>
+
+      <h3>Diagramme de Hasse</h3>
+      <p>C'est le dessin épuré d'un ordre : on place les éléments par niveaux et on relie \(x\) à \(y\) (avec \(x\) en dessous) <strong>seulement</strong> si \(y\) <em>couvre</em> \(x\) — c'est-à-dire \(x\prec y\) sans élément intermédiaire. On <strong>omet</strong> les boucles (réflexivité) et les arcs déductibles par transitivité.</p>
+      <div class="callout example">
+        <span class="label">Exemple — diviseurs de 12 ordonnés par « divise »</span>
+        <pre class="matrix">            12
+           /   \
+          4     6
+          |   /  |
+          2      3
+           \    /
+             1</pre>
+        <p>\(1\) est le minimum, \(12\) le maximum. \(4\) et \(6\) sont incomparables (aucun ne divise l'autre). On lit \(\sup\{4,6\}=12\) et \(\inf\{4,6\}=2\).</p>
+      </div>
+
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA</span>
+        Un <strong>DAG</strong> (graphe orienté acyclique) représente un ordre partiel : dépendances de tâches (Airflow, Spark, Makefile), ordre de calcul des couches d'un réseau de neurones (rétropropagation), historique Git. Le <strong>tri topologique</strong> consiste à « linéariser » un ordre partiel en ordre total compatible.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Dans le diagramme de Hasse, pourquoi ne dessine-t-on pas l'arc de \(1\) à \(12\) (diviseurs de 12) ?</div>
+        <div class="options">
+          <div class="opt">Parce que \(1\) ne divise pas \(12\)</div>
+          <div class="opt">Par oubli, on devrait le dessiner</div>
+          <div class="opt">Car il se déduit par transitivité (\(1\to 2\to 4\to 12\))</div>
+          <div class="opt">Car \(1\) est minimal</div>
+        </div>
+        <div class="feedback" data-explain="Le diagramme de Hasse n'affiche que les relations de couverture. \(1\prec 12\) est déductible par transitivité via des éléments intermédiaires, donc on ne le dessine pas."></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.2</strong></div>
+        <div class="qtext">\((\mathcal P(E), \subseteq)\) (parties d'un ensemble, ordonnées par inclusion) est un ordre…</div>
+        <div class="options">
+          <div class="opt">partiel (certaines parties sont incomparables)</div>
+          <div class="opt">total</div>
+          <div class="opt">qui n'est pas un ordre</div>
+          <div class="opt">symétrique</div>
+        </div>
+        <div class="feedback" data-explain="\(\subseteq\) est réflexive, antisymétrique (double inclusion ⇒ égalité) et transitive. Mais \(\{1\}\) et \(\{2\}\) ne sont pas comparables : l'ordre est seulement partiel."></div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 5 ========== -->
+    <section class="block" id="treillis">
+      <h2>5. Treillis (lattices)</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        Un <strong>treillis</strong> est un ensemble ordonné \((E,\preceq)\) dans lequel <em>toute paire</em> \(\{x,y\}\) admet une borne supérieure \(x\vee y = \sup\{x,y\}\) (le <strong>join</strong>) <strong>et</strong> une borne inférieure \(x\wedge y = \inf\{x,y\}\) (le <strong>meet</strong>).
+      </div>
+      <ul class="keys">
+        <li>\((\mathcal P(E),\subseteq)\) est un treillis : \(A\vee B = A\cup B\), \(A\wedge B = A\cap B\).</li>
+        <li>\((\mathbb N, \mid)\) (divisibilité) est un treillis : \(x\vee y = \text{ppcm}(x,y)\), \(x\wedge y = \text{pgcd}(x,y)\).</li>
+        <li>\((\{0,1\}^n, \leq \text{bit à bit})\) est un treillis : join = OU bit à bit, meet = ET bit à bit.</li>
+      </ul>
+
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA — là où ça devient puissant</span>
+        <ul>
+          <li><strong>Analyse formelle de concepts (FCA)</strong> : les « concepts » (objets ↔ attributs) forment un <strong>treillis de concepts</strong> ; outil de fouille de données et d'ontologies.</li>
+          <li><strong>Treillis de version space</strong> en apprentissage : les hypothèses cohérentes avec les données forment un treillis entre l'hypothèse la plus générale et la plus spécifique.</li>
+          <li><strong>CRDT</strong> (bases de données distribuées) : les états forment un semi-treillis, la fusion = join — ce qui garantit la convergence sans conflit.</li>
+          <li><strong>Analyse de programmes</strong> (compilateurs, sécurité) : l'analyse statique propage de l'information dans un treillis d'abstractions.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Dans le treillis \((\mathbb N,\mid)\), que vaut \(12 \vee 18\) (le join, c'est-à-dire \(\sup\)) ?</div>
+        <div class="options">
+          <div class="opt">6 (le pgcd)</div>
+          <div class="opt">36 (le ppcm)</div>
+          <div class="opt">30 (la somme)</div>
+          <div class="opt">216 (le produit)</div>
+        </div>
+        <div class="feedback" data-explain="Dans l'ordre de divisibilité, la borne supérieure de deux nombres est leur ppcm : \(\text{ppcm}(12,18)=36\). (Le meet serait le pgcd = 6.)"></div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 6 ========== -->
+    <section class="block" id="ops">
+      <h2>6. Opérations &amp; clôtures</h2>
+      <div class="callout def">
+        <span class="label">Relation inverse &amp; composition</span>
+        <ul>
+          <li><strong>Inverse</strong> : \(\mathcal R^{-1} = \{(y,x) : (x,y)\in\mathcal R\}\). En matrice : \(M^{\top}\).</li>
+          <li><strong>Composition</strong> : \(x\,(\mathcal S \circ \mathcal R)\,z \Leftrightarrow \exists y,\; x\mathcal R y \wedge y\mathcal S z\). En matrice booléenne : produit \(M_{\mathcal R}\cdot M_{\mathcal S}\) (avec \(+ = \text{OU}\), \(\times = \text{ET}\)).</li>
+        </ul>
+      </div>
+
+      <div class="callout def">
+        <span class="label">Clôtures (fermetures)</span>
+        La <strong>clôture</strong> d'une relation pour une propriété = la plus petite relation contenant \(\mathcal R\) qui possède cette propriété.
+        <ul>
+          <li><strong>Clôture réflexive</strong> : ajouter tous les \((x,x)\).</li>
+          <li><strong>Clôture symétrique</strong> : ajouter \((y,x)\) pour chaque \((x,y)\), i.e. \(\mathcal R \cup \mathcal R^{-1}\).</li>
+          <li><strong>Clôture transitive</strong> \(\mathcal R^{+}\) : ajouter tous les couples reliés par un <em>chemin</em>. Se calcule avec l'algorithme de <strong>Warshall</strong> (\(O(n^3)\)).</li>
+        </ul>
+      </div>
+
+      <div class="callout example">
+        <span class="label">Exemple — clôture transitive = accessibilité</span>
+        <p>Si \(\mathcal R\) = « il y a un vol direct de \(x\) à \(y\) », alors la clôture transitive \(\mathcal R^{+}\) = « on peut aller de \(x\) à \(y\) (avec escales) ». C'est exactement le calcul d'<strong>accessibilité</strong> dans un graphe.</p>
+      </div>
+
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA — Union-Find</span>
+        Pour maintenir dynamiquement les classes d'équivalence (clôture réflexive-symétrique-transitive de connexions), on utilise la structure <strong>Union-Find</strong> (presque \(O(1)\) amorti). Utilisée pour : composantes connexes, détection de cycles (Kruskal), déduplication, segmentation d'images.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">La clôture transitive d'une relation d'« amitié directe » symétrique donne…</div>
+        <div class="options">
+          <div class="opt">rien de nouveau</div>
+          <div class="opt">la relation inverse</div>
+          <div class="opt">« appartenir à la même communauté (composante connexe) »</div>
+          <div class="opt">un ordre total</div>
+        </div>
+        <div class="feedback" data-explain="En rendant transitive une relation symétrique et réflexive, on obtient une relation d'équivalence dont les classes sont les composantes connexes du graphe — les « communautés »."></div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 7 ========== -->
+    <section class="block" id="data">
+      <h2>7. Applications Data / IA — récapitulatif</h2>
+      <ul class="keys">
+        <li><strong>Bases de données relationnelles.</strong> Une « relation » SQL <em>est</em> un sous-ensemble d'un produit cartésien. Les <strong>dépendances fonctionnelles</strong> \(X\to Y\) et la normalisation (formes normales) reposent sur des propriétés relationnelles.</li>
+        <li><strong>Clustering &amp; déduplication.</strong> Partition = relation d'équivalence. Évaluer un clustering (Rand index) compare deux partitions.</li>
+        <li><strong>Ordonnancement &amp; pipelines.</strong> DAG = ordre partiel ; tri topologique pour planifier les tâches (Spark, Airflow, build systems).</li>
+        <li><strong>Optimisation multi-objectif.</strong> La <strong>dominance de Pareto</strong> est un ordre partiel : un point en domine un autre s'il est au moins aussi bon partout et strictement meilleur quelque part. Le <em>front de Pareto</em> = les éléments maximaux.</li>
+        <li><strong>Treillis de concepts (FCA)</strong> pour la fouille de motifs et les systèmes de recommandation.</li>
+        <li><strong>Accessibilité &amp; graphes.</strong> Clôture transitive = quelles données/pages/personnes sont atteignables (PageRank, propagation d'influence).</li>
+      </ul>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Relation_binaire" target="_blank">Relation binaire (Wikipédia)</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Relation_d%27%C3%A9quivalence" target="_blank">Relation d'équivalence</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Ordre_partiel" target="_blank">Ordre partiel</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Treillis_(ensemble_ordonn%C3%A9)" target="_blank">Treillis</a>
+        <a class="pill-link" href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/" target="_blank">MIT 6.042</a>
+      </div>
+    </section>
+
+    <!-- ========== EXOS ========== -->
+    <section class="block" id="exos">
+      <h2>8. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Identifier les propriétés</h3>
+      <p>Sur \(E=\{1,2,3\}\), soit \(\mathcal R = \{(1,1),(2,2),(3,3),(1,2),(2,1)\}\). Quelles propriétés possède-t-elle ? Est-ce une équivalence ? Un ordre ?</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Réflexive ✔ (les trois \((i,i)\) sont là). Symétrique ✔ (\((1,2)\) et \((2,1)\)). Transitive ✔ (à vérifier : \((1,2)\) et \((2,1)\) ⇒ \((1,1)\) ✔, etc.). Donc c'est une <strong>relation d'équivalence</strong>. Ses classes : \([1]=[2]=\{1,2\}\) et \([3]=\{3\}\) — partition \(\{\{1,2\},\{3\}\}\). Ce n'est pas un ordre (elle est symétrique mais pas antisymétrique : \((1,2)\) et \((2,1)\) avec \(1\neq 2\)).</p>
+      </details>
+
+      <h3>Exercice 2 — Démonstration (équivalence)</h3>
+      <p>Sur \(\mathbb R\), on pose \(x\sim y \Leftrightarrow x - y \in \mathbb Z\). Montre que \(\sim\) est une relation d'équivalence et décris les classes.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p><strong>Réflexive</strong> : \(x-x=0\in\mathbb Z\) ✔. <strong>Symétrique</strong> : si \(x-y\in\mathbb Z\) alors \(y-x=-(x-y)\in\mathbb Z\) ✔. <strong>Transitive</strong> : si \(x-y\in\mathbb Z\) et \(y-z\in\mathbb Z\), alors \(x-z=(x-y)+(y-z)\in\mathbb Z\) ✔.</p>
+        <p>Classe de \(x\) : \([x]=\{x+k : k\in\mathbb Z\}\). Chaque classe est représentée par sa <em>partie fractionnaire</em> dans \([0,1[\). Le quotient \(\mathbb R/\mathbb Z\) est le « cercle » — fondamental en traitement du signal (phase, périodicité).</p>
+      </details>
+
+      <h3>Exercice 3 — Ordre &amp; Hasse</h3>
+      <p>On ordonne \(\{1,2,3,4,6,12\}\) par divisibilité. Dessine (mentalement) le diagramme de Hasse, donne les éléments minimaux/maximaux, et calcule \(\sup\{2,3\}\) et \(\inf\{4,6\}\).</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Minimum = \(1\) (unique minimal), maximum = \(12\) (unique maximal). \(\sup\{2,3\}=\text{ppcm}(2,3)=6\). \(\inf\{4,6\}=\text{pgcd}(4,6)=2\). Couvertures : \(1\!-\!2,\,1\!-\!3,\,2\!-\!4,\,2\!-\!6,\,3\!-\!6,\,4\!-\!12,\,6\!-\!12\).</p>
+      </details>
+
+      <h3>Exercice 4 — Antisymétrie (⭐)</h3>
+      <p>Montre que si \(\mathcal R\) est à la fois symétrique et antisymétrique sur \(E\), alors \(\mathcal R \subseteq \{(x,x):x\in E\}\) (elle est incluse dans la diagonale).</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Soit \((x,y)\in\mathcal R\). Par <strong>symétrie</strong>, \((y,x)\in\mathcal R\). On a donc \(x\mathcal R y\) et \(y\mathcal R x\) ; par <strong>antisymétrie</strong>, \(x=y\). Donc tout couple de \(\mathcal R\) est de la forme \((x,x)\). ∎</p>
+      </details>
+
+      <h3>Exercice 5 — Compter (⭐⭐)</h3>
+      <p>Combien y a-t-il de relations binaires sur un ensemble à \(n\) éléments ? Combien sont réflexives ? Combien sont symétriques ?</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Une relation = un sous-ensemble de \(E\times E\) qui a \(n^2\) couples. Donc <strong>\(2^{n^2}\)</strong> relations au total.</p>
+        <p><strong>Réflexives</strong> : les \(n\) couples diagonaux sont imposés (présents), les \(n^2-n\) autres sont libres ⇒ \(2^{\,n^2-n}\).</p>
+        <p><strong>Symétriques</strong> : on choisit librement la diagonale (\(n\) bits) et, pour chaque paire \(\{i,j\}\) hors diagonale (\(\binom n2\) paires), un seul choix fixe les deux cases ⇒ \(2^{\,n + \binom{n}{2}} = 2^{\,n(n+1)/2}\).</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="1">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-1-relations-binaires.md" download>⬇️ Télécharger la fiche de révision (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-0-fondations.html"><div class="dir">← Précédent</div><div class="ttl">Module 0 · Fondations</div></a>
+      <a class="next" href="module-2-algebre-lineaire.html"><div class="dir">Suivant →</div><div class="ttl">Module 2 · Algèbre linéaire</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 1 — Relations binaires · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+<title>Rust — Révision express partiel</title>
+<style>
+:root{
+  --bg:#0f1117; --bg2:#171a23; --bg3:#1e2230; --card:#141822;
+  --txt:#e6e9ef; --muted:#9aa4b2; --line:#2a3040;
+  --acc:#f74c00; --acc2:#ffb27a; --ok:#3ecf8e; --bad:#ff5d6c; --warn:#ffcf5c;
+  --blue:#5aa9ff; --purple:#b98cff; --code:#0b0e16;
+  --mono:"JetBrains Mono","Fira Code",Consolas,monospace;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f6f7fb; --bg2:#fff; --bg3:#eef1f8; --card:#fff;
+  --txt:#161a24; --muted:#5a6478; --line:#dce1ec; --code:#1b1f2a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1100px 500px at 85% -10%,#1b1410,var(--bg) 55%) fixed;color:var(--txt);font-family:var(--sans);line-height:1.65;font-size:16px}
+a{color:var(--acc2)}
+.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:14px;padding:12px 22px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--acc),#b03400);display:grid;place-items:center;font-size:18px}
+.spacer{flex:1}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--bg3);color:var(--txt);padding:8px 13px;border-radius:9px;font-size:14px;font-family:inherit;text-decoration:none;transition:.15s}
+.btn:hover{border-color:var(--acc);color:#fff}
+.prog{position:sticky;top:59px;z-index:39;height:4px;background:var(--line)}
+.prog>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+.wrap{max-width:900px;margin:0 auto;padding:30px 22px 80px}
+.hero h1{font-size:clamp(28px,5vw,42px);margin:0 0 8px}
+.hero .sub{color:var(--muted);font-size:18px;margin-bottom:10px}
+.badge{display:inline-block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 12px;border-radius:999px;font-weight:700}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;margin:22px 0}
+.toc h4{margin:0 0 10px;color:var(--acc);text-transform:uppercase;font-size:13px;letter-spacing:1px}
+.toc ol{margin:0;padding-left:20px;columns:2}
+.toc li{margin:4px 0;break-inside:avoid}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 24px 20px;margin:20px 0;scroll-margin-top:72px}
+section>h2{font-size:23px;border-bottom:2px solid color-mix(in srgb,var(--acc) 40%,transparent);padding-bottom:8px;margin-top:20px}
+h3{font-size:18px;color:var(--txt);margin-top:22px}
+h4{color:var(--acc2);font-size:15px;margin-bottom:4px}
+p,li{color:var(--txt)}
+strong{color:#fff}
+[data-theme="light"] strong{color:#000}
+code{background:var(--bg3);padding:2px 6px;border-radius:5px;font-family:var(--mono);font-size:.9em;color:var(--acc2)}
+pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#e6e9ef;padding:0;font-size:13.5px;line-height:1.6}
+.cmt{color:#6b7a52}.kw{color:#ff8a5c}.ty{color:#5aa9ff}.st{color:#8fd98f}.fn{color:#c79bff}.nu{color:#ffcf5c}
+.box{border-left:4px solid var(--acc);background:var(--bg3);border-radius:0 10px 10px 0;padding:12px 16px;margin:14px 0}
+.box .lb{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:3px}
+.box.warn{border-color:var(--bad)}.box.warn .lb{color:var(--bad)}
+.box.tip{border-color:var(--ok)}.box.tip .lb{color:var(--ok)}
+.box.key{border-color:var(--warn)}.box.key .lb{color:var(--warn)}
+.box.ex{border-color:var(--blue)}.box.ex .lb{color:var(--blue)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:12px 0}
+th,td{border:1px solid var(--line);padding:7px 11px;text-align:left}
+th{background:var(--bg3)}
+.quiz{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:18px 0}
+.quiz .q{font-weight:600;margin-bottom:10px}
+.opt{cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 13px;margin:6px 0;transition:.12s}
+.opt:hover{border-color:var(--acc)}
+.opt.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--card))}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,var(--card))}
+.opt.dis{pointer-events:none;opacity:.9}
+.fb{display:none;margin-top:10px;padding:10px 13px;border-radius:9px;font-size:14px}
+.fb.show{display:block}.fb.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);border:1px solid var(--ok)}
+.fb.ko{background:color-mix(in srgb,var(--bad) 15%,transparent);border:1px solid var(--bad)}
+details{background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:10px 15px;margin:10px 0}
+summary{cursor:pointer;font-weight:600;color:var(--acc2)}
+ul.keys{list-style:none;padding:0}
+ul.keys li{padding:7px 0 7px 26px;position:relative;border-bottom:1px dashed var(--line)}
+ul.keys li::before{content:"🦀";position:absolute;left:2px}
+.foot{text-align:center;color:var(--muted);padding:40px 20px;border-top:1px solid var(--line);margin-top:30px}
+@media(max-width:600px){
+  html,body{overflow-x:hidden}
+  .top{padding:10px 14px;gap:9px;flex-wrap:wrap;padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+  .brand{font-size:15px}
+  .btn{padding:9px 11px;font-size:13px;min-height:42px;display:inline-flex;align-items:center}
+  .prog{top:55px}
+  .wrap{padding:22px 14px 60px}
+  .hero h1{font-size:28px}
+  .hero .sub{font-size:16px}
+  .toc ol{columns:1}
+  section{padding:6px 15px 16px;border-radius:12px}
+  section>h2{font-size:21px}
+  h3{font-size:17px}
+  pre{font-size:12.5px;padding:12px 13px}
+  pre code{font-size:12.5px}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+  .quiz .opt{padding:12px 14px}
+  .box{padding:11px 14px}
+  div[style*="text-align:center"] .btn{display:block;width:100%;margin:8px 0;text-align:center;justify-content:center}
+}
+@media(max-width:380px){
+  .hero h1{font-size:25px}
+  section>h2{font-size:19px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">🦀</span> Rust — Révision express</div>
+  <div class="spacer"></div>
+  <a class="btn" href="rust-cursus.html">📘 Cursus complet</a>
+  <a class="btn" href="../../index.html">← Portail</a>
+  <button class="btn" id="tt">☀️ Clair</button>
+</header>
+<div class="prog"><i></i></div>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="badge">Spécial partiel · l'essentiel en une page</span>
+    <h1>Rust, de zéro à l'examen 🦀</h1>
+    <p class="sub">Tout ce qu'il faut pour réviser ce soir : concepts clés, exemples de code, <strong>pièges d'examen</strong> et quiz. Focus sur ce qui tombe le plus : <strong>ownership, borrowing, lifetimes</strong>.</p>
+  </div>
+
+  <div class="box key">
+    <span class="lb">⚡ Si tu n'as que 10 minutes</span>
+    Lis les 3 sections ★ (<a href="#ownership">Ownership</a>, <a href="#borrowing">Borrowing</a>, <a href="#lifetimes">Lifetimes</a>) + l'<a href="#antiseche">antisèche finale</a>. C'est 70 % des points d'un partiel Rust.
+  </div>
+
+  <div class="toc">
+    <h4>Sommaire</h4>
+    <ol>
+      <li><a href="#intro">Pourquoi Rust ?</a></li>
+      <li><a href="#cargo">Cargo &amp; outils</a></li>
+      <li><a href="#vars">Variables &amp; types</a></li>
+      <li><a href="#flux">Fonctions &amp; flux</a></li>
+      <li><a href="#ownership">Ownership ★</a></li>
+      <li><a href="#borrowing">Borrowing ★</a></li>
+      <li><a href="#lifetimes">Lifetimes ★</a></li>
+      <li><a href="#structs">Structs &amp; enums</a></li>
+      <li><a href="#match">Pattern matching</a></li>
+      <li><a href="#collections">Collections</a></li>
+      <li><a href="#erreurs">Erreurs : Option/Result ★</a></li>
+      <li><a href="#traits">Traits &amp; génériques</a></li>
+      <li><a href="#closures">Closures &amp; iterators</a></li>
+      <li><a href="#pointers">Smart pointers</a></li>
+      <li><a href="#concur">Concurrence</a></li>
+      <li><a href="#pieges">Pièges d'examen</a></li>
+      <li><a href="#antiseche">Antisèche finale</a></li>
+    </ol>
+  </div>
+
+  <!-- INTRO -->
+  <section id="intro">
+    <h2>1. Pourquoi Rust ?</h2>
+    <p>Rust est un langage <strong>compilé</strong>, <strong>typé statiquement</strong>, aussi rapide que le C/C++ mais qui garantit la <strong>sûreté mémoire sans ramasse-miettes (garbage collector)</strong>. Son idée géniale : un <strong>vérificateur à la compilation</strong> (le <em>borrow checker</em>) interdit les bugs mémoire (<em>use-after-free</em>, <em>double free</em>, <em>data races</em>) <strong>avant</strong> même d'exécuter le programme.</p>
+    <ul class="keys">
+      <li><strong>Sûreté</strong> : pas de pointeur nul, pas d'accès hors limites non contrôlé, pas de course de données.</li>
+      <li><strong>Performance</strong> : pas de GC, « zero-cost abstractions » (les abstractions ne coûtent rien à l'exécution).</li>
+      <li><strong>Le compilateur est ton ami</strong> : messages d'erreur très pédagogiques. « If it compiles, it works » (souvent vrai !).</li>
+    </ul>
+    <div class="box ex"><span class="lb">Le fameux « Hello, world! »</span>
+      <pre><code><span class="kw">fn</span> <span class="fn">main</span>() {
+    <span class="fn">println!</span>(<span class="st">"Hello, world!"</span>); <span class="cmt">// println! est une MACRO (le ! l'indique)</span>
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- CARGO -->
+  <section id="cargo">
+    <h2>2. Cargo &amp; la chaîne d'outils</h2>
+    <p><strong>Cargo</strong> est le gestionnaire de paquets ET l'outil de build. À connaître absolument :</p>
+    <table>
+      <tr><th>Commande</th><th>Rôle</th></tr>
+      <tr><td><code>cargo new mon_projet</code></td><td>Crée un nouveau projet (avec <code>Cargo.toml</code> + <code>src/main.rs</code>)</td></tr>
+      <tr><td><code>cargo build</code></td><td>Compile (binaire dans <code>target/debug/</code>)</td></tr>
+      <tr><td><code>cargo build --release</code></td><td>Compile optimisé (plus lent à compiler, rapide à l'exécution)</td></tr>
+      <tr><td><code>cargo run</code></td><td>Compile <em>et</em> exécute</td></tr>
+      <tr><td><code>cargo check</code></td><td>Vérifie sans produire de binaire (rapide)</td></tr>
+      <tr><td><code>cargo test</code></td><td>Lance les tests</td></tr>
+      <tr><td><code>cargo fmt</code> / <code>cargo clippy</code></td><td>Formatage / linter (bonnes pratiques)</td></tr>
+    </table>
+    <div class="box"><span class="lb">À retenir</span>
+      <code>Cargo.toml</code> = manifeste (nom, version, dépendances appelées « crates »). <code>Cargo.lock</code> = versions exactes verrouillées. Une bibliothèque Rust s'appelle une <strong>crate</strong>.</div>
+    <div class="quiz" data-a="1">
+      <div class="q">❓ Quelle commande compile en version optimisée pour la production ?</div>
+      <div class="opt">cargo run</div>
+      <div class="opt">cargo build --release</div>
+      <div class="opt">cargo check</div>
+      <div class="opt">cargo new</div>
+      <div class="fb" data-ex="--release active les optimisations. Sans lui, on est en mode debug (compilation rapide, exécution plus lente)."></div>
+    </div>
+  </section>
+
+  <!-- VARS -->
+  <section id="vars">
+    <h2>3. Variables, mutabilité, shadowing &amp; types</h2>
+    <div class="box key"><span class="lb">★ Le réflexe n°1 de Rust</span>
+      Les variables sont <strong>immuables par défaut</strong>. Pour pouvoir modifier, il faut <code>mut</code>.</div>
+    <pre><code><span class="kw">let</span> x = <span class="nu">5</span>;        <span class="cmt">// immuable : x ne peut PAS changer</span>
+<span class="cmt">// x = 6;        // ❌ ERREUR de compilation</span>
+<span class="kw">let</span> <span class="kw">mut</span> y = <span class="nu">5</span>;    <span class="cmt">// mutable</span>
+y = <span class="nu">6</span>;             <span class="cmt">// ✅ ok</span>
+
+<span class="kw">const</span> MAX: <span class="ty">u32</span> = <span class="nu">100_000</span>; <span class="cmt">// constante : type obligatoire, toujours immuable</span></code></pre>
+    <h3>Shadowing (masquage)</h3>
+    <p>On peut <strong>redéclarer</strong> une variable avec <code>let</code> : on crée une nouvelle variable qui « masque » l'ancienne. Différent de <code>mut</code> : on peut même <strong>changer de type</strong>.</p>
+    <pre><code><span class="kw">let</span> espaces = <span class="st">"   "</span>;          <span class="cmt">// type &str</span>
+<span class="kw">let</span> espaces = espaces.<span class="fn">len</span>();  <span class="cmt">// maintenant un usize ! (shadowing)</span></code></pre>
+    <h3>Types primitifs</h3>
+    <table>
+      <tr><th>Catégorie</th><th>Types</th></tr>
+      <tr><td>Entiers signés</td><td><code>i8 i16 i32 i64 i128 isize</code> (défaut <code>i32</code>)</td></tr>
+      <tr><td>Entiers non signés</td><td><code>u8 u16 u32 u64 u128 usize</code></td></tr>
+      <tr><td>Flottants</td><td><code>f32 f64</code> (défaut <code>f64</code>)</td></tr>
+      <tr><td>Booléen</td><td><code>bool</code> (<code>true</code>/<code>false</code>)</td></tr>
+      <tr><td>Caractère</td><td><code>char</code> (Unicode, 4 octets, avec <code>'a'</code>)</td></tr>
+    </table>
+    <div class="box"><span class="lb">Inférence de type</span>
+      Rust devine souvent le type. Mais parfois il faut l'annoter : <code>let x: u64 = 5;</code> ou <code>"42".parse::&lt;i32&gt;()</code>.</div>
+    <div class="quiz" data-a="2">
+      <div class="q">❓ Que permet le shadowing que <code>mut</code> ne permet pas ?</div>
+      <div class="opt">Modifier la valeur</div>
+      <div class="opt">Rendre la variable globale</div>
+      <div class="opt">Changer le type en réutilisant le même nom</div>
+      <div class="opt">Supprimer la variable</div>
+      <div class="fb" data-ex="Le shadowing crée une nouvelle variable (nouveau let), donc on peut changer de type. mut garde le même type."></div>
+    </div>
+  </section>
+
+  <!-- FLUX -->
+  <section id="flux">
+    <h2>4. Fonctions, expressions vs statements &amp; flux</h2>
+    <div class="box key"><span class="lb">★ Piège d'examen ultra-classique</span>
+      En Rust, presque tout est une <strong>expression</strong> (qui renvoie une valeur). La <strong>dernière expression d'un bloc, SANS point-virgule, est la valeur de retour</strong>. Mettre un <code>;</code> la transforme en statement qui renvoie <code>()</code> (le « unit », rien).</div>
+    <pre><code><span class="kw">fn</span> <span class="fn">plus_un</span>(x: <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> {
+    x + <span class="nu">1</span>      <span class="cmt">// PAS de ; → c'est la valeur de retour</span>
+}
+<span class="cmt">// Si on écrivait `x + 1;` → ❌ erreur : la fonction renverrait () au lieu de i32</span>
+
+<span class="kw">let</span> y = <span class="kw">if</span> x &gt; <span class="nu">0</span> { <span class="st">"positif"</span> } <span class="kw">else</span> { <span class="st">"négatif"</span> }; <span class="cmt">// if est une expression !</span></code></pre>
+    <h3>Boucles</h3>
+    <pre><code><span class="kw">loop</span> { <span class="kw">break</span>; }                 <span class="cmt">// boucle infinie ; loop peut renvoyer une valeur via break x</span>
+<span class="kw">while</span> cond { <span class="cmt">/* ... */</span> }
+<span class="kw">for</span> i <span class="kw">in</span> <span class="nu">0</span>..<span class="nu">5</span> { }             <span class="cmt">// 0,1,2,3,4 (0..=5 inclut 5)</span>
+<span class="kw">for</span> e <span class="kw">in</span> &tab { }              <span class="cmt">// itère sur les éléments</span></code></pre>
+    <div class="quiz" data-a="0">
+      <div class="q">❓ Que renvoie <code>fn f() -> i32 { 5; }</code> ?</div>
+      <div class="opt">Erreur de compilation (le ; fait renvoyer ())</div>
+      <div class="opt">5</div>
+      <div class="opt">0</div>
+      <div class="opt">()</div>
+      <div class="fb" data-ex="Avec le point-virgule, `5;` est un statement renvoyant (). La fonction promet i32 → mismatch → erreur. Il fallait `5` sans ;."></div>
+    </div>
+  </section>
+
+  <!-- OWNERSHIP -->
+  <section id="ownership">
+    <h2>5. Ownership (la possession) ★★★</h2>
+    <div class="box key"><span class="lb">★ LE concept central de Rust (tombe à TOUS les partiels)</span>
+      Chaque valeur a <strong>un seul propriétaire</strong> (owner). Quand le propriétaire sort de sa portée (fin du bloc <code>}</code>), la valeur est <strong>libérée automatiquement</strong> (appel de <code>drop</code>). Pas de GC, pas de <code>free</code> manuel.</div>
+    <h3>Les 3 règles d'or</h3>
+    <ul class="keys">
+      <li>Chaque valeur a <strong>un propriétaire</strong>.</li>
+      <li>Il ne peut y avoir qu'<strong>un seul propriétaire à la fois</strong>.</li>
+      <li>Quand le propriétaire sort de portée, la valeur est <strong>détruite</strong>.</li>
+    </ul>
+    <h3>Move (déplacement) — le piège n°1</h3>
+    <p>Pour les types stockés sur le <strong>tas</strong> (heap) comme <code>String</code>, <code>Vec</code>, l'affectation <strong>déplace</strong> la propriété (move). L'ancienne variable devient <strong>invalide</strong>.</p>
+    <pre><code><span class="kw">let</span> s1 = <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"hello"</span>);
+<span class="kw">let</span> s2 = s1;              <span class="cmt">// la propriété est DÉPLACÉE vers s2</span>
+<span class="cmt">// println!("{}", s1);    // ❌ ERREUR : s1 n'est plus valide (moved)</span>
+<span class="fn">println!</span>(<span class="st">"{}"</span>, s2);      <span class="cmt">// ✅ ok</span></code></pre>
+    <div class="box tip"><span class="lb">Copy vs Move</span>
+      Les types simples à taille fixe sur la <strong>pile</strong> (entiers, <code>bool</code>, <code>char</code>, <code>f64</code>, tuples de Copy) implémentent <code>Copy</code> : ils sont <strong>copiés</strong>, pas déplacés. Donc <code>let a = 5; let b = a;</code> → <code>a</code> reste utilisable.</div>
+    <h3>clone() — la copie profonde explicite</h3>
+    <pre><code><span class="kw">let</span> s1 = <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"hi"</span>);
+<span class="kw">let</span> s2 = s1.<span class="fn">clone</span>();     <span class="cmt">// copie profonde : s1 ET s2 valides (2 allocations)</span></code></pre>
+    <h3>Ownership &amp; fonctions</h3>
+    <p>Passer une valeur à une fonction la <strong>déplace</strong> aussi (sauf si Copy) :</p>
+    <pre><code><span class="kw">fn</span> <span class="fn">prend</span>(s: <span class="ty">String</span>) { <span class="fn">println!</span>(<span class="st">"{}"</span>, s); } <span class="cmt">// s est détruit à la fin</span>
+
+<span class="kw">let</span> texte = <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"salut"</span>);
+<span class="fn">prend</span>(texte);
+<span class="cmt">// println!("{}", texte); // ❌ texte a été déplacé dans la fonction</span></code></pre>
+    <div class="box warn"><span class="lb">Erreur à reconnaître</span>
+      <code>value borrowed/used here after move</code> → tu utilises une variable après l'avoir déplacée. Solutions : emprunter (<code>&amp;</code>, section suivante) ou <code>clone()</code>.</div>
+    <div class="quiz" data-a="1">
+      <div class="q">❓ Après <code>let s2 = s1;</code> où <code>s1: String</code>, que vaut <code>s1</code> ?</div>
+      <div class="opt">Une copie de s2</div>
+      <div class="opt">Invalide (la propriété a été déplacée)</div>
+      <div class="opt">Toujours "hello"</div>
+      <div class="opt">Un pointeur nul</div>
+      <div class="fb" data-ex="String est sur le tas → move. s1 devient invalide. Utiliser s1 ensuite = erreur de compilation. (Les entiers, eux, seraient copiés.)"></div>
+    </div>
+    <div class="quiz" data-a="0">
+      <div class="q">❓ Quel type est <strong>copié</strong> (Copy) et non déplacé ?</div>
+      <div class="opt">i32</div>
+      <div class="opt">String</div>
+      <div class="opt">Vec&lt;i32&gt;</div>
+      <div class="opt">Un struct avec une String</div>
+      <div class="fb" data-ex="i32 est à taille fixe sur la pile → Copy. String/Vec sont sur le tas → Move. Un struct contenant une String n'est pas Copy."></div>
+    </div>
+  </section>
+
+  <!-- BORROWING -->
+  <section id="borrowing">
+    <h2>6. Borrowing &amp; références ★★★</h2>
+    <div class="box key"><span class="lb">★ L'idée</span>
+      Plutôt que de <em>déplacer</em> une valeur, on peut l'<strong>emprunter</strong> avec <code>&amp;</code> (référence). On accède à la valeur <strong>sans en prendre la propriété</strong>. L'emprunt se termine, le propriétaire garde sa valeur.</div>
+    <pre><code><span class="kw">fn</span> <span class="fn">longueur</span>(s: &<span class="ty">String</span>) -&gt; <span class="ty">usize</span> { s.<span class="fn">len</span>() } <span class="cmt">// &String = emprunt</span>
+
+<span class="kw">let</span> texte = <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"salut"</span>);
+<span class="kw">let</span> n = <span class="fn">longueur</span>(&texte);   <span class="cmt">// on PRÊTE texte</span>
+<span class="fn">println!</span>(<span class="st">"{} ({})"</span>, texte, n); <span class="cmt">// ✅ texte est toujours valide !</span></code></pre>
+    <h3>★ Les règles du borrow checker (à réciter)</h3>
+    <div class="box key"><span class="lb">La règle d'or des emprunts</span>
+      À un instant donné, pour une valeur, tu peux avoir <strong>SOIT</strong> :
+      <ul style="margin:6px 0">
+        <li>un <strong>nombre quelconque de références immuables</strong> <code>&amp;T</code> (lecture) ;</li>
+        <li><strong>OU</strong> <strong>une seule référence mutable</strong> <code>&amp;mut T</code> (écriture) ;</li>
+      </ul>
+      <strong>jamais les deux en même temps.</strong> C'est ce qui empêche les data races.</div>
+    <pre><code><span class="kw">let</span> <span class="kw">mut</span> s = <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"hi"</span>);
+<span class="kw">let</span> r1 = &s;      <span class="cmt">// ok</span>
+<span class="kw">let</span> r2 = &s;      <span class="cmt">// ok : plusieurs lectures simultanées</span>
+<span class="cmt">// let rm = &mut s; // ❌ interdit tant que r1/r2 sont utilisés</span>
+<span class="fn">println!</span>(<span class="st">"{} {}"</span>, r1, r2);
+
+<span class="kw">let</span> rm = &<span class="kw">mut</span> s;  <span class="cmt">// ✅ ok maintenant (r1,r2 ne sont plus utilisés)</span>
+rm.<span class="fn">push_str</span>(<span class="st">"!"</span>);</code></pre>
+    <div class="box warn"><span class="lb">Erreur à reconnaître</span>
+      <code>cannot borrow `s` as mutable because it is also borrowed as immutable</code> → tu mélanges lecture et écriture. Sépare les usages dans le temps.</div>
+    <h3>Pas de référence pendante (dangling)</h3>
+    <p>Rust interdit de renvoyer une référence vers une valeur détruite :</p>
+    <pre><code><span class="kw">fn</span> <span class="fn">danger</span>() -&gt; &<span class="ty">String</span> {   <span class="cmt">// ❌ erreur</span>
+    <span class="kw">let</span> s = <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"x"</span>);
+    &s                        <span class="cmt">// s meurt à la fin → référence pendante</span>
+}  <span class="cmt">// Solution : renvoyer String (déplacer la propriété)</span></code></pre>
+    <h3>Slices</h3>
+    <p>Un <strong>slice</strong> <code>&amp;str</code> ou <code>&amp;[T]</code> est une référence vers une <em>portion</em> d'une collection (pas de propriété).</p>
+    <pre><code><span class="kw">let</span> s = <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"hello world"</span>);
+<span class="kw">let</span> mot = &s[<span class="nu">0</span>..<span class="nu">5</span>];   <span class="cmt">// "hello" — un &str</span></code></pre>
+    <div class="quiz" data-a="2">
+      <div class="q">❓ Combien de <code>&amp;mut T</code> peut-on avoir en même temps sur une valeur ?</div>
+      <div class="opt">Autant qu'on veut</div>
+      <div class="opt">Zéro</div>
+      <div class="opt">Une seule (et aucune référence immuable en parallèle)</div>
+      <div class="opt">Deux maximum</div>
+      <div class="fb" data-ex="Une seule référence mutable à la fois, et pas de référence immuable simultanée. C'est la règle qui garantit l'absence de data races."></div>
+    </div>
+    <div class="quiz" data-a="0">
+      <div class="q">❓ <code>&amp;T</code> signifie…</div>
+      <div class="opt">un emprunt en lecture seule (immuable)</div>
+      <div class="opt">un emprunt mutable</div>
+      <div class="opt">un déplacement</div>
+      <div class="opt">une copie profonde</div>
+      <div class="fb" data-ex="&T = référence immuable (lecture). &mut T = référence mutable (écriture). Ni l'une ni l'autre ne prend la propriété."></div>
+    </div>
+  </section>
+
+  <!-- LIFETIMES -->
+  <section id="lifetimes">
+    <h2>7. Lifetimes (durées de vie) ★★</h2>
+    <div class="box key"><span class="lb">★ À quoi ça sert</span>
+      Les <strong>lifetimes</strong> indiquent au compilateur <strong>combien de temps une référence reste valide</strong>, pour garantir qu'une référence ne survit jamais à la donnée qu'elle pointe. La plupart sont <strong>inférées</strong> ; on les annote seulement quand c'est ambigu.</div>
+    <p>Syntaxe : <code>'a</code> (apostrophe + nom). On lit « lifetime a ».</p>
+    <pre><code><span class="cmt">// "la référence renvoyée vit aussi longtemps que la plus courte de x et y"</span>
+<span class="kw">fn</span> <span class="fn">plus_long</span>&lt;<span class="ty">'a</span>&gt;(x: &<span class="ty">'a</span> <span class="ty">str</span>, y: &<span class="ty">'a</span> <span class="ty">str</span>) -&gt; &<span class="ty">'a</span> <span class="ty">str</span> {
+    <span class="kw">if</span> x.<span class="fn">len</span>() &gt; y.<span class="fn">len</span>() { x } <span class="kw">else</span> { y }
+}</code></pre>
+    <div class="box"><span class="lb">Pourquoi l'annotation ici ?</span>
+      La fonction renvoie une référence, mais le compilateur ne sait pas si elle vient de <code>x</code> ou <code>y</code>. <code>'a</code> lui dit : « le résultat ne vivra pas plus longtemps que les deux entrées ». Ça évite une référence pendante.</div>
+    <div class="box tip"><span class="lb">Élision (bonne nouvelle)</span>
+      Dans les cas simples, Rust devine les lifetimes tout seul (règles d'élision). Tu n'écris <code>'a</code> que quand il y a plusieurs références en entrée ET une en sortie dont l'origine est ambiguë.</div>
+    <p>Lifetime spécial : <code>'static</code> = vit pendant <strong>toute</strong> la durée du programme (ex. les littéraux de chaîne <code>"..."</code> sont <code>&amp;'static str</code>).</p>
+    <div class="quiz" data-a="1">
+      <div class="q">❓ À quoi servent les lifetimes ?</div>
+      <div class="opt">À accélérer le programme</div>
+      <div class="opt">À garantir qu'une référence ne survit pas à la donnée pointée</div>
+      <div class="opt">À gérer la mémoire à l'exécution</div>
+      <div class="opt">À créer des threads</div>
+      <div class="fb" data-ex="Les lifetimes sont une vérification À LA COMPILATION (aucun coût à l'exécution) qui empêche les références pendantes."></div>
+    </div>
+  </section>
+
+  <!-- STRUCTS -->
+  <section id="structs">
+    <h2>8. Structs &amp; enums</h2>
+    <h3>Structs</h3>
+    <pre><code><span class="kw">struct</span> <span class="ty">User</span> {
+    nom: <span class="ty">String</span>,
+    age: <span class="ty">u32</span>,
+    actif: <span class="ty">bool</span>,
+}
+<span class="kw">impl</span> <span class="ty">User</span> {
+    <span class="kw">fn</span> <span class="fn">new</span>(nom: <span class="ty">String</span>) -&gt; <span class="ty">User</span> {        <span class="cmt">// fonction associée (pas de self) → User::new(...)</span>
+        <span class="ty">User</span> { nom, age: <span class="nu">0</span>, actif: <span class="kw">true</span> }  <span class="cmt">// raccourci : nom au lieu de nom: nom</span>
+    }
+    <span class="kw">fn</span> <span class="fn">anniv</span>(&<span class="kw">mut</span> <span class="kw">self</span>) { <span class="kw">self</span>.age += <span class="nu">1</span>; }  <span class="cmt">// méthode (prend self)</span>
+}</code></pre>
+    <div class="box"><span class="lb">self, &amp;self, &amp;mut self</span>
+      <code>&amp;self</code> = lecture (le plus courant), <code>&amp;mut self</code> = modifie l'instance, <code>self</code> = consomme l'instance. Une fonction <strong>sans</strong> <code>self</code> dans <code>impl</code> est une <strong>fonction associée</strong> (ex. les constructeurs <code>::new</code>).</div>
+    <h3>Enums</h3>
+    <pre><code><span class="kw">enum</span> <span class="ty">Direction</span> { <span class="ty">Nord</span>, <span class="ty">Sud</span>, <span class="ty">Est</span>, <span class="ty">Ouest</span> }
+
+<span class="cmt">// Les variantes peuvent porter des données :</span>
+<span class="kw">enum</span> <span class="ty">Message</span> {
+    <span class="ty">Quitter</span>,
+    <span class="ty">Bouger</span> { x: <span class="ty">i32</span>, y: <span class="ty">i32</span> },
+    <span class="ty">Ecrire</span>(<span class="ty">String</span>),
+}</code></pre>
+    <div class="box tip"><span class="lb">Les 2 enums stars de la lib standard</span>
+      <code>Option&lt;T&gt;</code> = <code>Some(T)</code> ou <code>None</code> (remplace le null). <code>Result&lt;T,E&gt;</code> = <code>Ok(T)</code> ou <code>Err(E)</code> (gestion d'erreur). Voir section 11.</div>
+  </section>
+
+  <!-- MATCH -->
+  <section id="match">
+    <h2>9. Pattern matching : match, if let</h2>
+    <div class="box key"><span class="lb">★ match doit être exhaustif</span>
+      Un <code>match</code> doit couvrir <strong>tous</strong> les cas possibles (sinon erreur de compilation). Le <code>_</code> capture « tout le reste ».</div>
+    <pre><code><span class="kw">let</span> dir = <span class="ty">Direction</span>::<span class="ty">Nord</span>;
+<span class="kw">match</span> dir {
+    <span class="ty">Direction</span>::<span class="ty">Nord</span> =&gt; <span class="fn">println!</span>(<span class="st">"⬆️"</span>),
+    <span class="ty">Direction</span>::<span class="ty">Sud</span>  =&gt; <span class="fn">println!</span>(<span class="st">"⬇️"</span>),
+    _ =&gt; <span class="fn">println!</span>(<span class="st">"↔️"</span>),   <span class="cmt">// tous les autres cas</span>
+}
+
+<span class="cmt">// Déstructuration + liaison de valeurs :</span>
+<span class="kw">match</span> msg {
+    <span class="ty">Message</span>::<span class="ty">Ecrire</span>(txt) =&gt; <span class="fn">println!</span>(<span class="st">"{}"</span>, txt),
+    <span class="ty">Message</span>::<span class="ty">Bouger</span> { x, y } =&gt; <span class="fn">println!</span>(<span class="st">"{},{}"</span>, x, y),
+    <span class="ty">Message</span>::<span class="ty">Quitter</span> =&gt; <span class="kw">return</span>,
+}</code></pre>
+    <h3>if let — match raccourci pour un seul cas</h3>
+    <pre><code><span class="kw">if</span> <span class="kw">let</span> <span class="ty">Some</span>(v) = option {   <span class="cmt">// si option vaut Some(...), lier v</span>
+    <span class="fn">println!</span>(<span class="st">"{}"</span>, v);
+}</code></pre>
+    <div class="quiz" data-a="0">
+      <div class="q">❓ Pourquoi ce <code>match</code> sur un <code>bool</code> ne compile pas s'il ne traite que <code>true</code> ?</div>
+      <div class="opt">match doit être exhaustif (il manque le cas false)</div>
+      <div class="opt">bool n'est pas matchable</div>
+      <div class="opt">Il faut un point-virgule</div>
+      <div class="opt">Il faut un _ obligatoire toujours</div>
+      <div class="fb" data-ex="Un match doit couvrir TOUS les cas. Pour un bool : true ET false (ou un _). Sinon erreur 'non-exhaustive patterns'."></div>
+    </div>
+  </section>
+
+  <!-- COLLECTIONS -->
+  <section id="collections">
+    <h2>10. Collections : Vec, String, HashMap</h2>
+    <pre><code><span class="cmt">// --- Vec (tableau dynamique) ---</span>
+<span class="kw">let</span> <span class="kw">mut</span> v: <span class="ty">Vec</span>&lt;<span class="ty">i32</span>&gt; = <span class="ty">Vec</span>::<span class="fn">new</span>();
+v.<span class="fn">push</span>(<span class="nu">1</span>); v.<span class="fn">push</span>(<span class="nu">2</span>);
+<span class="kw">let</span> v2 = <span class="fn">vec!</span>[<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>];       <span class="cmt">// macro pratique</span>
+<span class="kw">let</span> premier = v2[<span class="nu">0</span>];          <span class="cmt">// accès (panique si hors limites)</span>
+<span class="kw">let</span> sur = v2.<span class="fn">get</span>(<span class="nu">10</span>);         <span class="cmt">// renvoie Option (None si absent) → plus sûr</span>
+
+<span class="cmt">// --- HashMap ---</span>
+<span class="kw">use</span> std::collections::<span class="ty">HashMap</span>;
+<span class="kw">let</span> <span class="kw">mut</span> scores = <span class="ty">HashMap</span>::<span class="fn">new</span>();
+scores.<span class="fn">insert</span>(<span class="st">"Alice"</span>, <span class="nu">10</span>);
+<span class="kw">if</span> <span class="kw">let</span> <span class="ty">Some</span>(s) = scores.<span class="fn">get</span>(<span class="st">"Alice"</span>) { <span class="fn">println!</span>(<span class="st">"{}"</span>, s); }</code></pre>
+    <div class="box"><span class="lb">String vs &amp;str</span>
+      <code>String</code> = chaîne possédée, modifiable, sur le tas. <code>&amp;str</code> = slice de chaîne empruntée (ex. littéraux <code>"..."</code>). On passe souvent <code>&amp;str</code> en argument (plus flexible).</div>
+    <div class="quiz" data-a="1">
+      <div class="q">❓ Quelle méthode d'accès à un Vec renvoie une <code>Option</code> au lieu de paniquer ?</div>
+      <div class="opt">v[i]</div>
+      <div class="opt">v.get(i)</div>
+      <div class="opt">v.push(i)</div>
+      <div class="opt">v.len()</div>
+      <div class="fb" data-ex="v.get(i) renvoie Some(&val) ou None (sûr). v[i] panique si hors limites. En examen, get() = approche défensive."></div>
+    </div>
+  </section>
+
+  <!-- ERREURS -->
+  <section id="erreurs">
+    <h2>11. Gestion des erreurs : Option, Result, ? ★</h2>
+    <div class="box key"><span class="lb">★ Rust n'a pas d'exceptions</span>
+      Les erreurs sont des <strong>valeurs</strong> renvoyées. Deux enums :
+      <ul style="margin:6px 0">
+        <li><code>Option&lt;T&gt;</code> : une valeur <em>peut</em> être absente → <code>Some(v)</code> ou <code>None</code>.</li>
+        <li><code>Result&lt;T, E&gt;</code> : une opération <em>peut</em> échouer → <code>Ok(v)</code> ou <code>Err(e)</code>.</li>
+      </ul></div>
+    <pre><code><span class="kw">fn</span> <span class="fn">diviser</span>(a: <span class="ty">f64</span>, b: <span class="ty">f64</span>) -&gt; <span class="ty">Result</span>&lt;<span class="ty">f64</span>, <span class="ty">String</span>&gt; {
+    <span class="kw">if</span> b == <span class="nu">0.0</span> { <span class="kw">return</span> <span class="ty">Err</span>(<span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"division par zéro"</span>)); }
+    <span class="ty">Ok</span>(a / b)
+}
+<span class="kw">match</span> <span class="fn">diviser</span>(<span class="nu">10.0</span>, <span class="nu">2.0</span>) {
+    <span class="ty">Ok</span>(r)  =&gt; <span class="fn">println!</span>(<span class="st">"= {}"</span>, r),
+    <span class="ty">Err</span>(e) =&gt; <span class="fn">println!</span>(<span class="st">"erreur : {}"</span>, e),
+}</code></pre>
+    <h3>★ L'opérateur <code>?</code> (propagation)</h3>
+    <p>Dans une fonction qui renvoie <code>Result</code>, <code>?</code> renvoie automatiquement l'<code>Err</code> si échec, sinon déballe l'<code>Ok</code>. Très élégant, très demandé en examen.</p>
+    <pre><code><span class="kw">fn</span> <span class="fn">lire</span>() -&gt; <span class="ty">Result</span>&lt;<span class="ty">String</span>, std::io::<span class="ty">Error</span>&gt; {
+    <span class="kw">let</span> contenu = std::fs::<span class="fn">read_to_string</span>(<span class="st">"f.txt"</span>)?; <span class="cmt">// si Err → return Err ; sinon continue</span>
+    <span class="ty">Ok</span>(contenu)
+}</code></pre>
+    <div class="box"><span class="lb">unwrap() &amp; expect() — à utiliser avec prudence</span>
+      <code>.unwrap()</code> extrait la valeur mais <strong>panique</strong> si <code>None</code>/<code>Err</code>. <code>.expect("msg")</code> pareil avec message. OK pour prototyper/tester, à éviter en code robuste. <code>panic!("...")</code> arrête le programme.</div>
+    <div class="quiz" data-a="2">
+      <div class="q">❓ Que fait l'opérateur <code>?</code> sur un <code>Result</code> ?</div>
+      <div class="opt">Il panique toujours</div>
+      <div class="opt">Il ignore l'erreur</div>
+      <div class="opt">Il déballe Ok, ou retourne l'Err de la fonction</div>
+      <div class="opt">Il convertit en Option</div>
+      <div class="fb" data-ex="? propage : sur Ok(v) il donne v ; sur Err(e) il fait return Err(e). Pratique pour chaîner des opérations faillibles."></div>
+    </div>
+    <div class="quiz" data-a="0">
+      <div class="q">❓ Quel type remplace le <code>null</code> en Rust ?</div>
+      <div class="opt">Option&lt;T&gt; (Some/None)</div>
+      <div class="opt">Result&lt;T,E&gt;</div>
+      <div class="opt">nullptr</div>
+      <div class="opt">void</div>
+      <div class="fb" data-ex="Rust n'a pas de null. L'absence est modélisée par Option : None (absent) ou Some(valeur). Le compilateur t'oblige à gérer None."></div>
+    </div>
+  </section>
+
+  <!-- TRAITS -->
+  <section id="traits">
+    <h2>12. Génériques &amp; traits</h2>
+    <h3>Génériques</h3>
+    <pre><code><span class="kw">fn</span> <span class="fn">max</span>&lt;<span class="ty">T</span>: <span class="ty">PartialOrd</span>&gt;(a: <span class="ty">T</span>, b: <span class="ty">T</span>) -&gt; <span class="ty">T</span> {
+    <span class="kw">if</span> a &gt; b { a } <span class="kw">else</span> { b }   <span class="cmt">// marche pour tout T comparable</span>
+}</code></pre>
+    <h3>Traits (= interfaces)</h3>
+    <p>Un <strong>trait</strong> définit un comportement partagé. Les types l'<strong>implémentent</strong>.</p>
+    <pre><code><span class="kw">trait</span> <span class="ty">Animal</span> {
+    <span class="kw">fn</span> <span class="fn">crier</span>(&<span class="kw">self</span>) -&gt; <span class="ty">String</span>;             <span class="cmt">// méthode à implémenter</span>
+    <span class="kw">fn</span> <span class="fn">presenter</span>(&<span class="kw">self</span>) { <span class="fn">println!</span>(<span class="st">"Je dis {}"</span>, <span class="kw">self</span>.<span class="fn">crier</span>()); } <span class="cmt">// méthode par défaut</span>
+}
+<span class="kw">struct</span> <span class="ty">Chien</span>;
+<span class="kw">impl</span> <span class="ty">Animal</span> <span class="kw">for</span> <span class="ty">Chien</span> {
+    <span class="kw">fn</span> <span class="fn">crier</span>(&<span class="kw">self</span>) -&gt; <span class="ty">String</span> { <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"Wouf"</span>) }
+}</code></pre>
+    <div class="box"><span class="lb">Trait bounds &amp; dérivation</span>
+      <code>&lt;T: Animal&gt;</code> = « T doit implémenter Animal ». <code>#[derive(Debug, Clone)]</code> au-dessus d'un struct génère automatiquement ces traits (ex. <code>Debug</code> pour l'afficher avec <code>{:?}</code>). Traits classiques : <code>Debug, Clone, Copy, PartialEq, Default</code>.</div>
+    <div class="quiz" data-a="1">
+      <div class="q">❓ Un trait en Rust, c'est l'équivalent de…</div>
+      <div class="opt">une classe</div>
+      <div class="opt">une interface (comportement partagé)</div>
+      <div class="opt">une variable globale</div>
+      <div class="opt">un pointeur</div>
+      <div class="fb" data-ex="Un trait définit un ensemble de méthodes qu'un type doit fournir : c'est le concept d'interface. On l'implémente avec impl Trait for Type."></div>
+    </div>
+  </section>
+
+  <!-- CLOSURES -->
+  <section id="closures">
+    <h2>13. Closures &amp; iterators</h2>
+    <h3>Closures (fonctions anonymes)</h3>
+    <pre><code><span class="kw">let</span> ajoute = |a, b| a + b;      <span class="cmt">// closure</span>
+<span class="kw">let</span> r = <span class="fn">ajoute</span>(<span class="nu">2</span>, <span class="nu">3</span>);          <span class="cmt">// 5</span>
+<span class="kw">let</span> facteur = <span class="nu">10</span>;
+<span class="kw">let</span> mult = |x| x * facteur;     <span class="cmt">// capture `facteur` de l'environnement</span></code></pre>
+    <h3>Iterators (très puissant &amp; idiomatique)</h3>
+    <pre><code><span class="kw">let</span> v = <span class="fn">vec!</span>[<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>];
+<span class="kw">let</span> somme: <span class="ty">i32</span> = v.<span class="fn">iter</span>().<span class="fn">sum</span>();
+<span class="kw">let</span> pairs: <span class="ty">Vec</span>&lt;<span class="ty">i32</span>&gt; = v.<span class="fn">iter</span>()
+    .<span class="fn">filter</span>(|x| *x % <span class="nu">2</span> == <span class="nu">0</span>)   <span class="cmt">// garde les pairs</span>
+    .<span class="fn">map</span>(|x| x * <span class="nu">10</span>)            <span class="cmt">// transforme</span>
+    .<span class="fn">collect</span>();                 <span class="cmt">// [20, 40]</span></code></pre>
+    <div class="box tip"><span class="lb">Lazy</span>
+      Les iterators sont <strong>paresseux</strong> : rien ne se passe tant qu'on n'appelle pas un « consommateur » comme <code>collect()</code>, <code>sum()</code>, <code>for</code>, <code>count()</code>. <code>map</code>/<code>filter</code> ne font que décrire le pipeline.</div>
+    <div class="quiz" data-a="2">
+      <div class="q">❓ Quand s'exécute réellement une chaîne <code>.iter().map(...).filter(...)</code> ?</div>
+      <div class="opt">Immédiatement à chaque étape</div>
+      <div class="opt">Jamais</div>
+      <div class="opt">Seulement quand on appelle un consommateur (collect, sum, for...)</div>
+      <div class="opt">À la compilation</div>
+      <div class="fb" data-ex="Les iterators sont lazy : map/filter construisent un pipeline. Le calcul a lieu au consommateur final (collect, sum, for...)."></div>
+    </div>
+  </section>
+
+  <!-- POINTERS -->
+  <section id="pointers">
+    <h2>14. Smart pointers : Box, Rc, RefCell</h2>
+    <table>
+      <tr><th>Type</th><th>Rôle</th></tr>
+      <tr><td><code>Box&lt;T&gt;</code></td><td>Alloue sur le tas. Propriété unique. Utile pour les types récursifs (listes, arbres) ou gros objets.</td></tr>
+      <tr><td><code>Rc&lt;T&gt;</code></td><td>Reference Counted : <strong>plusieurs propriétaires</strong> en lecture (comptage de références). Mono-thread.</td></tr>
+      <tr><td><code>RefCell&lt;T&gt;</code></td><td>Mutabilité intérieure : emprunts vérifiés <strong>à l'exécution</strong> (panique si violation). Mono-thread.</td></tr>
+      <tr><td><code>Arc&lt;T&gt;</code> / <code>Mutex&lt;T&gt;</code></td><td>Versions <strong>thread-safe</strong> (Arc = Rc atomique ; Mutex = verrou).</td></tr>
+    </table>
+    <pre><code><span class="kw">use</span> std::rc::<span class="ty">Rc</span>;
+<span class="kw">let</span> a = <span class="ty">Rc</span>::<span class="fn">new</span>(<span class="nu">5</span>);
+<span class="kw">let</span> b = <span class="ty">Rc</span>::<span class="fn">clone</span>(&a);   <span class="cmt">// 2 propriétaires, compteur = 2</span>
+<span class="fn">println!</span>(<span class="st">"{}"</span>, <span class="ty">Rc</span>::<span class="fn">strong_count</span>(&a)); <span class="cmt">// 2</span></code></pre>
+    <div class="box"><span class="lb">Combo classique</span>
+      <code>Rc&lt;RefCell&lt;T&gt;&gt;</code> = plusieurs propriétaires qui peuvent aussi muter (graphe, arbre partagé). En multi-thread : <code>Arc&lt;Mutex&lt;T&gt;&gt;</code>.</div>
+  </section>
+
+  <!-- CONCURRENCE -->
+  <section id="concur">
+    <h2>15. Concurrence</h2>
+    <pre><code><span class="kw">use</span> std::thread;
+<span class="kw">let</span> h = thread::<span class="fn">spawn</span>(|| {
+    <span class="fn">println!</span>(<span class="st">"depuis un thread"</span>);
+});
+h.<span class="fn">join</span>().<span class="fn">unwrap</span>();   <span class="cmt">// attend la fin du thread</span></code></pre>
+    <div class="box key"><span class="lb">★ « Fearless concurrency »</span>
+      Les règles d'ownership/borrowing empêchent les <strong>data races à la compilation</strong>. Pour partager entre threads : <code>Arc&lt;Mutex&lt;T&gt;&gt;</code>. Pour communiquer : les <strong>channels</strong> (<code>mpsc::channel()</code>, modèle « ne communiquez pas en partageant la mémoire, partagez la mémoire en communiquant »).</div>
+    <pre><code><span class="kw">use</span> std::sync::mpsc;
+<span class="kw">let</span> (tx, rx) = mpsc::<span class="fn">channel</span>();
+thread::<span class="fn">spawn</span>(<span class="kw">move</span> || { tx.<span class="fn">send</span>(<span class="nu">42</span>).<span class="fn">unwrap</span>(); });
+<span class="fn">println!</span>(<span class="st">"{}"</span>, rx.<span class="fn">recv</span>().<span class="fn">unwrap</span>()); <span class="cmt">// 42</span></code></pre>
+  </section>
+
+  <!-- PIEGES -->
+  <section id="pieges">
+    <h2>16. Pièges d'examen fréquents 🎯</h2>
+    <ul class="keys">
+      <li><strong>Le <code>;</code> final</strong> : <code>x + 1</code> (retour) vs <code>x + 1;</code> (renvoie <code>()</code>). Source d'erreur n°1.</li>
+      <li><strong>Move après usage</strong> : utiliser une <code>String</code>/<code>Vec</code> après <code>let b = a;</code> ou après l'avoir passée à une fonction → erreur. Entiers = Copy, pas de souci.</li>
+      <li><strong>Mélange &amp; et &amp;mut</strong> : pas de référence mutable tant qu'une immuable est vivante.</li>
+      <li><strong>match non exhaustif</strong> : il manque un cas ou le <code>_</code>.</li>
+      <li><strong>Immuable par défaut</strong> : oublier <code>mut</code> → « cannot assign twice to immutable variable ».</li>
+      <li><strong>unwrap sur None/Err</strong> → panique à l'exécution.</li>
+      <li><strong>Référence pendante</strong> : renvoyer <code>&amp;</code> vers une variable locale → interdit.</li>
+      <li><strong>Macro vs fonction</strong> : <code>println!</code>, <code>vec!</code>, <code>format!</code> ont un <code>!</code> (ce sont des macros).</li>
+    </ul>
+    <div class="box ex"><span class="lb">Question piège type : « ce code compile-t-il ? »</span>
+      <pre><code><span class="kw">let</span> s1 = <span class="ty">String</span>::<span class="fn">from</span>(<span class="st">"hi"</span>);
+<span class="kw">let</span> s2 = s1;
+<span class="fn">println!</span>(<span class="st">"{} {}"</span>, s1, s2);</code></pre>
+      <strong>Réponse : NON.</strong> <code>s1</code> a été déplacé dans <code>s2</code> ; l'utiliser ensuite est une erreur <code>borrow of moved value</code>. Correctif : <code>let s2 = s1.clone();</code> ou utiliser <code>&amp;s1</code>.</div>
+  </section>
+
+  <!-- ANTISECHE -->
+  <section id="antiseche">
+    <h2>17. 🧠 Antisèche finale (à relire juste avant)</h2>
+    <ul class="keys">
+      <li><strong>Immuable par défaut</strong> ; <code>mut</code> pour modifier ; <code>const</code> pour les constantes.</li>
+      <li><strong>Ownership</strong> : 1 valeur = 1 propriétaire ; fin de portée = <code>drop</code>.</li>
+      <li><strong>Move</strong> (tas : String/Vec) invalide l'ancienne variable ; <strong>Copy</strong> (pile : i32/bool/char) copie.</li>
+      <li><strong>Borrow</strong> : <code>&amp;T</code> lecture (plusieurs OK) · <code>&amp;mut T</code> écriture (un seul, pas en même temps qu'un &amp;T).</li>
+      <li><strong>Lifetimes</strong> <code>'a</code> : garantissent qu'une référence ne survit pas à sa donnée (compilation).</li>
+      <li><strong>Option</strong> remplace null (<code>Some</code>/<code>None</code>) ; <strong>Result</strong> gère l'erreur (<code>Ok</code>/<code>Err</code>) ; <code>?</code> propage.</li>
+      <li><strong>match exhaustif</strong> ; <code>_</code> = reste ; <code>if let</code> pour un seul cas.</li>
+      <li><strong>struct</strong> + <code>impl</code> (méthodes <code>&amp;self</code>) ; <strong>enum</strong> peut porter des données.</li>
+      <li><strong>trait</strong> = interface ; <code>impl Trait for Type</code> ; <code>#[derive(Debug)]</code> pour <code>{:?}</code>.</li>
+      <li><strong>Iterators</strong> lazy : <code>iter().map().filter().collect()</code>.</li>
+      <li><strong>Cargo</strong> : <code>new / build / run / check / test</code> ; <code>--release</code> = optimisé.</li>
+      <li><strong>Macros</strong> finissent par <code>!</code> : <code>println! vec! format!</code>.</li>
+    </ul>
+    <div class="box tip"><span class="lb">Dernier conseil</span>
+      En examen, si on te demande « ce code compile-t-il ? », vérifie dans l'ordre : (1) <code>mut</code> présent ? (2) valeur <strong>déplacée</strong> puis réutilisée ? (3) conflit <code>&amp;</code>/<code>&amp;mut</code> ? (4) <code>;</code> de retour ? (5) <code>match</code> exhaustif ? Tu attraperas 90 % des pièges. Tu vas gérer ! 💪🦀</div>
+  </section>
+
+  <div style="text-align:center;margin:30px 0">
+    <a class="btn" href="revision-express-rust.md" download>⬇️ Télécharger l'antisèche (.md)</a>
+    <a class="btn" href="rust-cursus.html">📘 Approfondir avec le cursus complet (16 modules)</a>
+  </div>
+</div>
+
+<div class="foot">Révision express Rust · Bon courage pour ton partiel ! 🦀💙</div>
+
+<script>
+(function(){
+  var TK="rust-rev-theme";
+  function theme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem(TK,t);var b=document.getElementById("tt");if(b)b.textContent=t==="light"?"🌙 Sombre":"☀️ Clair";}
+  theme(localStorage.getItem(TK)||"dark");
+  document.getElementById("tt").addEventListener("click",function(){theme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+  // Quiz
+  document.querySelectorAll(".quiz").forEach(function(q){
+    var ans=parseInt(q.getAttribute("data-a"),10);
+    var opts=[].slice.call(q.querySelectorAll(".opt"));
+    var fb=q.querySelector(".fb");
+    var ex=fb?fb.getAttribute("data-ex"):"";
+    opts.forEach(function(o,i){
+      o.addEventListener("click",function(){
+        opts.forEach(function(x){x.classList.add("dis");});
+        opts[ans].classList.add("good");
+        var ok=i===ans; if(!ok)o.classList.add("bad");
+        fb.classList.add("show",ok?"ok":"ko");
+        fb.innerHTML=(ok?"✅ <b>Correct !</b> ":"❌ <b>Pas tout à fait.</b> ")+ex;
+      });
+    });
+  });
+  // Progress bar
+  var bar=document.querySelector(".prog>i");
+  window.addEventListener("scroll",function(){
+    var h=document.documentElement;var s=h.scrollTop/(h.scrollHeight-h.clientHeight);
+    bar.style.width=Math.min(100,Math.max(0,s*100))+"%";
+  },{passive:true});
+})();
+</script>
+</body>
+</html>

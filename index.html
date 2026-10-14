@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Mes cours ESGI — Portail IABD 3ᵉ année</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🎓</span>
+      <span>Mes cours ESGI<small>IABD · 3ᵉ année · Paris</small></span>
+    </div>
+    <div class="spacer"></div>
+    <a class="btn" href="ameliorations.html">🚀 Améliorations</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero">
+    <span class="eyebrow">Portail d'apprentissage</span>
+    <h1>Tous mes cours, réunis au même endroit</h1>
+    <p>Un hub interactif et évolutif pour réviser, approfondir et maîtriser les compétences de la 3ᵉ année IABD — et au-delà, pour le monde professionnel.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="stat-subjects">—</div><div class="lbl">Matières</div></div>
+    <div class="stat"><div class="num" id="stat-ready">—</div><div class="lbl">Prêtes</div></div>
+    <div class="stat"><div class="num">200+</div><div class="lbl">Questions</div></div>
+    <div class="stat"><div class="num">∞</div><div class="lbl">Extensible</div></div>
+  </div>
+
+  <div class="section">
+    <h2>📚 Matières</h2>
+    <p class="sub">Clique sur une matière disponible. Les cartes grisées sont des idées à construire ensemble.</p>
+    <div class="subjects" id="subjects"><!-- rendu par portal.js --></div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="callout">
+      <span class="label">💡 Comment ça marche</span>
+      <p>Chaque matière est un <strong>mini-site autonome</strong> avec ses cours, quiz, exercices et fiches téléchargeables. Le portail les relie. Pour en <strong>ajouter une</strong>, il suffit d'une entrée dans <code>assets/portal.js</code> et d'un dossier dans <code>matieres/</code> — l'architecture est pensée pour grandir.</p>
+    </div>
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Priorité du moment</span>
+      <p>Partiel de <strong>Rust</strong> demain : va droit à la <a href="matieres/rust/revision-express.html">Révision express</a> (l'essentiel en une page), puis approfondis avec le <a href="matieres/rust/rust-cursus.html">cursus complet</a>.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    Portail de cours ESGI · construit pour évoluer · <a href="ameliorations.html">feuille de route &amp; idées</a> · fait avec 💙
+  </div>
+
+  <script src="assets/portal.js"></script>
+</body>
+</html>

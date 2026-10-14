@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 9 — Maths du Big Data : Hashing, Bloom, MinHash, LSH</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 9</div>
+    <h1>Module 9 — Maths du Big Data ⭐</h1>
+    <p class="subtitle">Quand les données ne tiennent plus en mémoire ni en temps raisonnable, on troque l'exactitude contre des réponses <em>approchées mais ultra-rapides et compactes</em>. Hashing, structures probabilistes, streaming et similarité à grande échelle : les maths qui font tourner le Big Data.</p>
+
+    <div class="domains">
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Comprendre le hachage et les collisions ; savoir ce qu'est un filtre de Bloom et un HyperLogLog ; comprendre similarité de Jaccard, MinHash et LSH ; saisir le modèle streaming et la logique MapReduce.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#hash">Hachage &amp; collisions</a></li>
+        <li><a href="#bloom">Filtre de Bloom</a></li>
+        <li><a href="#hll">HyperLogLog (comptage)</a></li>
+        <li><a href="#jaccard">Jaccard &amp; MinHash</a></li>
+        <li><a href="#lsh">LSH (voisins proches)</a></li>
+        <li><a href="#stream">Streaming &amp; MapReduce</a></li>
+        <li><a href="#data">Domaines &amp; métiers</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section class="block" id="hash">
+      <h2>1. Hachage &amp; collisions</h2>
+      <div class="callout def">
+        <span class="label">Fonction de hachage</span>
+        Une <strong>fonction de hachage</strong> \(h\) transforme une donnée (clé) de taille quelconque en un entier de taille fixe (l'empreinte), idéalement réparti uniformément. Propriétés voulues : rapide, déterministe, uniforme.
+      </div>
+      <div class="callout theorem">
+        <span class="label">Collisions (lien Modules 1, 7)</span>
+        Deux clés différentes peuvent avoir le même haché : c'est une <strong>collision</strong>. Par le principe des tiroirs, elles sont inévitables dès qu'il y a plus de clés que de cases. On les gère (chaînage, adressage ouvert) ou on les <em>exploite</em> (structures probabilistes ci-dessous).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien</span>
+        Hachage = base des <strong>tables de hachage</strong> (O(1) moyen), du <strong>sharding</strong> (répartir les données par \(h(\text{clé}) \bmod n\), lien congruence Module 1), du <strong>consistent hashing</strong> (équilibrage de charge, caches distribués).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Une collision de hachage se produit quand…</div>
+        <div class="options">
+          <div class="opt">deux clés identiques ont le même haché</div>
+          <div class="opt">deux clés différentes ont le même haché</div>
+          <div class="opt">une clé n'a pas de haché</div>
+          <div class="opt">la table est vide</div>
+        </div>
+        <div class="feedback" data-explain="Collision = deux clés DIFFÉRENTES tombent sur la même case. Inévitable dès qu'il y a plus de clés que de cases (principe des tiroirs, Module 7)."></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="bloom">
+      <h2>2. Filtre de Bloom ⭐</h2>
+      <div class="callout def">
+        <span class="label">Principe</span>
+        Un <strong>filtre de Bloom</strong> teste l'appartenance à un ensemble de façon ultra-compacte. Un tableau de \(m\) bits + \(k\) fonctions de hachage. Pour <em>insérer</em> \(x\) : on met à 1 les bits \(h_1(x),\dots,h_k(x)\). Pour <em>tester</em> \(x\) : si l'un de ces bits est 0 → <strong>absent à coup sûr</strong> ; s'ils sont tous à 1 → <strong>probablement présent</strong>.
+      </div>
+      <div class="callout warning">
+        <span class="label">Compromis fondamental</span>
+        <strong>Faux positifs possibles, faux négatifs impossibles.</strong> On peut croire à tort qu'un élément est présent, jamais l'inverse. En échange : mémoire minuscule, tests en O(k). Taux de faux positifs ≈ \(\left(1 - e^{-kn/m}\right)^k\).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien</span>
+        Bases NoSQL (Cassandra, HBase, Bigtable) : éviter de lire le disque pour une clé absente. Navigateurs : URLs malveillantes. Caches, dédup, « cet utilisateur a-t-il déjà vu ce contenu ? ».
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Un filtre de Bloom répond « présent ». Que peut-on conclure ?</div>
+        <div class="options">
+          <div class="opt">l'élément est certainement présent</div>
+          <div class="opt">l'élément est certainement absent</div>
+          <div class="opt">l'élément est probablement présent (faux positif possible)</div>
+          <div class="opt">le filtre est cassé</div>
+        </div>
+        <div class="feedback" data-explain="Bloom : « présent » = PROBABLEMENT présent (faux positif possible). Seul « absent » est certain. D'où son usage comme pré-filtre avant une vérification coûteuse."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.2</strong></div>
+        <div class="qtext">Quel type d'erreur un filtre de Bloom ne commet JAMAIS ?</div>
+        <div class="options">
+          <div class="opt">faux négatif (dire « absent » à tort)</div>
+          <div class="opt">faux positif</div>
+          <div class="opt">aucune erreur</div>
+          <div class="opt">il se trompe toujours</div>
+        </div>
+        <div class="feedback" data-explain="Un élément inséré a tous ses bits à 1 : le test le retrouvera toujours. Donc jamais de faux négatif. Seuls les faux positifs existent."></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="hll">
+      <h2>3. HyperLogLog — compter les éléments distincts</h2>
+      <div class="callout def">
+        <span class="label">Problème &amp; idée</span>
+        Compter le nombre d'<strong>éléments distincts</strong> (cardinalité) dans un flux massif, sans stocker tous les éléments. <strong>HyperLogLog</strong> estime ce nombre avec une précision ~2 % en utilisant seulement quelques <strong>kilo-octets</strong>, en observant le plus long préfixe de zéros dans les hachés (plus on voit de zéros, plus il y a probablement d'éléments distincts).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien</span>
+        « Combien de visiteurs uniques aujourd'hui ? » sur des milliards d'événements : Redis, Presto, BigQuery (<code>APPROX_COUNT_DISTINCT</code>) utilisent HyperLogLog. Compter l'exact coûterait trop de mémoire.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">HyperLogLog sert à estimer…</div>
+        <div class="options">
+          <div class="opt">la somme des valeurs</div>
+          <div class="opt">le nombre d'éléments distincts (cardinalité)</div>
+          <div class="opt">la médiane</div>
+          <div class="opt">le maximum</div>
+        </div>
+        <div class="feedback" data-explain="HLL estime le nombre de valeurs DISTINCTES d'un flux avec très peu de mémoire (ex. visiteurs uniques). Idéal quand l'exact serait trop coûteux."></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="jaccard">
+      <h2>4. Similarité de Jaccard &amp; MinHash ⭐</h2>
+      <div class="callout def">
+        <span class="label">Indice de Jaccard</span>
+        Pour deux ensembles \(A,B\) :
+        \[ J(A,B) = \frac{|A\cap B|}{|A\cup B|} \in [0,1] \]
+        1 = identiques, 0 = disjoints. Mesure la similarité de deux ensembles (ex. mots de deux documents).
+      </div>
+      <div class="callout theorem">
+        <span class="label">MinHash — l'astuce géniale</span>
+        En appliquant une permutation aléatoire \(h\) et en gardant le minimum des hachés, on a la propriété magique :
+        \[ P\big(\min h(A) = \min h(B)\big) = J(A,B) \]
+        En répétant avec \(k\) fonctions, on estime \(J\) en comparant de petites <strong>signatures</strong> au lieu des ensembles entiers. Compression énorme.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        Détection de <strong>quasi-doublons</strong> (pages web, articles), de plagiat, de similarité de documents à l'échelle du web.
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">\(A=\{1,2,3,4\}\), \(B=\{3,4,5\}\). Que vaut l'indice de Jaccard \(J(A,B)\) ?</div>
+        <div class="options">
+          <div class="opt">1/2</div>
+          <div class="opt">3/4</div>
+          <div class="opt">2/3</div>
+          <div class="opt">2/5</div>
+        </div>
+        <div class="feedback" data-explain="A∩B={3,4} (2 éléments), A∪B={1,2,3,4,5} (5 éléments). J = 2/5 = 0,4."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.2</strong></div>
+        <div class="qtext">La propriété clé de MinHash est que \(P(\min h(A)=\min h(B))\) égale…</div>
+        <div class="options">
+          <div class="opt">la similarité de Jaccard J(A,B)</div>
+          <div class="opt">0 toujours</div>
+          <div class="opt">la taille de A</div>
+          <div class="opt">la distance euclidienne</div>
+        </div>
+        <div class="feedback" data-explain="C'est le théorème central de MinHash : la probabilité de collision des minima estime exactement J(A,B). On remplace des ensembles énormes par de courtes signatures."></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="lsh">
+      <h2>5. LSH — Locality-Sensitive Hashing</h2>
+      <div class="callout def">
+        <span class="label">Idée</span>
+        Problème : trouver les voisins proches parmi des milliards de vecteurs est trop coûteux en comparaison exhaustive (\(O(n^2)\)). <strong>LSH</strong> utilise des fonctions de hachage spéciales telles que les éléments <strong>similaires</strong> tombent dans la <strong>même case</strong> avec forte probabilité. On ne compare alors qu'au sein des cases.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> <span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien</span>
+        <strong>Recherche de voisins approchés (ANN)</strong> dans les bases vectorielles (recommandation, recherche d'images, RAG des LLM). Alternatives modernes : HNSW, FAISS. Transforme une recherche \(O(n)\) en quasi-\(O(1)\).
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Contrairement au hachage classique, LSH veut que…</div>
+        <div class="options">
+          <div class="opt">tout soit réparti uniformément sans structure</div>
+          <div class="opt">chaque élément ait une case unique</div>
+          <div class="opt">les éléments similaires tombent dans la même case</div>
+          <div class="opt">il n'y ait jamais de collision</div>
+        </div>
+        <div class="feedback" data-explain="LSH cherche justement à provoquer des collisions ENTRE éléments similaires, pour regrouper les candidats voisins et éviter la comparaison exhaustive."></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="stream">
+      <h2>6. Streaming &amp; MapReduce</h2>
+      <div class="callout def">
+        <span class="label">Modèle streaming</span>
+        Les données arrivent en <strong>flux continu</strong>, vues une seule fois, trop volumineuses pour être stockées. On maintient un <strong>résumé</strong> (sketch) en mémoire limitée : moyenne glissante, comptage approché, top-k fréquents (Count-Min Sketch), quantiles approchés.
+      </div>
+      <div class="callout def">
+        <span class="label">MapReduce — diviser pour régner (lien récurrence Module 0)</span>
+        <ul>
+          <li><strong>Map</strong> : transformer chaque donnée en paires (clé, valeur), en parallèle sur des milliers de machines.</li>
+          <li><strong>Shuffle</strong> : regrouper par clé (lien partition / relation d'équivalence, Module 1 !).</li>
+          <li><strong>Reduce</strong> : agréger les valeurs de chaque clé.</li>
+        </ul>
+        Les opérations <strong>associatives et commutatives</strong> (somme, max, union…) se parallélisent parfaitement — c'est un critère mathématique.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien</span>
+        Hadoop, Spark, Flink. Le fameux « word count » est le hello world de MapReduce. Le streaming alimente la détection de fraude en temps réel, les dashboards live, l'IoT.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">Dans MapReduce, l'étape « Shuffle » regroupe les données…</div>
+        <div class="options">
+          <div class="opt">au hasard</div>
+          <div class="opt">par clé (comme une partition / relation d'équivalence)</div>
+          <div class="opt">par ordre d'arrivée</div>
+          <div class="opt">par taille</div>
+        </div>
+        <div class="feedback" data-explain="Le shuffle regroupe toutes les valeurs d'une même clé ensemble : c'est exactement une partition par la relation « avoir la même clé » (Module 1). Puis Reduce agrège chaque groupe."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.2</strong></div>
+        <div class="qtext">Quelle propriété mathématique d'une opération la rend facilement parallélisable (MapReduce) ?</div>
+        <div class="options">
+          <div class="opt">être associative et commutative (ex. somme, max, union)</div>
+          <div class="opt">être une division</div>
+          <div class="opt">être non déterministe</div>
+          <div class="opt">être récursive uniquement</div>
+        </div>
+        <div class="feedback" data-explain="Associativité + commutativité permettent de combiner les résultats partiels dans n'importe quel ordre/regroupement → parallélisme massif. La soustraction/division ne le permettent pas."></div>
+      </div>
+    </section>
+
+    <!-- DATA & MÉTIERS -->
+    <section class="block" id="data">
+      <h2>7. Domaines, usages &amp; métiers</h2>
+      <div class="legend">
+        <span class="domain data"><span class="dot"></span>DATA</span>
+        <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+        <span class="domain ia"><span class="dot"></span>IA</span>
+      </div>
+      <div class="jobs">
+        <div class="jhead">💼 Usages concrets</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Notion</th><th>Domaine</th><th>Usage</th><th>Métiers</th></tr></thead>
+            <tbody>
+              <tr><td>Hashing / sharding</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Tables O(1), répartition, caches distribués</td><td>Data Engineer, SRE</td></tr>
+              <tr><td>Filtre de Bloom</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Pré-filtre NoSQL, dédup, sécurité URL</td><td>Data Engineer, Backend</td></tr>
+              <tr><td>HyperLogLog</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Visiteurs uniques, cardinalité approchée</td><td>Data Engineer, Analyst</td></tr>
+              <tr><td>MinHash/Jaccard</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Quasi-doublons, plagiat, similarité docs</td><td>Data Scientist</td></tr>
+              <tr><td>LSH / ANN</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Recherche vectorielle, reco, RAG</td><td>ML Engineer, Search</td></tr>
+              <tr><td>MapReduce/Streaming</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Traitement distribué, temps réel</td><td>Data Engineer, MLOps</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="http://www.mmds.org/" target="_blank">Mining of Massive Datasets (livre gratuit, référence)</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Filtre_de_Bloom" target="_blank">Filtre de Bloom</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/MinHash" target="_blank">MinHash</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/MapReduce" target="_blank">MapReduce</a>
+      </div>
+    </section>
+
+    <!-- EXOS -->
+    <section class="block" id="exos">
+      <h2>8. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Jaccard</h3>
+      <p>Deux documents ont pour ensembles de mots \(A=\{data,big,math,ia\}\) et \(B=\{big,math,ia,ml\}\). Calcule leur similarité de Jaccard.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(A\cap B=\{big,math,ia\}\) (3), \(A\cup B=\{data,big,math,ia,ml\}\) (5). \(J=3/5=0{,}6\) → assez similaires.</p>
+      </details>
+
+      <h3>Exercice 2 — Bloom (⭐)</h3>
+      <p>Pourquoi un filtre de Bloom est-il parfait comme pré-filtre avant une lecture disque coûteuse dans une base NoSQL ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Si Bloom dit « absent » (certain), on évite une lecture disque inutile — gain énorme pour les clés inexistantes. S'il dit « présent » (peut-être), on lit le disque pour vérifier. Comme il n'y a jamais de faux négatif, on ne rate jamais une vraie donnée. Coût mémoire minuscule pour un gain massif en I/O.</p>
+      </details>
+
+      <h3>Exercice 3 — MapReduce (⭐)</h3>
+      <p>Esquisse le « word count » (compter les occurrences de chaque mot) en Map/Reduce.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p><strong>Map</strong> : pour chaque mot \(w\) lu, émettre \((w, 1)\). <strong>Shuffle</strong> : regrouper par mot. <strong>Reduce</strong> : pour chaque mot, sommer les 1 → \((w, \text{total})\). La somme est associative/commutative → parallélisable sur tout le cluster.</p>
+      </details>
+
+      <h3>Exercice 4 — Synthèse transversale (⭐⭐)</h3>
+      <p>Relie chaque outil de ce module à une notion d'un module précédent.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <ul>
+          <li>Collisions ← principe des tiroirs (Module 7) &amp; congruence (Module 1).</li>
+          <li>Shuffle MapReduce ← partition / relation d'équivalence (Module 1).</li>
+          <li>MinHash ← probabilités (Module 3) &amp; ensembles (Module 0).</li>
+          <li>LSH/ANN ← similarité cosinus &amp; vecteurs (Module 2).</li>
+          <li>MapReduce « diviser pour régner » ← récurrence (Module 0) &amp; complexité (Module 7).</li>
+        </ul>
+        <p>Tout le cours se referme ici : le Big Data, c'est l'algèbre + les probas + le discret appliqués à l'échelle. 🎯</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="9">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-9-big-data.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-8-information.html"><div class="dir">← Précédent</div><div class="ttl">Module 8 · Théorie de l'information</div></a>
+      <a class="next" href="../index.html"><div class="dir">Fin 🎉 →</div><div class="ttl">Retour à l'accueil</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 9 — Maths du Big Data · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

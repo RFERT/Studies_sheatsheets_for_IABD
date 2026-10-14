@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 8 — Théorie de l'information : Entropie &amp; Cross-Entropy</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 8</div>
+    <h1>Module 8 — Théorie de l'information</h1>
+    <p class="subtitle">Mesurer l'information, l'incertitude et la surprise. De la compression de données aux fonctions de perte des réseaux de neurones, l'entropie de Shannon est un pilier discret mais omniprésent de l'IA.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Comprendre l'information et l'entropie de Shannon ; connaître entropie croisée et divergence KL ; relier à l'arbre de décision (gain d'information) et aux fonctions de perte ; voir le lien avec la compression.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#info">Information &amp; surprise</a></li>
+        <li><a href="#entropie">Entropie de Shannon</a></li>
+        <li><a href="#cross">Entropie croisée &amp; KL</a></li>
+        <li><a href="#mutual">Information mutuelle</a></li>
+        <li><a href="#tree">Gain d'information (arbres)</a></li>
+        <li><a href="#data">Domaines &amp; métiers</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section class="block" id="info">
+      <h2>1. Information &amp; surprise</h2>
+      <div class="callout def">
+        <span class="label">Quantité d'information</span>
+        L'information d'un événement de probabilité \(p\) est \(I = -\log_2 p\) (en <strong>bits</strong>). Un événement <strong>rare</strong> (p petit) apporte <strong>beaucoup</strong> d'information (grande surprise) ; un événement certain (p=1) n'apporte rien (\(I=0\)).
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple</span>
+        Une pièce équilibrée : chaque résultat a \(p=1/2\), donc \(I=-\log_2(1/2)=1\) bit. Apprendre le résultat d'un lancer = 1 bit d'information. Un dé à 8 faces : \(-\log_2(1/8)=3\) bits.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Quel événement apporte le PLUS d'information ?</div>
+        <div class="options">
+          <div class="opt">un événement certain (p=1)</div>
+          <div class="opt">un événement très rare (p proche de 0)</div>
+          <div class="opt">un événement à p=0,5</div>
+          <div class="opt">tous apportent autant</div>
+        </div>
+        <div class="feedback" data-explain="I = −log₂ p augmente quand p diminue. Un événement rare est très « surprenant » → beaucoup d'information. Le certain n'apprend rien (I=0)."></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="entropie">
+      <h2>2. Entropie de Shannon ⭐</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        L'<strong>entropie</strong> d'une variable \(X\) est l'information moyenne (l'incertitude) :
+        \[ H(X) = -\sum_i p_i \log_2 p_i \]
+        Mesurée en bits. Maximale quand tout est équiprobable (incertitude totale), nulle quand le résultat est certain.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple</span>
+        <p>Pièce équilibrée : \(H=-(0{,}5\log_2 0{,}5 + 0{,}5\log_2 0{,}5)=1\) bit (max pour 2 issues).</p>
+        <p>Pièce truquée (p=0,9 / 0,1) : \(H\approx 0{,}47\) bit — moins d'incertitude, donc moins d'information moyenne, donc <strong>plus compressible</strong>.</p>
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien — compression</span>
+        L'entropie est la <strong>limite théorique</strong> de compression (théorème de Shannon) : on ne peut pas compresser en dessous de \(H\) bits/symbole sans perte. Huffman, ZIP, codage arithmétique s'en approchent.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">L'entropie d'une variable est maximale quand…</div>
+        <div class="options">
+          <div class="opt">toutes les issues sont équiprobables</div>
+          <div class="opt">une issue est certaine</div>
+          <div class="opt">il n'y a qu'une seule issue</div>
+          <div class="opt">les probas sont très inégales</div>
+        </div>
+        <div class="feedback" data-explain="L'incertitude (donc l'entropie) est maximale quand on ne peut rien prédire : équiprobabilité. Pour n issues, H_max = log₂ n."></div>
+      </div>
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.2</strong></div>
+        <div class="qtext">Un jeu de données très prévisible (une classe à 99 %) a une entropie…</div>
+        <div class="options">
+          <div class="opt">maximale</div>
+          <div class="opt">infinie</div>
+          <div class="opt">faible (donc très compressible)</div>
+          <div class="opt">négative</div>
+        </div>
+        <div class="feedback" data-explain="Peu d'incertitude → faible entropie → forte compressibilité. Les données répétitives/prévisibles se compressent bien."></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="cross">
+      <h2>3. Entropie croisée &amp; divergence KL ⭐</h2>
+      <div class="callout def">
+        <span class="label">Entropie croisée</span>
+        Pour une vraie distribution \(p\) et une distribution prédite \(q\) :
+        \[ H(p,q) = -\sum_i p_i \log q_i \]
+        C'est le « coût » d'utiliser \(q\) pour coder des données issues de \(p\). Minimale quand \(q=p\).
+      </div>
+      <div class="callout def">
+        <span class="label">Divergence de Kullback-Leibler (KL)</span>
+        \[ D_{KL}(p\,\|\,q) = \sum_i p_i \log\frac{p_i}{q_i} = H(p,q) - H(p) \ge 0 \]
+        Mesure « combien \(q\) s'éloigne de \(p\) ». \(D_{KL}=0\) ssi \(q=p\). ⚠️ Non symétrique : \(D_{KL}(p\|q)\neq D_{KL}(q\|p)\).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien fondamental</span>
+        La <strong>cross-entropy est LA fonction de perte</strong> de la classification (régression logistique, réseaux de neurones, softmax). Minimiser la cross-entropy = rapprocher les prédictions \(q\) de la vérité \(p\) = maximum de vraisemblance (Module 4). La KL apparaît dans les VAE, la distillation, le RLHF.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">En classification, minimiser la cross-entropy revient à…</div>
+        <div class="options">
+          <div class="opt">augmenter l'erreur</div>
+          <div class="opt">rapprocher les prédictions q de la vraie distribution p</div>
+          <div class="opt">ignorer les labels</div>
+          <div class="opt">maximiser l'entropie</div>
+        </div>
+        <div class="feedback" data-explain="H(p,q) est minimale quand q=p. L'entraînement ajuste les prédictions q pour coller aux vrais labels p. C'est équivalent au maximum de vraisemblance."></div>
+      </div>
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.2</strong></div>
+        <div class="qtext">Quelle propriété a la divergence KL ?</div>
+        <div class="options">
+          <div class="opt">elle est symétrique</div>
+          <div class="opt">elle peut être négative</div>
+          <div class="opt">elle vaut toujours 1</div>
+          <div class="opt">elle est ≥ 0, nulle ssi q = p, et non symétrique</div>
+        </div>
+        <div class="feedback" data-explain="D_KL(p‖q) ≥ 0 (inégalité de Gibbs), = 0 ⇔ q=p, et D_KL(p‖q) ≠ D_KL(q‖p) en général. Ce n'est donc pas une vraie distance."></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="mutual">
+      <h2>4. Information mutuelle</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        L'<strong>information mutuelle</strong> \(I(X;Y) = H(X) - H(X\mid Y)\) mesure combien connaître \(Y\) réduit l'incertitude sur \(X\). \(I(X;Y)=0\) ssi \(X\) et \(Y\) sont indépendants.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        Sélection de features (garder les variables les plus informatives sur la cible), détection de dépendances non linéaires (là où la corrélation de Pearson échoue, Module 4).
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Si \(X\) et \(Y\) sont indépendants, leur information mutuelle vaut…</div>
+        <div class="options">
+          <div class="opt">0</div>
+          <div class="opt">1</div>
+          <div class="opt">l'infini</div>
+          <div class="opt">H(X)</div>
+        </div>
+        <div class="feedback" data-explain="Indépendance ⇒ connaître Y n'apprend rien sur X ⇒ I(X;Y)=0. À l'inverse, forte dépendance = forte information mutuelle."></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="tree">
+      <h2>5. Gain d'information (arbres de décision)</h2>
+      <div class="callout def">
+        <span class="label">Gain d'information</span>
+        Lors de la construction d'un <strong>arbre de décision</strong>, on choisit à chaque nœud l'attribut qui maximise le <strong>gain d'information</strong> = réduction d'entropie après la séparation :
+        \[ \text{Gain} = H(\text{avant}) - \sum_j \frac{n_j}{n} H(\text{branche}_j) \]
+        On sépare là où l'on « purifie » le plus les classes.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien</span>
+        ID3, C4.5, et le critère de Gini (proche) dans CART / Random Forest / arbres de gradient (XGBoost). L'entropie guide les meilleurs splits.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Un arbre de décision choisit la séparation qui…</div>
+        <div class="options">
+          <div class="opt">augmente l'entropie</div>
+          <div class="opt">choisit au hasard</div>
+          <div class="opt">maximise le gain d'information (réduit le plus l'entropie)</div>
+          <div class="opt">minimise le nombre de branches</div>
+        </div>
+        <div class="feedback" data-explain="On privilégie l'attribut qui rend les groupes les plus « purs » (faible entropie après split), donc le plus grand gain d'information."></div>
+      </div>
+    </section>
+
+    <!-- DATA & MÉTIERS -->
+    <section class="block" id="data">
+      <h2>6. Domaines, usages &amp; métiers</h2>
+      <div class="legend">
+        <span class="domain data"><span class="dot"></span>DATA</span>
+        <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+        <span class="domain ia"><span class="dot"></span>IA</span>
+      </div>
+      <div class="jobs">
+        <div class="jhead">💼 Usages concrets</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Notion</th><th>Domaine</th><th>Usage</th><th>Métiers</th></tr></thead>
+            <tbody>
+              <tr><td>Entropie</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Compression (ZIP, Huffman), limite théorique</td><td>Data Engineer, Systèmes</td></tr>
+              <tr><td>Cross-entropy</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Fonction de perte en classification</td><td>ML/DL Engineer</td></tr>
+              <tr><td>KL</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>VAE, distillation, RLHF, régularisation</td><td>Research Scientist</td></tr>
+              <tr><td>Info mutuelle</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Sélection de features</td><td>Data Scientist</td></tr>
+              <tr><td>Gain d'info</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Arbres de décision, Random Forest</td><td>Data Scientist, ML Eng.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Entropie_de_Shannon" target="_blank">Entropie de Shannon</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Entropie_crois%C3%A9e" target="_blank">Entropie croisée</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Divergence_de_Kullback-Leibler" target="_blank">Divergence KL</a>
+        <a class="pill-link" href="https://colah.github.io/posts/2015-09-Visual-Information/" target="_blank">Visual Information Theory (colah)</a>
+      </div>
+    </section>
+
+    <!-- EXOS -->
+    <section class="block" id="exos">
+      <h2>7. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Information</h3>
+      <p>Quelle information (en bits) apporte le résultat d'un dé équilibré à 6 faces ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(I = -\log_2(1/6) = \log_2 6 \approx 2{,}585\) bits. (Entre 2 bits pour 4 issues et 3 bits pour 8.)</p>
+      </details>
+
+      <h3>Exercice 2 — Entropie</h3>
+      <p>Calcule l'entropie d'une source à 4 symboles équiprobables.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(H = -4\times\frac14\log_2\frac14 = \log_2 4 = 2\) bits. (On peut coder chaque symbole sur exactement 2 bits : 00, 01, 10, 11.)</p>
+      </details>
+
+      <h3>Exercice 3 — Cross-entropy (⭐)</h3>
+      <p>Vrai label one-hot \(p=(1,0)\), prédiction \(q=(0{,}8,\ 0{,}2)\). Calcule la cross-entropy.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(H(p,q) = -[1\cdot\log 0{,}8 + 0\cdot\log 0{,}2] = -\log 0{,}8\). En log₂ : \(\approx 0{,}32\) bit. Si la prédiction avait été \(q=(0{,}99,0{,}01)\), la perte serait bien plus faible (bonne prédiction).</p>
+      </details>
+
+      <h3>Exercice 4 — Gain d'information (⭐⭐)</h3>
+      <p>Pourquoi un attribut qui sépare parfaitement les classes a-t-il le gain d'information maximal ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Après une séparation parfaite, chaque branche ne contient qu'une seule classe → entropie de chaque branche = 0 → le terme soustrait \(\sum \frac{n_j}{n}H(\text{branche}_j)=0\). Le gain = \(H(\text{avant}) - 0 = H(\text{avant})\), c'est-à-dire le maximum possible. L'arbre privilégie donc ces splits « purs ».</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="8">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-8-information.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-7-discret-complexite.html"><div class="dir">← Précédent</div><div class="ttl">Module 7 · Discret &amp; Complexité</div></a>
+      <a class="next" href="module-9-big-data.html"><div class="dir">Suivant →</div><div class="ttl">Module 9 · Maths du Big Data</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 8 — Théorie de l'information · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

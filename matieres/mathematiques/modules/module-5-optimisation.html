@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 5 — Analyse &amp; Optimisation : Gradient &amp; Descente</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 5</div>
+    <h1>Module 5 — Analyse &amp; Optimisation</h1>
+    <p class="subtitle">Comment un modèle « apprend » : en minimisant une fonction de coût. Dérivées, gradient et descente de gradient sont le moteur de TOUT le deep learning. Si tu ne devais retenir qu'un module pour l'IA, ce serait celui-ci.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Comprendre dérivée et gradient ; interpréter les dérivées partielles ; savoir ce qu'est la convexité ; dérouler la descente de gradient et ses variantes ; comprendre la rétropropagation à haut niveau.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#deriv">Dérivées</a></li>
+        <li><a href="#grad">Gradient &amp; dérivées partielles</a></li>
+        <li><a href="#convex">Convexité</a></li>
+        <li><a href="#gd">Descente de gradient</a></li>
+        <li><a href="#variantes">Variantes &amp; learning rate</a></li>
+        <li><a href="#backprop">Chain rule &amp; rétropropagation</a></li>
+        <li><a href="#data">Domaines &amp; métiers</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section class="block" id="deriv">
+      <h2>1. Dérivées</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        La <strong>dérivée</strong> \(f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}\) est la <strong>pente</strong> de la courbe en \(x\) : le taux de variation instantané. \(f'(x)>0\) = ça monte, \(<0\) = ça descend, \(=0\) = plat (extremum potentiel).
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>\(f(x)\)</th><th>\(f'(x)\)</th></tr></thead>
+          <tbody>
+            <tr><td>\(x^n\)</td><td>\(n x^{n-1}\)</td></tr>
+            <tr><td>\(e^x\)</td><td>\(e^x\)</td></tr>
+            <tr><td>\(\ln x\)</td><td>\(1/x\)</td></tr>
+            <tr><td>\(\sin x\)</td><td>\(\cos x\)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout theorem">
+        <span class="label">Règles essentielles</span>
+        Produit : \((uv)'=u'v+uv'\). Quotient : \((u/v)'=\frac{u'v-uv'}{v^2}\). <strong>Composition (chain rule)</strong> : \((f\circ g)'(x)=f'(g(x))\cdot g'(x)\) — la clé de la rétropropagation.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Que vaut la dérivée de \(f(x)=x^3\) ?</div>
+        <div class="options">
+          <div class="opt">\(x^2\)</div>
+          <div class="opt">\(3x^2\)</div>
+          <div class="opt">\(3x\)</div>
+          <div class="opt">\(x^3/3\)</div>
+        </div>
+        <div class="feedback" data-explain="Règle de puissance : \((x^n)'=nx^{n-1}\), donc \((x^3)'=3x^2\)."></div>
+      </div>
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.2</strong></div>
+        <div class="qtext">En un minimum local d'une fonction dérivable, la dérivée vaut…</div>
+        <div class="options">
+          <div class="opt">toujours positive</div>
+          <div class="opt">l'infini</div>
+          <div class="opt">0 (tangente horizontale)</div>
+          <div class="opt">négative</div>
+        </div>
+        <div class="feedback" data-explain="À un extremum intérieur, f'(x)=0 : la pente est nulle. (Condition nécessaire, pas suffisante : il faut vérifier f'' ou le signe.)"></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="grad">
+      <h2>2. Gradient &amp; dérivées partielles</h2>
+      <div class="callout def">
+        <span class="label">Dérivée partielle &amp; gradient</span>
+        Pour \(f(x_1,\dots,x_n)\), la <strong>dérivée partielle</strong> \(\frac{\partial f}{\partial x_i}\) dérive par rapport à \(x_i\) (les autres fixes). Le <strong>gradient</strong> est le vecteur de toutes :
+        \[ \nabla f = \left(\frac{\partial f}{\partial x_1},\dots,\frac{\partial f}{\partial x_n}\right) \]
+      </div>
+      <div class="callout theorem">
+        <span class="label">Propriété clé ⭐</span>
+        Le gradient \(\nabla f\) pointe dans la direction de <strong>plus forte augmentation</strong> de \(f\). Donc \(-\nabla f\) pointe vers la <strong>plus forte diminution</strong> : c'est la direction où aller pour <em>minimiser</em>. Tout l'apprentissage est là.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple</span>
+        \(f(x,y)=x^2+3y^2\). \(\frac{\partial f}{\partial x}=2x\), \(\frac{\partial f}{\partial y}=6y\), donc \(\nabla f=(2x,6y)\). Au point \((1,1)\) : \(\nabla f=(2,6)\).
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Le gradient \(\nabla f\) pointe vers…</div>
+        <div class="options">
+          <div class="opt">la plus forte augmentation de f</div>
+          <div class="opt">la plus forte diminution de f</div>
+          <div class="opt">un point au hasard</div>
+          <div class="opt">toujours l'origine</div>
+        </div>
+        <div class="feedback" data-explain="∇f indique la montée la plus raide. Pour minimiser une fonction de coût, on va dans le sens OPPOSÉ : −∇f."></div>
+      </div>
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.2</strong></div>
+        <div class="qtext">Pour \(f(x,y)=x^2+y^2\), que vaut \(\nabla f\) au point \((3,4)\) ?</div>
+        <div class="options">
+          <div class="opt">\((3,4)\)</div>
+          <div class="opt">\((9,16)\)</div>
+          <div class="opt">\((2,2)\)</div>
+          <div class="opt">\((6,8)\)</div>
+        </div>
+        <div class="feedback" data-explain="∂f/∂x=2x, ∂f/∂y=2y, donc ∇f=(2x,2y)=(6,8) en (3,4)."></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="convex">
+      <h2>3. Convexité</h2>
+      <div class="callout def">
+        <span class="label">Fonction convexe</span>
+        \(f\) est <strong>convexe</strong> si son graphe est « en bol » : tout segment entre deux points de la courbe reste au-dessus d'elle. Critère : \(f''(x)\ge0\) (1D) ou Hessienne semi-définie positive (nD).
+      </div>
+      <div class="callout theorem">
+        <span class="label">Pourquoi c'est crucial</span>
+        Pour une fonction convexe, <strong>tout minimum local est global</strong> : la descente de gradient trouve LA solution. Les fonctions non convexes (réseaux profonds) ont des minima locaux et points-selles — d'où la difficulté de l'entraînement.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien</span>
+        Régression linéaire / logistique, SVM = problèmes <strong>convexes</strong> (optimum garanti). Deep learning = <strong>non convexe</strong> (on se contente d'un bon minimum local).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Pour une fonction convexe, un minimum local est…</div>
+        <div class="options">
+          <div class="opt">rarement global</div>
+          <div class="opt">forcément global</div>
+          <div class="opt">impossible</div>
+          <div class="opt">toujours en zéro</div>
+        </div>
+        <div class="feedback" data-explain="La convexité garantit qu'il n'y a qu'un « bol » : tout minimum local est le minimum global. C'est pourquoi on adore les problèmes convexes."></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="gd">
+      <h2>4. Descente de gradient ⭐</h2>
+      <div class="callout theorem">
+        <span class="label">L'algorithme (à connaître par cœur)</span>
+        Pour minimiser une fonction de coût \(J(\theta)\), on répète :
+        \[ \theta \leftarrow \theta - \eta\,\nabla J(\theta) \]
+        où \(\eta\) est le <strong>taux d'apprentissage</strong> (learning rate). On fait de petits pas « vers le bas » jusqu'à convergence (gradient ≈ 0).
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple à la main</span>
+        <p>\(J(\theta)=\theta^2\), \(\nabla J=2\theta\), \(\eta=0{,}1\), départ \(\theta_0=5\).</p>
+        <p>\(\theta_1=5-0{,}1\times10=4\). \(\theta_2=4-0{,}1\times8=3{,}2\). \(\theta_3=3{,}2-0{,}1\times6{,}4=2{,}56\)… ça converge bien vers 0 (le minimum). ✔</p>
+      </div>
+      <div class="callout warning">
+        <span class="label">Le learning rate, paramètre critique</span>
+        Trop <strong>petit</strong> : convergence très lente. Trop <strong>grand</strong> : on « saute » le minimum, ça diverge (oscille et explose). Le régler est un art (voir variantes).
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Dans \(\theta \leftarrow \theta - \eta\nabla J\), pourquoi le signe « − » ?</div>
+        <div class="options">
+          <div class="opt">Par convention arbitraire</div>
+          <div class="opt">Pour augmenter J</div>
+          <div class="opt">Pour aller dans le sens opposé au gradient (descendre)</div>
+          <div class="opt">Pour annuler η</div>
+        </div>
+        <div class="feedback" data-explain="∇J monte ; on veut descendre (minimiser), donc on va dans la direction −∇J. D'où le signe moins."></div>
+      </div>
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.2</strong></div>
+        <div class="qtext">Un learning rate beaucoup trop grand provoque…</div>
+        <div class="options">
+          <div class="opt">une convergence parfaite</div>
+          <div class="opt">des oscillations / divergence (on saute le minimum)</div>
+          <div class="opt">un apprentissage plus précis</div>
+          <div class="opt">rien de spécial</div>
+        </div>
+        <div class="feedback" data-explain="Un pas trop grand fait dépasser le minimum à chaque itération : la perte oscille ou explose. Trop petit = lent. Il faut un juste milieu."></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="variantes">
+      <h2>5. Variantes &amp; learning rate</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Variante</th><th>Idée</th><th>Usage</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Batch GD</strong></td><td>gradient sur TOUT le dataset</td><td>précis mais lent</td></tr>
+            <tr><td><strong>SGD</strong> (stochastique)</td><td>gradient sur 1 exemple</td><td>rapide, bruité</td></tr>
+            <tr><td><strong>Mini-batch</strong></td><td>gradient sur un paquet (32–256)</td><td>standard en deep learning</td></tr>
+            <tr><td><strong>Momentum</strong></td><td>accumule l'élan</td><td>traverse les plateaux</td></tr>
+            <tr><td><strong>Adam</strong></td><td>learning rate adaptatif par paramètre</td><td>défaut moderne</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> <span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        Le <strong>mini-batch SGD</strong> rend l'apprentissage possible sur des datasets gigantesques (Big Data) : on n'a pas besoin de tout charger. <strong>Adam</strong> est l'optimiseur par défaut de la plupart des réseaux de neurones.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Pourquoi le mini-batch SGD est-il adapté au Big Data ?</div>
+        <div class="options">
+          <div class="opt">Il utilise tout le dataset à chaque pas</div>
+          <div class="opt">Il n'a pas besoin de gradient</div>
+          <div class="opt">Il met à jour sur de petits paquets, sans tout charger en mémoire</div>
+          <div class="opt">Il est exact</div>
+        </div>
+        <div class="feedback" data-explain="En traitant des mini-lots, on met à jour les paramètres fréquemment sans charger l'intégralité des données : idéal pour des volumes massifs et un entraînement rapide."></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="backprop">
+      <h2>6. Chain rule &amp; rétropropagation</h2>
+      <div class="callout def">
+        <span class="label">Rétropropagation (backprop)</span>
+        Un réseau de neurones est une <strong>composition</strong> de fonctions. Pour calculer le gradient de la perte par rapport à chaque poids, on applique la <strong>règle de la chaîne</strong> en remontant du coût vers les premières couches. C'est juste \((f\circ g)' = f'(g)\cdot g'\) appliqué à grande échelle.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien</span>
+        PyTorch / TensorFlow calculent ces gradients automatiquement (<strong>autograd</strong>). Comprendre la chain rule, c'est comprendre pourquoi/comment un réseau apprend.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">La rétropropagation repose mathématiquement sur…</div>
+        <div class="options">
+          <div class="opt">la règle de la chaîne (dérivée de composée)</div>
+          <div class="opt">le théorème de Bayes</div>
+          <div class="opt">la SVD</div>
+          <div class="opt">la loi des grands nombres</div>
+        </div>
+        <div class="feedback" data-explain="Backprop = application systématique de la chain rule (f∘g)'=f'(g)·g' pour propager les gradients couche par couche, de la sortie vers l'entrée."></div>
+      </div>
+    </section>
+
+    <!-- DATA & MÉTIERS -->
+    <section class="block" id="data">
+      <h2>7. Domaines, usages &amp; métiers</h2>
+      <div class="legend">
+        <span class="domain data"><span class="dot"></span>DATA</span>
+        <span class="domain ia"><span class="dot"></span>IA</span>
+      </div>
+      <div class="jobs">
+        <div class="jhead">💼 Usages concrets</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Notion</th><th>Domaine</th><th>Usage</th><th>Métiers</th></tr></thead>
+            <tbody>
+              <tr><td>Gradient</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Direction d'apprentissage de tout modèle</td><td>ML Engineer, Chercheur</td></tr>
+              <tr><td>Descente de gradient</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Entraînement (deep learning, régression)</td><td>Data Scientist, ML Eng.</td></tr>
+              <tr><td>Convexité</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Garantie d'optimum (SVM, régression)</td><td>Chercheur, Optimisation</td></tr>
+              <tr><td>Mini-batch SGD</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Apprentissage sur gros volumes</td><td>ML Engineer, MLOps</td></tr>
+              <tr><td>Backprop</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Cœur des frameworks (PyTorch/TF)</td><td>Deep Learning Engineer</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://www.3blue1brown.com/topics/neural-networks" target="_blank">3Blue1Brown — Réseaux de neurones &amp; backprop</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Algorithme_du_gradient" target="_blank">Descente de gradient</a>
+        <a class="pill-link" href="https://www.khanacademy.org/math/multivariable-calculus" target="_blank">Khan Academy — Calcul multivariable</a>
+      </div>
+    </section>
+
+    <!-- EXOS -->
+    <section class="block" id="exos">
+      <h2>8. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Dérivée</h3>
+      <p>Calcule la dérivée de \(f(x)=3x^2 - 4x + 7\) et trouve son minimum.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(f'(x)=6x-4\). Minimum quand \(f'=0\) : \(x=4/6=2/3\). (Et \(f''=6>0\) confirme un minimum.)</p>
+      </details>
+
+      <h3>Exercice 2 — Gradient</h3>
+      <p>\(f(x,y)=x^2 + xy + y^2\). Calcule \(\nabla f\) au point \((1,2)\).</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(\frac{\partial f}{\partial x}=2x+y\), \(\frac{\partial f}{\partial y}=x+2y\). En \((1,2)\) : \(\nabla f=(2+2,\ 1+4)=(4,5)\).</p>
+      </details>
+
+      <h3>Exercice 3 — Descente de gradient (⭐)</h3>
+      <p>\(J(\theta)=(\theta-3)^2\), \(\eta=0{,}5\), départ \(\theta_0=0\). Fais 2 itérations.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(\nabla J=2(\theta-3)\). \(\theta_1=0-0{,}5\times2(0-3)=0+3=3\). On tombe directement sur le minimum ! \(\theta_2=3-0{,}5\times2(3-3)=3\). (Avec η=0,5 et cette parabole, convergence en 1 pas.)</p>
+      </details>
+
+      <h3>Exercice 4 — Learning rate (⭐⭐)</h3>
+      <p>Avec \(J(\theta)=\theta^2\) (\(\nabla J=2\theta\)) et \(\eta=1\), que se passe-t-il depuis \(\theta_0=1\) ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(\theta_1=1-1\times2=-1\). \(\theta_2=-1-1\times(-2)=1\). \(\theta_3=-1\)… ça <strong>oscille</strong> entre 1 et −1 sans converger ! Le learning rate est trop grand. Il faudrait \(\eta<1\) ici pour converger.</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="5">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-5-optimisation.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-4-statistiques.html"><div class="dir">← Précédent</div><div class="ttl">Module 4 · Statistiques</div></a>
+      <a class="next" href="module-6-graphes.html"><div class="dir">Suivant →</div><div class="ttl">Module 6 · Graphes</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 5 — Analyse &amp; Optimisation · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

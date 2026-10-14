@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 4 — Statistiques : Estimation, Tests &amp; Régression</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 4</div>
+    <h1>Module 4 — Statistiques</h1>
+    <p class="subtitle">Faire parler les données : résumer, estimer, tester, prédire. Là où les probabilités modélisent le hasard « vers l'avant », les statistiques remontent des données vers le modèle. C'est le quotidien du Data Analyst et du Data Scientist.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Calculer et interpréter les statistiques descriptives ; comprendre l'estimation (ponctuelle, par intervalle) ; maîtriser les tests d'hypothèses et la p-value ; comprendre la régression linéaire et le maximum de vraisemblance.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#desc">Statistiques descriptives</a></li>
+        <li><a href="#corr">Covariance &amp; corrélation</a></li>
+        <li><a href="#estim">Estimation &amp; intervalles</a></li>
+        <li><a href="#tests">Tests d'hypothèses &amp; p-value</a></li>
+        <li><a href="#reg">Régression linéaire</a></li>
+        <li><a href="#mle">Maximum de vraisemblance</a></li>
+        <li><a href="#data">Domaines &amp; métiers</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section class="block" id="desc">
+      <h2>1. Statistiques descriptives</h2>
+      <div class="callout def">
+        <span class="label">Tendance centrale &amp; dispersion</span>
+        <ul>
+          <li><strong>Moyenne</strong> \(\bar x=\frac1n\sum x_i\) — sensible aux valeurs extrêmes.</li>
+          <li><strong>Médiane</strong> : valeur du milieu — robuste aux outliers.</li>
+          <li><strong>Mode</strong> : valeur la plus fréquente.</li>
+          <li><strong>Variance empirique</strong> \(s^2=\frac1{n-1}\sum(x_i-\bar x)^2\), écart-type \(s\).</li>
+          <li><strong>Quantiles</strong> : quartiles Q1, Q2 (médiane), Q3 ; IQR = Q3−Q1.</li>
+        </ul>
+      </div>
+      <div class="callout warning">
+        <span class="label">Moyenne vs médiane</span>
+        Sur des salaires (distribution asymétrique), la <strong>médiane</strong> est bien plus représentative : quelques très hauts salaires tirent la moyenne vers le haut. Toujours regarder la distribution, pas qu'un seul chiffre (quartet d'Anscombe !).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        Boîte à moustaches (boxplot), détection d'<strong>outliers</strong> via l'IQR (au-delà de Q3 + 1,5·IQR), premiers pas de toute analyse exploratoire (EDA).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Sur des revenus très inégaux, quel indicateur de centre est le plus représentatif ?</div>
+        <div class="options">
+          <div class="opt">La moyenne</div>
+          <div class="opt">La médiane (robuste aux extrêmes)</div>
+          <div class="opt">Le maximum</div>
+          <div class="opt">La variance</div>
+        </div>
+        <div class="feedback" data-explain="La médiane n'est pas tirée par les valeurs extrêmes : elle reflète mieux le « salarié typique ». La moyenne est gonflée par les très hauts revenus."></div>
+      </div>
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.2</strong></div>
+        <div class="qtext">Pourquoi divise-t-on par \(n-1\) dans la variance empirique ?</div>
+        <div class="options">
+          <div class="opt">Par erreur historique</div>
+          <div class="opt">Pour avoir un résultat plus petit</div>
+          <div class="opt">Pour corriger le biais d'estimation (correction de Bessel)</div>
+          <div class="opt">Ça ne change rien</div>
+        </div>
+        <div class="feedback" data-explain="Diviser par n−1 (correction de Bessel) rend l'estimateur de variance non biaisé, car on a « consommé » un degré de liberté en estimant la moyenne."></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="corr">
+      <h2>2. Covariance &amp; corrélation</h2>
+      <div class="callout def">
+        <span class="label">Définitions</span>
+        <ul>
+          <li><strong>Covariance</strong> : \(\mathrm{Cov}(X,Y)=\frac1n\sum(x_i-\bar x)(y_i-\bar y)\) — signe = sens de la relation.</li>
+          <li><strong>Corrélation de Pearson</strong> : \(r=\dfrac{\mathrm{Cov}(X,Y)}{s_X s_Y}\in[-1,1]\) — intensité d'une relation <em>linéaire</em>.</li>
+        </ul>
+      </div>
+      <div class="callout warning">
+        <span class="label">⚠️ Corrélation ≠ causalité</span>
+        Deux variables corrélées ne sont pas forcément liées causalement (variable cachée, hasard). Et \(r=0\) n'exclut pas une relation <em>non linéaire</em> (ex. \(y=x^2\)).
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Le coefficient de corrélation de Pearson \(r\) mesure…</div>
+        <div class="options">
+          <div class="opt">la causalité</div>
+          <div class="opt">n'importe quelle relation</div>
+          <div class="opt">la moyenne</div>
+          <div class="opt">l'intensité d'une relation linéaire, entre −1 et 1</div>
+        </div>
+        <div class="feedback" data-explain="r ∈ [−1,1] quantifie une relation LINÉAIRE. r≈0 ne signifie pas « aucun lien » (une parabole a r≈0), et corrélation n'implique jamais causalité."></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="estim">
+      <h2>3. Estimation &amp; intervalles de confiance</h2>
+      <div class="callout def">
+        <span class="label">Estimateur</span>
+        Un <strong>estimateur</strong> \(\hat\theta\) calcule une quantité inconnue (ex. \(\bar x\) estime \(\mu\)). Bon estimateur = <strong>sans biais</strong> (\(E[\hat\theta]=\theta\)) et de <strong>faible variance</strong> (précis).
+      </div>
+      <div class="callout theorem">
+        <span class="label">Intervalle de confiance (IC) pour une moyenne</span>
+        Via le TCL, à 95 % :
+        \[ \mathrm{IC}_{95\%} = \left[\bar x - 1{,}96\,\frac{s}{\sqrt n},\ \ \bar x + 1{,}96\,\frac{s}{\sqrt n}\right] \]
+        Interprétation : si on répétait l'expérience, 95 % des IC construits contiendraient le vrai \(\mu\). La largeur décroît en \(1/\sqrt n\).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> <span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien</span>
+        Les « marges d'erreur » des sondages, les barres d'incertitude des dashboards, la taille d'échantillon nécessaire pour un A/B test : tout vient de l'IC.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Pour diviser par 2 la largeur d'un intervalle de confiance, il faut multiplier la taille d'échantillon par…</div>
+        <div class="options">
+          <div class="opt">4</div>
+          <div class="opt">2</div>
+          <div class="opt">1,5</div>
+          <div class="opt">10</div>
+        </div>
+        <div class="feedback" data-explain="La largeur est en 1/√n. Pour la diviser par 2, il faut √n ×2, donc n ×4. La précision coûte cher !"></div>
+      </div>
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.2</strong></div>
+        <div class="qtext">Un bon estimateur est « sans biais ». Cela signifie…</div>
+        <div class="options">
+          <div class="opt">qu'il vaut toujours la vraie valeur</div>
+          <div class="opt">qu'il a une variance nulle</div>
+          <div class="opt">qu'en moyenne il vaut la vraie valeur : \(E[\hat\theta]=\theta\)</div>
+          <div class="opt">qu'il est toujours positif</div>
+        </div>
+        <div class="feedback" data-explain="Sans biais = correct « en espérance ». Un estimateur peut être sans biais tout en fluctuant (variance) ; on veut les deux : sans biais ET faible variance."></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="tests">
+      <h2>4. Tests d'hypothèses &amp; p-value ⭐</h2>
+      <div class="callout def">
+        <span class="label">Démarche</span>
+        <ul>
+          <li><strong>\(H_0\)</strong> (hypothèse nulle) : « rien ne change » (ex. le nouveau bouton ne change pas le taux de clic).</li>
+          <li><strong>\(H_1\)</strong> : l'effet existe.</li>
+          <li><strong>p-value</strong> : probabilité d'observer un résultat au moins aussi extrême <em>si \(H_0\) était vraie</em>.</li>
+          <li>Si p-value &lt; seuil \(\alpha\) (souvent 0,05) → on <strong>rejette \(H_0\)</strong>.</li>
+        </ul>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th></th><th>\(H_0\) vraie</th><th>\(H_0\) fausse</th></tr></thead>
+          <tbody>
+            <tr><td>On rejette \(H_0\)</td><td><strong>Erreur type I</strong> (faux positif, proba α)</td><td>✔ Bonne décision</td></tr>
+            <tr><td>On garde \(H_0\)</td><td>✔ Bonne décision</td><td><strong>Erreur type II</strong> (faux négatif, proba β)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warning">
+        <span class="label">⚠️ Pièges classiques (très demandés)</span>
+        La p-value n'est <strong>PAS</strong> « la probabilité que \(H_0\) soit vraie ». Ne pas rejeter \(H_0\) ≠ « \(H_0\) est vraie ». Et le <strong>p-hacking</strong> (tester plein de choses jusqu'à p&lt;0,05) invalide les résultats.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        <strong>A/B testing</strong> = test d'hypothèses appliqué aux produits. La puissance (1−β) détermine la taille d'échantillon nécessaire.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Une p-value de 0,03 avec seuil α=0,05 signifie…</div>
+        <div class="options">
+          <div class="opt">H₀ a 3 % de chances d'être vraie</div>
+          <div class="opt">on rejette H₀ (résultat « significatif »)</div>
+          <div class="opt">on garde H₀</div>
+          <div class="opt">le test est raté</div>
+        </div>
+        <div class="feedback" data-explain="0,03 < 0,05 → on rejette H₀. Attention : ça ne dit PAS que H₀ a 3 % de chances d'être vraie — c'est la proba des données sous H₀."></div>
+      </div>
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.2</strong></div>
+        <div class="qtext">Rejeter H₀ alors qu'elle est vraie, c'est une erreur de type…</div>
+        <div class="options">
+          <div class="opt">type II (faux négatif)</div>
+          <div class="opt">aucune erreur</div>
+          <div class="opt">type I (faux positif)</div>
+          <div class="opt">type III</div>
+        </div>
+        <div class="feedback" data-explain="Rejeter à tort H₀ = faux positif = erreur de type I, de probabilité α. Le faux négatif (garder H₀ fausse) est l'erreur de type II."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.3</strong></div>
+        <div class="qtext">Le « p-hacking » consiste à…</div>
+        <div class="options">
+          <div class="opt">multiplier les tests jusqu'à trouver p&lt;0,05 (mauvaise pratique)</div>
+          <div class="opt">baisser le seuil α</div>
+          <div class="opt">augmenter la taille d'échantillon</div>
+          <div class="opt">calculer la médiane</div>
+        </div>
+        <div class="feedback" data-explain="Tester beaucoup d'hypothèses et ne garder que les « significatives » produit des faux positifs. On corrige avec Bonferroni, pré-enregistrement, etc."></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="reg">
+      <h2>5. Régression linéaire</h2>
+      <div class="callout def">
+        <span class="label">Modèle</span>
+        On cherche \(\hat y = \beta_0 + \beta_1 x\) (ou \(\hat y = X\boldsymbol\beta\) en multivarié) minimisant la somme des carrés des erreurs (<strong>moindres carrés</strong>) :
+        \[ \min_{\boldsymbol\beta}\ \sum_i (y_i - \hat y_i)^2 \]
+        Solution matricielle : \(\hat{\boldsymbol\beta}=(X^{\top}X)^{-1}X^{\top}\mathbf y\) (lien direct avec le Module 2 !).
+      </div>
+      <div class="callout def">
+        <span class="label">Qualité : \(R^2\)</span>
+        \(R^2\in[0,1]\) = proportion de variance expliquée par le modèle. \(R^2=1\) = ajustement parfait ; \(R^2=0\) = le modèle ne fait pas mieux que la moyenne.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien</span>
+        La régression linéaire est le « hello world » du ML supervisé. La <strong>régularisation</strong> (Ridge \(L_2\), Lasso \(L_1\)) évite le surapprentissage et gère la multicolinéarité.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Que minimise la régression par moindres carrés ?</div>
+        <div class="options">
+          <div class="opt">la somme des erreurs</div>
+          <div class="opt">la somme des valeurs absolues</div>
+          <div class="opt">la somme des carrés des erreurs</div>
+          <div class="opt">le nombre de points</div>
+        </div>
+        <div class="feedback" data-explain="On minimise Σ(yᵢ−ŷᵢ)² : les carrés pénalisent fortement les grosses erreurs et donnent une solution analytique élégante."></div>
+      </div>
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.2</strong></div>
+        <div class="qtext">Un \(R^2 = 0{,}85\) signifie…</div>
+        <div class="options">
+          <div class="opt">85 % des points sont sur la droite</div>
+          <div class="opt">le modèle explique 85 % de la variance de y</div>
+          <div class="opt">85 % de chances que le modèle soit correct</div>
+          <div class="opt">la pente vaut 0,85</div>
+        </div>
+        <div class="feedback" data-explain="R² = part de la variance de y expliquée par le modèle. 0,85 = bon ajustement, mais à croiser avec l'analyse des résidus."></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="mle">
+      <h2>6. Maximum de vraisemblance (MLE)</h2>
+      <div class="callout def">
+        <span class="label">Principe</span>
+        On choisit les paramètres \(\theta\) qui <strong>maximisent la vraisemblance</strong> des données observées : \(\hat\theta = \arg\max_\theta\ L(\theta) = \arg\max_\theta \prod_i P(x_i\mid\theta)\). En pratique on maximise la <strong>log-vraisemblance</strong> \(\sum_i \log P(x_i\mid\theta)\) (plus simple, mêmes maxima).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien fondamental</span>
+        Entraîner un modèle = souvent maximiser une vraisemblance = minimiser une <strong>log-vraisemblance négative</strong>. La <strong>cross-entropy</strong> (Module 8) en est un cas particulier. La régression par moindres carrés = MLE sous bruit gaussien.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">Pourquoi maximise-t-on la <em>log</em>-vraisemblance plutôt que la vraisemblance ?</div>
+        <div class="options">
+          <div class="opt">Le log transforme le produit en somme (plus stable et dérivable)</div>
+          <div class="opt">Pour changer le résultat</div>
+          <div class="opt">Le log est obligatoire mathématiquement</div>
+          <div class="opt">Pour rendre les probas négatives</div>
+        </div>
+        <div class="feedback" data-explain="log(∏) = Σ log : on évite les produits de nombreuses petites probabilités (underflow numérique) et on simplifie la dérivation. Le log étant croissant, l'argmax est inchangé."></div>
+      </div>
+    </section>
+
+    <!-- DATA & MÉTIERS -->
+    <section class="block" id="data">
+      <h2>7. Domaines, usages &amp; métiers</h2>
+      <div class="legend">
+        <span class="domain data"><span class="dot"></span>DATA</span>
+        <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+        <span class="domain ia"><span class="dot"></span>IA</span>
+      </div>
+      <div class="jobs">
+        <div class="jhead">💼 Usages concrets</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Notion</th><th>Domaine</th><th>Usage</th><th>Métiers</th></tr></thead>
+            <tbody>
+              <tr><td>Descriptif / EDA</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Dashboards, détection d'outliers, reporting</td><td>Data Analyst, BI</td></tr>
+              <tr><td>Tests &amp; p-value</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>A/B testing, décisions produit</td><td>Product/Growth Analyst</td></tr>
+              <tr><td>IC / Sampling</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Estimer sur échantillon, marges d'erreur</td><td>Data Engineer, Analyst</td></tr>
+              <tr><td>Régression</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Prédiction, modélisation, baseline ML</td><td>Data Scientist, ML Eng.</td></tr>
+              <tr><td>MLE</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Fondement de l'entraînement des modèles</td><td>ML Engineer, Chercheur</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://www.khanacademy.org/math/statistics-probability" target="_blank">Khan Academy — Stats</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Test_statistique" target="_blank">Tests statistiques</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/R%C3%A9gression_lin%C3%A9aire" target="_blank">Régression linéaire</a>
+        <a class="pill-link" href="https://seeing-theory.brown.edu/fr.html" target="_blank">Seeing Theory</a>
+      </div>
+    </section>
+
+    <!-- EXOS -->
+    <section class="block" id="exos">
+      <h2>8. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Descriptif</h3>
+      <p>Données : 2, 4, 4, 5, 100. Calcule moyenne et médiane. Lequel décrit mieux le « centre » ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Moyenne = 115/5 = 23. Médiane = 4 (valeur du milieu). La médiane (4) décrit bien mieux le centre : 100 est un outlier qui gonfle la moyenne.</p>
+      </details>
+
+      <h3>Exercice 2 — Intervalle de confiance</h3>
+      <p>Échantillon n=100, moyenne \(\bar x=50\), écart-type s=10. Donne l'IC à 95 % de la moyenne.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Marge = 1,96 × 10/√100 = 1,96 × 1 = 1,96. IC = [50 − 1,96 ; 50 + 1,96] = [48,04 ; 51,96].</p>
+      </details>
+
+      <h3>Exercice 3 — Test (⭐)</h3>
+      <p>Un A/B test donne p-value = 0,12 avec α=0,05. Conclusion ? Peut-on dire que B n'a aucun effet ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>0,12 > 0,05 → on <strong>ne rejette pas H₀</strong> : pas de preuve d'effet significatif. Mais cela ne prouve PAS l'absence d'effet (peut-être échantillon trop petit, manque de puissance). « Absence de preuve » ≠ « preuve d'absence ».</p>
+      </details>
+
+      <h3>Exercice 4 — Régression (⭐⭐)</h3>
+      <p>Pourquoi, quand deux features sont presque identiques (colinéaires), la formule \((X^\top X)^{-1}\) pose-t-elle problème ? Quelle solution ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>La colinéarité rend \(X^\top X\) presque singulière (\(\det\approx0\), Module 2) : l'inverse explose, les coefficients deviennent instables et énormes. Solution : <strong>régularisation Ridge</strong> \((X^\top X + \lambda I)^{-1}\), qui rend la matrice inversible et stabilise. (Lien direct algèbre linéaire ↔ stats.)</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="4">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-4-statistiques.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-3-probabilites.html"><div class="dir">← Précédent</div><div class="ttl">Module 3 · Probabilités</div></a>
+      <a class="next" href="module-5-optimisation.html"><div class="dir">Suivant →</div><div class="ttl">Module 5 · Optimisation</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 4 — Statistiques · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

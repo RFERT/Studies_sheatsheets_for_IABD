@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 3 — Probabilités : Bayes, Lois &amp; TCL</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 3</div>
+    <h1>Module 3 — Probabilités</h1>
+    <p class="subtitle">La science de l'incertitude. En Data et en IA, on ne prédit jamais « la » vérité mais une probabilité. Ce module te donne le langage pour modéliser le hasard, raisonner avec Bayes et comprendre pourquoi « plus de données = plus de fiabilité ».</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Manier le vocabulaire probabiliste (univers, événements, indépendance) ; appliquer les probabilités conditionnelles et le théorème de Bayes ; connaître les lois usuelles (Bernoulli, binomiale, Poisson, normale) ; comprendre espérance/variance, la loi des grands nombres et le théorème central limite.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#base">Vocabulaire &amp; axiomes</a></li>
+        <li><a href="#cond">Conditionnelles &amp; indépendance</a></li>
+        <li><a href="#bayes">Théorème de Bayes</a></li>
+        <li><a href="#va">Variables aléatoires</a></li>
+        <li><a href="#lois">Lois usuelles</a></li>
+        <li><a href="#esp">Espérance, variance</a></li>
+        <li><a href="#lgn">LGN &amp; TCL</a></li>
+        <li><a href="#data">Domaines &amp; métiers</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section class="block" id="base">
+      <h2>1. Vocabulaire &amp; axiomes</h2>
+      <div class="callout def">
+        <span class="label">Définitions de base</span>
+        <ul>
+          <li><strong>Univers</strong> \(\Omega\) : ensemble de tous les résultats possibles (ex. \(\{1,\dots,6\}\) pour un dé).</li>
+          <li><strong>Événement</strong> \(A\) : une partie de \(\Omega\) (ex. « obtenir un pair » = \(\{2,4,6\}\)).</li>
+          <li><strong>Probabilité</strong> \(P(A)\in[0,1]\).</li>
+        </ul>
+      </div>
+      <div class="callout theorem">
+        <span class="label">Axiomes de Kolmogorov &amp; règles</span>
+        \[ 0\le P(A)\le 1,\quad P(\Omega)=1,\quad P(A\cup B)=P(A)+P(B)-P(A\cap B) \]
+        Complémentaire : \(P(\bar A)=1-P(A)\). Si \(A,B\) incompatibles (\(A\cap B=\varnothing\)) : \(P(A\cup B)=P(A)+P(B)\).
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple</span>
+        Dé équilibré : \(P(\text{pair})=\tfrac36=\tfrac12\). \(P(\text{pair ou} >4)=P(\{2,4,6\})+P(\{5\})=\tfrac36+\tfrac16=\tfrac46\) (5 est impair, aucune intersection avec pair sauf 6 déjà compté → on fait attention au crible).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Si \(P(A)=0{,}3\) et \(P(B)=0{,}5\) avec \(A,B\) incompatibles, que vaut \(P(A\cup B)\) ?</div>
+        <div class="options">
+          <div class="opt">0,15</div>
+          <div class="opt">0,8</div>
+          <div class="opt">0,2</div>
+          <div class="opt">1,0</div>
+        </div>
+        <div class="feedback" data-explain="Incompatibles ⇒ \(P(A\cap B)=0\), donc \(P(A\cup B)=0{,}3+0{,}5=0{,}8\)."></div>
+      </div>
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.2</strong></div>
+        <div class="qtext">Que vaut toujours \(P(\bar A)\) ?</div>
+        <div class="options">
+          <div class="opt">\(P(A)\)</div>
+          <div class="opt">\(1+P(A)\)</div>
+          <div class="opt">\(1-P(A)\)</div>
+          <div class="opt">\(0\)</div>
+        </div>
+        <div class="feedback" data-explain="La probabilité du complémentaire est \(1-P(A)\) : utile pour calculer « au moins un » via « aucun »."></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="cond">
+      <h2>2. Probabilités conditionnelles &amp; indépendance</h2>
+      <div class="callout def">
+        <span class="label">Probabilité conditionnelle</span>
+        \[ P(A\mid B) = \frac{P(A\cap B)}{P(B)} \quad (P(B)>0) \]
+        « Probabilité de \(A\) sachant que \(B\) est réalisé. » On <em>réduit l'univers</em> à \(B\).
+      </div>
+      <div class="callout def">
+        <span class="label">Indépendance</span>
+        \(A\) et \(B\) sont <strong>indépendants</strong> ssi \(P(A\cap B)=P(A)P(B)\), c'est-à-dire \(P(A\mid B)=P(A)\) (savoir \(B\) n'apprend rien sur \(A\)).
+      </div>
+      <div class="callout theorem">
+        <span class="label">Probabilités totales</span>
+        Si \(B_1,\dots,B_n\) forment une partition de \(\Omega\) :
+        \[ P(A)=\sum_{i} P(A\mid B_i)\,P(B_i) \]
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien</span>
+        L'hypothèse d'indépendance (naïve) est le cœur du classifieur <strong>Naive Bayes</strong> (anti-spam, classification de texte). Les <strong>réseaux bayésiens</strong> modélisent des dépendances conditionnelles complexes.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">On tire 2 cartes sans remise dans un jeu de 52. Les deux tirages sont-ils indépendants ?</div>
+        <div class="options">
+          <div class="opt">Non : le 1ᵉʳ tirage change les probabilités du 2ᵉ</div>
+          <div class="opt">Oui, toujours</div>
+          <div class="opt">Oui, car 52 est grand</div>
+          <div class="opt">Impossible à dire</div>
+        </div>
+        <div class="feedback" data-explain="Sans remise, l'univers du 2ᵉ tirage a changé (51 cartes). \(P(2^e\mid 1^{er})\neq P(2^e)\) : dépendants. Avec remise, ils seraient indépendants."></div>
+      </div>
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.2</strong></div>
+        <div class="qtext">\(P(A)=0{,}5\), \(P(B)=0{,}4\), \(P(A\cap B)=0{,}2\). \(A\) et \(B\) sont-ils indépendants ?</div>
+        <div class="options">
+          <div class="opt">Non</div>
+          <div class="opt">Impossible à dire</div>
+          <div class="opt">Ils sont incompatibles</div>
+          <div class="opt">Oui : \(P(A)P(B)=0{,}2=P(A\cap B)\)</div>
+        </div>
+        <div class="feedback" data-explain="\(P(A)P(B)=0{,}5\times0{,}4=0{,}2\), égal à \(P(A\cap B)\). Le critère d'indépendance est vérifié."></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="bayes">
+      <h2>3. Théorème de Bayes ⭐</h2>
+      <div class="callout theorem">
+        <span class="label">Formule de Bayes</span>
+        \[ P(A\mid B) = \frac{P(B\mid A)\,P(A)}{P(B)} \]
+        On <strong>inverse</strong> le conditionnement. \(P(A)\) = <em>a priori</em>, \(P(A\mid B)\) = <em>a posteriori</em> (après observation de \(B\)), \(P(B\mid A)\) = <em>vraisemblance</em>.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple culte — test médical (piège d'intuition)</span>
+        <p>Maladie touchant \(1\%\) de la population. Test : \(99\%\) de vrais positifs, \(5\%\) de faux positifs. Tu es positif. Quelle probabilité d'être malade ?</p>
+        <p>\(P(M)=0{,}01\), \(P(+\mid M)=0{,}99\), \(P(+\mid \bar M)=0{,}05\).</p>
+        <p>\(P(+)=0{,}99\times0{,}01 + 0{,}05\times0{,}99 = 0{,}0099 + 0{,}0495 = 0{,}0594\).</p>
+        <p>\(P(M\mid +)=\dfrac{0{,}0099}{0{,}0594}\approx \mathbf{16{,}7\%}\) seulement ! La rareté de la maladie domine. C'est le <strong>paradoxe du taux de base</strong>.</p>
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> <span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        Bayes est partout : filtres anti-spam, diagnostic, A/B testing bayésien, mise à jour de croyances d'un modèle, détection de fraude. Toute l'<strong>inférence bayésienne</strong> en dépend.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Dans l'exemple du test, pourquoi \(P(M\mid+)\) est-il si bas malgré un test « à 99 % » ?</div>
+        <div class="options">
+          <div class="opt">Le test est mauvais</div>
+          <div class="opt">Un calcul est faux</div>
+          <div class="opt">La maladie est rare : beaucoup de faux positifs noient les vrais</div>
+          <div class="opt">Bayes ne s'applique pas ici</div>
+        </div>
+        <div class="feedback" data-explain="Avec une maladie à 1 %, les 5 % de faux positifs sur les 99 % de gens sains produisent beaucoup plus de positifs que les vrais malades. L'a priori (taux de base) pèse énormément."></div>
+      </div>
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.2</strong></div>
+        <div class="qtext">Dans \(P(A\mid B)=\frac{P(B\mid A)P(A)}{P(B)}\), comment s'appelle \(P(A)\) ?</div>
+        <div class="options">
+          <div class="opt">La vraisemblance</div>
+          <div class="opt">L'a priori (prior)</div>
+          <div class="opt">L'a posteriori</div>
+          <div class="opt">L'évidence</div>
+        </div>
+        <div class="feedback" data-explain="\(P(A)\) est l'a priori (prior) : ce qu'on croyait avant d'observer \(B\). \(P(A\mid B)\) est l'a posteriori."></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="va">
+      <h2>4. Variables aléatoires</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        Une <strong>variable aléatoire</strong> (VA) \(X\) associe un nombre à chaque résultat. <strong>Discrète</strong> (valeurs dénombrables, ex. nb de clics) ou <strong>continue</strong> (valeurs réelles, ex. temps de réponse).
+      </div>
+      <ul class="keys">
+        <li><strong>Loi discrète</strong> : \(P(X=k)\), avec \(\sum_k P(X=k)=1\).</li>
+        <li><strong>Densité</strong> \(f\) (cas continu) : \(P(a\le X\le b)=\int_a^b f(x)\,dx\), avec \(\int_{\mathbb R} f = 1\).</li>
+        <li><strong>Fonction de répartition</strong> : \(F(x)=P(X\le x)\).</li>
+      </ul>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">« Le nombre d'e-mails reçus par heure » est une variable aléatoire plutôt…</div>
+        <div class="options">
+          <div class="opt">discrète</div>
+          <div class="opt">continue</div>
+          <div class="opt">constante</div>
+          <div class="opt">ni l'une ni l'autre</div>
+        </div>
+        <div class="feedback" data-explain="C'est un comptage (0, 1, 2, …) : variable discrète. On la modélise souvent par une loi de Poisson."></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="lois">
+      <h2>5. Lois usuelles</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Loi</th><th>Modélise</th><th>Espérance</th><th>Variance</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bernoulli</strong>(p)</td><td>1 essai binaire (succès/échec)</td><td>\(p\)</td><td>\(p(1-p)\)</td></tr>
+            <tr><td><strong>Binomiale</strong>(n,p)</td><td>nb de succès sur n essais</td><td>\(np\)</td><td>\(np(1-p)\)</td></tr>
+            <tr><td><strong>Géométrique</strong>(p)</td><td>nb d'essais avant 1ᵉʳ succès</td><td>\(1/p\)</td><td>\((1-p)/p^2\)</td></tr>
+            <tr><td><strong>Poisson</strong>(λ)</td><td>nb d'événements rares / unité</td><td>\(\lambda\)</td><td>\(\lambda\)</td></tr>
+            <tr><td><strong>Uniforme</strong>[a,b]</td><td>hasard « plat »</td><td>\(\frac{a+b}{2}\)</td><td>\(\frac{(b-a)^2}{12}\)</td></tr>
+            <tr><td><strong>Normale</strong>(μ,σ²)</td><td>phénomènes « en cloche »</td><td>\(\mu\)</td><td>\(\sigma^2\)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout def">
+        <span class="label">Binomiale — formule</span>
+        \[ P(X=k)=\binom{n}{k}p^k(1-p)^{n-k} \]
+      </div>
+      <div class="callout def">
+        <span class="label">Loi normale (gaussienne)</span>
+        \[ f(x)=\frac{1}{\sigma\sqrt{2\pi}}\,e^{-\frac{(x-\mu)^2}{2\sigma^2}} \]
+        Règle <strong>68–95–99,7</strong> : 68 % des valeurs dans \([\mu\pm\sigma]\), 95 % dans \([\mu\pm2\sigma]\), 99,7 % dans \([\mu\pm3\sigma]\).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain data" style="font-size:11px"><span class="dot"></span>DATA</span> Lien</span>
+        Poisson : requêtes serveur, arrivées de clics, pannes. Normale : erreurs de mesure, tailles, bruit. Binomiale : taux de conversion, A/B testing.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">On lance 10 fois une pièce équilibrée. Quelle loi décrit le nombre de « face » ?</div>
+        <div class="options">
+          <div class="opt">Poisson(10)</div>
+          <div class="opt">Binomiale(10, 0,5)</div>
+          <div class="opt">Normale(0,1)</div>
+          <div class="opt">Géométrique(0,5)</div>
+        </div>
+        <div class="feedback" data-explain="n=10 essais indépendants, p=0,5 de succès : c'est une binomiale B(10 ; 0,5). Espérance np=5."></div>
+      </div>
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.2</strong></div>
+        <div class="qtext">Pour une loi normale, environ quel pourcentage des valeurs tombe dans \([\mu-2\sigma,\ \mu+2\sigma]\) ?</div>
+        <div class="options">
+          <div class="opt">68 %</div>
+          <div class="opt">50 %</div>
+          <div class="opt">95 %</div>
+          <div class="opt">99,7 %</div>
+        </div>
+        <div class="feedback" data-explain="Règle 68–95–99,7 : à ±2σ on couvre ~95 % des valeurs. C'est la base des intervalles de confiance."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.3</strong></div>
+        <div class="qtext">Quelle particularité a la loi de Poisson(λ) ?</div>
+        <div class="options">
+          <div class="opt">Son espérance ET sa variance valent λ</div>
+          <div class="opt">Sa variance vaut toujours 1</div>
+          <div class="opt">Elle est continue</div>
+          <div class="opt">Elle n'a pas d'espérance</div>
+        </div>
+        <div class="feedback" data-explain="Pour Poisson, E[X]=Var[X]=λ. Si sur des données réelles la variance dépasse largement la moyenne, on parle de surdispersion (Poisson mal adaptée)."></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="esp">
+      <h2>6. Espérance &amp; variance</h2>
+      <div class="callout def">
+        <span class="label">Définitions</span>
+        <ul>
+          <li><strong>Espérance</strong> (moyenne théorique) : \(E[X]=\sum_k k\,P(X=k)\) (discret) ou \(\int x f(x)dx\) (continu).</li>
+          <li><strong>Variance</strong> : \(\mathrm{Var}(X)=E[(X-E[X])^2]=E[X^2]-E[X]^2\). <strong>Écart-type</strong> : \(\sigma=\sqrt{\mathrm{Var}(X)}\).</li>
+        </ul>
+      </div>
+      <div class="callout theorem">
+        <span class="label">Propriétés (à connaître)</span>
+        \[ E[aX+b]=aE[X]+b,\qquad \mathrm{Var}(aX+b)=a^2\mathrm{Var}(X) \]
+        Linéarité de l'espérance (toujours vraie) : \(E[X+Y]=E[X]+E[Y]\). Si \(X,Y\) indépendants : \(\mathrm{Var}(X+Y)=\mathrm{Var}(X)+\mathrm{Var}(Y)\).
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien — biais &amp; variance</span>
+        Le compromis <strong>biais-variance</strong> gouverne le sur/sous-apprentissage. La variance mesure l'instabilité d'un modèle selon les données ; le biais, son erreur systématique.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">\(E[X]=3\). Que vaut \(E[2X+1]\) ?</div>
+        <div class="options">
+          <div class="opt">6</div>
+          <div class="opt">7</div>
+          <div class="opt">3</div>
+          <div class="opt">4</div>
+        </div>
+        <div class="feedback" data-explain="Linéarité : \(E[2X+1]=2E[X]+1=2\times3+1=7\)."></div>
+      </div>
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.2</strong></div>
+        <div class="qtext">\(\mathrm{Var}(X)=4\). Que vaut \(\mathrm{Var}(3X)\) ?</div>
+        <div class="options">
+          <div class="opt">12</div>
+          <div class="opt">4</div>
+          <div class="opt">7</div>
+          <div class="opt">36</div>
+        </div>
+        <div class="feedback" data-explain="\(\mathrm{Var}(aX)=a^2\mathrm{Var}(X)=3^2\times4=36\). La constante additive n'aurait rien changé."></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="block" id="lgn">
+      <h2>7. Loi des grands nombres &amp; Théorème central limite</h2>
+      <div class="callout theorem">
+        <span class="label">Loi des grands nombres (LGN)</span>
+        La moyenne empirique \(\bar X_n=\frac1n\sum X_i\) converge vers l'espérance \(\mu\) quand \(n\to\infty\). <strong>Plus on a de données, plus la moyenne observée est fiable.</strong> C'est le fondement de l'estimation.
+      </div>
+      <div class="callout theorem">
+        <span class="label">Théorème central limite (TCL) ⭐</span>
+        Pour \(n\) grand, la moyenne \(\bar X_n\) suit approximativement une <strong>loi normale</strong> :
+        \[ \bar X_n \approx \mathcal N\!\left(\mu,\ \frac{\sigma^2}{n}\right) \]
+        <strong>Peu importe la loi de départ</strong> (du moment que \(\sigma\) est fini). C'est pourquoi la gaussienne est partout.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien</span>
+        LGN = justification du <strong>sampling</strong> (échantillonnage) : estimer une statistique sur un échantillon plutôt que sur des téraoctets. TCL = base des <strong>intervalles de confiance</strong> et des tests A/B (Module 4).
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 7.1</strong></div>
+        <div class="qtext">Le TCL dit que la moyenne d'un grand échantillon est approximativement…</div>
+        <div class="options">
+          <div class="opt">uniforme</div>
+          <div class="opt">de Poisson</div>
+          <div class="opt">normale, quelle que soit la loi de départ</div>
+          <div class="opt">toujours égale à μ exactement</div>
+        </div>
+        <div class="feedback" data-explain="Le TCL affirme la normalité approchée de la moyenne pour n grand, indépendamment de la distribution d'origine (variance finie). D'où l'omniprésence de la loi normale."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 7.2</strong></div>
+        <div class="qtext">Quand n augmente, la variance de la moyenne \(\bar X_n\) (\(=\sigma^2/n\))…</div>
+        <div class="options">
+          <div class="opt">diminue (la moyenne se concentre autour de μ)</div>
+          <div class="opt">augmente</div>
+          <div class="opt">reste constante</div>
+          <div class="opt">devient négative</div>
+        </div>
+        <div class="feedback" data-explain="\(\sigma^2/n\) décroît en 1/n : plus l'échantillon est grand, plus la moyenne est précise. C'est la LGN quantifiée."></div>
+      </div>
+    </section>
+
+    <!-- DATA & MÉTIERS -->
+    <section class="block" id="data">
+      <h2>8. Domaines, usages &amp; métiers</h2>
+      <div class="legend">
+        <span class="domain data"><span class="dot"></span>DATA</span>
+        <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+        <span class="domain ia"><span class="dot"></span>IA</span>
+      </div>
+      <div class="jobs">
+        <div class="jhead">💼 Où ces probabilités servent concrètement</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Notion</th><th>Domaine</th><th>Usage concret</th><th>Métiers</th></tr></thead>
+            <tbody>
+              <tr><td>Bayes</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Naive Bayes (spam), diagnostic, détection de fraude</td><td>Data Scientist, ML Engineer</td></tr>
+              <tr><td>Lois (Poisson/Normale)</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Modéliser trafic, pannes, erreurs de mesure</td><td>Data Analyst, Statisticien</td></tr>
+              <tr><td>LGN / Sampling</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Estimer sur échantillon au lieu de scanner tout</td><td>Data Engineer, Analytics Engineer</td></tr>
+              <tr><td>TCL / Intervalles</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>A/B testing, marges d'erreur, dashboards</td><td>Product Analyst, Growth</td></tr>
+              <tr><td>Espérance/Variance</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Compromis biais-variance, régularisation</td><td>ML Engineer, Chercheur</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://www.khanacademy.org/math/statistics-probability" target="_blank">Khan Academy — Probabilités</a>
+        <a class="pill-link" href="https://seeing-theory.brown.edu/fr.html" target="_blank">Seeing Theory (visuel &amp; interactif)</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Th%C3%A9or%C3%A8me_de_Bayes" target="_blank">Théorème de Bayes</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Th%C3%A9or%C3%A8me_central_limite" target="_blank">TCL</a>
+      </div>
+    </section>
+
+    <!-- EXOS -->
+    <section class="block" id="exos">
+      <h2>9. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Bayes</h3>
+      <p>Une usine a 2 machines : A produit 60 % des pièces (2 % défectueuses), B produit 40 % (5 % défectueuses). Une pièce est défectueuse. Probabilité qu'elle vienne de B ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(P(D)=0{,}6\times0{,}02+0{,}4\times0{,}05=0{,}012+0{,}02=0{,}032\). \(P(B\mid D)=\frac{0{,}02}{0{,}032}=0{,}625=\mathbf{62{,}5\%}\).</p>
+      </details>
+
+      <h3>Exercice 2 — Binomiale</h3>
+      <p>Un site a un taux de conversion de 10 %. Sur 5 visiteurs, probabilité d'exactement 2 conversions ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(P(X=2)=\binom52 (0{,}1)^2(0{,}9)^3 = 10\times0{,}01\times0{,}729 = 0{,}0729 \approx \mathbf{7{,}3\%}\).</p>
+      </details>
+
+      <h3>Exercice 3 — Espérance (⭐)</h3>
+      <p>Un jeu : tu gagnes 10 € avec proba 0,2, tu perds 3 € sinon. Espérance de gain ? Jeu favorable ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(E=10\times0{,}2 + (-3)\times0{,}8 = 2 - 2{,}4 = -0{,}4\) €. Espérance négative ⇒ jeu <strong>défavorable</strong> sur le long terme (LGN).</p>
+      </details>
+
+      <h3>Exercice 4 — TCL (⭐⭐)</h3>
+      <p>Les temps de réponse d'un serveur ont μ=200 ms, σ=40 ms. On mesure la moyenne sur 100 requêtes. Quelle est la loi approchée de cette moyenne et son écart-type ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Par le TCL : \(\bar X_{100}\approx \mathcal N(200,\ 40^2/100)=\mathcal N(200,\ 16)\). Écart-type de la moyenne = \(\sqrt{16}=4\) ms. La moyenne est donc bien plus stable (4 ms) qu'une mesure individuelle (40 ms).</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="3">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-3-probabilites.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-2-algebre-lineaire.html"><div class="dir">← Précédent</div><div class="ttl">Module 2 · Algèbre linéaire</div></a>
+      <a class="next" href="module-4-statistiques.html"><div class="dir">Suivant →</div><div class="ttl">Module 4 · Statistiques</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 3 — Probabilités · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

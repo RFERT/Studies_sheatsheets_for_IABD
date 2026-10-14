@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 0 — Fondations : Logique, Ensembles &amp; Preuves</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+      svg: { fontCache: "global" }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 0</div>
+    <h1>Module 0 — Fondations</h1>
+    <p class="subtitle">Le langage mathématique : logique, ensembles, fonctions et preuves. C'est la « grammaire » qui te permettra de lire et écrire tout le reste du cours sans te perdre.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs du module</span>
+      À la fin, tu sauras : manipuler les connecteurs logiques et les quantificateurs, nier une proposition complexe, calculer sur les ensembles, distinguer injection/surjection/bijection, et rédiger une preuve (directe, par contraposée, par l'absurde, par récurrence).
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#logique">Logique propositionnelle</a></li>
+        <li><a href="#quantif">Quantificateurs</a></li>
+        <li><a href="#ensembles">Ensembles</a></li>
+        <li><a href="#fonctions">Applications &amp; fonctions</a></li>
+        <li><a href="#preuves">Méthodes de preuve</a></li>
+        <li><a href="#recurrence">Récurrence</a></li>
+        <li><a href="#data">Et dans la Data ?</a></li>
+        <li><a href="#exos">Exercices de synthèse</a></li>
+      </ol>
+    </div>
+
+    <!-- ================= SECTION 1 ================= -->
+    <section class="block" id="logique">
+      <h2>1. Logique propositionnelle</h2>
+      <p>Une <strong>proposition</strong> est un énoncé qui est soit <strong>vrai</strong> (V, ou 1), soit <strong>faux</strong> (F, ou 0), jamais les deux. Exemple : « \(2+2=4\) » est vraie ; « il pleut » n'est pas une proposition mathématique (ça dépend du contexte).</p>
+
+      <div class="callout def">
+        <span class="label">Définition — Connecteurs logiques</span>
+        À partir de propositions \(P, Q\) on construit de nouvelles propositions :
+        <ul>
+          <li>\(\neg P\) (<strong>négation</strong>, « non \(P\) »)</li>
+          <li>\(P \wedge Q\) (<strong>conjonction</strong>, « \(P\) et \(Q\) »)</li>
+          <li>\(P \vee Q\) (<strong>disjonction</strong>, « \(P\) ou \(Q\) », ou <em>inclusif</em>)</li>
+          <li>\(P \Rightarrow Q\) (<strong>implication</strong>, « si \(P\) alors \(Q\) »)</li>
+          <li>\(P \Leftrightarrow Q\) (<strong>équivalence</strong>, « \(P\) si et seulement si \(Q\) »)</li>
+        </ul>
+      </div>
+
+      <h3>Tables de vérité</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>\(P\)</th><th>\(Q\)</th><th>\(\neg P\)</th><th>\(P\wedge Q\)</th><th>\(P\vee Q\)</th><th>\(P\Rightarrow Q\)</th><th>\(P\Leftrightarrow Q\)</th></tr></thead>
+          <tbody>
+            <tr><td>V</td><td>V</td><td>F</td><td>V</td><td>V</td><td>V</td><td>V</td></tr>
+            <tr><td>V</td><td>F</td><td>F</td><td>F</td><td>V</td><td>F</td><td>F</td></tr>
+            <tr><td>F</td><td>V</td><td>V</td><td>F</td><td>V</td><td>V</td><td>F</td></tr>
+            <tr><td>F</td><td>F</td><td>V</td><td>F</td><td>F</td><td>V</td><td>V</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warning">
+        <span class="label">Piège classique — l'implication</span>
+        \(P \Rightarrow Q\) est <strong>vraie</strong> dès que \(P\) est fausse (« faux implique n'importe quoi »). Elle n'est fausse que dans le cas V ⇒ F. Exemple : « s'il fait \(-100°\)C alors je vole » est <em>vraie</em> car la prémisse est toujours fausse.
+      </div>
+
+      <h3>Lois fondamentales (tautologies)</h3>
+      <p>Une <strong>tautologie</strong> est une proposition toujours vraie. Quelques équivalences logiques à connaître par cœur :</p>
+      <ul class="keys">
+        <li><strong>Contraposée :</strong> \((P \Rightarrow Q) \;\Leftrightarrow\; (\neg Q \Rightarrow \neg P)\)</li>
+        <li><strong>Négation de l'implication :</strong> \(\neg(P \Rightarrow Q) \;\Leftrightarrow\; (P \wedge \neg Q)\)</li>
+        <li><strong>Lois de De Morgan :</strong> \(\neg(P \wedge Q) \Leftrightarrow (\neg P \vee \neg Q)\) et \(\neg(P \vee Q) \Leftrightarrow (\neg P \wedge \neg Q)\)</li>
+        <li><strong>Double négation :</strong> \(\neg(\neg P) \Leftrightarrow P\)</li>
+        <li><strong>Distributivité :</strong> \(P \wedge (Q \vee R) \Leftrightarrow (P\wedge Q)\vee(P\wedge R)\)</li>
+        <li><strong>Implication « déguisée » :</strong> \((P \Rightarrow Q) \Leftrightarrow (\neg P \vee Q)\)</li>
+      </ul>
+
+      <div class="callout example">
+        <span class="label">Exemple résolu</span>
+        <p>Nions l'énoncé : « Si un nombre est pair <em>et</em> supérieur à 2, alors il n'est pas premier. »</p>
+        <p>Posons \(P\) : « pair », \(Q\) : « \(>2\) », \(R\) : « premier ». L'énoncé est \((P \wedge Q) \Rightarrow \neg R\).</p>
+        <p>Sa négation : \(\neg\big((P\wedge Q)\Rightarrow \neg R\big) \Leftrightarrow (P \wedge Q) \wedge R\) — c'est-à-dire « il existe un nombre pair, supérieur à 2 <em>et</em> premier ». (Ce nombre n'existe pas, donc l'énoncé de départ est vrai.)</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Quelle est la négation de \(P \Rightarrow Q\) ?</div>
+        <div class="options">
+          <div class="opt">\(\neg P \Rightarrow \neg Q\)</div>
+          <div class="opt">\(P \wedge \neg Q\)</div>
+          <div class="opt">\(\neg P \wedge Q\)</div>
+          <div class="opt">\(Q \Rightarrow P\)</div>
+        </div>
+        <div class="feedback" data-explain="Une implication n'est fausse que lorsque la prémisse est vraie et la conclusion fausse : \(P\) vrai ET \(Q\) faux, donc \(P \wedge \neg Q\)."></div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 2 ================= -->
+    <section class="block" id="quantif">
+      <h2>2. Quantificateurs</h2>
+      <p>Quand une propriété dépend d'une variable (un <strong>prédicat</strong> \(P(x)\)), on quantifie :</p>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        <ul>
+          <li>\(\forall x \in E,\; P(x)\) : « <strong>pour tout</strong> \(x\) de \(E\), \(P(x)\) est vraie » (quantificateur universel).</li>
+          <li>\(\exists x \in E,\; P(x)\) : « <strong>il existe</strong> (au moins) un \(x\) de \(E\) tel que \(P(x)\) » (quantificateur existentiel).</li>
+          <li>\(\exists!\, x \in E,\; P(x)\) : « il existe un <strong>unique</strong> \(x\) ».</li>
+        </ul>
+      </div>
+
+      <div class="callout theorem">
+        <span class="label">Règle d'or — Négation des quantificateurs</span>
+        Pour nier, on <strong>échange</strong> \(\forall \leftrightarrow \exists\) et on nie le prédicat :
+        \[ \neg\big(\forall x,\; P(x)\big) \Leftrightarrow \exists x,\; \neg P(x) \qquad\qquad \neg\big(\exists x,\; P(x)\big) \Leftrightarrow \forall x,\; \neg P(x) \]
+      </div>
+
+      <div class="callout warning">
+        <span class="label">L'ordre des quantificateurs compte !</span>
+        <p>\(\forall x\, \exists y,\; x < y\) (pour chaque \(x\), on peut trouver un \(y\) plus grand) — <strong>VRAI</strong> dans \(\mathbb{R}\).</p>
+        <p>\(\exists y\, \forall x,\; x < y\) (il existe un \(y\) plus grand que <em>tous</em> les \(x\)) — <strong>FAUX</strong> dans \(\mathbb{R}\).</p>
+        Permuter \(\forall\) et \(\exists\) change radicalement le sens.
+      </div>
+
+      <div class="callout example">
+        <span class="label">Exemple résolu — nier une définition de limite</span>
+        <p>« \(f\) converge vers \(\ell\) » s'écrit \(\forall \varepsilon >0,\; \exists N,\; \forall n \geq N,\; |u_n - \ell| < \varepsilon\).</p>
+        <p>Sa négation (la suite ne converge pas vers \(\ell\)) :</p>
+        \[ \exists \varepsilon > 0,\; \forall N,\; \exists n \geq N,\; |u_n - \ell| \geq \varepsilon \]
+        <p>On a inversé chaque quantificateur et nié l'inégalité finale.</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Quelle est la négation de \(\forall x \in \mathbb{R},\; \exists y \in \mathbb{R},\; y^2 = x\) ?</div>
+        <div class="options">
+          <div class="opt">\(\forall x,\; \forall y,\; y^2 \neq x\)</div>
+          <div class="opt">\(\exists x,\; \exists y,\; y^2 = x\)</div>
+          <div class="opt">\(\exists x \in \mathbb{R},\; \forall y \in \mathbb{R},\; y^2 \neq x\)</div>
+          <div class="opt">\(\forall x,\; \exists y,\; y^2 \neq x\)</div>
+        </div>
+        <div class="feedback" data-explain="On échange chaque quantificateur et on nie : \(\forall \to \exists\), \(\exists \to \forall\), et \(y^2=x\) devient \(y^2\neq x\). (Au passage, l'énoncé original est faux : prendre \(x=-1\).)"></div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 3 ================= -->
+    <section class="block" id="ensembles">
+      <h2>3. Ensembles</h2>
+      <p>Un <strong>ensemble</strong> est une collection d'objets appelés <strong>éléments</strong>. On note \(x \in E\) (appartenance) et \(x \notin E\).</p>
+
+      <h3>Ensembles de nombres usuels</h3>
+      <p>\(\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R} \subset \mathbb{C}\) : entiers naturels, relatifs, rationnels, réels, complexes.</p>
+
+      <div class="callout def">
+        <span class="label">Définition — Inclusion &amp; égalité</span>
+        \(A \subseteq B\) signifie \(\forall x,\; (x\in A \Rightarrow x \in B)\). Et \(A = B \Leftrightarrow (A\subseteq B \text{ et } B \subseteq A)\). C'est la technique reine pour prouver une égalité d'ensembles : <strong>double inclusion</strong>.
+      </div>
+
+      <h3>Opérations</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Opération</th><th>Notation</th><th>Définition</th></tr></thead>
+          <tbody>
+            <tr><td>Union</td><td>\(A \cup B\)</td><td>\(\{x : x\in A \;\vee\; x\in B\}\)</td></tr>
+            <tr><td>Intersection</td><td>\(A \cap B\)</td><td>\(\{x : x\in A \;\wedge\; x\in B\}\)</td></tr>
+            <tr><td>Différence</td><td>\(A \setminus B\)</td><td>\(\{x : x\in A \;\wedge\; x\notin B\}\)</td></tr>
+            <tr><td>Complémentaire</td><td>\(\overline{A}\) ou \(A^c\)</td><td>\(\{x \in E : x \notin A\}\)</td></tr>
+            <tr><td>Produit cartésien</td><td>\(A \times B\)</td><td>\(\{(a,b) : a\in A,\; b\in B\}\)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout theorem">
+        <span class="label">Lois de De Morgan (ensembles)</span>
+        \[ \overline{A \cup B} = \overline{A} \cap \overline{B} \qquad\qquad \overline{A \cap B} = \overline{A} \cup \overline{B} \]
+        On retrouve exactement les lois de De Morgan logiques — normal, un ensemble n'est qu'un prédicat déguisé !
+      </div>
+
+      <div class="callout def">
+        <span class="label">Cardinal &amp; ensemble des parties</span>
+        <p>Le <strong>cardinal</strong> \(|A|\) (ou \(\#A\)) est le nombre d'éléments. L'<strong>ensemble des parties</strong> \(\mathcal{P}(E)\) contient tous les sous-ensembles de \(E\).</p>
+        <p>Si \(|E| = n\) alors \(|\mathcal{P}(E)| = 2^n\). Formule du crible : \(|A \cup B| = |A| + |B| - |A \cap B|\).</p>
+      </div>
+
+      <div class="callout example">
+        <span class="label">Exemple résolu</span>
+        <p>Soit \(E = \{1,2,3\}\). Alors \(\mathcal{P}(E) = \{\emptyset, \{1\},\{2\},\{3\},\{1,2\},\{1,3\},\{2,3\},\{1,2,3\}\}\), soit \(2^3 = 8\) éléments. ✔</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Si \(|A| = 4\) et \(|B| = 5\) avec \(|A \cap B| = 2\), combien vaut \(|A \cup B|\) ?</div>
+        <div class="options">
+          <div class="opt">9</div>
+          <div class="opt">11</div>
+          <div class="opt">7</div>
+          <div class="opt">2</div>
+        </div>
+        <div class="feedback" data-explain="Formule du crible : \(|A\cup B| = |A|+|B|-|A\cap B| = 4+5-2 = 7\)."></div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 4 ================= -->
+    <section class="block" id="fonctions">
+      <h2>4. Applications &amp; fonctions</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        Une <strong>application</strong> \(f : E \to F\) associe à chaque \(x \in E\) (l'<em>ensemble de départ</em>) un <strong>unique</strong> \(f(x) \in F\) (l'<em>ensemble d'arrivée</em>). On note \(x \mapsto f(x)\).
+      </div>
+
+      <div class="callout def">
+        <span class="label">Injective, surjective, bijective</span>
+        <ul>
+          <li><strong>Injective</strong> : \(f(x_1) = f(x_2) \Rightarrow x_1 = x_2\) (jamais deux antécédents pour une même image).</li>
+          <li><strong>Surjective</strong> : \(\forall y \in F,\; \exists x \in E,\; f(x) = y\) (tout élément d'arrivée est atteint).</li>
+          <li><strong>Bijective</strong> : injective <em>et</em> surjective (correspondance parfaite 1-1). Elle admet alors une <strong>réciproque</strong> \(f^{-1}\).</li>
+        </ul>
+      </div>
+
+      <div class="callout data">
+        <span class="label">🔗 Lien Data</span>
+        Une <strong>fonction de hachage idéale</strong> voudrait être injective (pas de collision). Un <strong>index</strong> de base de données est une bijection logique entre une clé et une ligne. L'<strong>encodage one-hot</strong> est une injection d'un ensemble de catégories vers \(\{0,1\}^n\).
+      </div>
+
+      <div class="callout example">
+        <span class="label">Exemple résolu</span>
+        <p>\(f:\mathbb{R}\to\mathbb{R},\; x\mapsto x^2\) n'est <strong>ni</strong> injective (\(f(-2)=f(2)\)) <strong>ni</strong> surjective (aucun \(x\) ne donne \(-1\)).</p>
+        <p>Mais \(f:\mathbb{R}_{\geq 0}\to\mathbb{R}_{\geq 0},\; x\mapsto x^2\) est <strong>bijective</strong>, de réciproque \(y\mapsto \sqrt{y}\).</p>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">L'application \(f:\mathbb{Z}\to\mathbb{Z},\; n\mapsto 2n\) est…</div>
+        <div class="options">
+          <div class="opt">surjective mais pas injective</div>
+          <div class="opt">bijective</div>
+          <div class="opt">ni l'une ni l'autre</div>
+          <div class="opt">injective mais pas surjective</div>
+        </div>
+        <div class="feedback" data-explain="Injective : \(2n_1=2n_2 \Rightarrow n_1=n_2\) ✔. Mais pas surjective : aucun entier \(n\) ne vérifie \(2n=3\) (les impairs ne sont jamais atteints)."></div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 5 ================= -->
+    <section class="block" id="preuves">
+      <h2>5. Méthodes de preuve</h2>
+      <p>Savoir <em>rédiger</em> une preuve rapporte énormément de points en partiel. Les quatre schémas à maîtriser :</p>
+
+      <h3>a) Preuve directe</h3>
+      <p>On suppose \(P\) et on déroule des implications jusqu'à \(Q\). <em>Ex :</em> « \(n\) pair \(\Rightarrow n^2\) pair » : \(n = 2k \Rightarrow n^2 = 4k^2 = 2(2k^2)\), donc pair. ∎</p>
+
+      <h3>b) Par contraposée</h3>
+      <p>Pour montrer \(P \Rightarrow Q\), on montre \(\neg Q \Rightarrow \neg P\) (logiquement équivalent). <em>Ex :</em> « si \(n^2\) est pair alors \(n\) est pair » se prouve facilement par contraposée : « si \(n\) impair alors \(n^2\) impair ».</p>
+
+      <h3>c) Par l'absurde</h3>
+      <p>On suppose \(P\) <strong>et</strong> \(\neg Q\), et on en déduit une contradiction.</p>
+      <div class="callout example">
+        <span class="label">Exemple culte — \(\sqrt{2}\) est irrationnel</span>
+        <p>Supposons \(\sqrt2 = \tfrac{p}{q}\) <strong>irréductible</strong>. Alors \(p^2 = 2q^2\), donc \(p^2\) pair, donc \(p\) pair : \(p=2k\). D'où \(4k^2 = 2q^2\), soit \(q^2 = 2k^2\), donc \(q\) pair aussi. Mais alors \(p\) et \(q\) sont tous deux pairs — contradiction avec « irréductible ». ∎</p>
+      </div>
+
+      <h3>d) Par contre-exemple</h3>
+      <p>Pour <strong>réfuter</strong> un \(\forall\), un seul contre-exemple suffit. « Tout nombre premier est impair » ? Faux : \(2\) est premier et pair.</p>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Pour prouver « \(n^2\) impair \(\Rightarrow n\) impair », quelle méthode est la plus simple ?</div>
+        <div class="options">
+          <div class="opt">La contraposée : « \(n\) pair \(\Rightarrow n^2\) pair »</div>
+          <div class="opt">Un contre-exemple</div>
+          <div class="opt">La récurrence sur \(n\)</div>
+          <div class="opt">La preuve directe à partir de \(n^2\)</div>
+        </div>
+        <div class="feedback" data-explain="La contraposée transforme un énoncé difficile (partir de \(n^2\)) en un énoncé trivial (partir de \(n\) pair). C'est le réflexe à avoir."></div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 6 ================= -->
+    <section class="block" id="recurrence">
+      <h2>6. Le raisonnement par récurrence</h2>
+      <div class="callout theorem">
+        <span class="label">Principe de récurrence</span>
+        Pour prouver « \(\forall n \geq n_0,\; P(n)\) » :
+        <ol>
+          <li><strong>Initialisation</strong> : montrer \(P(n_0)\).</li>
+          <li><strong>Hérédité</strong> : montrer \(\forall n \geq n_0,\; \big(P(n) \Rightarrow P(n+1)\big)\).</li>
+          <li><strong>Conclusion</strong> : alors \(P(n)\) est vraie pour tout \(n \geq n_0\).</li>
+        </ol>
+      </div>
+
+      <div class="callout example">
+        <span class="label">Exemple résolu</span>
+        <p>Montrons \(\displaystyle \sum_{k=1}^{n} k = \frac{n(n+1)}{2}\).</p>
+        <p><strong>Initialisation</strong> (\(n=1\)) : \(\sum = 1\) et \(\frac{1\cdot 2}{2} = 1\). ✔</p>
+        <p><strong>Hérédité</strong> : supposons \(\sum_{k=1}^n k = \frac{n(n+1)}{2}\). Alors
+        \[\sum_{k=1}^{n+1} k = \frac{n(n+1)}{2} + (n+1) = (n+1)\Big(\frac{n}{2}+1\Big) = \frac{(n+1)(n+2)}{2}.\]
+        C'est bien \(P(n+1)\). ∎</p>
+      </div>
+
+      <div class="callout warning">
+        <span class="label">Erreurs qui coûtent cher</span>
+        Oublier l'initialisation ; confondre « supposer \(P(n)\) » (autorisé, c'est l'hypothèse de récurrence) avec « supposer ce qu'on veut prouver ». Pour certaines suites, utiliser la <strong>récurrence forte</strong> : on suppose \(P(n_0),\dots,P(n)\) tous vrais.
+      </div>
+
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / Info</span>
+        La récurrence est le pendant mathématique de la <strong>récursivité</strong> en programmation. Prouver qu'un algorithme récursif est correct = initialisation (cas de base) + hérédité (appel récursif). C'est aussi la base des preuves de complexité (ex. tri fusion en \(O(n\log n)\)).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">Dans une récurrence, l'« hypothèse de récurrence » est…</div>
+        <div class="options">
+          <div class="opt">ce qu'on veut prouver, supposé vrai pour tout \(n\) (interdit)</div>
+          <div class="opt">la supposition que \(P(n)\) est vraie, pour en déduire \(P(n+1)\)</div>
+          <div class="opt">le cas de base \(P(n_0)\)</div>
+          <div class="opt">la conclusion finale</div>
+        </div>
+        <div class="feedback" data-explain="On suppose \(P(n)\) vraie à un rang \(n\) fixé (hypothèse de récurrence) et on démontre \(P(n+1)\). On ne suppose jamais \(P\) vraie pour tout \(n\) — ce serait supposer le résultat."></div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION DATA ================= -->
+    <section class="block" id="data">
+      <h2>7. Et dans la Data, concrètement ?</h2>
+      <ul class="keys">
+        <li><strong>SQL = algèbre des ensembles.</strong> <code>UNION</code> = \(\cup\), <code>INTERSECT</code> = \(\cap\), <code>EXCEPT</code> = \(\setminus\), un <code>JOIN</code> s'appuie sur le produit cartésien \(A\times B\) filtré par un prédicat.</li>
+        <li><strong>Filtres &amp; requêtes = logique propositionnelle.</strong> Un <code>WHERE age &gt; 18 AND pays = 'FR'</code> est une conjonction ; De Morgan sert à réécrire/optimiser les conditions.</li>
+        <li><strong>Quantificateurs = agrégations.</strong> \(\exists\) ↔ <code>EXISTS</code> / <code>ANY</code> ; \(\forall\) ↔ <code>ALL</code> / « aucun contre-exemple ».</li>
+        <li><strong>Fonctions injectives = clés &amp; hachage.</strong> Une clé primaire garantit l'unicité (injectivité) ; les collisions de hachage sont des violations d'injectivité.</li>
+        <li><strong>Récurrence = récursivité &amp; preuves d'algorithmes.</strong> Fondamental pour MapReduce, les parcours de graphes, le diviser-pour-régner.</li>
+      </ul>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Calcul_des_propositions" target="_blank">Calcul propositionnel (Wikipédia)</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Th%C3%A9orie_des_ensembles" target="_blank">Théorie des ensembles</a>
+        <a class="pill-link" href="https://www.khanacademy.org/math" target="_blank">Khan Academy (maths)</a>
+        <a class="pill-link" href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/" target="_blank">MIT 6.042 — Maths pour l'informatique</a>
+      </div>
+    </section>
+
+    <!-- ================= EXOS ================= -->
+    <section class="block" id="exos">
+      <h2>8. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Logique</h3>
+      <p>Écris la négation, en français <em>et</em> en symboles, de : « Tous les étudiants de la classe ont rendu au moins un devoir. »</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Original : \(\forall e,\; \exists d,\; \text{Rendu}(e,d)\). Négation : \(\exists e,\; \forall d,\; \neg\text{Rendu}(e,d)\).</p>
+        <p>En français : « <strong>Il existe au moins un étudiant qui n'a rendu aucun devoir.</strong> »</p>
+      </details>
+
+      <h3>Exercice 2 — Ensembles (double inclusion)</h3>
+      <p>Démontre que \(A \setminus (B \cup C) = (A\setminus B) \cap (A \setminus C)\).</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Soit \(x\). On a la chaîne d'équivalences :</p>
+        <p>\(x \in A\setminus(B\cup C) \Leftrightarrow x\in A \wedge \neg(x\in B \vee x\in C) \Leftrightarrow x\in A \wedge (x\notin B \wedge x\notin C)\) (De Morgan).</p>
+        <p>\(\Leftrightarrow (x\in A \wedge x\notin B) \wedge (x\in A \wedge x\notin C) \Leftrightarrow x\in(A\setminus B)\cap(A\setminus C)\). ∎</p>
+      </details>
+
+      <h3>Exercice 3 — Fonctions</h3>
+      <p>Soit \(f:E\to F\) et \(g:F\to G\). Montre que si \(g\circ f\) est injective, alors \(f\) est injective.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Soit \(x_1,x_2\in E\) avec \(f(x_1)=f(x_2)\). En appliquant \(g\) : \(g(f(x_1))=g(f(x_2))\), i.e. \((g\circ f)(x_1)=(g\circ f)(x_2)\). Comme \(g\circ f\) est injective, \(x_1=x_2\). Donc \(f\) est injective. ∎ <em>(Remarque : \(g\) n'a pas besoin d'être injective.)</em></p>
+      </details>
+
+      <h3>Exercice 4 — Récurrence (⭐ difficile)</h3>
+      <p>Montre que \(\forall n\geq 1,\; 7^n - 1\) est divisible par \(6\).</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p><strong>Init</strong> (\(n=1\)) : \(7-1=6\) divisible par 6 ✔.</p>
+        <p><strong>Hérédité</strong> : supposons \(6 \mid 7^n-1\), i.e. \(7^n = 1 + 6k\). Alors \(7^{n+1}-1 = 7\cdot 7^n - 1 = 7(1+6k)-1 = 6 + 42k = 6(1+7k)\), divisible par 6. ∎</p>
+      </details>
+
+      <h3>Exercice 5 — Vrai/Faux à justifier</h3>
+      <p>« Si \(A\cup B = A\cup C\) alors \(B = C\). » Vrai ou faux ?</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p><strong>Faux.</strong> Contre-exemple : \(A=\{1\}\), \(B=\{1\}\), \(C=\{\}\). Alors \(A\cup B = \{1\} = A\cup C\), mais \(B\neq C\). (L'égalité serait vraie en ajoutant \(A\cap B = A\cap C\).)</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="0">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-0-fondations.md" download>⬇️ Télécharger la fiche de révision (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../index.html"><div class="dir">← Retour</div><div class="ttl">Accueil</div></a>
+      <a class="next" href="module-1-relations-binaires.html"><div class="dir">Suivant →</div><div class="ttl">Module 1 · Relations binaires</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 0 — Fondations · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

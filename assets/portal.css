@@ -1,0 +1,191 @@
+/* =========================================================
+   Portail de cours ESGI — Design system du hub
+   (chaque matière garde son propre thème ; ceci stylise le portail)
+   ========================================================= */
+
+:root {
+  --bg: #0e1016;
+  --bg-soft: #151824;
+  --bg-card: #181c2a;
+  --bg-elev: #1f2435;
+  --border: #2a3047;
+  --text: #eef1fb;
+  --text-soft: #a7b0d0;
+  --muted: #727c9e;
+  --primary: #6c8cff;
+  --accent: #27e0b0;
+  --shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+  --radius: 16px;
+  --maxw: 1140px;
+}
+
+[data-theme="light"] {
+  --bg: #f4f6fc;
+  --bg-soft: #ffffff;
+  --bg-card: #ffffff;
+  --bg-elev: #eef1ff;
+  --border: #dbe1f5;
+  --text: #141732;
+  --text-soft: #3c4367;
+  --muted: #6b7399;
+  --shadow: 0 14px 40px rgba(40, 60, 140, 0.12);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+  background:
+    radial-gradient(1000px 500px at 85% -10%, var(--bg-soft), transparent),
+    radial-gradient(900px 500px at 0% 0%, #1a1430 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  line-height: 1.6;
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- Topbar ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 28px;
+  padding-left: max(28px, env(safe-area-inset-left));
+  padding-right: max(28px, env(safe-area-inset-right));
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.brand { font-weight: 800; letter-spacing: 0.3px; display: flex; align-items: center; gap: 12px; font-size: 18px; }
+.brand .logo {
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border-radius: 10px; font-weight: 800; color: #0b0e1c; font-size: 20px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+.brand small { display: block; font-size: 11px; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; }
+.spacer { flex: 1; }
+.btn {
+  cursor: pointer; border: 1px solid var(--border); background: var(--bg-card);
+  color: var(--text); padding: 9px 15px; border-radius: 10px; font-size: 14px;
+  transition: all 0.15s ease; font-family: inherit;
+}
+.btn:hover { border-color: var(--primary); transform: translateY(-1px); }
+
+/* ---------- Hero ---------- */
+.hero { max-width: var(--maxw); margin: 0 auto; padding: 56px 28px 20px; text-align: center; }
+.hero .eyebrow {
+  display: inline-block; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--accent); font-weight: 700; margin-bottom: 14px;
+  padding: 4px 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--bg-card);
+}
+.hero h1 {
+  font-size: clamp(32px, 6vw, 56px); margin: 0 0 14px; line-height: 1.05;
+  background: linear-gradient(120deg, var(--text) 20%, var(--primary) 60%, var(--accent));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero p { color: var(--text-soft); max-width: 680px; margin: 0 auto; font-size: 19px; }
+
+/* ---------- Stats ---------- */
+.stats { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; margin: 32px auto 0; max-width: var(--maxw); padding: 0 28px; }
+.stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 26px; text-align: center; min-width: 130px; }
+.stat .num { font-size: 30px; font-weight: 800; color: var(--primary); }
+.stat .lbl { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ---------- Section ---------- */
+.section { max-width: var(--maxw); margin: 0 auto; padding: 44px 28px; }
+.section h2 { font-size: 26px; margin: 0 0 6px; }
+.section .sub { color: var(--muted); margin: 0 0 24px; }
+
+/* ---------- Subject grid ---------- */
+.subjects { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
+.subject {
+  position: relative; display: flex; flex-direction: column;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 0; overflow: hidden;
+  box-shadow: var(--shadow); transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.subject:hover { transform: translateY(-5px); border-color: var(--sc, var(--primary)); text-decoration: none; }
+.subject .banner {
+  height: 92px; display: flex; align-items: center; gap: 14px; padding: 0 22px;
+  background: linear-gradient(135deg, var(--sc, var(--primary)), color-mix(in srgb, var(--sc, var(--primary)) 40%, #000));
+}
+.subject .banner .emoji {
+  font-size: 34px; width: 56px; height: 56px; display: grid; place-items: center;
+  background: rgba(255,255,255,0.15); border-radius: 14px; backdrop-filter: blur(4px);
+}
+.subject .banner .bt { color: #fff; }
+.subject .banner .bt .code { font-size: 12px; opacity: 0.85; letter-spacing: 1px; text-transform: uppercase; }
+.subject .banner .bt .name { font-size: 21px; font-weight: 800; }
+.subject .body { padding: 18px 22px 20px; flex: 1; display: flex; flex-direction: column; }
+.subject .body p { color: var(--text-soft); font-size: 15px; margin: 0 0 14px; flex: 1; }
+.subject .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.subject .tag { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--bg-elev); color: var(--text-soft); border: 1px solid var(--border); }
+.subject .foot { display: flex; align-items: center; justify-content: space-between; }
+.subject .status { font-size: 13px; font-weight: 600; }
+.subject .status.ready { color: var(--accent); }
+.subject .status.soon { color: var(--muted); }
+.subject .status.wip { color: #ffb454; }
+.subject .go { font-size: 14px; color: var(--sc, var(--primary)); font-weight: 700; }
+.subject.locked { opacity: 0.58; cursor: default; }
+.subject.locked:hover { transform: none; }
+.subject .ribbon {
+  position: absolute; top: 14px; right: -34px; transform: rotate(45deg);
+  background: var(--accent); color: #05231b; font-size: 11px; font-weight: 800;
+  padding: 4px 42px; letter-spacing: 1px;
+}
+
+/* ---------- Callout ---------- */
+.callout { border-left: 4px solid var(--primary); background: var(--bg-elev); border-radius: 0 12px 12px 0; padding: 16px 20px; margin: 18px 0; }
+.callout .label { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; display: block; color: var(--primary); }
+.callout p { margin: 4px 0; color: var(--text-soft); }
+
+/* ---------- Footer ---------- */
+.footer { text-align: center; color: var(--muted); font-size: 14px; padding: 48px 20px; border-top: 1px solid var(--border); margin-top: 30px; }
+.footer a { color: var(--text-soft); }
+
+/* ================= RESPONSIVE (mobile-first tuning) ================= */
+/* Tablettes */
+@media (max-width: 820px) {
+  .section, .hero, .stats { padding-left: 20px; padding-right: 20px; }
+  .subjects { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+}
+
+/* Téléphones (Samsung S26 Ultra ~412px portrait et équivalents) */
+@media (max-width: 560px) {
+  html, body { overflow-x: hidden; }
+  .topbar { padding: 10px 14px; gap: 10px; flex-wrap: wrap; }
+  .brand { font-size: 16px; gap: 9px; }
+  .brand .logo { width: 32px; height: 32px; font-size: 17px; }
+  .brand small { font-size: 10px; }
+  .btn { padding: 9px 12px; font-size: 13.5px; min-height: 42px; display: inline-flex; align-items: center; }
+
+  .hero { padding: 30px 16px 12px; }
+  .hero .eyebrow { font-size: 11px; letter-spacing: 1px; }
+  .hero p { font-size: 16px; }
+
+  .stats { gap: 10px; padding: 0 16px; }
+  .stat { min-width: 0; flex: 1 1 40%; padding: 12px 10px; }
+  .stat .num { font-size: 24px; }
+  .stat .lbl { font-size: 11px; }
+
+  .section { padding: 30px 16px; }
+  .section h2 { font-size: 22px; }
+  .subjects { grid-template-columns: 1fr; gap: 14px; }
+  .subject .banner { height: 80px; padding: 0 16px; }
+  .subject .banner .emoji { width: 48px; height: 48px; font-size: 28px; }
+  .subject .banner .bt .name { font-size: 19px; }
+  .subject .body { padding: 16px 16px 18px; }
+  .subject .ribbon { font-size: 10px; padding: 3px 38px; }
+
+  .callout { padding: 14px 16px; }
+  .footer { padding: 36px 16px; }
+}
+
+/* Très petits écrans / edge display */
+@media (max-width: 380px) {
+  .stat { flex: 1 1 100%; }
+  .hero h1 { font-size: 28px; }
+}
+

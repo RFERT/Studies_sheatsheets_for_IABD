@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Examen blanc final — Partiel type (toutes notions)</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Examen blanc</div>
+    <h1>📝 Examen blanc final</h1>
+    <p class="subtitle">Partiel type, toutes notions mélangées (Modules 0 à 9). Mets-toi en conditions réelles : chrono, sans tes fiches d'abord, puis corrige-toi avec les solutions dépliables.</p>
+
+    <div class="callout" style="border-color:var(--accent-2)">
+      <span class="label" style="color:var(--accent-2)">🎯 Mode d'emploi</span>
+      <ul>
+        <li><strong>Durée conseillée :</strong> 2 heures. <strong>Barème :</strong> Partie A (QCM) /20, Partie B (exercices) /40, Partie C (problème Data) /20 → total <strong>/80</strong>.</li>
+        <li>Fais d'abord <strong>sans aide</strong>. Clique les QCM pour la correction immédiate ; déplie les solutions des exercices seulement après avoir cherché.</li>
+        <li>Note ton score et repère les modules à retravailler (indiqués entre crochets).</li>
+      </ul>
+    </div>
+
+    <div class="toc">
+      <h4>Structure</h4>
+      <ol>
+        <li><a href="#partieA">Partie A — QCM express (/20)</a></li>
+        <li><a href="#partieB">Partie B — Exercices rédigés (/40)</a></li>
+        <li><a href="#partieC">Partie C — Problème Data transversal (/20)</a></li>
+        <li><a href="#bareme">Barème &amp; auto-évaluation</a></li>
+      </ol>
+    </div>
+
+    <!-- ============ PARTIE A ============ -->
+    <section class="block" id="partieA">
+      <h2>Partie A — QCM express <span style="color:var(--muted);font-size:16px">(20 questions, 1 pt chacune)</span></h2>
+      <p>Une seule bonne réponse par question. Clique pour vérifier.</p>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">A1</span><strong>[Module 0]</strong></div>
+        <div class="qtext">La négation de \(\forall x,\ \exists y,\ P(x,y)\) est…</div>
+        <div class="options">
+          <div class="opt">\(\forall x,\ \forall y,\ \neg P\)</div>
+          <div class="opt">\(\exists x,\ \exists y,\ P\)</div>
+          <div class="opt">\(\exists x,\ \forall y,\ \neg P(x,y)\)</div>
+          <div class="opt">\(\forall x,\ \exists y,\ \neg P\)</div>
+        </div>
+        <div class="feedback" data-explain="On échange chaque quantificateur et on nie le prédicat."></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">A2</span><strong>[Module 1]</strong></div>
+        <div class="qtext">Une relation Réflexive + Symétrique + Transitive est une relation…</div>
+        <div class="options">
+          <div class="opt">d'ordre</div>
+          <div class="opt">d'équivalence</div>
+          <div class="opt">totale</div>
+          <div class="opt">antisymétrique</div>
+        </div>
+        <div class="feedback" data-explain="RST = relation d'équivalence (ses classes forment une partition)."></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">A3</span><strong>[Module 1]</strong></div>
+        <div class="qtext">Dans \((\mathbb N, \mid)\), que vaut \(\inf\{12,18\}\) (le meet) ?</div>
+        <div class="options">
+          <div class="opt">6 (pgcd)</div>
+          <div class="opt">36 (ppcm)</div>
+          <div class="opt">3</div>
+          <div class="opt">216</div>
+        </div>
+        <div class="feedback" data-explain="Le meet dans l'ordre de divisibilité est le pgcd : pgcd(12,18)=6."></div>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">A4</span><strong>[Module 2]</strong></div>
+        <div class="qtext">Deux vecteurs non nuls vérifient \(\mathbf u\cdot\mathbf v=0\). Ils sont…</div>
+        <div class="options">
+          <div class="opt">égaux</div>
+          <div class="opt">colinéaires</div>
+          <div class="opt">de même norme</div>
+          <div class="opt">orthogonaux</div>
+        </div>
+        <div class="feedback" data-explain="Produit scalaire nul ⇒ cos θ = 0 ⇒ angle droit ⇒ orthogonaux."></div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">A5</span><strong>[Module 2]</strong></div>
+        <div class="qtext">En PCA, les premières composantes principales correspondent aux directions de…</div>
+        <div class="options">
+          <div class="opt">plus faible variance</div>
+          <div class="opt">corrélation nulle</div>
+          <div class="opt">plus grande variance</div>
+          <div class="opt">moyenne maximale</div>
+        </div>
+        <div class="feedback" data-explain="La PCA garde les axes orthogonaux de plus grande variance (plus d'information)."></div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">A6</span><strong>[Module 2]</strong></div>
+        <div class="qtext">\(A\mathbf v=\lambda\mathbf v\) (\(\mathbf v\neq 0\)) : \(\mathbf v\) est un…</div>
+        <div class="options">
+          <div class="opt">scalaire</div>
+          <div class="opt">déterminant</div>
+          <div class="opt">vecteur propre (valeur propre λ)</div>
+          <div class="opt">gradient</div>
+        </div>
+        <div class="feedback" data-explain="Direction préservée par A, étirée d'un facteur λ : vecteur propre."></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">A7</span><strong>[Module 3]</strong></div>
+        <div class="qtext">\(A,B\) indépendants, \(P(A)=0{,}3\), \(P(B)=0{,}5\). \(P(A\cap B)=\)</div>
+        <div class="options">
+          <div class="opt">0,8</div>
+          <div class="opt">0,15</div>
+          <div class="opt">0,2</div>
+          <div class="opt">0</div>
+        </div>
+        <div class="feedback" data-explain="Indépendance : P(A∩B)=P(A)·P(B)=0,3×0,5=0,15."></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">A8</span><strong>[Module 3]</strong></div>
+        <div class="qtext">La loi décrivant « le nombre de succès sur n essais indépendants » est…</div>
+        <div class="options">
+          <div class="opt">binomiale</div>
+          <div class="opt">normale</div>
+          <div class="opt">uniforme</div>
+          <div class="opt">géométrique</div>
+        </div>
+        <div class="feedback" data-explain="n essais, p de succès → binomiale B(n,p), espérance np."></div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">A9</span><strong>[Module 3]</strong></div>
+        <div class="qtext">Le théorème central limite affirme que la moyenne d'un grand échantillon est approximativement…</div>
+        <div class="options">
+          <div class="opt">uniforme</div>
+          <div class="opt">de Poisson</div>
+          <div class="opt">normale</div>
+          <div class="opt">exponentielle</div>
+        </div>
+        <div class="feedback" data-explain="TCL : X̄ₙ ≈ N(μ, σ²/n), quelle que soit la loi de départ."></div>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">A10</span><strong>[Module 4]</strong></div>
+        <div class="qtext">Une p-value de 0,02 (seuil α=0,05) conduit à…</div>
+        <div class="options">
+          <div class="opt">garder H₀</div>
+          <div class="opt">dire que H₀ a 2 % de chances d'être vraie</div>
+          <div class="opt">ne rien conclure</div>
+          <div class="opt">rejeter H₀</div>
+        </div>
+        <div class="feedback" data-explain="0,02 < 0,05 → on rejette H₀. (La p-value n'est pas P(H₀ vraie).)"></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">A11</span><strong>[Module 4]</strong></div>
+        <div class="qtext">Pour diviser par 2 la largeur d'un intervalle de confiance, on multiplie n par…</div>
+        <div class="options">
+          <div class="opt">4</div>
+          <div class="opt">2</div>
+          <div class="opt">8</div>
+          <div class="opt">16</div>
+        </div>
+        <div class="feedback" data-explain="Largeur ∝ 1/√n : diviser par 2 demande n ×4."></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">A12</span><strong>[Module 5]</strong></div>
+        <div class="qtext">Le gradient \(\nabla f\) pointe vers…</div>
+        <div class="options">
+          <div class="opt">la plus forte diminution</div>
+          <div class="opt">la plus forte augmentation</div>
+          <div class="opt">l'origine</div>
+          <div class="opt">un minimum</div>
+        </div>
+        <div class="feedback" data-explain="∇f = montée la plus raide. On minimise en allant vers −∇f."></div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">A13</span><strong>[Module 5]</strong></div>
+        <div class="qtext">Dans \(\theta\leftarrow\theta-\eta\nabla J\), un \(\eta\) beaucoup trop grand provoque…</div>
+        <div class="options">
+          <div class="opt">une convergence rapide et sûre</div>
+          <div class="opt">rien de spécial</div>
+          <div class="opt">oscillations / divergence</div>
+          <div class="opt">un gradient nul</div>
+        </div>
+        <div class="feedback" data-explain="Pas trop grand = on dépasse le minimum à chaque étape → ça diverge."></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">A14</span><strong>[Module 6]</strong></div>
+        <div class="qtext">Pour un plus court chemin pondéré (poids ≥ 0), on utilise…</div>
+        <div class="options">
+          <div class="opt">BFS</div>
+          <div class="opt">Dijkstra</div>
+          <div class="opt">DFS</div>
+          <div class="opt">un tri</div>
+        </div>
+        <div class="feedback" data-explain="Dijkstra pour poids positifs. BFS seulement pour non pondéré."></div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">A15</span><strong>[Module 6]</strong></div>
+        <div class="qtext">PageRank est mathématiquement…</div>
+        <div class="options">
+          <div class="opt">un plus court chemin</div>
+          <div class="opt">une moyenne de degrés</div>
+          <div class="opt">le vecteur propre dominant de la matrice de transition</div>
+          <div class="opt">un tri topologique</div>
+        </div>
+        <div class="feedback" data-explain="r = Mr : vecteur propre (λ=1), calculé par power iteration."></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">A16</span><strong>[Module 7]</strong></div>
+        <div class="qtext">Choisir 3 personnes parmi 10 (sans rôle) : combien de façons ?</div>
+        <div class="options">
+          <div class="opt">720</div>
+          <div class="opt">120</div>
+          <div class="opt">30</div>
+          <div class="opt">1000</div>
+        </div>
+        <div class="feedback" data-explain="Ordre indifférent → C(10,3)=120."></div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">A17</span><strong>[Module 7]</strong></div>
+        <div class="qtext">La recherche dichotomique a une complexité…</div>
+        <div class="options">
+          <div class="opt">O(n)</div>
+          <div class="opt">O(n²)</div>
+          <div class="opt">O(log n)</div>
+          <div class="opt">O(1)</div>
+        </div>
+        <div class="feedback" data-explain="On divise l'espace par 2 à chaque étape : O(log n)."></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">A18</span><strong>[Module 8]</strong></div>
+        <div class="qtext">L'entropie de Shannon est maximale quand les issues sont…</div>
+        <div class="options">
+          <div class="opt">équiprobables</div>
+          <div class="opt">certaines</div>
+          <div class="opt">au nombre de 1</div>
+          <div class="opt">très inégales</div>
+        </div>
+        <div class="feedback" data-explain="Incertitude max = équiprobabilité (H_max = log₂ n)."></div>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">A19</span><strong>[Module 8]</strong></div>
+        <div class="qtext">En classification, la fonction de perte standard est…</div>
+        <div class="options">
+          <div class="opt">la variance</div>
+          <div class="opt">la distance de Jaccard</div>
+          <div class="opt">le déterminant</div>
+          <div class="opt">l'entropie croisée (cross-entropy)</div>
+        </div>
+        <div class="feedback" data-explain="Cross-entropy H(p,q), minimale quand q=p. Équivaut au maximum de vraisemblance."></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">A20</span><strong>[Module 9]</strong></div>
+        <div class="qtext">Un filtre de Bloom ne commet jamais…</div>
+        <div class="options">
+          <div class="opt">de faux positif</div>
+          <div class="opt">de faux négatif</div>
+          <div class="opt">d'erreur du tout</div>
+          <div class="opt">de collision</div>
+        </div>
+        <div class="feedback" data-explain="Bloom : faux positifs possibles, faux négatifs impossibles. « Absent » est toujours certain."></div>
+      </div>
+    </section>
+
+    <!-- ============ PARTIE B ============ -->
+    <section class="block" id="partieB">
+      <h2>Partie B — Exercices rédigés <span style="color:var(--muted);font-size:16px">(5 exercices, 8 pts chacun)</span></h2>
+
+      <h3>Exercice B1 — Ensembles &amp; preuve [Modules 0-1] <span style="color:var(--muted)">/8</span></h3>
+      <p>Soit \(\sim\) définie sur \(\mathbb Z\) par \(a\sim b \Leftrightarrow 5\mid(a-b)\).</p>
+      <p><strong>a)</strong> Montre que \(\sim\) est une relation d'équivalence. <strong>b)</strong> Combien de classes ? Décris-les. <strong>c)</strong> À quelle notion du Big Data (Module 9) cela se relie-t-il ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p><strong>a)</strong> <em>Réflexive</em> : \(5\mid(a-a)=0\) ✔. <em>Symétrique</em> : \(5\mid(a-b)\Rightarrow 5\mid(b-a)\) ✔. <em>Transitive</em> : \(5\mid(a-b)\) et \(5\mid(b-c)\Rightarrow 5\mid(a-c)\) (somme) ✔. Donc équivalence.</p>
+        <p><strong>b)</strong> <strong>5 classes</strong> : \([0],[1],[2],[3],[4]\) selon le reste modulo 5. C'est \(\mathbb Z/5\mathbb Z\).</p>
+        <p><strong>c)</strong> Le <strong>sharding</strong> par \(h(\text{clé})\bmod 5\) répartit les données en 5 partitions : exactement ces classes de congruence.</p>
+      </details>
+
+      <h3>Exercice B2 — Algèbre linéaire [Module 2] <span style="color:var(--muted)">/8</span></h3>
+      <p>Soit \(A=\begin{pmatrix}3&1\\0&2\end{pmatrix}\).</p>
+      <p><strong>a)</strong> Calcule \(\det(A)\). <strong>b)</strong> \(A\) est-elle inversible ? <strong>c)</strong> Trouve ses valeurs propres. <strong>d)</strong> Calcule \(A\mathbf x\) pour \(\mathbf x=(2,1)\).</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p><strong>a)</strong> \(\det(A)=3\times2-1\times0=6\).</p>
+        <p><strong>b)</strong> \(\det\neq0\) ⇒ <strong>inversible</strong>.</p>
+        <p><strong>c)</strong> Matrice triangulaire ⇒ valeurs propres = diagonale : \(\lambda_1=3,\ \lambda_2=2\).</p>
+        <p><strong>d)</strong> \(A\mathbf x=\begin{pmatrix}3\cdot2+1\cdot1\\0\cdot2+2\cdot1\end{pmatrix}=\begin{pmatrix}7\\2\end{pmatrix}\).</p>
+      </details>
+
+      <h3>Exercice B3 — Probabilités &amp; Bayes [Module 3] <span style="color:var(--muted)">/8</span></h3>
+      <p>Un filtre anti-spam : 40 % des mails sont du spam. Le mot « gratuit » apparaît dans 60 % des spams et 5 % des mails légitimes. Un mail contient « gratuit ».</p>
+      <p><strong>a)</strong> Quelle est la probabilité qu'il soit du spam ? <strong>b)</strong> Nomme la méthode utilisée.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p><strong>a)</strong> \(P(S)=0{,}4\), \(P(G\mid S)=0{,}6\), \(P(G\mid \bar S)=0{,}05\).</p>
+        <p>\(P(G)=0{,}6\times0{,}4 + 0{,}05\times0{,}6 = 0{,}24 + 0{,}03 = 0{,}27\).</p>
+        <p>\(P(S\mid G)=\dfrac{0{,}24}{0{,}27}\approx \mathbf{0{,}889}\) soit ~88,9 %.</p>
+        <p><strong>b)</strong> <strong>Théorème de Bayes</strong> (principe du classifieur Naive Bayes).</p>
+      </details>
+
+      <h3>Exercice B4 — Optimisation [Module 5] <span style="color:var(--muted)">/8</span></h3>
+      <p>Soit \(J(\theta)=(\theta-4)^2\), learning rate \(\eta=0{,}25\), départ \(\theta_0=0\).</p>
+      <p><strong>a)</strong> Donne \(\nabla J\). <strong>b)</strong> Effectue 2 itérations de descente de gradient. <strong>c)</strong> Vers quelle valeur converge-t-on et pourquoi ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p><strong>a)</strong> \(\nabla J = 2(\theta-4)\).</p>
+        <p><strong>b)</strong> \(\theta_1=0-0{,}25\cdot2(0-4)=0+2=2\). \(\theta_2=2-0{,}25\cdot2(2-4)=2+1=3\).</p>
+        <p><strong>c)</strong> On converge vers \(\theta=4\) (le minimum, où \(\nabla J=0\)). \(J\) est convexe ⇒ ce minimum est global.</p>
+      </details>
+
+      <h3>Exercice B5 — Information &amp; complexité [Modules 7-8] <span style="color:var(--muted)">/8</span></h3>
+      <p><strong>a)</strong> Calcule l'entropie d'une source à 8 symboles équiprobables. <strong>b)</strong> Combien de bits pour coder chaque symbole ? <strong>c)</strong> Un algo fait une double boucle sur \(n\) données : complexité ? Est-ce viable pour \(n=10^9\) ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p><strong>a)</strong> \(H=\log_2 8 = 3\) bits.</p>
+        <p><strong>b)</strong> 3 bits/symbole (000 à 111) : l'entropie donne la limite de compression.</p>
+        <p><strong>c)</strong> Double boucle = \(O(n^2)\). Pour \(n=10^9\) : \(10^{18}\) opérations ⇒ <strong>infaisable</strong>. Il faut un algo en \(O(n)\) ou \(O(n\log n)\).</p>
+      </details>
+    </section>
+
+    <!-- ============ PARTIE C ============ -->
+    <section class="block" id="partieC">
+      <h2>Partie C — Problème transversal Data <span style="color:var(--muted);font-size:16px">(/20)</span></h2>
+      <div class="callout data">
+        <span class="label">🧩 Contexte</span>
+        Tu es Data Engineer. Tu dois dédupliquer et analyser <strong>1 milliard</strong> de documents textuels, trouver les quasi-doublons, compter les utilisateurs uniques, et préparer les données pour un modèle de classification.
+      </div>
+
+      <p><strong>C1.</strong> [Module 9] Pour éviter des lectures disque inutiles en vérifiant si un document a déjà été vu, quelle structure utilises-tu, et quel type d'erreur accepte-t-elle ? <span style="color:var(--muted)">/4</span></p>
+      <p><strong>C2.</strong> [Module 9] Pour mesurer la similarité entre deux documents (vus comme ensembles de mots), quel indice ? Pour l'estimer à grande échelle sans comparer les ensembles entiers, quelle technique ? <span style="color:var(--muted)">/4</span></p>
+      <p><strong>C3.</strong> [Module 9] Pour compter les utilisateurs uniques sur 1 milliard d'événements avec peu de mémoire ? <span style="color:var(--muted)">/3</span></p>
+      <p><strong>C4.</strong> [Modules 2-8] Les documents sont vectorisés (TF-IDF). Quelle mesure pour leur similarité de direction ? Quelle fonction de perte pour le classifieur final ? <span style="color:var(--muted)">/5</span></p>
+      <p><strong>C5.</strong> [Modules 1-9] En MapReduce, l'étape Shuffle regroupe les paires par clé. À quelle notion mathématique du cours cela correspond-il ? <span style="color:var(--muted)">/4</span></p>
+
+      <details class="solution"><summary>Voir la correction complète</summary>
+        <p><strong>C1.</strong> Un <strong>filtre de Bloom</strong> : il répond « absent » de façon certaine (on évite la lecture disque) et « probablement présent » sinon. Il accepte les <strong>faux positifs</strong> (jamais de faux négatif).</p>
+        <p><strong>C2.</strong> L'<strong>indice de Jaccard</strong> \(J=|A\cap B|/|A\cup B|\). Pour l'estimer à l'échelle : <strong>MinHash</strong> (signatures compactes, car \(P(\min h(A)=\min h(B))=J\)), éventuellement combiné à <strong>LSH</strong> pour ne comparer que les candidats proches.</p>
+        <p><strong>C3.</strong> <strong>HyperLogLog</strong> : estime la cardinalité (distincts) avec ~quelques Ko et ~2 % d'erreur.</p>
+        <p><strong>C4.</strong> La <strong>similarité cosinus</strong> \(\frac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|\|\mathbf v\|}\) pour la proximité de direction (insensible à la longueur). Pour le classifieur : l'<strong>entropie croisée</strong> (cross-entropy).</p>
+        <p><strong>C5.</strong> Le Shuffle regroupe par clé = construit les classes de la <strong>relation d'équivalence</strong> « avoir la même clé » = une <strong>partition</strong> (Module 1). Reduce agrège ensuite chaque classe.</p>
+        <p style="color:var(--accent)"><strong>Bilan :</strong> ce problème seul mobilise les Modules 1, 2, 8 et 9 — c'est tout l'intérêt du cours : les maths s'enchaînent.</p>
+      </details>
+    </section>
+
+    <!-- ============ BAREME ============ -->
+    <section class="block" id="bareme">
+      <h2>Barème &amp; auto-évaluation</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Score /80</th><th>Niveau</th><th>Conseil</th></tr></thead>
+          <tbody>
+            <tr><td>≥ 68 (85 %)</td><td>🏆 Excellent — tu passes haut la main</td><td>Révise juste les fiches la veille</td></tr>
+            <tr><td>56–67 (70-84 %)</td><td>✅ Solide</td><td>Cible les 2-3 modules les plus faibles</td></tr>
+            <tr><td>40–55 (50-69 %)</td><td>🟡 À consolider</td><td>Reprends les modules ratés + leurs quiz</td></tr>
+            <tr><td>&lt; 40</td><td>🔴 Rattrapage nécessaire</td><td>Refais les Modules 0-1-2-3 dans l'ordre</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📌 Repère tes points faibles</span>
+        Chaque question indique son module entre crochets [Module X]. Note les numéros ratés, identifie les modules récurrents, et retourne faire leurs quiz et exercices. La répétition espacée (revoir à J+1, J+3, J+7) est ta meilleure alliée.
+      </div>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="exam">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/examen-blanc-final.md" download>⬇️ Télécharger l'examen (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-9-big-data.html"><div class="dir">← Précédent</div><div class="ttl">Module 9 · Big Data</div></a>
+      <a class="next" href="../index.html"><div class="dir">Fin 🎉 →</div><div class="ttl">Retour à l'accueil</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Examen blanc final · Cours interactif de maths pour la Data 💙 · Bonne chance !</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

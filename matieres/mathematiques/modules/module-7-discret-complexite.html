@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 7 — Discret &amp; Complexité : Combinatoire &amp; Big-O</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 7</div>
+    <h1>Module 7 — Maths discrètes &amp; Complexité</h1>
+    <p class="subtitle">Compter, dénombrer, et mesurer le coût des algorithmes. En Big Data, savoir si un algorithme passe à l'échelle (ou explose) est vital. La combinatoire et la notation Big-O sont vos boussoles.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Maîtriser le dénombrement (produit, somme, arrangements, combinaisons) ; connaître le binôme de Newton et le principe des tiroirs ; comprendre la notation Big-O et classer les complexités ; relier au passage à l'échelle.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#denom">Principes de dénombrement</a></li>
+        <li><a href="#arr">Arrangements &amp; combinaisons</a></li>
+        <li><a href="#binome">Binôme &amp; triangle de Pascal</a></li>
+        <li><a href="#tiroirs">Principe des tiroirs</a></li>
+        <li><a href="#bigo">Complexité &amp; Big-O</a></li>
+        <li><a href="#classes">Classes de complexité</a></li>
+        <li><a href="#data">Domaines &amp; métiers</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section class="block" id="denom">
+      <h2>1. Principes de dénombrement</h2>
+      <div class="callout def">
+        <span class="label">Les deux règles de base</span>
+        <ul>
+          <li><strong>Principe multiplicatif</strong> : si une tâche se fait en \(k\) étapes avec \(n_1,\dots,n_k\) choix, le total est \(n_1\times\dots\times n_k\).</li>
+          <li><strong>Principe additif</strong> : choix exclusifs (soit… soit…) → on additionne.</li>
+        </ul>
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple</span>
+        Un mot de passe de 4 caractères parmi 62 (a-z, A-Z, 0-9) : \(62^4 = 14\,776\,336\) possibilités (multiplicatif, avec répétition).
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Combien de codes PIN à 4 chiffres (0-9, répétition permise) existe-t-il ?</div>
+        <div class="options">
+          <div class="opt">40</div>
+          <div class="opt">5040</div>
+          <div class="opt">10 000</div>
+          <div class="opt">24</div>
+        </div>
+        <div class="feedback" data-explain="4 positions, 10 choix chacune, indépendantes : 10×10×10×10 = 10⁴ = 10 000 (principe multiplicatif)."></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="arr">
+      <h2>2. Arrangements &amp; combinaisons</h2>
+      <div class="callout def">
+        <span class="label">Les formules clés</span>
+        <ul>
+          <li><strong>Factorielle</strong> : \(n! = n(n-1)\cdots2\cdot1\), avec \(0!=1\). Nombre de permutations de \(n\) objets.</li>
+          <li><strong>Arrangements</strong> (ordre compte, sans répétition) : \(A_n^k = \dfrac{n!}{(n-k)!}\).</li>
+          <li><strong>Combinaisons</strong> (ordre ne compte pas) : \(\displaystyle\binom nk = C_n^k = \frac{n!}{k!(n-k)!}\).</li>
+        </ul>
+      </div>
+      <div class="callout warning">
+        <span class="label">« L'ordre compte-t-il ? » — la question à se poser</span>
+        Podium (1er, 2e, 3e) → arrangement. Choisir un comité de 3 → combinaison. Mot de passe → arrangement (ou avec répétition). Main de cartes → combinaison.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple</span>
+        Tirer 5 cartes parmi 52 (ordre indifférent) : \(\binom{52}{5}=\frac{52!}{5!\,47!}=2\,598\,960\) mains possibles.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Choisir une équipe de 3 personnes parmi 10 (sans rôle particulier). Combien de façons ?</div>
+        <div class="options">
+          <div class="opt">720 (arrangement)</div>
+          <div class="opt">120 (combinaison)</div>
+          <div class="opt">1000</div>
+          <div class="opt">30</div>
+        </div>
+        <div class="feedback" data-explain="L'ordre n'importe pas → combinaison : C(10,3)=10!/(3!·7!)=120. Si les rôles comptaient (capitaine…), ce serait A(10,3)=720."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.2</strong></div>
+        <div class="qtext">Pour un podium (or, argent, bronze) parmi 8 athlètes, on compte…</div>
+        <div class="options">
+          <div class="opt">des arrangements : A(8,3) = 336</div>
+          <div class="opt">des combinaisons : C(8,3) = 56</div>
+          <div class="opt">8! = 40320</div>
+          <div class="opt">8×3 = 24</div>
+        </div>
+        <div class="feedback" data-explain="Les positions sont distinctes (l'ordre compte) : A(8,3)=8!/5!=8×7×6=336."></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="binome">
+      <h2>3. Binôme de Newton &amp; triangle de Pascal</h2>
+      <div class="callout theorem">
+        <span class="label">Formule du binôme</span>
+        \[ (a+b)^n = \sum_{k=0}^n \binom nk a^k b^{n-k} \]
+        Les coefficients \(\binom nk\) sont ceux du <strong>triangle de Pascal</strong>, avec la relation \(\binom nk = \binom{n-1}{k-1} + \binom{n-1}{k}\).
+      </div>
+      <div class="callout def">
+        <span class="label">Identités utiles</span>
+        \(\displaystyle\sum_{k=0}^n \binom nk = 2^n\) (nombre total de sous-ensembles, Module 0 !). Symétrie : \(\binom nk = \binom{n}{n-k}\).
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Que vaut \(\sum_{k=0}^n \binom nk\) ?</div>
+        <div class="options">
+          <div class="opt">\(n!\)</div>
+          <div class="opt">\(n^2\)</div>
+          <div class="opt">\(n\)</div>
+          <div class="opt">\(2^n\)</div>
+        </div>
+        <div class="feedback" data-explain="La somme des coefficients binomiaux = 2ⁿ (poser a=b=1 dans le binôme). C'est aussi le nombre de parties d'un ensemble à n éléments."></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="tiroirs">
+      <h2>4. Principe des tiroirs (pigeonhole)</h2>
+      <div class="callout theorem">
+        <span class="label">Énoncé</span>
+        Si l'on range \(n\) objets dans \(k\) tiroirs avec \(n>k\), alors au moins un tiroir contient \(\ge 2\) objets. Plus fort : un tiroir contient au moins \(\lceil n/k\rceil\) objets.
+      </div>
+      <div class="callout data">
+        <span class="label"><span class="domain bigdata" style="font-size:11px"><span class="dot"></span>BIG DATA</span> Lien</span>
+        Garantit l'existence de <strong>collisions de hachage</strong> : avec plus de clés que de cases, deux clés tombent forcément dans la même case (base du Module 9). Fondamental pour dimensionner les tables de hachage.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">On hache 1000 clés dans une table de 999 cases. Peut-on éviter toute collision ?</div>
+        <div class="options">
+          <div class="opt">Non : par le principe des tiroirs, au moins 2 clés partagent une case</div>
+          <div class="opt">Oui, avec une bonne fonction</div>
+          <div class="opt">Oui, si les clés sont triées</div>
+          <div class="opt">Cela dépend du langage</div>
+        </div>
+        <div class="feedback" data-explain="1000 objets, 999 tiroirs, 1000>999 : au moins une case reçoit ≥2 clés. Aucune fonction de hachage ne peut l'éviter. Les collisions sont inévitables dès que n>k."></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="bigo">
+      <h2>5. Complexité &amp; notation Big-O ⭐</h2>
+      <div class="callout def">
+        <span class="label">Notation \(O\)</span>
+        \(f(n)=O(g(n))\) signifie que \(f\) croît <strong>au plus</strong> comme \(g\) (à une constante près), pour \(n\) grand. On ignore constantes et termes négligeables : \(3n^2+5n+2 = O(n^2)\). C'est le comportement <em>asymptotique</em> qui compte.
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Complexité</th><th>Nom</th><th>Exemple</th></tr></thead>
+          <tbody>
+            <tr><td>\(O(1)\)</td><td>constante</td><td>accès à un tableau, hash lookup</td></tr>
+            <tr><td>\(O(\log n)\)</td><td>logarithmique</td><td>recherche dichotomique</td></tr>
+            <tr><td>\(O(n)\)</td><td>linéaire</td><td>parcours simple</td></tr>
+            <tr><td>\(O(n\log n)\)</td><td>quasi-linéaire</td><td>tri fusion/rapide</td></tr>
+            <tr><td>\(O(n^2)\)</td><td>quadratique</td><td>double boucle, tri naïf</td></tr>
+            <tr><td>\(O(2^n)\)</td><td>exponentielle</td><td>force brute sur sous-ensembles</td></tr>
+            <tr><td>\(O(n!)\)</td><td>factorielle</td><td>toutes les permutations (voyageur de commerce brut)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warning">
+        <span class="label">Pourquoi c'est VITAL en Big Data</span>
+        Sur \(n=10^9\) (un milliard) : un algo \(O(n)\) fait un milliard d'opérations (ok), mais \(O(n^2)\) en fait \(10^{18}\) (infaisable !). La différence entre \(O(n\log n)\) et \(O(n^2)\) décide si votre job tourne en minutes ou en siècles.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Quelle est la complexité de la recherche dichotomique dans un tableau trié ?</div>
+        <div class="options">
+          <div class="opt">\(O(n)\)</div>
+          <div class="opt">\(O(n^2)\)</div>
+          <div class="opt">\(O(\log n)\)</div>
+          <div class="opt">\(O(1)\)</div>
+        </div>
+        <div class="feedback" data-explain="À chaque étape on divise par 2 l'espace de recherche : O(log n). Sur un milliard d'éléments, ~30 comparaisons suffisent !"></div>
+      </div>
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.2</strong></div>
+        <div class="qtext">\(3n^2 + 100n + 7\) est en \(O\) de…</div>
+        <div class="options">
+          <div class="opt">\(O(n)\)</div>
+          <div class="opt">\(O(n^2)\)</div>
+          <div class="opt">\(O(n^3)\)</div>
+          <div class="opt">\(O(100n)\)</div>
+        </div>
+        <div class="feedback" data-explain="On garde le terme dominant et on ignore constantes/termes inférieurs : O(n²). Pour n grand, le n² écrase tout le reste."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.3</strong></div>
+        <div class="qtext">Deux boucles imbriquées sur n éléments donnent typiquement…</div>
+        <div class="options">
+          <div class="opt">\(O(n^2)\)</div>
+          <div class="opt">\(O(n)\)</div>
+          <div class="opt">\(O(\log n)\)</div>
+          <div class="opt">\(O(1)\)</div>
+        </div>
+        <div class="feedback" data-explain="n itérations × n itérations = n² opérations : O(n²). À éviter sur de gros volumes ; on cherche souvent à descendre à O(n log n) ou O(n)."></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="classes">
+      <h2>6. Classes de complexité (culture)</h2>
+      <ul class="keys">
+        <li><strong>P</strong> : problèmes résolubles en temps polynomial (« faciles »).</li>
+        <li><strong>NP</strong> : solution vérifiable en temps polynomial.</li>
+        <li><strong>NP-complet</strong> : les plus durs de NP (SAT, voyageur de commerce, sac à dos). On ne sait pas les résoudre efficacement → on utilise des <strong>heuristiques/approximations</strong>.</li>
+        <li><strong>P = NP ?</strong> : la grande question ouverte (1 M$ à la clé).</li>
+      </ul>
+      <div class="callout data">
+        <span class="label"><span class="domain ia" style="font-size:11px"><span class="dot"></span>IA</span> Lien</span>
+        Beaucoup de problèmes d'optimisation réels sont NP-difficiles → l'IA/le ML fournissent des <strong>approximations</strong> rapides « assez bonnes » (routage, planification, clustering).
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">Face à un problème NP-difficile sur de grandes instances, on utilise souvent…</div>
+        <div class="options">
+          <div class="opt">la force brute exacte</div>
+          <div class="opt">rien, c'est impossible</div>
+          <div class="opt">des heuristiques / approximations</div>
+          <div class="opt">un tri</div>
+        </div>
+        <div class="feedback" data-explain="Sans algo exact efficace connu, on se tourne vers des heuristiques (gloutonnes, génétiques, recuit simulé, ML) donnant de bonnes solutions en temps raisonnable."></div>
+      </div>
+    </section>
+
+    <!-- DATA & MÉTIERS -->
+    <section class="block" id="data">
+      <h2>7. Domaines, usages &amp; métiers</h2>
+      <div class="legend">
+        <span class="domain data"><span class="dot"></span>DATA</span>
+        <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+        <span class="domain ia"><span class="dot"></span>IA</span>
+      </div>
+      <div class="jobs">
+        <div class="jhead">💼 Usages concrets</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Notion</th><th>Domaine</th><th>Usage</th><th>Métiers</th></tr></thead>
+            <tbody>
+              <tr><td>Combinatoire</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Dénombrer cas, probas, feature engineering</td><td>Data Analyst, Scientist</td></tr>
+              <tr><td>Big-O</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Choisir des algos qui passent à l'échelle</td><td>Data/Software Engineer</td></tr>
+              <tr><td>Pigeonhole</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Collisions de hachage, dimensionnement</td><td>Data Engineer</td></tr>
+              <tr><td>NP-difficulté</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Recours aux heuristiques / ML</td><td>OR, ML Engineer</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Analyse_combinatoire" target="_blank">Analyse combinatoire</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Comparaison_asymptotique" target="_blank">Notation Big-O</a>
+        <a class="pill-link" href="https://www.bigocheatsheet.com/" target="_blank">Big-O Cheat Sheet</a>
+        <a class="pill-link" href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/" target="_blank">MIT 6.042</a>
+      </div>
+    </section>
+
+    <!-- EXOS -->
+    <section class="block" id="exos">
+      <h2>8. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Dénombrement</h3>
+      <p>Combien de plaques d'immatriculation de la forme 2 lettres + 3 chiffres (A-Z, 0-9, répétition OK) ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(26^2 \times 10^3 = 676 \times 1000 = 676\,000\) plaques.</p>
+      </details>
+
+      <h3>Exercice 2 — Combinaisons</h3>
+      <p>Au Loto, on choisit 6 numéros parmi 49. Combien de grilles ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(\binom{49}{6}=\frac{49!}{6!\,43!}=13\,983\,816\). (Probabilité de gagner ≈ 1 sur 14 millions.)</p>
+      </details>
+
+      <h3>Exercice 3 — Big-O (⭐)</h3>
+      <p>Un algo fait, pour chaque élément, une recherche dichotomique dans le tableau. Complexité totale ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>n éléments × O(log n) par recherche = <strong>O(n log n)</strong>. (C'est aussi la complexité d'un bon tri — logique, car trier puis chercher est une stratégie courante.)</p>
+      </details>
+
+      <h3>Exercice 4 — Pigeonhole (⭐⭐)</h3>
+      <p>Montre que dans un groupe de 13 personnes, au moins deux sont nées le même mois.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>13 personnes (objets), 12 mois (tiroirs). Comme 13 > 12, le principe des tiroirs garantit qu'au moins un mois contient ≥ 2 personnes. ∎</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="7">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-7-discret-complexite.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-6-graphes.html"><div class="dir">← Précédent</div><div class="ttl">Module 6 · Graphes</div></a>
+      <a class="next" href="module-8-information.html"><div class="dir">Suivant →</div><div class="ttl">Module 8 · Théorie de l'information</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 7 — Discret &amp; Complexité · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

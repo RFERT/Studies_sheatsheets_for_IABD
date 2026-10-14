@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Améliorations & compétences — Feuille de route</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+  <style>
+    .rm { max-width: 1140px; margin: 0 auto; padding: 20px 28px; }
+    .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; }
+    .panel h3 { margin: 0 0 12px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    .panel ul { margin: 0; padding-left: 18px; }
+    .panel li { color: var(--text-soft); margin: 7px 0; }
+    .panel li b { color: var(--text); }
+    .prio { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; margin-left:6px; vertical-align:middle }
+    .p1 { background: color-mix(in srgb, #ff6b81 22%, transparent); color:#ff9aa8; border:1px solid #ff6b81 }
+    .p2 { background: color-mix(in srgb, #ffb454 22%, transparent); color:#ffcf8f; border:1px solid #ffb454 }
+    .p3 { background: color-mix(in srgb, #27e0b0 22%, transparent); color:#6fe9cd; border:1px solid #27e0b0 }
+    .tagrow { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px }
+    .t { font-size:12px; padding:3px 10px; border-radius:999px; background:var(--bg-elev); border:1px solid var(--border); color:var(--text-soft) }
+    @media (max-width: 560px) {
+      .rm { padding: 16px 16px; }
+      .cols { grid-template-columns: 1fr; gap: 14px; }
+      .panel { padding: 16px 16px; }
+      .panel h3 { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🚀</span> <span>Améliorations<small>feuille de route évolutive</small></span></div>
+    <div class="spacer"></div>
+    <a class="btn" href="index.html">← Portail</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero" style="padding-bottom:10px">
+    <span class="eyebrow">Roadmap</span>
+    <h1>Faire grandir ce portail 🌱</h1>
+    <p>Toutes les idées pour enrichir le site et les compétences à apprendre pour le monde pro — y compris celles peu ou pas couvertes à l'ESGI. On coche au fur et à mesure !</p>
+  </div>
+
+  <div class="rm">
+    <h2 style="margin-top:10px">🛠️ Fonctionnalités du site</h2>
+    <p class="sub" style="color:var(--muted)">Priorités : <span class="prio p1">haute</span> <span class="prio p2">moyenne</span> <span class="prio p3">bonus</span></p>
+    <div class="cols">
+      <div class="panel">
+        <h3>🎯 Suivi &amp; révision</h3>
+        <ul>
+          <li><b>Tableau de bord de progression</b> global (matières terminées, quiz réussis) <span class="prio p1">haute</span></li>
+          <li><b>Répétition espacée</b> (flashcards, rappels J+1/J+3/J+7) <span class="prio p1">haute</span></li>
+          <li><b>Mode examen chronométré</b> avec score et correction <span class="prio p2">moyenne</span></li>
+          <li><b>Recherche globale</b> dans tous les cours <span class="prio p2">moyenne</span></li>
+          <li><b>Favoris / marque-pages</b> de sections <span class="prio p3">bonus</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>💻 Interactivité</h3>
+        <ul>
+          <li><b>Éditeur de code exécutable</b> (Rust Playground, Pyodide pour Python) <span class="prio p1">haute</span></li>
+          <li><b>Quiz générés aléatoirement</b> + banque de questions <span class="prio p2">moyenne</span></li>
+          <li><b>Visualisations interactives</b> (graphes, matrices, descente de gradient animée) <span class="prio p2">moyenne</span></li>
+          <li><b>Coloration syntaxique</b> avancée (Prism/Highlight.js) <span class="prio p3">bonus</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>🏗️ Technique &amp; qualité</h3>
+        <ul>
+          <li><b>Design system partagé</b> unifié entre toutes les matières <span class="prio p2">moyenne</span></li>
+          <li><b>Export PDF</b> propre de chaque cours/fiche <span class="prio p2">moyenne</span></li>
+          <li><b>PWA</b> (consultation hors-ligne, installable) <span class="prio p3">bonus</span></li>
+          <li><b>MathJax/KaTeX en local</b> (pas de dépendance réseau) <span class="prio p3">bonus</span></li>
+          <li><b>Versionnage Git</b> du dossier pour historiser les cours <span class="prio p2">moyenne</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 style="margin-top:30px">📘 Matières à ajouter (programme IABD)</h2>
+    <div class="cols">
+      <div class="panel">
+        <h3>🧠 Cœur IA / Data</h3>
+        <ul>
+          <li><b>Python &amp; Data Science</b> (Pandas, NumPy, viz)</li>
+          <li><b>Machine Learning</b> (scikit-learn, évaluation)</li>
+          <li><b>Deep Learning</b> (PyTorch, CNN, Transformers)</li>
+          <li><b>NLP &amp; LLM</b> (embeddings, RAG, fine-tuning)</li>
+          <li><b>Computer Vision</b></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>🗄️ Data Engineering</h3>
+        <ul>
+          <li><b>Big Data</b> (Hadoop, Spark, Kafka)</li>
+          <li><b>Bases de données</b> (SQL avancé, NoSQL)</li>
+          <li><b>Data pipelines / ETL</b> (Airflow)</li>
+          <li><b>Cloud data</b> (BigQuery, Snowflake)</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>📊 Transverse ESGI</h3>
+        <ul>
+          <li><b>Statistiques appliquées</b></li>
+          <li><b>RGPD, éthique &amp; IA responsable</b></li>
+          <li><b>Gestion de projet / Agile</b></li>
+          <li><b>Anglais technique</b></li>
+          <li><b>Soutenance &amp; communication</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 style="margin-top:30px">🌟 Compétences pro souvent peu couvertes à l'école</h2>
+    <p class="sub" style="color:var(--muted)">Ce qui fait vraiment la différence en entreprise et en entretien.</p>
+    <div class="cols">
+      <div class="panel">
+        <h3>⚙️ Ingénierie logicielle</h3>
+        <ul>
+          <li><b>Git avancé</b> (branches, rebase, résolution de conflits, workflow d'équipe)</li>
+          <li><b>Tests</b> (unitaires, intégration, TDD, couverture)</li>
+          <li><b>Clean code &amp; refactoring</b>, principes SOLID</li>
+          <li><b>Revue de code</b> et collaboration</li>
+          <li><b>Débogage efficace</b> &amp; lecture de logs</li>
+        </ul>
+        <div class="tagrow"><span class="t">Git</span><span class="t">Tests</span><span class="t">SOLID</span></div>
+      </div>
+      <div class="panel">
+        <h3>☁️ DevOps / MLOps</h3>
+        <ul>
+          <li><b>Docker &amp; conteneurs</b> (indispensable aujourd'hui)</li>
+          <li><b>CI/CD</b> (GitHub Actions, GitLab CI)</li>
+          <li><b>Cloud</b> (AWS/GCP/Azure : bases)</li>
+          <li><b>MLOps</b> (MLflow, déploiement de modèles, monitoring)</li>
+          <li><b>Linux &amp; ligne de commande</b>, bash</li>
+        </ul>
+        <div class="tagrow"><span class="t">Docker</span><span class="t">CI/CD</span><span class="t">Cloud</span><span class="t">MLOps</span></div>
+      </div>
+      <div class="panel">
+        <h3>🔒 Qualité &amp; sécurité</h3>
+        <ul>
+          <li><b>Sécurité applicative</b> (OWASP, secrets, injections)</li>
+          <li><b>Performance &amp; profilage</b></li>
+          <li><b>Architecture logicielle</b> (API REST, microservices)</li>
+          <li><b>Documentation technique</b> claire</li>
+        </ul>
+        <div class="tagrow"><span class="t">OWASP</span><span class="t">API</span><span class="t">Archi</span></div>
+      </div>
+      <div class="panel">
+        <h3>🤝 Savoir-être (soft skills)</h3>
+        <ul>
+          <li><b>Vulgarisation</b> : expliquer la data à des non-experts</li>
+          <li><b>Storytelling data</b> &amp; dataviz convaincante</li>
+          <li><b>Veille technologique</b> structurée</li>
+          <li><b>Préparation entretiens</b> (techniques + comportementaux)</li>
+          <li><b>Portfolio &amp; projets perso</b> (GitHub soigné)</li>
+        </ul>
+        <div class="tagrow"><span class="t">Communication</span><span class="t">Dataviz</span><span class="t">Portfolio</span></div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:30px; border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">💬 Comment on avance</span>
+      <p>Dis-moi simplement « on fait [matière] » ou « ajoute [fonctionnalité] » et je la construis avec le même niveau de soin que les cours de maths et de Rust. Chaque matière = un dossier dans <code>matieres/</code> + une entrée dans <code>assets/portal.js</code>. Le site est fait pour grossir sans jamais casser. 💙</p>
+    </div>
+  </div>
+
+  <div class="footer">Feuille de route · <a href="index.html">retour au portail</a> · mise à jour en continu 💙</div>
+
+  <script>
+    (function(){
+      var TK="esgi-portal-theme";
+      function t(x){document.documentElement.setAttribute("data-theme",x);localStorage.setItem(TK,x);var b=document.getElementById("theme-toggle");if(b)b.textContent=x==="light"?"🌙 Sombre":"☀️ Clair";}
+      t(localStorage.getItem(TK)||"dark");
+      document.getElementById("theme-toggle").addEventListener("click",function(){t(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+    })();
+  </script>
+</body>
+</html>

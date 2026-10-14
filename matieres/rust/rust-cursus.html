@@ -1,0 +1,2638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+<title>Cursus Rust — Débutant → Intermédiaire</title>
+<style>
+  :root{
+    --bg:#0f1117; --bg2:#171a23; --bg3:#1e2230; --panel:#141822;
+    --txt:#e6e9ef; --muted:#9aa4b2; --line:#2a3040;
+    --acc:#f74c00; --acc2:#ffb27a; --ok:#3ecf8e; --bad:#ff5d6c;
+    --warn:#ffcf5c; --blue:#5aa9ff; --purple:#b98cff;
+    --code:#11141d;
+    --radius:14px;
+    --mono:"JetBrains Mono","Fira Code",Consolas,Menlo,monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 600px at 80% -10%,#1a1410 0%,var(--bg) 55%);
+    color:var(--txt);font-family:var(--sans);line-height:1.6;font-size:16px;
+  }
+  a{color:var(--blue)}
+  .app{display:grid;grid-template-columns:290px 1fr;min-height:100vh}
+  /* Sidebar */
+  aside{
+    background:linear-gradient(180deg,var(--bg2),var(--bg));
+    border-right:1px solid var(--line);padding:20px 16px;position:sticky;top:0;height:100vh;overflow:auto
+  }
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logo{
+    width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--acc),#b03400);
+    display:grid;place-items:center;font-weight:800;color:#fff;font-size:20px;box-shadow:0 6px 18px rgba(247,76,0,.35)
+  }
+  .brand h1{font-size:17px;margin:0;line-height:1.2}
+  .brand small{color:var(--muted);font-size:12px}
+  .levelbar{margin:14px 0 8px}
+  .levelbar .lvl{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:6px}
+  .bar{height:8px;background:var(--bg3);border-radius:99px;overflow:hidden}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s}
+  nav{margin-top:14px;display:flex;flex-direction:column;gap:4px}
+  .navitem{
+    display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:10px;cursor:pointer;
+    color:var(--muted);font-size:14px;border:1px solid transparent;user-select:none
+  }
+  .navitem:hover{background:var(--bg3);color:var(--txt)}
+  .navitem.active{background:var(--bg3);color:var(--txt);border-color:var(--line)}
+  .navitem.done{color:var(--txt)}
+  .navitem .ic{width:22px;height:22px;border-radius:6px;background:var(--bg3);display:grid;place-items:center;font-size:12px;flex:0 0 auto}
+  .navitem.done .ic{background:rgba(62,207,142,.15);color:var(--ok)}
+  .navitem.cp .ic{background:rgba(90,169,255,.15);color:var(--blue)}
+  .navitem.final .ic{background:rgba(185,140,255,.15);color:var(--purple)}
+  .side-actions{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+  .btn{
+    border:1px solid var(--line);background:var(--bg3);color:var(--txt);padding:9px 12px;border-radius:10px;
+    cursor:pointer;font-size:14px;font-family:inherit;transition:.15s
+  }
+  .btn:hover{border-color:var(--acc);color:#fff}
+  .btn.small{padding:6px 10px;font-size:13px}
+  .btn.primary{background:linear-gradient(135deg,var(--acc),#c93c00);border-color:transparent;color:#fff;font-weight:600}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  /* Main */
+  main{padding:34px 40px 90px;max-width:1000px;margin:0 auto;width:100%}
+  .kicker{color:var(--acc2);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  h2.title{font-size:30px;margin:6px 0 4px}
+  .sub{color:var(--muted);margin-bottom:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px}
+  .lesson h3{margin-top:26px;font-size:20px;color:#fff;border-left:3px solid var(--acc);padding-left:10px}
+  .lesson h4{margin-top:20px;font-size:16px;color:var(--acc2)}
+  .lesson p{margin:10px 0}
+  .lesson ul,.lesson ol{margin:8px 0 8px 4px;padding-left:22px}
+  .lesson li{margin:4px 0}
+  .lesson table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+  .lesson th,.lesson td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  .lesson th{background:var(--bg3)}
+  code{font-family:var(--mono);background:var(--bg3);padding:2px 6px;border-radius:6px;font-size:.9em;color:var(--acc2)}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto;margin:12px 0}
+  pre code{background:none;padding:0;color:#dfe4ee;font-size:13.5px;line-height:1.55;display:block}
+  .callout{border-radius:10px;padding:12px 16px;margin:14px 0;border:1px solid;font-size:14.5px}
+  .callout .h{font-weight:700;margin-bottom:2px;display:flex;gap:8px;align-items:center}
+  .callout.why{border-color:rgba(90,169,255,.4);background:rgba(90,169,255,.08)}
+  .callout.py{border-color:rgba(185,140,255,.4);background:rgba(185,140,255,.08)}
+  .callout.trap{border-color:rgba(255,93,108,.4);background:rgba(255,93,108,.08)}
+  .callout.err{border-color:rgba(255,207,92,.4);background:rgba(255,207,92,.07)}
+  .tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-lit{color:#a5d6a3}.tok-num{color:#79c0ff}
+  .tok-cmt{color:#7d8590;font-style:italic}.tok-mac{color:#ffa657}.tok-ty{color:#7ee787}
+  /* Quiz */
+  .quizhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+  .pill{font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+  .pill.d1{color:var(--ok);border-color:rgba(62,207,142,.4)}
+  .pill.d2{color:var(--warn);border-color:rgba(255,207,92,.4)}
+  .pill.d3{color:var(--bad);border-color:rgba(255,93,108,.4)}
+  .qprompt{font-size:17px;margin:6px 0 14px;font-weight:500}
+  .choices{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+  .choice{
+    display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    cursor:pointer;transition:.12s;background:var(--bg2)
+  }
+  .choice:hover{border-color:var(--acc)}
+  .choice.sel{border-color:var(--acc);background:rgba(247,76,0,.08)}
+  .choice.correct{border-color:var(--ok);background:rgba(62,207,142,.12)}
+  .choice.wrong{border-color:var(--bad);background:rgba(255,93,108,.12)}
+  .choice .mk{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;display:grid;place-items:center;font-size:12px}
+  .choice.sel .mk{border-color:var(--acc)}
+  .choice.correct .mk{border-color:var(--ok);background:var(--ok);color:#04120b}
+  .choice.wrong .mk{border-color:var(--bad);background:var(--bad);color:#fff}
+  .choice.multi .mk{border-radius:6px}
+  textarea.answer{
+    width:100%;min-height:120px;background:var(--code);color:#dfe4ee;border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;font-family:var(--mono);font-size:13.5px;resize:vertical
+  }
+  input.answer{
+    width:100%;background:var(--code);color:#dfe4ee;border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;font-family:var(--mono);font-size:14px
+  }
+  .feedback{margin-top:16px;border-radius:12px;padding:16px 18px;border:1px solid var(--line);background:var(--bg2);display:none}
+  .feedback.show{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .verdict{font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .verdict.ok{color:var(--ok)}.verdict.bad{color:var(--bad)}.verdict.part{color:var(--warn)}
+  .selfassess{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+  .selfassess .lab{color:var(--muted);font-size:14px;margin-right:4px}
+  .qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px;flex-wrap:wrap}
+  .progressline{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--bg3);border:1px solid var(--line)}
+  .dot.ok{background:var(--ok);border-color:var(--ok)}
+  .dot.bad{background:var(--bad);border-color:var(--bad)}
+  .dot.part{background:var(--warn);border-color:var(--warn)}
+  .dot.cur{box-shadow:0 0 0 3px rgba(247,76,0,.35)}
+  .hintbox{margin-top:12px;font-size:14px;color:var(--warn);display:none}
+  .hintbox.show{display:block}
+  .summary .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}
+  .stat{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .stat .n{font-size:26px;font-weight:800}
+  .stat .l{color:var(--muted);font-size:13px}
+  .badge{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;font-size:13px}
+  .weak{background:rgba(255,93,108,.1);border:1px solid rgba(255,93,108,.4);border-radius:10px;padding:10px 14px;margin:8px 0}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--line);
+    padding:10px 18px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1}
+  .topbar-m{display:none}
+  @media(max-width:860px){
+      html,body{overflow-x:hidden}
+      .app{grid-template-columns:1fr}
+      aside{position:fixed;z-index:40;left:-320px;width:min(300px,85vw);transition:.25s;box-shadow:0 0 40px rgba(0,0,0,.5);padding-left:max(16px,env(safe-area-inset-left))}
+      aside.open{left:0}
+      main{padding:18px 16px 80px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+      .topbar-m{display:flex;gap:12px;align-items:center;margin-bottom:14px;position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(8px);padding:6px 0}
+    }
+    @media(max-width:520px){
+      .card{padding:16px 15px}
+      main{font-size:15.5px}
+      .kicker,h2{font-size:22px}
+      pre code{font-size:12.5px}
+      .choice{padding:12px 13px;min-height:46px}
+      .choices{gap:8px}
+      .btn{min-height:42px}
+      table{display:block;overflow-x:auto;white-space:nowrap}
+      .answer{min-height:100px}
+    }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="logo">🦀</div>
+      <div><h1>Cursus Rust</h1><small>Débutant → Intermédiaire</small></div>
+    </div>
+    <div class="levelbar">
+      <div class="lvl"><span id="lvlName">Niveau : Débutant</span><span id="lvlPct">0%</span></div>
+      <div class="bar"><i id="lvlBar"></i></div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-actions">
+      <a class="btn primary small" href="revision-express.html">🔥 Révision express partiel</a>
+      <a class="btn small" href="../../index.html">← Tous mes cours</a>
+      <button class="btn ghost small" id="resetBtn">↺ Réinitialiser la progression</button>
+      <small style="color:var(--muted);font-size:11px">Progression sauvegardée dans ce navigateur.</small>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div class="topbar-m">
+      <button class="btn small" id="menuBtn">☰ Menu</button>
+      <strong>Cursus Rust</strong>
+    </div>
+    <div id="content"></div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   MOTEUR DE QUIZ + CONTENU DU COURS
+   ============================================================ */
+
+/* ---------- Coloration syntaxique très simple pour Rust ---------- */
+function hl(src){
+  const kw=/\b(let|mut|fn|struct|enum|impl|trait|for|while|loop|if|else|match|return|use|mod|pub|crate|self|Self|as|ref|move|where|dyn|const|static|type|in|break|continue|unsafe|async|await)\b/g;
+  const ty=/\b(i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|usize|isize|f32|f64|bool|char|str|String|Vec|Option|Result|Box|Rc|Arc|RefCell|HashMap|Some|None|Ok|Err)\b/g;
+  // échappement HTML
+  let s=src.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  // On met de côté commentaires et chaines pour ne PAS les recolorer ensuite
+  const store=[];
+  const stash=(html)=>{ store.push(html); return '\uE000'+String.fromCharCode(0xE100+store.length-1)+'\uE001'; };
+  s=s.replace(/(\/\/[^\n]*)/g,(m)=>stash('<span class=tok-cmt>'+m+'</span>'));       // commentaires
+  s=s.replace(/("(?:[^"\\]|\\.)*")/g,(m)=>stash('<span class=tok-lit>'+m+'</span>')); // chaines
+  s=s.replace(/\b([a-zA-Z_]\w*!)/g,'<span class=tok-mac>$1</span>');                  // macros
+  s=s.replace(/\b(\d[\d_]*(?:\.\d+)?)\b/g,'<span class=tok-num>$1</span>');           // nombres
+  s=s.replace(ty,'<span class=tok-ty>$1</span>');
+  s=s.replace(kw,'<span class=tok-kw>$1</span>');
+  // restauration des commentaires/chaines
+  s=s.replace(/\uE000([\uE100-\uE1FF])\uE001/g,(m,c)=>store[c.charCodeAt(0)-0xE100]);
+  return s;
+}
+function code(src){return '<pre><code>'+hl(src.replace(/^\n/,'').replace(/\s+$/,''))+'</code></pre>';}
+
+/* Callouts helpers */
+const why =(t)=>`<div class="callout why"><div class="h">💡 Le « pourquoi » de Rust</div>${t}</div>`;
+const py  =(t)=>`<div class="callout py"><div class="h">🐍 Comparaison Python</div>${t}</div>`;
+const trap=(t)=>`<div class="callout trap"><div class="h">⚠️ Piège fréquent</div>${t}</div>`;
+const cerr=(t)=>`<div class="callout err"><div class="h">🧯 Erreur de compilation typique</div>${t}</div>`;
+
+/* ============================================================
+   DONNÉES DU COURS
+   Types de question :
+   - mcq   : choix unique (answer = index)
+   - multi : choix multiple (answer = [indices])
+   - tf    : vrai/faux (answer = true/false)
+   - text  : réponse libre courte, auto-évaluée (model + explain)
+   - predict: prédiction de sortie, auto-évaluée
+   - code  : écriture/refactoring de code, auto-évaluée
+   ============================================================ */
+const COURSE = [];
+</script>
+
+<!-- Le contenu (modules, checkpoints, examen) est injecté ci-dessous -->
+<script>
+/* ================= MODULE 1 — Installation, Cargo & outils ================= */
+COURSE.push({
+  type:'module', navtitle:'1 · Cargo & outils',
+  title:'Module 1 — Installation, Cargo & la chaîne d’outils',
+  sub:'Mettre en place un environnement Rust professionnel et comprendre le rôle de chaque outil.',
+  lesson:
+    `<p>Rust est un langage <b>compilé</b>, <b>statiquement typé</b> et sans ramasse-miettes (garbage collector). Avant d’écrire du code, il faut comprendre son écosystème d’outils, qui est l’un des plus soignés de l’industrie.</p>
+    <h3>Installer Rust : <code>rustup</code></h3>
+    <p><code>rustup</code> est le gestionnaire d’installation officiel. Il installe et met à jour le compilateur et les outils, et gère plusieurs versions (« toolchains »).</p>
+    `+code(`# Installer Rust (Linux/macOS)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Vérifier les versions
+rustc --version   # le compilateur
+cargo --version   # le gestionnaire de projet
+rustup update     # mettre à jour`)+
+    `<h3>Les outils clés</h3>
+    <table>
+      <tr><th>Outil</th><th>Rôle</th><th>Équivalent Python (approx.)</th></tr>
+      <tr><td><code>rustc</code></td><td>Le compilateur bas niveau</td><td><code>CPython</code></td></tr>
+      <tr><td><code>cargo</code></td><td>Build system + gestionnaire de paquets + lanceur de tests</td><td><code>pip</code> + <code>venv</code> + <code>build</code> + <code>pytest</code> réunis</td></tr>
+      <tr><td><code>rustfmt</code></td><td>Formateur automatique (<code>cargo fmt</code>)</td><td><code>black</code></td></tr>
+      <tr><td><code>clippy</code></td><td>Linter très riche (<code>cargo clippy</code>)</td><td><code>ruff</code> / <code>pylint</code></td></tr>
+      <tr><td><code>rust-analyzer</code></td><td>Serveur de langage pour l’IDE (autocomplétion, erreurs en direct)</td><td><code>pylance</code></td></tr>
+    </table>
+    <h3>Créer et lancer un projet</h3>
+    `+code(`cargo new mon_projet      # crée un projet binaire (avec un main)
+cargo new ma_lib --lib    # crée une bibliothèque
+
+cd mon_projet
+cargo run                 # compile PUIS exécute
+cargo build               # compile seulement (cible debug)
+cargo build --release     # compile optimisé (plus lent à compiler, rapide à l'exécution)
+cargo check               # vérifie la compilation SANS produire de binaire (très rapide)
+cargo test                # lance les tests
+cargo fmt                 # reformate le code
+cargo clippy              # analyse le code`)+
+    `<h3>Structure d’un projet Cargo</h3>
+    `+code(`mon_projet/
+├── Cargo.toml      # manifeste : nom, version, dépendances
+├── Cargo.lock      # versions exactes verrouillées (comme requirements.lock / poetry.lock)
+└── src/
+    └── main.rs     # point d'entrée`)+
+    `<p>Le fichier <code>Cargo.toml</code> décrit le paquet. Ajouter une dépendance (un « crate ») :</p>
+    `+code(`# Dans Cargo.toml
+[dependencies]
+rand = "0.8"
+
+# ou en ligne de commande :
+# cargo add rand`)+
+    `<h3>Le premier programme</h3>
+    `+code(`fn main() {
+    println!("Bonjour, Rust !");
+}`)+
+    py(`En Python, un script <code>hello.py</code> s’exécute directement avec <code>python hello.py</code>, sans compilation ni <code>main</code> obligatoire. En Rust, tout binaire a une fonction <code>main</code>, et le code est <b>compilé</b> en exécutable natif avant de tourner. <code>println!</code> est une <b>macro</b> (le <code>!</code> le signale), pas une fonction.`)+
+    why(`<code>cargo check</code> existe parce que la compilation complète de Rust peut être lente (vérifications poussées + optimisations). <code>check</code> effectue toute l’analyse de types et d’emprunts <b>sans</b> générer de code machine : c’est la boucle de feedback rapide qu’on utilise en développement.`)+
+    trap(`Ne confonds pas <b>debug</b> et <b>release</b>. Par défaut <code>cargo run</code> compile en mode debug : le binaire est lent et gros mais compile vite et garde les vérifications de débordement. Pour mesurer les performances, utilise toujours <code>--release</code>.`),
+  quiz:[
+    { kind:'mcq', difficulty:1, tags:['Cargo'],
+      prompt:'Quelle commande vérifie que le code compile <b>sans</b> produire d’exécutable, pour un retour rapide ?',
+      choices:['<code>cargo build</code>','<code>cargo check</code>','<code>cargo run</code>','<code>rustc --fast</code>'],
+      answer:1,
+      explain:'<code>cargo check</code> effectue toute l’analyse (types, emprunts) mais saute la génération de code machine, ce qui le rend bien plus rapide que <code>build</code>. <code>build</code> produit un binaire, <code>run</code> compile puis exécute.'},
+    { kind:'mcq', difficulty:1, tags:['macros','syntaxe'],
+      prompt:'Dans <code>println!("hi")</code>, que signifie le <code>!</code> ?',
+      choices:['Une négation logique','Que <code>println</code> est une <b>macro</b>, pas une fonction','Que la ligne peut échouer','Rien, c’est décoratif'],
+      answer:1,
+      explain:'Le <code>!</code> indique un appel de <b>macro</b>. Les macros sont développées à la compilation et peuvent, par exemple, accepter un nombre variable d’arguments typés — ce qu’une fonction Rust ordinaire ne peut pas faire.'},
+    { kind:'tf', difficulty:2, tags:['Cargo','release'],
+      prompt:'<code>cargo run</code> produit par défaut un binaire optimisé pour la production.',
+      answer:false,
+      explain:'Faux. Par défaut c’est le profil <b>debug</b> (non optimisé, avec vérifications). Il faut <code>cargo run --release</code> pour le profil optimisé.'},
+    { kind:'text', difficulty:2, tags:['Cargo','projet'],
+      prompt:'Explique en une ou deux phrases la différence de rôle entre <code>Cargo.toml</code> et <code>Cargo.lock</code>.',
+      hint:'Pense à requirements.txt vs un fichier de verrouillage.',
+      keywords:['toml','lock','version','exacte','dépendances','manifeste','verrou'],
+      model:'<b>Cargo.toml</b> = manifeste écrit à la main : nom, version du paquet, et contraintes de dépendances (ex. <code>rand = "0.8"</code>). <b>Cargo.lock</b> = généré automatiquement, il fige les versions <b>exactes</b> résolues pour des builds reproductibles.',
+      explain:'C’est l’analogue de <code>pyproject.toml</code>/<code>requirements.txt</code> (souhaits) vs <code>poetry.lock</code>/<code>requirements.lock</code> (versions verrouillées). On commit <code>Cargo.lock</code> pour un binaire, pas nécessairement pour une bibliothèque.'},
+    { kind:'mcq', difficulty:2, tags:['outils','qualité'],
+      prompt:'Quel outil signale des tournures non idiomatiques et des améliorations possibles (au-delà du simple formatage) ?',
+      choices:['<code>rustfmt</code>','<code>clippy</code>','<code>rustup</code>','<code>rust-analyzer</code>'],
+      answer:1,
+      explain:'<code>clippy</code> est le <b>linter</b> : il propose des centaines de « lints » idiomatiques. <code>rustfmt</code> ne fait que reformater. <code>rustup</code> gère les versions du toolchain, <code>rust-analyzer</code> alimente l’IDE.'}
+  ]
+});
+
+/* ================= MODULE 2 — Variables, mutabilité, shadowing, types primitifs ================= */
+COURSE.push({
+  type:'module', navtitle:'2 · Variables & types',
+  title:'Module 2 — Variables, mutabilité, shadowing & types primitifs',
+  sub:'Immutabilité par défaut, inférence de types, et les types scalaires de base.',
+  lesson:
+    `<h3>Immuable par défaut</h3>
+    <p>En Rust, une variable déclarée avec <code>let</code> est <b>immuable</b> par défaut. Pour pouvoir la modifier, il faut <code>let mut</code>.</p>
+    `+code(`let x = 5;
+x = 6;        // ERREUR : cannot assign twice to immutable variable
+let mut y = 5;
+y = 6;        // OK`)+
+    cerr(`<code>error[E0384]: cannot assign twice to immutable variable \`x\`</code><br>Solution : déclarer <code>let mut x = 5;</code> si la mutation est voulue — sinon, c’est souvent le signe d’un bug.`)+
+    why(`L’immutabilité par défaut n’est pas un caprice : elle rend le code plus facile à raisonner, permet des optimisations, et est <b>essentielle au modèle de concurrence</b> de Rust (on peut partager sans risque ce qui ne change pas). Tu déclares explicitement ton intention de muter.`)+
+    py(`En Python, tout est mutable par défaut (<code>x = 5; x = 6</code> fonctionne toujours). Rust inverse ce défaut. De plus, <code>const</code> en Python n’existe pas vraiment (convention MAJUSCULES) ; en Rust les <b>constantes</b> sont réelles : <code>const MAX: u32 = 100_000;</code> — type obligatoire, évaluées à la compilation.`)+
+    `<h3>Constantes</h3>
+    `+code(`const MAX_POINTS: u32 = 100_000;  // type OBLIGATOIRE, toujours immuable, portée globale possible`)+
+    `<h3>Shadowing (ombrage)</h3>
+    <p>On peut redéclarer une variable avec le même nom via <code>let</code> : c’est du <b>shadowing</b>. La nouvelle variable <b>remplace</b> l’ancienne dans la portée, et peut changer de type.</p>
+    `+code(`let spaces = "   ";        // &str
+let spaces = spaces.len();  // usize — nouveau type, même nom : OK grâce au shadowing
+
+let mut guess = "42";
+// guess = guess.len();     // ERREUR : mut ne change PAS le type`)+
+    trap(`Ne confonds pas <b>mutabilité</b> et <b>shadowing</b>. <code>mut</code> réutilise le <b>même</b> emplacement, même type. Le shadowing crée une <b>nouvelle</b> variable (nouvel emplacement) qui peut avoir un autre type. Le shadowing est très utilisé pour transformer une valeur par étapes tout en gardant l’immutabilité.`)+
+    `<h3>Types scalaires</h3>
+    <table>
+      <tr><th>Catégorie</th><th>Types</th><th>Notes</th></tr>
+      <tr><td>Entiers signés</td><td><code>i8 i16 i32 i64 i128 isize</code></td><td>défaut : <code>i32</code></td></tr>
+      <tr><td>Entiers non signés</td><td><code>u8 u16 u32 u64 u128 usize</code></td><td><code>usize</code> = taille d’un pointeur (indices)</td></tr>
+      <tr><td>Flottants</td><td><code>f32 f64</code></td><td>défaut : <code>f64</code></td></tr>
+      <tr><td>Booléen</td><td><code>bool</code></td><td><code>true</code>/<code>false</code></td></tr>
+      <tr><td>Caractère</td><td><code>char</code></td><td>4 octets, un <b>scalaire Unicode</b> (pas un octet !)</td></tr>
+    </table>
+    `+code(`let a: i64 = 9_000_000_000;   // annotation de type explicite
+let b = 2.0;                  // f64 inféré
+let c = b'A';                 // u8 (octet)
+let d = 'é';                  // char (Unicode), 4 octets
+let sum = 5 + 10;             // i32
+let overflow: u8 = 255 + 1;   // panique en debug, "wrappe" en release`)+
+    why(`<code>usize</code> existe parce que l’indexation et les tailles dépendent de l’architecture (32 vs 64 bits). Les indices de tableaux et longueurs sont des <code>usize</code>. Le typage précis des entiers permet un contrôle mémoire fin, impossible en Python où <code>int</code> est illimité.`)+
+    cerr(`<code>error[E0308]: mismatched types</code> apparaît si tu mélanges les types : <code>let x: i32 = 5; let y: i64 = x;</code> échoue. Rust ne convertit <b>jamais</b> implicitement : il faut <code>x as i64</code> (cast explicite).`),
+  quiz:[
+    { kind:'predict', difficulty:1, tags:['mutabilité'], expect:'erreur de compilation',
+      prompt:'Que se passe-t-il à la compilation ?',
+      code:`fn main() {
+    let n = 10;
+    n = 20;
+    println!("{n}");
+}`,
+      hint:'La variable est-elle déclarée mutable ?',
+      model:'Erreur de compilation : <code>E0384 cannot assign twice to immutable variable</code>.',
+      explain:'<code>let n = 10;</code> est immuable. Réassigner <code>n = 20;</code> est interdit. Correction : <code>let mut n = 10;</code>. C’est l’immutabilité-par-défaut de Rust.'},
+    { kind:'mcq', difficulty:2, tags:['shadowing'],
+      prompt:'Ce code compile-t-il, et pourquoi ?<br>'+code(`let x = "  hi  ";
+let x = x.trim();
+let x = x.len();`),
+      choices:[
+        'Non : on ne peut pas réassigner <code>x</code>',
+        'Oui : le shadowing crée à chaque <code>let</code> une nouvelle variable, le type peut changer',
+        'Non : il manque <code>mut</code>',
+        'Oui mais seulement parce que les types sont identiques'],
+      answer:1,
+      explain:'Chaque <code>let x = ...</code> <b>ombrage</b> le précédent : ce sont de nouvelles variables. Le type passe de <code>&str</code> à <code>&str</code> puis <code>usize</code> sans problème. Avec <code>mut</code> seul, changer le type serait interdit.'},
+    { kind:'mcq', difficulty:2, tags:['types','cast'],
+      prompt:'Pourquoi <code>let y: i64 = my_i32;</code> ne compile-t-il pas (avec <code>my_i32: i32</code>) ?',
+      choices:[
+        'Rust convertit seulement vers des types plus petits',
+        'Rust n’effectue aucune conversion numérique implicite ; il faut <code>my_i32 as i64</code>',
+        'Il faut <code>mut</code>',
+        'i64 n’existe pas'],
+      answer:1,
+      explain:'Rust interdit les conversions numériques implicites (source fréquente de bugs en C). Il faut un cast explicite <code>as</code> : <code>let y = my_i32 as i64;</code>. C’est verbeux mais sans surprise.'},
+    { kind:'tf', difficulty:2, tags:['char'],
+      prompt:'En Rust, un <code>char</code> fait 1 octet, comme en C.',
+      answer:false,
+      explain:'Faux. Un <code>char</code> Rust fait <b>4 octets</b> et représente un <b>scalaire Unicode</b> (ex. <code>\'é\'</code>, <code>\'🦀\'</code>). L’équivalent « un octet » est <code>u8</code> (ex. <code>b\'A\'</code>).'},
+    { kind:'text', difficulty:3, tags:['mutabilité','shadowing'],
+      prompt:'Donne une situation concrète où le <b>shadowing</b> est préférable à <code>mut</code>. Explique le bénéfice.',
+      hint:'Pense à un changement de type ou à garder l’immutabilité.',
+      keywords:['type','immuable','transform','parse','nouvelle','conversion'],
+      model:'Exemple : lire une saisie <code>let input = "42";</code> (un <code>&str</code>) puis <code>let input: i32 = input.parse().unwrap();</code>. Le shadowing permet de <b>changer le type</b> (&str → i32) tout en gardant le même nom pertinent, et le résultat reste <b>immuable</b>.',
+      explain:'Avantage : on évite d’inventer des noms (<code>input_str</code>, <code>input_num</code>), on garde l’immutabilité (sécurité), et on peut transformer le type — impossible avec <code>mut</code>. Le shadowing exprime « voici la version finale de cette donnée ».'}
+  ]
+});
+</script>
+
+<script>
+/* ================= MODULE 3 — Tuples, tableaux, slices ================= */
+COURSE.push({
+  type:'module', navtitle:'3 · Tuples, tableaux, slices',
+  title:'Module 3 — Types composés : tuples, tableaux & slices',
+  sub:'Regrouper des valeurs. Introduction douce à une idée centrale : les slices.',
+  lesson:
+    `<h3>Tuples</h3>
+    <p>Un <b>tuple</b> regroupe des valeurs de types éventuellement différents, avec une taille <b>fixe</b>.</p>
+    `+code(`let tup: (i32, f64, char) = (500, 6.4, 'z');
+let (x, y, z) = tup;          // déstructuration
+let premier = tup.0;          // accès par index avec un point
+println!("{y}");              // 6.4
+let unit = ();                // le tuple vide = type "unit", la "rien" de Rust`)+
+    py(`Comme les tuples Python, ils sont hétérogènes et déstructurables. Différence : la taille et les types sont <b>fixés à la compilation</b>. Et le tuple vide <code>()</code> — le type « unit » — joue le rôle de <code>None</code>/<code>void</code> : c’est ce que renvoie une fonction sans valeur de retour.`)+
+    `<h3>Tableaux (arrays)</h3>
+    <p>Un <b>tableau</b> a une taille fixe et des éléments du <b>même type</b>. Il vit généralement sur la pile (stack).</p>
+    `+code(`let a = [1, 2, 3, 4, 5];        // [i32; 5]
+let b: [i32; 3] = [0; 3];      // [0, 0, 0] (répétition)
+let premier = a[0];
+let taille = a.len();          // 5
+// let x = a[10];              // panique à l'exécution : index out of bounds`)+
+    trap(`Indexer hors limites (<code>a[10]</code>) <b>ne corrompt pas la mémoire</b> comme en C : Rust vérifie et <b>panique</b> proprement (« index out of bounds »). C’est plus sûr, mais reste une erreur à éviter — souvent avec <code>.get(i)</code> qui renvoie une <code>Option</code>.`)+
+    `<h3>Vec vs tableau</h3>
+    <p>Le tableau <code>[T; N]</code> a une taille figée. Pour une liste <b>dynamique</b>, on utilise <code>Vec&lt;T&gt;</code> (Module 9), l’équivalent de la <code>list</code> Python.</p>
+    <h3>Slices — l’idée clé</h3>
+    <p>Un <b>slice</b> <code>&[T]</code> est une <b>vue empruntée</b> sur une portion contiguë d’un tableau, d’un <code>Vec</code> ou d’une chaîne : un couple (pointeur, longueur). Il ne possède <b>pas</b> les données — il les référence.</p>
+    `+code(`let a = [10, 20, 30, 40, 50];
+let milieu = &a[1..4];   // &[i32] -> [20, 30, 40] (fin exclusive)
+let debut  = &a[..2];    // [10, 20]
+let tout   = &a[..];     // le tableau entier
+
+let mot = String::from("bonjour");
+let bon = &mot[0..3];    // &str -> "bon" (slice de chaîne)`)+
+    why(`Les slices sont fondamentaux : ils permettent d’écrire des fonctions qui travaillent indifféremment sur un tableau, un <code>Vec</code> ou une sous-partie, <b>sans copier</b> les données. Une fonction qui prend <code>&[i32]</code> accepte <code>&mon_tableau</code> comme <code>&mon_vec</code>. C’est plus flexible et plus performant que de passer la collection entière.</p>
+    <p>Attention : <code>&str</code> est un slice de chaîne UTF-8. Découper au milieu d’un caractère multi-octets (ex. <code>&mot[0..1]</code> sur « é ») <b>panique</b>, car les indices sont en <b>octets</b>.`)+
+    py(`Le slicing Python (<code>liste[1:4]</code>) <b>copie</b> les éléments dans une nouvelle liste. Le slice Rust ne copie <b>rien</b> : c’est une fenêtre sur les données existantes, soumise au borrow checker (Module 6).`),
+  quiz:[
+    { kind:'predict', difficulty:1, tags:['tuples'], expect:'6.4',
+      prompt:'Quelle est la sortie ?',
+      code:`fn main() {
+    let t = (1, 6.4, 'x');
+    let (_, y, _) = t;
+    println!("{y}");
+}`,
+      model:'6.4',
+      explain:'La déstructuration <code>let (_, y, _) = t;</code> lie <code>y</code> au deuxième élément (<code>6.4</code>). <code>_</code> ignore les autres. On aurait aussi pu écrire <code>t.1</code>.'},
+    { kind:'mcq', difficulty:2, tags:['slices'],
+      prompt:'Que représente <code>&a[1..4]</code> pour <code>let a = [10,20,30,40,50];</code> ?',
+      choices:[
+        'Une copie <code>[20,30,40,50]</code>',
+        'Une vue empruntée <code>[20,30,40]</code> (fin exclusive), sans copie',
+        'Une erreur : les slices n’existent que sur les String',
+        'Le tableau entier'],
+      answer:1,
+      explain:'<code>1..4</code> va de l’index 1 inclus à 4 <b>exclus</b> → éléments d’indices 1,2,3 = <code>[20,30,40]</code>. C’est un <code>&[i32]</code>, une <b>vue</b> empruntée, aucune copie.'},
+    { kind:'tf', difficulty:2, tags:['slices','ownership'],
+      prompt:'Un slice possède (owns) les données qu’il désigne.',
+      answer:false,
+      explain:'Faux. Un slice <b>emprunte</b> les données : c’est une référence (pointeur + longueur). Il dépend de la durée de vie de la collection sous-jacente (cf. borrow checker).'},
+    { kind:'mcq', difficulty:2, tags:['tableaux','sécurité'],
+      prompt:'Que fait <code>a[10]</code> si <code>a</code> n’a que 5 éléments ?',
+      choices:[
+        'Comportement indéfini (comme en C)',
+        'Renvoie 0',
+        'Panique à l’exécution : « index out of bounds »',
+        'Erreur de compilation systématique'],
+      answer:2,
+      explain:'Rust insère une vérification de borne : accès hors limites → <b>panique contrôlée</b> à l’exécution, pas de corruption mémoire. Pour un accès sûr renvoyant une <code>Option</code>, utilise <code>a.get(10)</code>.'},
+    { kind:'text', difficulty:3, tags:['slices','fonctions'],
+      prompt:'Pourquoi préfère-t-on écrire une fonction <code>fn somme(v: &[i32]) -> i32</code> plutôt que <code>fn somme(v: Vec&lt;i32&gt;) -> i32</code> ? Donne deux raisons.',
+      hint:'Pense à la flexibilité des types acceptés et à l’ownership.',
+      keywords:['slice','copie','vec','tableau','emprunt','ownership','flexible','possession'],
+      model:'1) <code>&[i32]</code> accepte à la fois un <code>Vec</code>, un tableau <code>[i32; N]</code> et une sous-partie, sans copie. 2) La fonction <b>emprunte</b> au lieu de <b>prendre possession</b> : l’appelant garde sa collection après l’appel. C’est plus flexible et évite un déplacement/clone inutile.',
+      explain:'Prendre <code>Vec&lt;i32&gt;</code> par valeur <b>consomme</b> (move) la collection : l’appelant la perd. Prendre <code>&[i32]</code> emprunte une vue en lecture seule, réutilisable, compatible avec plusieurs types. C’est l’idiome recommandé pour les paramètres « lecture ».'}
+  ]
+});
+
+/* ================= MODULE 4 — Fonctions, expressions vs statements, contrôle de flux ================= */
+COURSE.push({
+  type:'module', navtitle:'4 · Fonctions & flux',
+  title:'Module 4 — Fonctions, expressions vs statements & contrôle de flux',
+  sub:'Une distinction fondamentale : en Rust, presque tout est une expression qui produit une valeur.',
+  lesson:
+    `<h3>Fonctions</h3>
+    `+code(`fn addition(a: i32, b: i32) -> i32 {
+    a + b          // PAS de point-virgule : c'est l'expression de retour
+}
+
+fn saluer(nom: &str) {   // pas de "-> " => retourne () (unit)
+    println!("Salut {nom}");
+}`)+
+    trap(`Le type des paramètres est <b>obligatoire</b> (pas d’inférence sur les signatures). Le type de retour aussi, sauf s’il vaut <code>()</code>.`)+
+    `<h3>Expressions vs statements — LE point à comprendre</h3>
+    <ul>
+      <li>Une <b>instruction</b> (statement) exécute une action et ne renvoie <b>pas</b> de valeur : <code>let x = 5;</code></li>
+      <li>Une <b>expression</b> produit une <b>valeur</b> : <code>5 + 3</code>, un appel de fonction, un bloc <code>{ ... }</code>, un <code>if</code>, un <code>match</code>…</li>
+    </ul>
+    `+code(`let y = {
+    let a = 3;
+    a + 1        // pas de ; -> le bloc VAUT 4
+};               // y == 4
+
+let z = if y > 2 { "grand" } else { "petit" };  // if est une EXPRESSION`)+
+    cerr(`Ajouter un point-virgule transforme une expression en instruction qui vaut <code>()</code> :<br><code>fn f() -&gt; i32 { 5; }</code> → <code>error[E0308]: mismatched types, expected i32, found ()</code>. Retire le <code>;</code> après <code>5</code>.`)+
+    why(`Faire du <code>if</code>, du <code>match</code> et des blocs des <b>expressions</b> supprime le besoin d’un opérateur ternaire séparé et rend le code plus composable : on peut affecter directement le résultat d’un branchement. Le <code>;</code> devient porteur de sens (il « jette » la valeur).`)+
+    py(`Python distingue aussi expressions et instructions, mais son <code>if</code> classique n’est pas une expression (il faut <code>a if cond else b</code>). En Rust, <b>le même</b> <code>if</code> sert partout et renvoie une valeur. Autre différence : le <code>return</code> explicite est rare en Rust — on laisse la dernière expression.`)+
+    `<h3>Contrôle de flux</h3>
+    `+code(`// if / else if / else (les conditions sont des bool STRICTS : pas de "truthy")
+if n % 2 == 0 { println!("pair"); } else { println!("impair"); }
+
+// loop : boucle infinie qui peut RENVOYER une valeur via break
+let resultat = loop {
+    compteur += 1;
+    if compteur == 10 { break compteur * 2; }  // renvoie 20
+};
+
+// while
+while n > 0 { n -= 1; }
+
+// for sur un intervalle ou un itérable
+for i in 0..5 { print!("{i} "); }        // 0 1 2 3 4
+for x in [10, 20, 30] { print!("{x} "); }`)+
+    trap(`Les conditions doivent être des <code>bool</code> stricts. <code>if 3 { ... }</code> ne compile pas (pas de « truthy/falsy » comme en Python). Écris <code>if n != 0</code>.`)+
+    why(`La boucle <code>loop</code> qui peut renvoyer une valeur via <code>break valeur</code> est unique : elle remplace élégamment les motifs « répéter jusqu’à obtenir un résultat ». <code>for i in 0..5</code> utilise un <b>intervalle</b> (<code>Range</code>), qui est un itérateur — pas une liste matérialisée (comme <code>range</code> en Python 3).`),
+  quiz:[
+    { kind:'predict', difficulty:2, tags:['expressions'], expect:'4',
+      prompt:'Quelle est la valeur de <code>y</code> affichée ?',
+      code:`fn main() {
+    let y = {
+        let a = 3;
+        a + 1
+    };
+    println!("{y}");
+}`,
+      model:'4',
+      explain:'Le bloc <code>{ let a = 3; a + 1 }</code> est une <b>expression</b> : sa valeur est celle de sa dernière expression sans <code>;</code>, soit <code>4</code>. Donc <code>y == 4</code>.'},
+    { kind:'predict', difficulty:2, tags:['expressions','statements'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ? Si non, pourquoi ?',
+      code:`fn double(x: i32) -> i32 {
+    x * 2;
+}`,
+      hint:'Regarde le point-virgule sur la dernière ligne.',
+      model:'Erreur : <code>E0308 mismatched types (expected i32, found ())</code>.',
+      explain:'Le <code>;</code> après <code>x * 2</code> en fait une <b>instruction</b> qui vaut <code>()</code>. La fonction promet <code>-> i32</code> mais renvoie <code>()</code>. Correction : enlève le point-virgule → <code>x * 2</code>.'},
+    { kind:'mcq', difficulty:2, tags:['flux','if'],
+      prompt:'Pourquoi <code>let s = if x { "a" } else { "b" };</code> fonctionne-t-il en Rust ?',
+      choices:[
+        'Parce que <code>if</code> est une <b>expression</b> qui produit une valeur',
+        'Parce que <code>let</code> autorise deux valeurs',
+        'Ça ne fonctionne pas',
+        'Seulement avec <code>match</code>'],
+      answer:0,
+      explain:'En Rust, <code>if/else</code> est une <b>expression</b>. Les deux branches doivent renvoyer le <b>même type</b>. Ici les deux valent <code>&str</code>, donc <code>s: &str</code>.'},
+    { kind:'mcq', difficulty:1, tags:['flux','loop'],
+      prompt:'Comment faire renvoyer une valeur par une boucle <code>loop</code> ?',
+      choices:['<code>return v</code>','<code>break v;</code>','<code>yield v</code>','Impossible'],
+      answer:1,
+      explain:'<code>break v;</code> sort de la <code>loop</code> <b>en renvoyant</b> <code>v</code> comme valeur de l’expression <code>loop</code>. Utile pour « réessayer jusqu’au succès ».'},
+    { kind:'code', difficulty:2, tags:['fonctions','flux'],
+      prompt:'Écris une fonction <code>fn max(a: i32, b: i32) -> i32</code> qui renvoie le plus grand, en utilisant <code>if</code> <b>comme expression</b> (sans <code>return</code>).',
+      starter:'fn max(a: i32, b: i32) -> i32 {\n    \n}',
+      hint:'La dernière expression du corps est la valeur de retour.',
+      keywords:['if','else','a','b'],
+      modelCode:true,
+      model:`fn max(a: i32, b: i32) -> i32 {
+    if a > b { a } else { b }
+}`,
+      explain:'Le <code>if/else</code> est l’unique expression du corps : sa valeur devient le retour, sans <code>;</code> ni <code>return</code>. Les deux branches renvoient bien <code>i32</code>.'}
+  ]
+});
+
+/* ================= MODULE 5 — OWNERSHIP ================= */
+COURSE.push({
+  type:'module', navtitle:'5 · Ownership ★',
+  title:'Module 5 — Ownership (la possession) ★',
+  sub:'Le concept le plus différenciant de Rust. Prends ton temps ici.',
+  lesson:
+    `<p>Rust gère la mémoire <b>sans ramasse-miettes</b> et <b>sans <code>malloc/free</code> manuels</b>. Le mécanisme s’appelle l’<b>ownership</b> (possession). C’est un ensemble de règles vérifiées <b>à la compilation</b> — coût nul à l’exécution.</p>
+    <h3>Pile vs tas (stack vs heap)</h3>
+    <p>Les données de taille connue et fixe vont sur la <b>pile</b> (rapide). Les données de taille variable (ex. <code>String</code>) vont sur le <b>tas</b> (heap), et il faut savoir <b>quand les libérer</b>. C’est ce que l’ownership résout.</p>
+    <h3>Les trois règles</h3>
+    <ol>
+      <li>Chaque valeur a une <b>unique variable propriétaire</b> (owner).</li>
+      <li>Il ne peut y avoir qu’<b>un seul</b> propriétaire à la fois.</li>
+      <li>Quand le propriétaire sort de sa <b>portée</b>, la valeur est <b>libérée</b> automatiquement (appel de <code>drop</code>).</li>
+    </ol>
+    `+code(`{
+    let s = String::from("hello");  // s possède la String (allouée sur le tas)
+    // ... on utilise s ...
+}   // fin de portée : s est "droppé", la mémoire est libérée automatiquement`)+
+    `<h3>Le « move » (déplacement)</h3>
+    <p>Affecter une valeur du tas à une autre variable <b>déplace</b> la possession. L’ancienne variable devient <b>invalide</b>.</p>
+    `+code(`let s1 = String::from("hello");
+let s2 = s1;              // MOVE : s1 est déplacé dans s2
+// println!("{s1}");      // ERREUR : borrow of moved value: \`s1\`
+println!("{s2}");         // OK`)+
+    cerr(`<code>error[E0382]: borrow of moved value: \`s1\`</code><br>Cause : <code>s1</code> a été déplacé dans <code>s2</code>. Solutions : soit utiliser <code>s2</code>, soit cloner explicitement <code>let s2 = s1.clone();</code> (copie profonde), soit emprunter (Module 6).`)+
+    why(`Pourquoi invalider <code>s1</code> ? Parce que <code>String</code> possède un pointeur vers le tas. Si <code>s1</code> et <code>s2</code> pointaient tous deux vers la même mémoire, à la fin de portée on la libérerait <b>deux fois</b> (« double free », bug de sécurité classique en C++). Le move garantit un <b>unique</b> propriétaire, donc une <b>unique</b> libération.`)+
+    `<h3>Copy vs Move</h3>
+    <p>Les types simples entièrement sur la pile (entiers, <code>bool</code>, <code>char</code>, <code>f64</code>, tuples de Copy…) implémentent le trait <code>Copy</code> : ils sont <b>copiés</b>, pas déplacés.</p>
+    `+code(`let x = 5;
+let y = x;         // COPY : x reste valide (i32 est Copy)
+println!("{x} {y}");   // 5 5  -> OK
+
+let s1 = String::from("hi");
+let s2 = s1;       // MOVE : String n'est PAS Copy
+// x est copié, s1 est déplacé`)+
+    py(`En Python, <code>s2 = s1</code> crée deux références vers le <b>même</b> objet (compté par le garbage collector). En Rust, il n’y a pas de comptage automatique par défaut : soit copie (types <code>Copy</code>), soit transfert de propriété (move). Le GC de Python résout le « qui libère » à l’exécution ; Rust le résout à la <b>compilation</b>, sans coût.`)+
+    `<h3>Ownership et fonctions</h3>
+    `+code(`fn prendre(s: String) {      // s prend possession
+    println!("{s}");
+}                             // s est droppé ici
+
+fn main() {
+    let a = String::from("x");
+    prendre(a);               // a est MOVE dans la fonction
+    // println!("{a}");       // ERREUR : a n'est plus valide
+}`)+
+    trap(`Passer une <code>String</code> (ou tout type non-Copy) à une fonction <b>par valeur</b> la <b>consomme</b>. Si tu veux la réutiliser après, il faut soit la faire <b>renvoyer</b>, soit — bien mieux — la passer par <b>référence</b> (<code>&String</code> ou <code>&str</code>), ce qu’on voit au Module 6.`)+
+    why(`Ce modèle élimine des classes entières de bugs <b>à la compilation</b> : use-after-free, double-free, fuites, data races. C’est le cœur de la promesse de Rust : « sécurité mémoire sans GC ». Le prix à payer est l’apprentissage de ces règles — d’où l’importance de ce module.`),
+  quiz:[
+    { kind:'predict', difficulty:2, tags:['ownership','move'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let s1 = String::from("hi");
+    let s2 = s1;
+    println!("{s1}");
+}`,
+      hint:'Que devient s1 après le move ?',
+      model:'Erreur : <code>E0382 borrow of moved value: s1</code>.',
+      explain:'<code>let s2 = s1;</code> <b>déplace</b> la <code>String</code> : <code>s1</code> devient invalide. Utiliser <code>s1</code> ensuite est interdit. Solutions : afficher <code>s2</code>, ou <code>let s2 = s1.clone();</code>, ou emprunter <code>&s1</code>.'},
+    { kind:'predict', difficulty:2, tags:['ownership','copy'], expect:'5 5',
+      prompt:'Quelle est la sortie ?',
+      code:`fn main() {
+    let x = 5;
+    let y = x;
+    println!("{x} {y}");
+}`,
+      model:'5 5',
+      explain:'<code>i32</code> implémente <code>Copy</code> : <code>let y = x;</code> effectue une <b>copie</b>, pas un move. <code>x</code> reste valide → <code>5 5</code>. La différence avec <code>String</code> est cruciale.'},
+    { kind:'mcq', difficulty:3, tags:['ownership','sécurité'],
+      prompt:'Pourquoi Rust invalide-t-il <code>s1</code> après <code>let s2 = s1;</code> pour une <code>String</code> ?',
+      choices:[
+        'Pour économiser de la RAM',
+        'Pour éviter que la mémoire du tas soit libérée deux fois (double free)',
+        'Parce que String est un mot-clé réservé',
+        'Pour forcer l’usage du GC'],
+      answer:1,
+      explain:'Une <code>String</code> possède un pointeur vers le tas. Deux propriétaires → double libération en fin de portée (« double free », faille classique). En imposant un <b>propriétaire unique</b>, Rust garantit une libération unique et sûre.'},
+    { kind:'mcq', difficulty:2, tags:['ownership','fonctions'],
+      prompt:'Après <code>prendre(a);</code> où <code>fn prendre(s: String)</code> et <code>a: String</code>, quel est l’état de <code>a</code> ?',
+      choices:[
+        '<code>a</code> est toujours utilisable',
+        '<code>a</code> a été déplacé (moved) dans la fonction et n’est plus utilisable',
+        '<code>a</code> vaut maintenant <code>None</code>',
+        '<code>a</code> a été copié'],
+      answer:1,
+      explain:'Passer par valeur un type non-<code>Copy</code> le <b>déplace</b>. <code>a</code> est consommé par <code>prendre</code> et droppé à la fin de la fonction ; on ne peut plus l’utiliser dans <code>main</code>. Pour l’éviter : passer <code>&a</code>.'},
+    { kind:'text', difficulty:3, tags:['ownership','clone','copy'],
+      prompt:'Explique la différence entre <code>Copy</code> et <code>Clone</code>, et quand chacun s’applique.',
+      hint:'L’un est implicite et peu coûteux, l’autre explicite et potentiellement coûteux.',
+      keywords:['copy','clone','pile','tas','explicite','implicite','profonde','coût'],
+      model:'<b>Copy</b> : copie bit-à-bit <b>implicite</b>, réservée aux types entièrement sur la pile et peu coûteux (i32, bool, char, f64, tuples de Copy). L’ancienne variable <b>reste valide</b>. <b>Clone</b> : copie <b>explicite</b> (<code>.clone()</code>), potentiellement <b>profonde</b> et coûteuse (alloue sur le tas pour une String, un Vec…).',
+      explain:'Un type <code>Copy</code> est aussi <code>Clone</code>, mais l’inverse est faux : <code>String</code> est <code>Clone</code> mais pas <code>Copy</code> (car elle possède de la mémoire tas). Rust rend le coût <b>visible</b> : tu écris <code>.clone()</code> quand tu duplique de la mémoire, ce qui évite les copies cachées coûteuses des autres langages.'}
+  ]
+});
+
+/* ================= CHECKPOINT 1 — Débutant ================= */
+COURSE.push({
+  type:'checkpoint', navtitle:'⚑ Checkpoint : Débutant',
+  title:'Checkpoint — Niveau Débutant',
+  sub:'Examen de synthèse sur les modules 1 à 5. Objectif : ≥ 70% pour avancer sereinement.',
+  lesson:`<div class="callout why"><div class="h">🎯 Ce que tu dois maîtriser</div>
+    Cargo & la boucle <code>check/build/run</code>, l’immutabilité par défaut, le shadowing, les types primitifs et le cast <code>as</code>, tuples/tableaux/slices, expressions vs statements, et surtout les <b>règles d’ownership</b> (move, Copy, drop). Les lacunes détectées seront listées à la fin.</div>`,
+  exam:[
+    { kind:'mcq', difficulty:1, tags:['Cargo'],
+      prompt:'Boucle de dev la plus rapide pour vérifier les erreurs de type sans binaire ?',
+      choices:['<code>cargo run</code>','<code>cargo check</code>','<code>cargo build --release</code>','<code>cargo new</code>'],
+      answer:1, explain:'<code>cargo check</code> : analyse complète sans génération de code machine.'},
+    { kind:'predict', difficulty:2, tags:['mutabilité','shadowing'], expect:'6',
+      prompt:'Sortie ?',
+      code:`fn main() {
+    let x = 5;
+    let x = x + 1;
+    println!("{x}");
+}`,
+      model:'6', explain:'Shadowing : le second <code>let x</code> crée une nouvelle variable valant <code>x+1 = 6</code>. Pas besoin de <code>mut</code> car ce sont des variables distinctes.'},
+    { kind:'mcq', difficulty:2, tags:['slices'],
+      prompt:'Type de <code>&v[1..3]</code> où <code>v: Vec&lt;i32&gt;</code> ?',
+      choices:['<code>Vec&lt;i32&gt;</code>','<code>[i32; 2]</code>','<code>&[i32]</code>','<code>i32</code>'],
+      answer:2, explain:'Un slice emprunté <code>&[i32]</code> : une vue, pas une copie ni un nouveau Vec.'},
+    { kind:'predict', difficulty:3, tags:['ownership','move'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn afficher(s: String) { println!("{s}"); }
+fn main() {
+    let m = String::from("salut");
+    afficher(m);
+    afficher(m);
+}`,
+      hint:'Combien de fois m peut-il être déplacé ?',
+      model:'Erreur E0382 : use of moved value m au 2e appel.',
+      explain:'Le 1er <code>afficher(m)</code> <b>déplace</b> <code>m</code> ; au 2e appel <code>m</code> n’existe plus. Correctifs : <code>fn afficher(s: &str)</code> puis <code>afficher(&m)</code>, ou cloner.'},
+    { kind:'mcq', difficulty:2, tags:['expressions'],
+      prompt:'Quelle affirmation est vraie ?',
+      choices:[
+        'En Rust <code>if</code> ne peut pas produire de valeur',
+        'Un bloc <code>{ ... }</code> sans <code>;</code> final vaut la valeur de sa dernière expression',
+        'Toute ligne doit se terminer par <code>return</code>',
+        'Les conditions <code>if</code> acceptent les entiers comme booléens'],
+      answer:1, explain:'Les blocs sont des expressions ; leur valeur est la dernière expression sans <code>;</code>. Les conditions exigent un <code>bool</code> strict.'},
+    { kind:'text', difficulty:3, tags:['ownership','fonctions','slices'],
+      prompt:'On a <code>let mut v = vec![1,2,3];</code> et on veut une fonction qui calcule la somme <b>sans consommer</b> <code>v</code>. Donne sa signature idéale et explique pourquoi.',
+      hint:'Emprunt en lecture + type de paramètre flexible.',
+      keywords:['&[i32]','slice','emprunt','&','consomme','possession'],
+      model:'<code>fn somme(v: &[i32]) -> i32</code>, appelée <code>somme(&v)</code>. On <b>emprunte</b> une vue en lecture (slice), donc <code>v</code> reste la propriété de l’appelant et est réutilisable ; en bonus, la fonction accepte aussi bien un <code>Vec</code> qu’un tableau.',
+      explain:'Prendre <code>Vec&lt;i32&gt;</code> par valeur consommerait <code>v</code>. Le slice emprunté <code>&[i32]</code> est l’idiome : pas de move, pas de copie, compatible avec plusieurs types de collections.'}
+  ]
+});
+</script>
+<script>
+/* ================= MODULE 6 — Borrowing & références ================= */
+COURSE.push({
+  type:'module', navtitle:'6 · Borrowing ★',
+  title:'Module 6 — Borrowing, références & le borrow checker ★',
+  sub:'Utiliser une valeur sans la posséder. Les règles qui font la réputation de Rust.',
+  lesson:
+    `<p>Consommer (move) une valeur à chaque usage serait pénible. La solution : <b>emprunter</b> (borrow) via une <b>référence</b>. Une référence pointe vers une valeur <b>sans en prendre possession</b>.</p>
+    <h3>Références immuables <code>&T</code></h3>
+    `+code(`fn longueur(s: &String) -> usize {   // emprunte, ne possède pas
+    s.len()
+}                                     // s sort de portée mais NE libère RIEN (n'est pas propriétaire)
+
+fn main() {
+    let texte = String::from("hello");
+    let n = longueur(&texte);          // on prête &texte
+    println!("{texte} fait {n}");      // texte TOUJOURS valide
+}`)+
+    `<h3>Références mutables <code>&mut T</code></h3>
+    `+code(`fn ajoute(s: &mut String) {
+    s.push_str(" !");
+}
+fn main() {
+    let mut t = String::from("hi");
+    ajoute(&mut t);        // prêt mutable
+    println!("{t}");       // "hi !"
+}`)+
+    `<h3>Les règles du borrow checker</h3>
+    <p>À tout instant, pour une donnée, tu peux avoir <b>SOIT</b> :</p>
+    <ul>
+      <li><b>autant de références immuables <code>&T</code> que tu veux</b>, <b>OU</b></li>
+      <li><b>exactement une référence mutable <code>&mut T</code></b>,</li>
+    </ul>
+    <p>… mais <b>jamais les deux en même temps</b>. Et aucune référence ne peut <b>survivre</b> à la valeur qu’elle désigne (pas de « dangling reference »).</p>
+    `+code(`let mut s = String::from("hi");
+let r1 = &s;        // ok
+let r2 = &s;        // ok, plusieurs lecteurs
+// let rm = &mut s; // ERREUR ici si r1/r2 encore utilisés
+println!("{r1} {r2}");   // dernière utilisation de r1/r2
+let rm = &mut s;    // maintenant OK (r1/r2 ne sont plus utilisés)
+rm.push('!');`)+
+    cerr(`<code>error[E0502]: cannot borrow \`s\` as mutable because it is also borrowed as immutable</code><br>Cause : un <code>&mut</code> coexiste avec un <code>&</code> actif. Solution : réduire la portée d’usage des emprunts immuables (les utiliser plus tôt), ou réorganiser le code. Le compilateur t’indique la ligne fautive.`)+
+    why(`Cette règle « lecteurs multiples <b>xor</b> un seul écrivain » est exactement ce qui interdit les <b>data races</b> — <b>à la compilation</b>, même en mono-thread pour les invariants (ex. invalidation d’itérateur). Si une donnée est modifiable par un seul chemin à la fois, personne ne peut lire un état incohérent. C’est le même principe que « readers–writer lock », mais vérifié statiquement, coût zéro à l’exécution.`)+
+    `<h3>NLL : les emprunts finissent à leur dernière utilisation</h3>
+    <p>Depuis « Non-Lexical Lifetimes », un emprunt s’arrête à sa <b>dernière utilisation</b>, pas à la fin du bloc. D’où le fait que l’exemple ci-dessus compile.</p>
+    `+code(`let mut v = vec![1, 2, 3];
+let first = &v[0];      // emprunt immuable
+println!("{first}");    // dernière utilisation de first -> emprunt terminé
+v.push(4);              // OK : plus d'emprunt actif`)+
+    trap(`Le classique : emprunter un élément puis modifier la collection.<br><code>let first = &v[0]; v.push(4); println!("{first}");</code> → <b>ERREUR</b>. <code>push</code> peut réallouer le tampon et invalider <code>first</code>. Rust refuse à la compilation ce qui, en C++, serait un pointeur pendouillant silencieux.`)+
+    py(`Python n’a pas ce problème car tout est référence comptée par le GC : tu peux garder une référence à un élément et modifier la liste (au risque d’un bug logique). Rust rend ces situations <b>impossibles à compiler</b>, t’obligeant à un code correct. C’est déroutant au début (« fighting the borrow checker »), puis libérateur.`)+
+    why(`Pas de <code>&mut</code> sur une valeur non déclarée <code>mut</code> : la mutabilité de la variable et celle de la référence doivent être cohérentes. <code>let x = 5; let r = &mut x;</code> échoue → il faut <code>let mut x</code>.`),
+  quiz:[
+    { kind:'predict', difficulty:2, tags:['borrowing'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let mut v = vec![1, 2, 3];
+    let first = &v[0];
+    v.push(4);
+    println!("{first}");
+}`,
+      hint:'Que peut faire push à la mémoire du Vec ?',
+      model:'Erreur E0502 : cannot borrow v as mutable because it is also borrowed as immutable.',
+      explain:'<code>first</code> emprunte <code>v</code> en lecture et est <b>encore utilisé</b> après le <code>push</code> (qui emprunte en mutable). <code>push</code> pourrait réallouer et invalider <code>first</code>. Rust refuse. Déplacer le <code>println!("{first}")</code> <b>avant</b> le <code>push</code> compilerait (NLL).'},
+    { kind:'mcq', difficulty:2, tags:['borrowing','règles'],
+      prompt:'Quelle combinaison d’emprunts <b>simultanés</b> est autorisée ?',
+      choices:[
+        'Un <code>&mut</code> et un <code>&</code>',
+        'Deux <code>&mut</code>',
+        'Plusieurs <code>&</code> (immuables)',
+        'Un <code>&mut</code> et plusieurs <code>&</code>'],
+      answer:2, explain:'Règle : lecteurs multiples <b>OU</b> un seul écrivain, jamais les deux. Donc plusieurs <code>&</code> immuables simultanés = OK ; tout ce qui mêle un <code>&mut</code> à un autre emprunt actif = interdit.'},
+    { kind:'mcq', difficulty:3, tags:['borrowing','data race'],
+      prompt:'Quel bug la règle « un seul <code>&mut</code> à la fois » empêche-t-elle en priorité ?',
+      choices:[
+        'Les fuites mémoire uniquement',
+        'Les data races et l’observation d’un état incohérent (ex. itérateur invalidé)',
+        'Les dépassements de pile',
+        'Les erreurs de syntaxe'],
+      answer:1, explain:'Aliasing + mutation = source des data races et des invalidations. Interdire l’écriture concurrente à toute lecture rend ces bugs impossibles, vérifié statiquement.'},
+    { kind:'code', difficulty:2, tags:['borrowing','&mut'],
+      prompt:'Écris <code>fn double_tout(v: &mut Vec&lt;i32&gt;)</code> qui multiplie chaque élément par 2 <b>en place</b>.',
+      starter:'fn double_tout(v: &mut Vec<i32>) {\n    \n}',
+      hint:'Itère sur &mut v et déréférence avec *.',
+      keywords:['for','&mut','*','2'],
+      modelCode:true,
+      model:`fn double_tout(v: &mut Vec<i32>) {
+    for x in v.iter_mut() {
+        *x *= 2;
+    }
+}`,
+      explain:'<code>iter_mut()</code> donne des <code>&mut i32</code>. Il faut <b>déréférencer</b> avec <code>*x</code> pour modifier la valeur pointée. La fonction emprunte le Vec en mutable ; l’appelant le conserve.'},
+    { kind:'predict', difficulty:2, tags:['borrowing','mut'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let x = 10;
+    let r = &mut x;
+    *r += 1;
+}`,
+      hint:'x est-il déclaré mutable ?',
+      model:'Erreur : cannot borrow x as mutable, as it is not declared as mutable (E0596).',
+      explain:'On ne peut pas prendre <code>&mut</code> sur une variable non déclarée <code>mut</code>. Correction : <code>let mut x = 10;</code>. La mutabilité de la variable et de la référence doivent concorder.'}
+  ]
+});
+
+/* ================= MODULE 7 — Structs, impl, méthodes ================= */
+COURSE.push({
+  type:'module', navtitle:'7 · Structs & méthodes',
+  title:'Module 7 — Structs, impl & méthodes',
+  sub:'Créer ses propres types de données et leur attacher des comportements.',
+  lesson:
+    `<h3>Définir une struct</h3>
+    `+code(`struct Utilisateur {
+    nom: String,
+    age: u32,
+    actif: bool,
+}
+
+let mut u = Utilisateur {
+    nom: String::from("Ada"),
+    age: 36,
+    actif: true,
+};
+u.age += 1;                 // nécessite que u soit "mut"
+println!("{}", u.nom);`)+
+    trap(`La mutabilité est au niveau de la <b>variable entière</b>, pas du champ : il n’existe pas de champ « mut » individuel. <code>let u = ...;</code> (sans <code>mut</code>) rend <b>tous</b> les champs immuables.`)+
+    `<h3>Raccourcis utiles</h3>
+    `+code(`fn creer(nom: String, age: u32) -> Utilisateur {
+    Utilisateur { nom, age, actif: true }   // "field init shorthand" : nom = nom
+}
+
+// Mise à jour à partir d'une autre instance :
+let u2 = Utilisateur { age: 40, ..u };      // reprend les autres champs de u`)+
+    `<h3>Tuple structs & unit structs</h3>
+    `+code(`struct Point(i32, i32);        // tuple struct
+let p = Point(3, 4);
+println!("{}", p.0);
+
+struct Marqueur;               // unit struct (aucune donnée)`)+
+    `<h3>Méthodes avec <code>impl</code></h3>
+    `+code(`impl Utilisateur {
+    // méthode : premier paramètre = &self / &mut self / self
+    fn description(&self) -> String {
+        format!("{} ({} ans)", self.nom, self.age)
+    }
+    fn anniversaire(&mut self) {      // emprunte en mutable
+        self.age += 1;
+    }
+    // fonction associée (pas de self) = souvent un constructeur
+    fn nouveau(nom: String) -> Self {
+        Self { nom, age: 0, actif: true }
+    }
+}
+
+let mut u = Utilisateur::nouveau(String::from("Ada"));  // :: pour l'associée
+u.anniversaire();                                        // . pour la méthode
+println!("{}", u.description());`)+
+    why(`<code>&self</code> vs <code>&mut self</code> vs <code>self</code> reprennent exactement les règles d’ownership : <code>&self</code> emprunte en lecture, <code>&mut self</code> en écriture, <code>self</code> <b>consomme</b> l’objet (utile pour des transformations qui « détruisent » l’ancien état). Le choix documente l’intention et est vérifié par le borrow checker.`)+
+    py(`Une struct + <code>impl</code> ≈ une classe Python, mais <b>données</b> (struct) et <b>comportement</b> (impl) sont <b>séparés</b>. <code>&self</code> ≈ <code>self</code> en Python, mais explicite et typé. Les « fonctions associées » sans self (ex. <code>Utilisateur::nouveau</code>) jouent le rôle des <code>@staticmethod</code>/constructeurs (<code>__init__</code>). Rust n’a pas d’héritage de classes : on compose et on utilise des <b>traits</b> (Module 11).`)+
+    `<h3>Déboguer une struct : <code>#[derive(Debug)]</code></h3>
+    `+code(`#[derive(Debug)]
+struct Point { x: i32, y: i32 }
+
+let p = Point { x: 1, y: 2 };
+println!("{p:?}");     // {:?} = format Debug -> Point { x: 1, y: 2 }
+println!("{p:#?}");    // joli (pretty) multi-lignes`)+
+    cerr(`<code>error[E0277]: \`Point\` doesn't implement \`Debug\`</code> si tu fais <code>println!("{p:?}")</code> sans <code>#[derive(Debug)]</code>. Ajoute l’attribut au-dessus de la struct.`),
+  quiz:[
+    { kind:'mcq', difficulty:1, tags:['structs','impl'],
+      prompt:'Comment appelle-t-on une fonction associée sans <code>self</code>, ex. un constructeur <code>nouveau</code> ?',
+      choices:['<code>u.nouveau()</code>','<code>Utilisateur::nouveau(...)</code>','<code>nouveau(Utilisateur)</code>','<code>new Utilisateur()</code>'],
+      answer:1, explain:'Les fonctions associées (sans <code>self</code>) s’appellent avec <code>::</code> sur le type : <code>Utilisateur::nouveau(...)</code>. Les méthodes (avec <code>self</code>) s’appellent avec <code>.</code> sur l’instance.'},
+    { kind:'mcq', difficulty:2, tags:['structs','méthodes','ownership'],
+      prompt:'Une méthode qui modifie l’objet en place doit prendre :',
+      choices:['<code>self</code>','<code>&self</code>','<code>&mut self</code>','aucun paramètre'],
+      answer:2, explain:'<code>&mut self</code> emprunte l’instance en mutable → modification en place. <code>&self</code> = lecture seule ; <code>self</code> = consomme (détruit) l’instance.'},
+    { kind:'predict', difficulty:2, tags:['structs','Debug'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`struct P { x: i32 }
+fn main() {
+    let p = P { x: 5 };
+    println!("{p:?}");
+}`,
+      hint:'Le format {:?} nécessite quoi ?',
+      model:'Erreur E0277 : P doesn’t implement Debug.',
+      explain:'<code>{:?}</code> requiert le trait <code>Debug</code>. Ajoute <code>#[derive(Debug)]</code> au-dessus de <code>struct P</code>. C’est une erreur de trait bound, pas de syntaxe.'},
+    { kind:'code', difficulty:2, tags:['structs','impl','méthodes'],
+      prompt:'Définis <code>struct Rectangle { l: u32, h: u32 }</code> avec une méthode <code>aire(&self) -> u32</code> et un constructeur associé <code>carre(cote: u32) -> Self</code>.',
+      hint:'impl bloc, &self pour aire, Self pour le constructeur.',
+      keywords:['impl','&self','aire','Self','carre','l','h'],
+      modelCode:true,
+      model:`struct Rectangle { l: u32, h: u32 }
+
+impl Rectangle {
+    fn aire(&self) -> u32 {
+        self.l * self.h
+    }
+    fn carre(cote: u32) -> Self {
+        Self { l: cote, h: cote }
+    }
+}`,
+      explain:'<code>aire</code> lit les champs → <code>&self</code>. <code>carre</code> ne reçoit pas d’instance → fonction associée renvoyant <code>Self</code>. Appels : <code>Rectangle::carre(4).aire()</code>.'},
+    { kind:'text', difficulty:3, tags:['structs','ownership','méthodes'],
+      prompt:'Quand est-il pertinent qu’une méthode prenne <code>self</code> (par valeur) plutôt que <code>&self</code> ? Donne un exemple.',
+      hint:'Pense aux transformations qui doivent invalider l’ancien objet.',
+      keywords:['consomme','self','transform','détruit','builder','into','possession'],
+      model:'Quand la méthode <b>transforme/consomme</b> l’objet et qu’il ne doit plus être utilisé ensuite. Exemple : un patron « builder » <code>fn build(self) -> Config</code>, ou une conversion <code>fn into_bytes(self) -> Vec&lt;u8&gt;</code> sur une <code>String</code> qui réutilise la mémoire au lieu de copier.',
+      explain:'Prendre <code>self</code> déplace l’instance dans la méthode : l’appelant ne peut plus l’utiliser. C’est voulu pour les conversions/finalisations, où réutiliser l’ancien objet n’aurait pas de sens et où on veut éviter une copie.'}
+  ]
+});
+
+/* ================= MODULE 8 — Enums & pattern matching ================= */
+COURSE.push({
+  type:'module', navtitle:'8 · Enums & match',
+  title:'Module 8 — Enums, pattern matching, if let & while let',
+  sub:'Modéliser « l’un parmi plusieurs cas » et déstructurer avec puissance.',
+  lesson:
+    `<h3>Enums qui portent des données</h3>
+    <p>Un <b>enum</b> Rust n’est pas qu’une liste de constantes : chaque variante peut porter <b>ses propres données</b> (comme une union typée).</p>
+    `+code(`enum Message {
+    Quitter,                       // aucune donnée
+    Deplacer { x: i32, y: i32 },   // struct anonyme
+    Ecrire(String),                // un tuple
+    Couleur(u8, u8, u8),
+}
+
+let m = Message::Ecrire(String::from("salut"));`)+
+    why(`Regrouper des variantes hétérogènes dans un seul type permet des états <b>mutuellement exclusifs</b> et sûrs. En C, on simule ça avec un <code>enum</code> + <code>union</code> + champ « tag » gérés à la main (source de bugs). Rust en fait un type de première classe, vérifié.`)+
+    py(`Proche des <code>Enum</code> Python, mais bien plus riche : les variantes portent des données typées. C’est aussi ce qui remplace, en mieux, le fait de renvoyer <code>None</code> ou de lever une exception : voir <code>Option</code> et <code>Result</code> (Module 10).`)+
+    `<h3><code>match</code> — exhaustif</h3>
+    `+code(`fn traiter(m: &Message) -> String {
+    match m {
+        Message::Quitter => String::from("bye"),
+        Message::Deplacer { x, y } => format!("go {x},{y}"),
+        Message::Ecrire(txt) => txt.clone(),
+        Message::Couleur(r, g, b) => format!("#{r:02x}{g:02x}{b:02x}"),
+    }
+}`)+
+    cerr(`<code>error[E0004]: non-exhaustive patterns</code> : si tu oublies une variante, le compilateur <b>refuse</b>. Tu dois traiter tous les cas, ou ajouter un bras attrape-tout <code>_ =&gt; ...</code>. C’est une sécurité : ajouter une variante plus tard force à mettre à jour tous les <code>match</code>.`)+
+    why(`L’<b>exhaustivité</b> du <code>match</code> est une garantie majeure : impossible d’oublier un cas silencieusement. Ajoute une variante à ton enum, et le compilateur t’indique <b>tous</b> les endroits à corriger — refactoring sûr à grande échelle.`)+
+    `<h3>Patterns : littéraux, intervalles, gardes, liaisons</h3>
+    `+code(`let n = 7;
+match n {
+    0 => println!("zéro"),
+    1 | 2 => println!("un ou deux"),         // ou
+    3..=9 => println!("entre 3 et 9"),        // intervalle inclusif
+    x if x % 2 == 0 => println!("pair {x}"),  // garde
+    autre => println!("{autre}"),             // liaison attrape-tout
+}`)+
+    `<h3><code>if let</code> — un seul cas qui compte</h3>
+    `+code(`let config: Option<i32> = Some(3);
+if let Some(v) = config {
+    println!("valeur = {v}");
+} else {
+    println!("aucune");
+}`)+
+    `<h3><code>while let</code> — boucler tant que ça correspond</h3>
+    `+code(`let mut pile = vec![1, 2, 3];
+while let Some(sommet) = pile.pop() {   // pop() renvoie Option
+    println!("{sommet}");               // 3 puis 2 puis 1
+}`)+
+    trap(`<code>if let</code> est un raccourci pour un <code>match</code> à deux cas : il <b>abandonne l’exhaustivité</b>. Pratique quand un seul motif t’intéresse, mais utilise <code>match</code> quand tu veux la garantie de traiter tous les cas.`)+
+    py(`<code>match</code> Rust ressemble au <code>match</code> structurel de Python 3.10+, mais il est <b>exhaustif</b> et intégré au typage. <code>while let Some(x) = it.pop()</code> remplace élégamment les boucles « tant qu’il reste des éléments ».`),
+  quiz:[
+    { kind:'predict', difficulty:2, tags:['pattern matching','match'], expect:'entre 3 et 9',
+      prompt:'Sortie ?',
+      code:`fn main() {
+    let n = 5;
+    match n {
+        0 => println!("zéro"),
+        1 | 2 => println!("un ou deux"),
+        3..=9 => println!("entre 3 et 9"),
+        _ => println!("autre"),
+    }
+}`,
+      model:'entre 3 et 9',
+      explain:'<code>5</code> ne matche ni <code>0</code>, ni <code>1 | 2</code>, mais tombe dans l’intervalle inclusif <code>3..=9</code>. Le premier bras qui correspond gagne.'},
+    { kind:'mcq', difficulty:2, tags:['match','exhaustivité'],
+      prompt:'Pourquoi un <code>match</code> sur un enum sans traiter toutes les variantes ne compile-t-il pas ?',
+      choices:[
+        'Un bug du compilateur',
+        'Rust exige l’<b>exhaustivité</b> : tous les cas doivent être couverts (ou un <code>_</code>)',
+        'Il faut toujours un <code>default</code>',
+        'Les enums n’acceptent pas <code>match</code>'],
+      answer:1, explain:'L’exhaustivité garantit qu’aucun cas n’est oublié. Ajoute les variantes manquantes ou un bras <code>_ =&gt; ...</code>. Bénéfice : ajout futur d’une variante = erreurs ciblées à corriger.'},
+    { kind:'predict', difficulty:2, tags:['while let'], expect:'3\n2\n1',
+      prompt:'Sortie (une valeur par ligne) ?',
+      code:`fn main() {
+    let mut p = vec![1, 2, 3];
+    while let Some(x) = p.pop() {
+        println!("{x}");
+    }
+}`,
+      model:'3\n2\n1',
+      explain:'<code>pop()</code> retire le dernier élément et renvoie <code>Some(v)</code>, puis <code>None</code> quand c’est vide (fin de boucle). Ordre LIFO : 3, 2, 1.'},
+    { kind:'mcq', difficulty:2, tags:['if let'],
+      prompt:'<code>if let Some(v) = opt { ... }</code> est équivalent à :',
+      choices:[
+        'Un <code>match</code> exhaustif',
+        'Un <code>match</code> à un seul motif utile, qui abandonne l’exhaustivité',
+        'Une boucle',
+        'Un cast'],
+      answer:1, explain:'<code>if let</code> = sucre syntaxique pour <code>match opt { Some(v) => {...}, _ => {} }</code>. Idéal quand un seul cas t’intéresse ; tu perds la vérification d’exhaustivité.'},
+    { kind:'code', difficulty:3, tags:['enums','match'],
+      prompt:'Définis <code>enum Forme</code> avec <code>Cercle(f64)</code> (rayon) et <code>Rectangle(f64, f64)</code>. Écris <code>fn aire(f: &Forme) -> f64</code> avec un <code>match</code>.',
+      hint:'π ≈ 3.14159 ; utilise std::f64::consts::PI si tu veux.',
+      keywords:['enum','Cercle','Rectangle','match','aire','*'],
+      modelCode:true,
+      model:`enum Forme {
+    Cercle(f64),
+    Rectangle(f64, f64),
+}
+
+fn aire(f: &Forme) -> f64 {
+    match f {
+        Forme::Cercle(r) => std::f64::consts::PI * r * r,
+        Forme::Rectangle(l, h) => l * h,
+    }
+}`,
+      explain:'Le <code>match</code> déstructure chaque variante et lie ses données (<code>r</code>, ou <code>l</code> et <code>h</code>). Comme les deux variantes sont traitées, le match est exhaustif — pas besoin de <code>_</code>.'}
+  ]
+});
+
+/* ================= CHECKPOINT 2 — Débutant avancé ================= */
+COURSE.push({
+  type:'checkpoint', navtitle:'⚑ Checkpoint : Débutant avancé',
+  title:'Checkpoint — Niveau Débutant avancé',
+  sub:'Synthèse des modules 6 à 8 : borrowing, structs/impl, enums & pattern matching.',
+  lesson:`<div class="callout why"><div class="h">🎯 Attendu</div>
+    Manier les références <code>&</code>/<code>&mut</code> et respecter la règle « lecteurs multiples XOR un écrivain », concevoir des <b>structs</b> avec <code>impl</code> (méthodes vs fonctions associées, choix de <code>self</code>), et modéliser avec des <b>enums</b> déstructurés par <code>match</code>/<code>if let</code>/<code>while let</code> de façon exhaustive.</div>`,
+  exam:[
+    { kind:'predict', difficulty:3, tags:['borrowing'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let mut s = String::from("hi");
+    let r1 = &mut s;
+    let r2 = &mut s;
+    println!("{r1} {r2}");
+}`,
+      hint:'Combien de &mut simultanés sont permis ?',
+      model:'Erreur E0499 : cannot borrow s as mutable more than once at a time.',
+      explain:'Deux <code>&mut</code> actifs en même temps sur <code>s</code> = interdit. Un seul écrivain à la fois. Il faut utiliser/terminer <code>r1</code> avant de créer <code>r2</code>.'},
+    { kind:'mcq', difficulty:2, tags:['structs','impl'],
+      prompt:'Différence entre <code>Type::f()</code> et <code>instance.f()</code> ?',
+      choices:[
+        'Aucune',
+        '<code>::</code> appelle une fonction associée (sans self), <code>.</code> une méthode (avec self)',
+        '<code>::</code> est réservé aux enums',
+        '<code>.</code> ne marche que sur les tuples'],
+      answer:1, explain:'<code>::</code> → fonction associée (souvent un constructeur). <code>.</code> → méthode prenant <code>self</code>/<code>&self</code>/<code>&mut self</code>.'},
+    { kind:'predict', difficulty:2, tags:['pattern matching'], expect:'pair 4',
+      prompt:'Sortie ?',
+      code:`fn main() {
+    let n = 4;
+    match n {
+        1 | 2 => println!("petit"),
+        x if x % 2 == 0 => println!("pair {x}"),
+        _ => println!("autre"),
+    }
+}`,
+      model:'pair 4',
+      explain:'<code>4</code> n’est pas <code>1|2</code> ; il atteint la <b>garde</b> <code>x if x % 2 == 0</code>, vraie → « pair 4 ». La liaison <code>x</code> capture la valeur.'},
+    { kind:'mcq', difficulty:3, tags:['enums','exhaustivité'],
+      prompt:'Bénéfice concret de l’exhaustivité du <code>match</code> lors d’un refactoring ?',
+      choices:[
+        'Le code s’exécute plus vite',
+        'Ajouter une variante d’enum fait échouer la compilation partout où un cas manque, guidant les corrections',
+        'Ça réduit la taille du binaire',
+        'Ça active le GC'],
+      answer:1, explain:'C’est un filet de sécurité au refactoring : le compilateur liste tous les <code>match</code> à mettre à jour. Impossible d’oublier un cas silencieusement.'},
+    { kind:'code', difficulty:3, tags:['borrowing','structs','méthodes'],
+      prompt:'Pour <code>struct Compteur { n: u32 }</code>, écris une méthode <code>incr(&mut self)</code> et une méthode <code>valeur(&self) -> u32</code>. Explique en commentaire pourquoi les self diffèrent.',
+      starter:'struct Compteur { n: u32 }\n\nimpl Compteur {\n    \n}',
+      hint:'Écriture = &mut self, lecture = &self.',
+      keywords:['&mut self','&self','incr','valeur','self.n'],
+      modelCode:true,
+      model:`struct Compteur { n: u32 }
+
+impl Compteur {
+    fn incr(&mut self) {   // modifie -> emprunt mutable
+        self.n += 1;
+    }
+    fn valeur(&self) -> u32 {  // lit seulement -> emprunt immuable
+        self.n
+    }
+}`,
+      explain:'<code>incr</code> modifie <code>self.n</code> → il faut <code>&mut self</code>. <code>valeur</code> ne fait que lire → <code>&self</code> suffit et permet des appels concurrents en lecture. Le choix du receveur applique les règles d’ownership aux méthodes.'}
+  ]
+});
+</script>
+<script>
+/* ================= MODULE 9 — Collections : Vec, String, HashMap ================= */
+COURSE.push({
+  type:'module', navtitle:'9 · Collections',
+  title:'Module 9 — Collections : Vec, String & HashMap',
+  sub:'Les structures dynamiques du quotidien, stockées sur le tas.',
+  lesson:
+    `<h3><code>Vec&lt;T&gt;</code> — le tableau dynamique</h3>
+    `+code(`let mut v: Vec<i32> = Vec::new();
+v.push(1);
+v.push(2);
+
+let mut v2 = vec![10, 20, 30];   // macro vec!
+v2.pop();                         // Some(30)
+let x = v2[0];                    // panique si hors borne
+let y = v2.get(5);                // Option: None si hors borne (sûr)
+
+for e in &v2 { println!("{e}"); }         // itère par référence
+for e in &mut v2 { *e += 1; }             // itère en mutable`)+
+    trap(`<code>v[i]</code> panique hors borne ; <code>v.get(i)</code> renvoie une <code>Option</code> — préfère <code>get</code> quand l’index peut être invalide. Et rappel du Module 6 : tu ne peux pas garder <code>&v[0]</code> pendant que tu fais <code>v.push(...)</code>.`)+
+    `<h3><code>String</code> vs <code>&str</code></h3>
+    <p>Deux types de chaînes, souvent source de confusion :</p>
+    <table>
+      <tr><th>Type</th><th>Nature</th><th>Analogie</th></tr>
+      <tr><td><code>String</code></td><td>Chaîne <b>possédée</b>, extensible, sur le tas</td><td>owned / mutable</td></tr>
+      <tr><td><code>&str</code></td><td>Slice de chaîne <b>empruntée</b> (vue UTF-8)</td><td>vue en lecture</td></tr>
+    </table>
+    `+code(`let s: String = String::from("hello");
+let vue: &str = &s;              // emprunt -> &str
+let litt: &str = "monde";        // les littéraux sont des &str
+let concat = s + " " + litt;     // + consomme s (move) et emprunte le reste
+let f = format!("{vue} !");      // format! n'emprunte pas destructivement`)+
+    why(`Deux types de chaînes = deux besoins : <b>posséder/modifier</b> (<code>String</code>) vs <b>lire sans copier</b> (<code>&str</code>). Idiome clé : une fonction qui <b>lit</b> une chaîne prend <code>&str</code> (accepte <code>String</code> ET littéraux) ; une fonction qui <b>stocke</b> prend <code>String</code>. Attention : indexer une chaîne par entier (<code>s[0]</code>) est <b>interdit</b>, car un caractère UTF-8 peut faire plusieurs octets — utilise <code>.chars()</code> ou <code>.bytes()</code>.`)+
+    cerr(`<code>error[E0277]: the type \`String\` cannot be indexed by \`{integer}\`</code> — Rust interdit <code>s[0]</code>. Utilise <code>s.chars().nth(0)</code> (renvoie <code>Option&lt;char&gt;</code>) ou une slice d’octets <code>&s[0..1]</code> (à tes risques sur l’UTF-8).`)+
+    `<h3><code>HashMap&lt;K, V&gt;</code> — le dictionnaire</h3>
+    `+code(`use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+scores.insert(String::from("Ada"), 10);
+scores.insert(String::from("Lin"), 7);
+
+// accès sûr : get renvoie Option<&V>
+if let Some(s) = scores.get("Ada") { println!("{s}"); }
+
+// valeur par défaut
+let s = scores.get("X").copied().unwrap_or(0);
+
+// insérer si absent, puis modifier
+*scores.entry(String::from("Ada")).or_insert(0) += 5;
+
+for (nom, score) in &scores { println!("{nom}: {score}"); }`)+
+    py(`<code>Vec</code> ≈ <code>list</code>, <code>HashMap</code> ≈ <code>dict</code>. Mais l’accès est <b>sûr par défaut</b> : <code>scores.get(k)</code> renvoie <code>Option&lt;&V&gt;</code> (jamais de <code>KeyError</code> inattendu). Le patron <code>entry(k).or_insert(d)</code> remplace <code>dict.setdefault</code>. L’ownership s’applique : insérer une <code>String</code> la <b>déplace</b> dans la map.`)+
+    trap(`<code>entry().or_insert(v)</code> renvoie une <b>référence mutable</b> <code>&mut V</code> ; d’où le <code>*</code> pour incrémenter : <code>*map.entry(k).or_insert(0) += 1;</code>. Oublier le <code>*</code> = erreur de type.`),
+  quiz:[
+    { kind:'mcq', difficulty:1, tags:['Vec','sécurité'],
+      prompt:'Pour un accès qui ne panique pas si l’index est hors borne, on utilise :',
+      choices:['<code>v[i]</code>','<code>v.get(i)</code> (renvoie <code>Option</code>)','<code>v.at(i)</code>','<code>v.index(i)</code>'],
+      answer:1, explain:'<code>v.get(i)</code> renvoie <code>Some(&T)</code> ou <code>None</code>. <code>v[i]</code> panique hors borne. Choisis selon que l’index peut être invalide.'},
+    { kind:'mcq', difficulty:2, tags:['String','&str'],
+      prompt:'Quelle signature est la plus flexible pour une fonction qui <b>lit</b> une chaîne ?',
+      choices:['<code>fn f(s: String)</code>','<code>fn f(s: &String)</code>','<code>fn f(s: &str)</code>','<code>fn f(s: char)</code>'],
+      answer:2, explain:'<code>&str</code> accepte à la fois <code>String</code> (via déréférencement automatique) et les littéraux, sans consommer ni copier. C’est l’idiome pour les paramètres « lecture de texte ».'},
+    { kind:'predict', difficulty:2, tags:['String','indexation'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let s = String::from("café");
+    let c = s[0];
+    println!("{c}");
+}`,
+      hint:'Peut-on indexer une String par entier ?',
+      model:'Erreur E0277 : String cannot be indexed by {integer}.',
+      explain:'L’indexation par entier d’une <code>String</code> est interdite (UTF-8 = octets de taille variable). Utilise <code>s.chars().next()</code> → <code>Option&lt;char&gt;</code>, ou <code>s.as_bytes()[0]</code> pour un octet.'},
+    { kind:'predict', difficulty:3, tags:['HashMap','entry'], expect:'2',
+      prompt:'Que vaut <code>scores["a"]</code> à la fin (valeur affichée) ?',
+      code:`use std::collections::HashMap;
+fn main() {
+    let mut scores: HashMap<&str, i32> = HashMap::new();
+    *scores.entry("a").or_insert(0) += 1;
+    *scores.entry("a").or_insert(0) += 1;
+    println!("{}", scores["a"]);
+}`,
+      model:'2',
+      explain:'1er <code>entry("a").or_insert(0)</code> insère 0 puis <code>+=1</code> → 1. 2e appel : la clé existe, <code>or_insert</code> ne réinsère pas, <code>+=1</code> → 2. <code>*</code> déréférence le <code>&mut i32</code> renvoyé.'},
+    { kind:'code', difficulty:3, tags:['HashMap','Vec','iterators'],
+      prompt:'Écris <code>fn compter(mots: &[&str]) -> HashMap&lt;&str, i32&gt;</code> qui compte les occurrences de chaque mot.',
+      starter:'use std::collections::HashMap;\n\nfn compter(mots: &[&str]) -> HashMap<&str, i32> {\n    \n}',
+      hint:'Boucle + entry().or_insert(0).',
+      keywords:['HashMap','entry','or_insert','for','+= 1'],
+      modelCode:true,
+      model:`use std::collections::HashMap;
+
+fn compter<'a>(mots: &[&'a str]) -> HashMap<&'a str, i32> {
+    let mut map = HashMap::new();
+    for &m in mots {
+        *map.entry(m).or_insert(0) += 1;
+    }
+    map
+}`,
+      explain:'Le patron <code>entry(clé).or_insert(0)</code> renvoie <code>&mut i32</code> ; <code>*... += 1</code> incrémente. La map est renvoyée par valeur (move) à l’appelant. Note : une annotation de durée de vie <code>\'a</code> lie les clés empruntées à l’entrée (Module 12).'}
+  ]
+});
+
+/* ================= MODULE 10 — Gestion des erreurs ================= */
+COURSE.push({
+  type:'module', navtitle:'10 · Erreurs ★',
+  title:'Module 10 — Gestion des erreurs : Option, Result & propagation ★',
+  sub:'Rust n’a pas d’exceptions. Les erreurs sont des valeurs typées que l’on manipule explicitement.',
+  lesson:
+    `<h3>Deux familles d’« absence/échec »</h3>
+    <ul>
+      <li><code>Option&lt;T&gt;</code> : une valeur <b>peut être absente</b> — <code>Some(T)</code> ou <code>None</code>.</li>
+      <li><code>Result&lt;T, E&gt;</code> : une opération <b>peut échouer</b> — <code>Ok(T)</code> ou <code>Err(E)</code>.</li>
+    </ul>
+    `+code(`enum Option<T> { Some(T), None }
+enum Result<T, E> { Ok(T), Err(E) }`)+
+    why(`En rendant l’absence (<code>Option</code>) et l’échec (<code>Result</code>) <b>visibles dans le type</b>, Rust élimine le « null » (l’« erreur à un milliard de dollars ») et les exceptions non capturées. Le compilateur t’<b>oblige</b> à gérer le cas d’échec — impossible d’ignorer un <code>None</code> ou un <code>Err</code> par accident.`)+
+    py(`Python signale l’échec par des <b>exceptions</b> (<code>raise</code>/<code>try/except</code>), qui peuvent remonter silencieusement. Rust en fait des <b>valeurs de retour typées</b>. Le <code>None</code> remplace le <code>None</code> Python, mais avec vérification obligatoire. <code>panic!</code> existe (proche d’une exception), mais est réservé aux bugs irrécupérables, pas au flux normal.`)+
+    `<h3>Extraire une valeur</h3>
+    `+code(`let x: Option<i32> = Some(5);
+
+match x {
+    Some(v) => println!("{v}"),
+    None => println!("rien"),
+}
+
+let a = x.unwrap();            // renvoie 5, mais PANIQUE si None
+let b = x.unwrap_or(0);        // 5, ou 0 si None (sûr)
+let c = x.unwrap_or_else(|| calcul());  // défaut paresseux
+if let Some(v) = x { /* ... */ }`)+
+    trap(`<code>unwrap()</code> et <code>expect("msg")</code> <b>paniquent</b> en cas de <code>None</code>/<code>Err</code>. Pratiques pour un prototype ou quand l’échec est « impossible », mais en code robuste on préfère <code>match</code>, <code>unwrap_or</code>, <code>?</code>, etc. <code>expect</code> est meilleur qu’<code>unwrap</code> car il documente la raison.`)+
+    `<h3>L’opérateur <code>?</code> — propagation</h3>
+    <p><code>?</code> après une expression <code>Result</code>/<code>Option</code> : si <code>Ok(v)</code>/<code>Some(v)</code>, il <b>extrait</b> <code>v</code> ; sinon il <b>retourne immédiatement</b> l’erreur/<code>None</code> depuis la fonction courante.</p>
+    `+code(`use std::num::ParseIntError;
+
+fn somme_texte(a: &str, b: &str) -> Result<i32, ParseIntError> {
+    let x: i32 = a.parse()?;   // si Err -> return Err(...)
+    let y: i32 = b.parse()?;
+    Ok(x + y)
+}
+
+// Équivalent SANS ? :
+fn somme_v2(a: &str) -> Result<i32, ParseIntError> {
+    let x = match a.parse::<i32>() {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
+    Ok(x)
+}`)+
+    cerr(`<code>error[E0277]: the \`?\` operator can only be used in a function that returns Result or Option</code> — <code>?</code> exige que la fonction renvoie un type compatible. Dans <code>main</code>, écris <code>fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt;</code> pour utiliser <code>?</code>.`)+
+    why(`<code>?</code> supprime le boilerplate des <code>match</code> répétés tout en gardant les erreurs <b>explicites</b> dans les signatures. C’est le meilleur des deux mondes : concision proche des exceptions, sûreté du typage. Le <code>?</code> convertit aussi l’erreur via le trait <code>From</code> (utile pour agréger plusieurs types d’erreurs).`)+
+    `<h3>Combinateurs utiles</h3>
+    `+code(`let n: Option<i32> = Some(4);
+let d = n.map(|x| x * 2);           // Some(8)
+let e = n.and_then(|x| if x > 0 { Some(x) } else { None });
+let r: Result<i32, String> = Ok(3);
+let f = r.map_err(|e| format!("échec: {e}"));   // transforme l'erreur`)+
+    trap(`<code>Option</code> et <code>Result</code> ne sont pas interchangeables. Conversion : <code>opt.ok_or(err)</code> transforme <code>Option</code> → <code>Result</code> ; <code>res.ok()</code> transforme <code>Result</code> → <code>Option</code> (jette l’erreur).`),
+  quiz:[
+    { kind:'mcq', difficulty:1, tags:['Option','Result'],
+      prompt:'Quel type modélise « une opération qui peut échouer avec une raison » ?',
+      choices:['<code>Option&lt;T&gt;</code>','<code>Result&lt;T, E&gt;</code>','<code>bool</code>','<code>panic!</code>'],
+      answer:1, explain:'<code>Result&lt;T,E&gt;</code> porte l’erreur <code>E</code> en cas d’échec. <code>Option</code> exprime juste présence/absence, sans raison.'},
+    { kind:'predict', difficulty:2, tags:['Option','unwrap'], expect:'panique',
+      prompt:'Que se passe-t-il à l’exécution ?',
+      code:`fn main() {
+    let x: Option<i32> = None;
+    println!("{}", x.unwrap());
+}`,
+      hint:'unwrap sur None ?',
+      model:'Panique à l’exécution : called `Option::unwrap()` on a `None` value.',
+      explain:'<code>unwrap()</code> sur <code>None</code> <b>panique</b>. Le code compile mais s’arrête à l’exécution. Alternatives sûres : <code>unwrap_or(0)</code>, <code>match</code>, ou <code>?</code>.'},
+    { kind:'mcq', difficulty:3, tags:['?','propagation'],
+      prompt:'Dans <code>let x: i32 = a.parse()?;</code>, que fait <code>?</code> si <code>parse()</code> renvoie <code>Err(e)</code> ?',
+      choices:[
+        'Il panique',
+        'Il ignore l’erreur et met 0',
+        'Il fait <code>return Err(e)</code> depuis la fonction courante',
+        'Il boucle'],
+      answer:2, explain:'<code>?</code> propage : sur <code>Err(e)</code> il retourne immédiatement <code>Err(e)</code> (après conversion via <code>From</code>). Sur <code>Ok(v)</code> il extrait <code>v</code>. La fonction doit renvoyer un <code>Result</code> compatible.'},
+    { kind:'predict', difficulty:2, tags:['?','main'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let n: i32 = "12".parse()?;
+    println!("{n}");
+}`,
+      hint:'Le type de retour de main permet-il ? ',
+      model:'Erreur E0277 : le ? nécessite un retour Result/Option ; main renvoie ().',
+      explain:'Pour utiliser <code>?</code> dans <code>main</code>, il faut <code>fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; { ...; Ok(()) }</code>. Sinon, la propagation n’a nulle part où aller.'},
+    { kind:'code', difficulty:3, tags:['Result','?','erreurs'],
+      prompt:'Écris <code>fn division(a: i32, b: i32) -> Result&lt;i32, String&gt;</code> qui renvoie <code>Err("division par zéro")</code> si <code>b == 0</code>, sinon <code>Ok(a / b)</code>.',
+      starter:'fn division(a: i32, b: i32) -> Result<i32, String> {\n    \n}',
+      hint:'Un if qui renvoie Err, sinon Ok.',
+      keywords:['Result','Err','Ok','== 0','a / b'],
+      modelCode:true,
+      model:`fn division(a: i32, b: i32) -> Result<i32, String> {
+    if b == 0 {
+        Err(String::from("division par zéro"))
+    } else {
+        Ok(a / b)
+    }
+}`,
+      explain:'On renvoie explicitement <code>Ok</code> ou <code>Err</code> — l’échec fait partie du type de retour, forçant l’appelant à le gérer. L’appelant pourra faire <code>division(10, x)?</code> pour propager.'}
+  ]
+});
+
+/* ================= CHECKPOINT 3 — Intermédiaire ================= */
+COURSE.push({
+  type:'checkpoint', navtitle:'⚑ Checkpoint : Intermédiaire',
+  title:'Checkpoint — Niveau Intermédiaire',
+  sub:'Synthèse des modules 9 et 10 : collections et gestion des erreurs.',
+  lesson:`<div class="callout why"><div class="h">🎯 Attendu</div>
+    Choisir la bonne collection et l’accès sûr (<code>get</code>, <code>entry</code>), distinguer <code>String</code>/<code>&str</code>, et surtout maîtriser <b>Option/Result</b>, l’opérateur <code>?</code> et les combinateurs. À ce stade tu écris du Rust « qui gère ses erreurs proprement ».</div>`,
+  exam:[
+    { kind:'mcq', difficulty:2, tags:['String','&str'],
+      prompt:'Pourquoi préférer <code>&str</code> à <code>&String</code> comme paramètre de lecture ?',
+      choices:[
+        'C’est identique',
+        '<code>&str</code> accepte aussi les littéraux et sous-slices, pas seulement les <code>String</code>',
+        '<code>&String</code> n’existe pas',
+        '<code>&str</code> copie la chaîne'],
+      answer:1, explain:'<code>&str</code> est plus général : une <code>String</code> se déréférence en <code>&str</code>, mais l’inverse est faux. Idiome : <code>fn f(s: &str)</code>.'},
+    { kind:'predict', difficulty:3, tags:['Result','?'], expect:'Err',
+      prompt:'Quelle variante renvoie <code>run("x", "3")</code> ? (réponds Ok ou Err)',
+      code:`fn run(a: &str, b: &str) -> Result<i32, std::num::ParseIntError> {
+    let x: i32 = a.parse()?;
+    let y: i32 = b.parse()?;
+    Ok(x + y)
+}`,
+      hint:'"x" est-il un entier valide ?',
+      model:'Err (le parse de "x" échoue, ? propage l’erreur).',
+      explain:'<code>"x".parse::<i32>()</code> échoue → <code>?</code> retourne immédiatement <code>Err(...)</code>. La 2e ligne n’est jamais atteinte. Avec <code>"5","3"</code>, on aurait <code>Ok(8)</code>.'},
+    { kind:'mcq', difficulty:2, tags:['HashMap'],
+      prompt:'Que renvoie <code>map.get("absent")</code> pour une clé absente ?',
+      choices:['Panique','<code>None</code>','<code>0</code>','Chaîne vide'],
+      answer:1, explain:'<code>get</code> renvoie <code>Option&lt;&V&gt;</code> → <code>None</code> si absent. Pas de <code>KeyError</code>. Pour une valeur par défaut : <code>.copied().unwrap_or(0)</code>.'},
+    { kind:'mcq', difficulty:2, tags:['Option','Result','conversion'],
+      prompt:'Comment transformer une <code>Option&lt;T&gt;</code> en <code>Result&lt;T, E&gt;</code> ?',
+      choices:['<code>opt.ok()</code>','<code>opt.ok_or(err)</code>','<code>opt.unwrap()</code>','impossible'],
+      answer:1, explain:'<code>opt.ok_or(err)</code> : <code>Some(v)→Ok(v)</code>, <code>None→Err(err)</code>. L’inverse est <code>res.ok()</code> (Result→Option, jette l’erreur).'},
+    { kind:'code', difficulty:3, tags:['Vec','iterators','Option'],
+      prompt:'Écris <code>fn premier_pair(v: &[i32]) -> Option&lt;i32&gt;</code> qui renvoie le premier nombre pair, ou <code>None</code>.',
+      starter:'fn premier_pair(v: &[i32]) -> Option<i32> {\n    \n}',
+      hint:'Boucle + return Some(...), ou iterators (Module 13).',
+      keywords:['for','% 2','Some','None'],
+      modelCode:true,
+      model:`fn premier_pair(v: &[i32]) -> Option<i32> {
+    for &x in v {
+        if x % 2 == 0 {
+            return Some(x);
+        }
+    }
+    None
+}
+// Version idiomatique : v.iter().copied().find(|x| x % 2 == 0)`,
+      explain:'On renvoie <code>Some(x)</code> dès qu’on trouve un pair, sinon <code>None</code> à la fin. La version avec <code>.find(...)</code> (Module 13) est plus concise et exprime la même chose.'}
+  ]
+});
+</script>
+<script>
+/* ================= MODULE 11 — Génériques, traits, trait bounds ================= */
+COURSE.push({
+  type:'module', navtitle:'11 · Traits ★',
+  title:'Module 11 — Génériques, traits & trait bounds ★',
+  sub:'Le polymorphisme de Rust : du code réutilisable et des comportements partagés, vérifiés statiquement.',
+  lesson:
+    `<h3>Génériques</h3>
+    <p>Un <b>paramètre de type</b> <code>&lt;T&gt;</code> permet d’écrire une fonction/struct valable pour de nombreux types, sans duplication.</p>
+    `+code(`fn premier<T>(v: &[T]) -> &T {
+    &v[0]
+}
+
+struct Paire<T> { a: T, b: T }
+
+// Contrainte : T doit être comparable (PartialOrd) pour utiliser >
+fn plus_grand<T: PartialOrd>(a: T, b: T) -> T {
+    if a > b { a } else { b }
+}`)+
+    why(`Les génériques Rust sont <b>monomorphisés</b> : le compilateur génère une version spécialisée par type concret utilisé. Résultat : <b>zéro coût à l’exécution</b> (pas de boxing ni de vérification dynamique), contrairement aux génériques « effacés » de Java. Le prix : des binaires potentiellement plus gros et des temps de compilation plus longs.`)+
+    `<h3>Traits — des interfaces</h3>
+    <p>Un <b>trait</b> définit un ensemble de méthodes qu’un type peut <b>implémenter</b>. C’est l’équivalent des interfaces (Java) / protocoles (Python) / typeclasses (Haskell).</p>
+    `+code(`trait Resume {
+    fn resume(&self) -> String;              // méthode requise
+    fn apercu(&self) -> String {             // méthode par défaut
+        format!("Lire : {}", self.resume())
+    }
+}
+
+struct Article { titre: String }
+impl Resume for Article {
+    fn resume(&self) -> String {
+        self.titre.clone()
+    }
+}
+
+let a = Article { titre: String::from("Rust") };
+println!("{}", a.apercu());`)+
+    py(`Un trait ≈ une classe de base abstraite / un <code>Protocol</code> Python, mais <b>vérifié à la compilation</b> et sans héritage de champs. Différence majeure : on peut implémenter un trait pour un type <b>déjà existant</b> (même de la bibliothèque standard), tant que le trait ou le type est défini chez toi (« règle de cohérence/orphan rule »).`)+
+    `<h3>Trait bounds — contraindre les génériques</h3>
+    `+code(`use std::fmt::Display;
+
+fn afficher_tout<T: Display>(items: &[T]) {
+    for x in items { println!("{x}"); }
+}
+
+// Plusieurs contraintes : + , ou clause where pour lisibilité
+fn traiter<T>(x: T) where T: Display + Clone {
+    let copie = x.clone();
+    println!("{copie}");
+}
+
+// Syntaxe "impl Trait" (sucre) :
+fn creer_resume() -> impl Resume { Article { titre: String::from("x") } }`)+
+    cerr(`<code>error[E0369]: binary operation \`>\` cannot be applied to type \`T\`</code> — tu utilises <code>&gt;</code> sur un <code>T</code> sans contrainte. Ajoute <code>&lt;T: PartialOrd&gt;</code>. De même, <code>{}</code> exige <code>T: Display</code>, <code>{:?}</code> exige <code>T: Debug</code>.`)+
+    why(`Les trait bounds rendent le polymorphisme <b>sûr et explicite</b> : la signature déclare précisément ce dont le code a besoin (<code>T: Display + Clone</code>). Le compilateur vérifie <b>au site de définition</b>, pas seulement à l’appel — les erreurs sont locales et claires, contrairement au « duck typing » de Python où l’erreur surgit à l’exécution.`)+
+    `<h3>Dispatch statique vs dynamique</h3>
+    `+code(`// Statique (monomorphisé, rapide) :
+fn notifier(item: &impl Resume) { println!("{}", item.resume()); }
+
+// Dynamique (objet-trait, une seule copie de code, indirection) :
+fn notifier_dyn(item: &dyn Resume) { println!("{}", item.resume()); }
+
+let liste: Vec<Box<dyn Resume>> = vec![Box::new(Article{titre:"a".into()})];`)+
+    trap(`<code>impl Trait</code> / génériques = <b>dispatch statique</b> (le type est connu, monomorphisé). <code>dyn Trait</code> = <b>dispatch dynamique</b> (table virtuelle, un seul code, léger surcoût). Utilise <code>dyn</code> quand tu veux stocker des <b>types différents</b> dans une même collection (<code>Vec&lt;Box&lt;dyn Trait&gt;&gt;</code>).`),
+  quiz:[
+    { kind:'mcq', difficulty:2, tags:['génériques','trait bounds'],
+      prompt:'Pourquoi <code>fn max&lt;T&gt;(a: T, b: T) -> T { if a &gt; b {a} else {b} }</code> ne compile-t-il pas tel quel ?',
+      choices:[
+        'Il manque <code>mut</code>',
+        '<code>T</code> n’est pas contraint : il faut <code>T: PartialOrd</code> pour utiliser <code>&gt;</code>',
+        'Les génériques sont interdits dans les fonctions',
+        'Il faut renvoyer une référence'],
+      answer:1, explain:'Sans contrainte, <code>T</code> pourrait être un type non comparable. Le trait bound <code>T: PartialOrd</code> autorise <code>&gt;</code>. Le compilateur vérifie ça à la définition.'},
+    { kind:'mcq', difficulty:2, tags:['traits'],
+      prompt:'Un trait peut fournir :',
+      choices:[
+        'Uniquement des signatures abstraites',
+        'Des méthodes requises <b>et</b> des méthodes par défaut',
+        'Uniquement des champs',
+        'De l’héritage de champs'],
+      answer:1, explain:'Un trait peut déclarer des méthodes requises (à implémenter) et fournir des <b>implémentations par défaut</b> réutilisables. Il ne contient pas de champs de données.'},
+    { kind:'mcq', difficulty:3, tags:['génériques','performance'],
+      prompt:'La « monomorphisation » des génériques signifie que :',
+      choices:[
+        'Le type est vérifié à l’exécution',
+        'Le compilateur génère une version spécialisée par type concret → coût d’exécution nul',
+        'Tout devient <code>dyn</code>',
+        'Les génériques sont plus lents que les fonctions concrètes'],
+      answer:1, explain:'Rust duplique le code pour chaque type utilisé (comme les templates C++), éliminant l’indirection. Compromis : binaire plus gros, compilation plus longue, mais exécution optimale.'},
+    { kind:'mcq', difficulty:3, tags:['dyn','dispatch'],
+      prompt:'Pour stocker dans un même <code>Vec</code> plusieurs types implémentant le trait <code>Dessin</code>, on utilise :',
+      choices:[
+        '<code>Vec&lt;impl Dessin&gt;</code>',
+        '<code>Vec&lt;Box&lt;dyn Dessin&gt;&gt;</code>',
+        '<code>Vec&lt;Dessin&gt;</code>',
+        'C’est impossible'],
+      answer:1, explain:'Des types <b>différents</b> ont des tailles différentes : il faut les « boxer » derrière un objet-trait <code>Box&lt;dyn Dessin&gt;</code> (dispatch dynamique). <code>Vec&lt;impl Dessin&gt;</code> impose un seul type concret.'},
+    { kind:'code', difficulty:3, tags:['traits','impl'],
+      prompt:'Définis un trait <code>Aire { fn aire(&self) -> f64; }</code> et implémente-le pour <code>struct Carre { cote: f64 }</code>.',
+      hint:'trait Aire { ... } puis impl Aire for Carre { ... }',
+      keywords:['trait','Aire','impl','for','&self','aire','cote'],
+      modelCode:true,
+      model:`trait Aire {
+    fn aire(&self) -> f64;
+}
+
+struct Carre { cote: f64 }
+
+impl Aire for Carre {
+    fn aire(&self) -> f64 {
+        self.cote * self.cote
+    }
+}`,
+      explain:'On sépare le <b>contrat</b> (trait) de son <b>implémentation</b> pour un type donné (<code>impl Aire for Carre</code>). N’importe quelle fonction générique <code>fn f&lt;T: Aire&gt;(...)</code> accepte désormais <code>Carre</code>.'}
+  ]
+});
+
+/* ================= MODULE 12 — Lifetimes ================= */
+COURSE.push({
+  type:'module', navtitle:'12 · Lifetimes ★',
+  title:'Module 12 — Lifetimes (durées de vie) ★',
+  sub:'Comment Rust garantit qu’une référence ne survit jamais à la donnée qu’elle désigne.',
+  lesson:
+    `<p>Une <b>lifetime</b> (durée de vie) est la portée pendant laquelle une référence est valide. Le borrow checker les utilise pour interdire les <b>références pendouillantes</b>. La plupart du temps, elles sont <b>inférées</b> ; parfois il faut les <b>annoter</b>.</p>
+    <h3>Le problème que ça résout</h3>
+    `+code(`fn main() {
+    let r;
+    {
+        let x = 5;
+        r = &x;        // r emprunte x
+    }                  // x est droppé ici
+    // println!("{r}"); // ERREUR : x ne vit plus assez longtemps
+}`)+
+    cerr(`<code>error[E0597]: \`x\` does not live long enough</code> — la référence <code>r</code> vivrait plus longtemps que <code>x</code>. En C, ce serait un pointeur pendouillant silencieux ; Rust le <b>refuse à la compilation</b>.`)+
+    `<h3>Annoter une fonction</h3>
+    <p>Quand une fonction renvoie une référence, Rust doit savoir à quelle entrée elle est liée. On l’exprime avec un paramètre de durée de vie <code>'a</code> (un nom, souvent <code>'a</code>).</p>
+    `+code(`// "La référence renvoyée vit aussi longtemps que la PLUS COURTE de x et y."
+fn plus_long<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() { x } else { y }
+}`)+
+    why(`<code>'a</code> ne <b>change pas</b> la durée de vie réelle des données : c’est une <b>annotation</b> qui <b>relie</b> les durées de vie des entrées et de la sortie, pour que le compilateur puisse vérifier la cohérence. Ici, on promet que le résultat ne survivra pas aux deux entrées. Sans ça, le compilateur ne pourrait pas savoir si la référence renvoyée reste valide.`)+
+    cerr(`<code>error[E0106]: missing lifetime specifier</code> — tu renvoies une référence sans dire à quelle entrée elle est liée. Ajoute les annotations <code>'a</code> comme ci-dessus.`)+
+    `<h3>Élision : pourquoi on n’en écrit presque jamais</h3>
+    <p>Rust applique des <b>règles d’élision</b> qui déduisent les lifetimes dans les cas courants. Ex. <code>fn f(s: &str) -> &str</code> : la sortie est liée à l’entrée unique, pas besoin d’annoter.</p>
+    <h3>Lifetimes dans les structs</h3>
+    <p>Une struct qui <b>stocke une référence</b> doit annoter sa durée de vie : elle ne peut pas survivre à la donnée référencée.</p>
+    `+code(`struct Extrait<'a> {
+    partie: &'a str,     // emprunte une chaîne qui doit vivre au moins autant
+}
+
+let phrase = String::from("Rust est sûr. Et rapide.");
+let premiere = phrase.split('.').next().unwrap();
+let e = Extrait { partie: premiere };  // e ne peut pas survivre à phrase
+println!("{}", e.partie);`)+
+    trap(`Erreur fréquente : vouloir renvoyer une référence vers une variable <b>locale</b> à la fonction. Impossible : la locale meurt à la fin de la fonction. Solution : renvoyer une valeur <b>possédée</b> (<code>String</code> plutôt que <code>&str</code>).`)+
+    py(`Python n’a rien de tel : le GC garde en vie tout objet encore référencé. Les lifetimes sont le <b>coût conceptuel</b> qui permet à Rust de se passer de GC tout en restant sûr. Bonne nouvelle : l’élision fait qu’on les écrit rarement au niveau débutant/intermédiaire — mais il faut les <b>comprendre</b> pour lire les messages d’erreur.`)+
+    `<h3>La lifetime spéciale <code>'static</code></h3>
+    `+code(`let s: &'static str = "je vis toute la durée du programme"; // littéraux = 'static`),
+  quiz:[
+    { kind:'predict', difficulty:2, tags:['lifetimes'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let r;
+    {
+        let x = 5;
+        r = &x;
+    }
+    println!("{r}");
+}`,
+      hint:'x vit-il assez longtemps pour r ?',
+      model:'Erreur E0597 : x does not live long enough.',
+      explain:'<code>r</code> emprunte <code>x</code>, mais <code>x</code> est droppé à la fin du bloc interne. Utiliser <code>r</code> ensuite lirait de la mémoire libérée → refusé. C’est exactement le bug de « dangling pointer » évité à la compilation.'},
+    { kind:'mcq', difficulty:3, tags:['lifetimes','annotations'],
+      prompt:'Que signifie <code>&\'a</code> dans <code>fn f&lt;\'a&gt;(x: &\'a str) -> &\'a str</code> ?',
+      choices:[
+        'Que <code>x</code> vit plus longtemps grâce à l’annotation',
+        'Que la référence renvoyée est liée à la même durée de vie que <code>x</code>',
+        'Que <code>x</code> devient <code>\'static</code>',
+        'Que <code>x</code> est copié'],
+      answer:1, explain:'<code>\'a</code> <b>relie</b> les durées de vie sans les modifier : la sortie ne pourra pas vivre plus longtemps que <code>x</code>. C’est une contrainte de vérification, pas une allocation.'},
+    { kind:'mcq', difficulty:2, tags:['lifetimes','élision'],
+      prompt:'Pourquoi n’écrit-on pas d’annotation dans <code>fn premier(s: &str) -> &str</code> ?',
+      choices:[
+        'Parce que les lifetimes sont interdites ici',
+        'Grâce aux <b>règles d’élision</b> : la sortie est liée à l’unique entrée',
+        'Parce que <code>&str</code> est <code>\'static</code>',
+        'Parce que la fonction ne compile pas'],
+      answer:1, explain:'Avec une seule référence en entrée, l’élision lie automatiquement la sortie à cette entrée. Le compilateur écrit <code>\'a</code> pour toi.'},
+    { kind:'mcq', difficulty:3, tags:['lifetimes','erreurs'],
+      prompt:'Renvoyer <code>&String</code> vers une variable locale créée dans la fonction :',
+      choices:[
+        'Fonctionne toujours',
+        'Est refusé : la locale meurt en fin de fonction ; renvoyer une valeur possédée (<code>String</code>)',
+        'Nécessite <code>unsafe</code>',
+        'Nécessite <code>Box</code>'],
+      answer:1, explain:'La référence pendouillerait. Solution idiomatique : renvoyer la <b>valeur possédée</b> (<code>String</code>), transférant l’ownership à l’appelant.'},
+    { kind:'text', difficulty:3, tags:['lifetimes','structs'],
+      prompt:'Pourquoi une struct qui contient un champ <code>&str</code> doit-elle porter une durée de vie, ex. <code>struct S&lt;\'a&gt; { x: &\'a str }</code> ?',
+      hint:'La struct peut-elle vivre plus longtemps que ce qu’elle référence ?',
+      keywords:['référence','survit','vivre','durée','donnée','emprunt','invalide'],
+      model:'Parce que la struct <b>emprunte</b> une donnée qu’elle ne possède pas. La lifetime <code>\'a</code> exprime que l’instance de la struct ne peut pas <b>survivre</b> à la chaîne référencée par <code>x</code> ; sinon <code>x</code> pointerait vers de la mémoire libérée.',
+      explain:'Le paramètre <code>\'a</code> lie la durée de vie de l’instance à celle de la donnée empruntée. Le compilateur refusera toute utilisation de la struct après la disparition de la donnée. C’est la même garantie « pas de dangling » appliquée aux champs.'}
+  ]
+});
+
+/* ================= MODULE 13 — Closures & iterators ================= */
+COURSE.push({
+  type:'module', navtitle:'13 · Closures & iterators ★',
+  title:'Module 13 — Closures & iterators ★',
+  sub:'Le style fonctionnel de Rust : concis, expressif et sans surcoût.',
+  lesson:
+    `<h3>Closures (fermetures)</h3>
+    <p>Une <b>closure</b> est une fonction anonyme qui peut <b>capturer</b> son environnement.</p>
+    `+code(`let facteur = 3;
+let multiplier = |x| x * facteur;   // capture 'facteur'
+println!("{}", multiplier(10));      // 30
+
+let addition = |a: i32, b: i32| -> i32 { a + b };`)+
+    `<h3>Trois façons de capturer</h3>
+    <p>Le compilateur choisit automatiquement le mode le plus permissif nécessaire, correspondant à trois traits :</p>
+    <table>
+      <tr><th>Trait</th><th>Capture</th><th>Analogie</th></tr>
+      <tr><td><code>Fn</code></td><td>par référence immuable <code>&T</code></td><td>lecture</td></tr>
+      <tr><td><code>FnMut</code></td><td>par référence mutable <code>&mut T</code></td><td>écriture</td></tr>
+      <tr><td><code>FnOnce</code></td><td>par valeur (move), appelable une seule fois</td><td>consomme</td></tr>
+    </table>
+    `+code(`let mut compte = 0;
+let mut incr = || compte += 1;   // FnMut : capture &mut compte
+incr(); incr();
+println!("{compte}");             // 2
+
+let s = String::from("hi");
+let consomme = move || s;         // move : prend possession de s
+println!("{}", consomme());`)+
+    py(`Closures ≈ <code>lambda</code> Python, mais bien plus puissantes (corps multi-lignes, capture typée). Le mot-clé <code>move</code> force la capture <b>par valeur</b> — crucial pour passer une closure à un thread (Module 15), où l’environnement emprunté ne survivrait pas.`)+
+    `<h3>Iterators — paresseux et composables</h3>
+    <p>Un <b>iterator</b> produit des éléments à la demande. Les <b>adaptateurs</b> (<code>map</code>, <code>filter</code>…) sont <b>paresseux</b> : rien ne se calcule tant qu’un <b>consommateur</b> (<code>collect</code>, <code>sum</code>, <code>for</code>…) ne les tire.</p>
+    `+code(`let v = vec![1, 2, 3, 4, 5, 6];
+
+let pairs_doubles: Vec<i32> = v.iter()
+    .filter(|&&x| x % 2 == 0)   // 2,4,6   (adaptateur, paresseux)
+    .map(|&x| x * 2)            // 4,8,12  (adaptateur, paresseux)
+    .collect();                 // consommateur -> déclenche le calcul
+
+let somme: i32 = v.iter().sum();
+let total: i32 = v.iter().filter(|&&x| x > 3).sum();  // 4+5+6 = 15
+let trouve = v.iter().find(|&&x| x > 4);              // Some(&5)
+let compte = v.iter().filter(|&&x| x % 2 == 0).count();`)+
+    why(`Les itérateurs Rust sont une abstraction à <b>coût nul</b> (« zero-cost abstraction ») : la chaîne <code>iter().filter().map().sum()</code> compile en code aussi rapide qu’une boucle <code>for</code> manuelle, souvent plus, grâce à la monomorphisation et à l’inlining. Tu obtiens l’expressivité du fonctionnel <b>sans</b> la pénalité habituelle.`)+
+    `<h3>iter vs iter_mut vs into_iter</h3>
+    <table>
+      <tr><th>Méthode</th><th>Produit</th><th>Effet sur la collection</th></tr>
+      <tr><td><code>iter()</code></td><td><code>&T</code></td><td>emprunte (lecture)</td></tr>
+      <tr><td><code>iter_mut()</code></td><td><code>&mut T</code></td><td>emprunte (modification en place)</td></tr>
+      <tr><td><code>into_iter()</code></td><td><code>T</code></td><td><b>consomme</b> la collection (move)</td></tr>
+    </table>
+    `+code(`let mut v = vec![1, 2, 3];
+for x in v.iter_mut() { *x *= 10; }   // v = [10,20,30]
+let somme: i32 = v.into_iter().sum(); // v est CONSOMMÉ ici`)+
+    trap(`Après <code>into_iter()</code>, la collection est <b>déplacée</b> : tu ne peux plus l’utiliser. Autre piège classique : les closures de <code>filter</code> reçoivent des <b>références</b> (d’où <code>|&&x|</code> ou <code>|x| **x</code>), car <code>iter()</code> donne des <code>&T</code> et <code>filter</code> passe encore une référence.`)+
+    `<h3>collect : le couteau suisse</h3>
+    `+code(`use std::collections::HashMap;
+let carres: Vec<i32> = (1..=5).map(|x| x * x).collect();      // [1,4,9,16,25]
+let map: HashMap<i32,i32> = (1..=3).map(|x| (x, x*x)).collect();
+// collect peut aussi produire un Result<Vec<_>, E> et court-circuiter à la 1re erreur`),
+  quiz:[
+    { kind:'predict', difficulty:2, tags:['iterators'], expect:'[4, 8, 12]',
+      prompt:'Que contient <code>r</code> ?',
+      code:`fn main() {
+    let v = vec![1, 2, 3, 4, 5, 6];
+    let r: Vec<i32> = v.iter()
+        .filter(|&&x| x % 2 == 0)
+        .map(|&x| x * 2)
+        .collect();
+    println!("{r:?}");
+}`,
+      model:'[4, 8, 12]',
+      explain:'<code>filter</code> garde 2,4,6 ; <code>map</code> les double → 4,8,12 ; <code>collect</code> matérialise le <code>Vec</code>. Les adaptateurs sont paresseux : le calcul n’a lieu qu’au <code>collect</code>.'},
+    { kind:'mcq', difficulty:3, tags:['iterators','paresse'],
+      prompt:'Pourquoi <code>v.iter().map(|x| x*2)</code> seul « ne fait rien » ?',
+      choices:[
+        'C’est un bug',
+        'Les adaptateurs sont <b>paresseux</b> ; il faut un consommateur (<code>collect</code>, <code>sum</code>, <code>for</code>…)',
+        'Il faut <code>mut</code>',
+        '<code>map</code> n’existe pas sur les Vec'],
+      answer:1, explain:'Un iterator ne calcule rien tant qu’il n’est pas <b>consommé</b>. Sans <code>collect()</code>/<code>sum()</code>/boucle, la chaîne est inerte (le compilateur émet d’ailleurs un avertissement).'},
+    { kind:'mcq', difficulty:2, tags:['iterators','ownership'],
+      prompt:'Quelle méthode <b>consomme</b> la collection en produisant des valeurs possédées <code>T</code> ?',
+      choices:['<code>iter()</code>','<code>iter_mut()</code>','<code>into_iter()</code>','<code>get()</code>'],
+      answer:2, explain:'<code>into_iter()</code> déplace les éléments hors de la collection (move) → après, elle n’est plus utilisable. <code>iter()</code>=&T, <code>iter_mut()</code>=&mut T.'},
+    { kind:'mcq', difficulty:2, tags:['closures'],
+      prompt:'À quoi sert <code>move</code> devant une closure, ex. <code>move || s</code> ?',
+      choices:[
+        'À accélérer l’exécution',
+        'À forcer la capture <b>par valeur</b> (prise de possession) de l’environnement',
+        'À rendre la closure asynchrone',
+        'À la rendre immuable'],
+      answer:1, explain:'<code>move</code> transfère la propriété des variables capturées dans la closure. Indispensable pour passer une closure à un thread, dont la durée de vie dépasse la portée locale.'},
+    { kind:'code', difficulty:3, tags:['iterators','closures'],
+      prompt:'En une seule chaîne d’itérateurs, calcule la somme des carrés des nombres <b>impairs</b> de <code>v: &[i32]</code>.',
+      starter:'fn somme_carres_impairs(v: &[i32]) -> i32 {\n    \n}',
+      hint:'filter puis map puis sum.',
+      keywords:['iter','filter','map','sum','% 2'],
+      modelCode:true,
+      model:`fn somme_carres_impairs(v: &[i32]) -> i32 {
+    v.iter()
+        .filter(|&&x| x % 2 != 0)
+        .map(|&x| x * x)
+        .sum()
+}`,
+      explain:'<code>filter</code> garde les impairs, <code>map</code> les élève au carré, <code>sum</code> consomme et additionne. Aussi rapide qu’une boucle manuelle (abstraction à coût nul), mais plus lisible.'}
+  ]
+});
+</script>
+<script>
+/* ================= MODULE 14 — Smart pointers : Box, Rc, RefCell ================= */
+COURSE.push({
+  type:'module', navtitle:'14 · Smart pointers',
+  title:'Module 14 — Smart pointers : Box, Rc, RefCell',
+  sub:'Des pointeurs « intelligents » pour l’allocation sur le tas, le partage et la mutabilité contrôlée.',
+  lesson:
+    `<p>Un <b>smart pointer</b> est une struct qui agit comme un pointeur mais ajoute des capacités (allocation, comptage de références, vérifications). Ils implémentent <code>Deref</code> (accès transparent) et souvent <code>Drop</code> (nettoyage).</p>
+    <h3><code>Box&lt;T&gt;</code> — allouer sur le tas</h3>
+    <p>Stocke une valeur sur le <b>tas</b>. Utile pour : les types <b>récursifs</b> (taille inconnue à la compilation), les grosses données à ne pas copier, ou les objets-traits.</p>
+    `+code(`let b = Box::new(5);        // 5 est sur le tas, b sur la pile
+println!("{b}");             // Deref automatique
+
+// Type récursif : impossible sans indirection
+enum Liste {
+    Cons(i32, Box<Liste>),   // Box brise la récursion infinie de taille
+    Nil,
+}
+use Liste::*;
+let l = Cons(1, Box::new(Cons(2, Box::new(Nil))));`)+
+    cerr(`<code>error[E0072]: recursive type \`Liste\` has infinite size</code> — un enum qui se contient directement aurait une taille infinie. <code>Box</code> introduit une indirection (un pointeur de taille fixe) qui résout le problème.`)+
+    `<h3><code>Rc&lt;T&gt;</code> — propriété partagée (mono-thread)</h3>
+    <p><code>Rc</code> (Reference Counted) permet à <b>plusieurs</b> propriétaires de partager une donnée immuable. Il compte les références ; la donnée est libérée quand le compteur tombe à 0.</p>
+    `+code(`use std::rc::Rc;
+let a = Rc::new(String::from("partagé"));
+let b = Rc::clone(&a);      // n'copie PAS la donnée : incrémente le compteur
+let c = Rc::clone(&a);
+println!("compteur = {}", Rc::strong_count(&a));  // 3`)+
+    why(`<code>Rc::clone</code> est <b>bon marché</b> : il ne duplique pas la donnée, juste le compteur. C’est le plus proche du modèle Python (comptage de références) — mais <b>uniquement mono-thread</b>. Pour du multi-thread, on utilise <code>Arc</code> (Atomic Rc), au compteur thread-safe (Module 15).`)+
+    `<h3><code>RefCell&lt;T&gt;</code> — mutabilité intérieure</h3>
+    <p>Normalement, la règle d’emprunt est vérifiée à la <b>compilation</b>. <code>RefCell</code> la déplace à l’<b>exécution</b> : tu peux muter une donnée derrière une référence immuable, mais violer la règle « un seul écrivain » <b>panique</b> au runtime.</p>
+    `+code(`use std::cell::RefCell;
+let c = RefCell::new(5);
+*c.borrow_mut() += 10;              // emprunt mutable vérifié à l'exécution
+println!("{}", c.borrow());         // 15
+
+// PANIQUE : deux emprunts mutables simultanés
+// let m1 = c.borrow_mut();
+// let m2 = c.borrow_mut();         // thread panicked: already borrowed`)+
+    trap(`<code>RefCell</code> échange une garantie <b>compile-time</b> contre une vérification <b>runtime</b> : une violation de l’emprunt ne se voit plus à la compilation mais <b>panique</b> à l’exécution. À n’utiliser que quand le compilateur est trop strict pour un motif que tu sais correct.`)+
+    `<h3>Le combo <code>Rc&lt;RefCell&lt;T&gt;&gt;</code></h3>
+    <p>Motif classique : <b>plusieurs propriétaires</b> (<code>Rc</code>) d’une donnée <b>mutable</b> (<code>RefCell</code>). Fréquent pour les graphes/arbres partagés.</p>
+    `+code(`use std::rc::Rc;
+use std::cell::RefCell;
+let partage = Rc::new(RefCell::new(vec![1, 2, 3]));
+let autre = Rc::clone(&partage);
+partage.borrow_mut().push(4);
+println!("{:?}", autre.borrow());   // [1, 2, 3, 4]`)+
+    py(`En Python, tout objet est déjà un <code>Rc&lt;RefCell&lt;T&gt;&gt;</code> implicite : partagé (comptage de refs) et librement mutable. Rust rend ces choix <b>explicites</b> et te fait payer exactement ce que tu utilises : <code>Box</code> (tas), <code>Rc</code> (partage), <code>RefCell</code> (mutabilité contrôlée).`)+
+    why(`Ces types matérialisent des compromis : <code>Box</code> = possession unique + tas ; <code>Rc</code> = partage + immuable ; <code>RefCell</code> = mutabilité intérieure + vérif runtime. En les combinant, tu obtiens précisément la sémantique voulue, sans GC généralisé.`),
+  quiz:[
+    { kind:'mcq', difficulty:2, tags:['Box'],
+      prompt:'Pourquoi un enum récursif comme une liste chaînée nécessite-t-il <code>Box</code> ?',
+      choices:[
+        'Pour la vitesse',
+        'Sans indirection, sa taille serait infinie ; <code>Box</code> (pointeur, taille fixe) la borne',
+        'Parce que les enums sont interdits',
+        'Pour partager la propriété'],
+      answer:1, explain:'Un type qui se contient directement aurait une taille non bornée. <code>Box</code> stocke la suite sur le tas et n’occupe qu’un pointeur de taille fixe dans la variante.'},
+    { kind:'mcq', difficulty:2, tags:['Rc'],
+      prompt:'Que fait <code>Rc::clone(&a)</code> ?',
+      choices:[
+        'Copie profondément la donnée',
+        'Incrémente le compteur de références et partage la même donnée',
+        'Déplace <code>a</code>',
+        'Crée un thread'],
+      answer:1, explain:'<code>Rc::clone</code> est peu coûteux : il n’duplique pas la donnée, il ajoute un propriétaire (compteur +1). La donnée vit tant que le compteur > 0.'},
+    { kind:'mcq', difficulty:3, tags:['RefCell'],
+      prompt:'Quelle est la différence clé entre le borrow checker normal et <code>RefCell</code> ?',
+      choices:[
+        'Aucune',
+        '<code>RefCell</code> vérifie les règles d’emprunt à l’<b>exécution</b> (et panique si violées), pas à la compilation',
+        '<code>RefCell</code> désactive toute vérification',
+        '<code>RefCell</code> est thread-safe'],
+      answer:1, explain:'<code>RefCell</code> = « mutabilité intérieure » : la règle un-écrivain-xor-plusieurs-lecteurs est vérifiée <b>au runtime</b> via <code>borrow()</code>/<code>borrow_mut()</code>, et une violation panique. <code>RefCell</code> n’est PAS thread-safe.'},
+    { kind:'predict', difficulty:3, tags:['Rc','RefCell'], expect:'[1, 2, 3, 4]',
+      prompt:'Sortie ?',
+      code:`use std::rc::Rc;
+use std::cell::RefCell;
+fn main() {
+    let a = Rc::new(RefCell::new(vec![1, 2, 3]));
+    let b = Rc::clone(&a);
+    b.borrow_mut().push(4);
+    println!("{:?}", a.borrow());
+}`,
+      model:'[1, 2, 3, 4]',
+      explain:'<code>a</code> et <code>b</code> partagent le <b>même</b> <code>RefCell</code> (Rc). Muter via <code>b</code> se voit via <code>a</code>. <code>Rc</code> = partage, <code>RefCell</code> = mutation intérieure : le combo pour données mutables partagées mono-thread.'},
+    { kind:'text', difficulty:3, tags:['Rc','Arc','concurrence'],
+      prompt:'Pourquoi utilise-t-on <code>Arc</code> plutôt que <code>Rc</code> pour partager entre threads ?',
+      hint:'Pense à la sûreté du compteur en présence de plusieurs threads.',
+      keywords:['atomique','thread','arc','rc','send','sync','compteur','concurrent'],
+      model:'<code>Rc</code> utilise un compteur <b>non atomique</b> (rapide mais non thread-safe) : deux threads pourraient le corrompre. <code>Arc</code> (Atomic Reference Counted) utilise un compteur <b>atomique</b>, sûr en concurrence — il implémente <code>Send</code>/<code>Sync</code>. Le compilateur refuse <code>Rc</code> entre threads.',
+      explain:'C’est un compromis performance/sûreté : <code>Rc</code> évite le coût des opérations atomiques quand tu es mono-thread ; <code>Arc</code> paie ce coût pour la sûreté multi-thread. Rust t’oblige à choisir le bon — passer un <code>Rc</code> à un thread ne compile pas.'}
+  ]
+});
+
+/* ================= MODULE 15 — Concurrence : threads & channels ================= */
+COURSE.push({
+  type:'module', navtitle:'15 · Concurrence',
+  title:'Module 15 — Concurrence : threads & channels',
+  sub:'La « concurrence sans peur » : le borrow checker élimine les data races à la compilation.',
+  lesson:
+    `<h3>Lancer des threads</h3>
+    `+code(`use std::thread;
+
+fn main() {
+    let handle = thread::spawn(|| {
+        for i in 1..5 { println!("thread: {i}"); }
+    });
+    for i in 1..3 { println!("main: {i}"); }
+    handle.join().unwrap();     // attend la fin du thread
+}`)+
+    `<h3><code>move</code> pour capturer</h3>
+    <p>Un thread peut survivre à la portée qui l’a créé : il doit donc <b>posséder</b> les données qu’il utilise. D’où le <code>move</code>.</p>
+    `+code(`let v = vec![1, 2, 3];
+let handle = thread::spawn(move || {   // move : v est déplacé dans le thread
+    println!("{v:?}");
+});
+handle.join().unwrap();`)+
+    cerr(`<code>error[E0373]: closure may outlive the current function, but it borrows \`v\`</code> — sans <code>move</code>, la closure emprunte <code>v</code>, mais le thread pourrait vivre plus longtemps que <code>v</code>. Le compilateur suggère d’ajouter <code>move</code>.`)+
+    `<h3>Channels — communiquer par messages</h3>
+    <p>Idiome Rust : « <b>ne communiquez pas en partageant la mémoire, partagez la mémoire en communiquant</b> ». Un <b>channel</b> transfère la <b>propriété</b> des messages d’un thread à l’autre.</p>
+    `+code(`use std::sync::mpsc;   // multi-producer, single-consumer
+use std::thread;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+    thread::spawn(move || {
+        for i in 0..3 {
+            tx.send(i).unwrap();   // envoie i (le transfère)
+        }
+    });
+    for recu in rx {               // itère jusqu'à fermeture du canal
+        println!("reçu: {recu}");
+    }
+}`)+
+    why(`Le <code>send</code> <b>déplace</b> la valeur : après envoi, l’émetteur ne peut plus l’utiliser. Impossible d’avoir deux threads qui modifient la même donnée par accident — l’ownership rend la <b>data race</b> inexprimable. C’est ce que Rust appelle la « fearless concurrency ».`)+
+    `<h3>État partagé : <code>Arc&lt;Mutex&lt;T&gt;&gt;</code></h3>
+    <p>Quand il faut vraiment partager un état mutable, on combine <code>Arc</code> (partage multi-thread) et <code>Mutex</code> (verrou d’accès exclusif).</p>
+    `+code(`use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let compteur = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+    for _ in 0..10 {
+        let c = Arc::clone(&compteur);
+        handles.push(thread::spawn(move || {
+            let mut n = c.lock().unwrap();  // verrouille (bloque si occupé)
+            *n += 1;
+        }));                                 // verrou relâché en fin de portée
+    }
+    for h in handles { h.join().unwrap(); }
+    println!("{}", *compteur.lock().unwrap());   // 10
+}`)+
+    trap(`Deux traits marqueurs gouvernent la sûreté : <code>Send</code> (transférable entre threads) et <code>Sync</code> (partageable par référence). <code>Rc</code> n’est ni l’un ni l’autre → le compilateur t’empêche de l’utiliser entre threads. Oublier de <code>join()</code> peut laisser un thread inachevé ; un <code>Mutex</code> jamais déverrouillé (garde gardée trop longtemps) peut créer un interblocage.`)+
+    py(`Rappelle-toi du GIL de Python : la vraie parallélisation CPU y est limitée (souvent multiprocessing). Rust n’a pas de GIL : vrai parallélisme, et la sûreté est garantie par le typage (<code>Send</code>/<code>Sync</code>) au lieu d’être laissée à la discipline du développeur.`),
+  quiz:[
+    { kind:'mcq', difficulty:2, tags:['threads','move'],
+      prompt:'Pourquoi faut-il souvent <code>move</code> dans <code>thread::spawn(move || ...)</code> ?',
+      choices:[
+        'Pour la performance',
+        'Parce que le thread peut survivre à la fonction : il doit <b>posséder</b> les données capturées',
+        'Parce que <code>spawn</code> l’exige toujours',
+        'Pour rendre la closure immuable'],
+      answer:1, explain:'Le thread a une durée de vie indépendante. Emprunter des locales serait dangereux si elles disparaissent avant. <code>move</code> transfère la propriété dans la closure.'},
+    { kind:'mcq', difficulty:3, tags:['channels','ownership'],
+      prompt:'Après <code>tx.send(x)</code>, que devient <code>x</code> (type non-Copy) chez l’émetteur ?',
+      choices:[
+        'Il reste utilisable',
+        'Il est <b>déplacé</b> dans le canal ; l’émetteur ne peut plus l’utiliser',
+        'Il est copié',
+        'Il devient <code>None</code>'],
+      answer:1, explain:'<code>send</code> transfère la propriété du message. C’est ce transfert qui garantit l’absence d’accès concurrent à la même donnée. « Partager en communiquant. »'},
+    { kind:'mcq', difficulty:3, tags:['Arc','Mutex'],
+      prompt:'Pour partager un compteur mutable entre 10 threads, on utilise :',
+      choices:[
+        '<code>Rc&lt;RefCell&lt;i32&gt;&gt;</code>',
+        '<code>Arc&lt;Mutex&lt;i32&gt;&gt;</code>',
+        'un <code>i32</code> global',
+        '<code>Box&lt;i32&gt;</code>'],
+      answer:1, explain:'<code>Arc</code> pour le partage thread-safe, <code>Mutex</code> pour l’accès exclusif en écriture. <code>Rc</code>/<code>RefCell</code> ne sont pas thread-safe et seraient refusés par le compilateur.'},
+    { kind:'mcq', difficulty:2, tags:['Send','Sync'],
+      prompt:'Le trait <code>Send</code> signifie qu’un type :',
+      choices:[
+        'peut être envoyé sur le réseau',
+        'peut être <b>transféré</b> vers un autre thread en toute sûreté',
+        'est immuable',
+        'implémente <code>Clone</code>'],
+      answer:1, explain:'<code>Send</code> = transférable entre threads ; <code>Sync</code> = partageable par référence (&T) entre threads. Le compilateur s’appuie dessus pour interdire les usages dangereux (ex. <code>Rc</code> non-<code>Send</code>).'},
+    { kind:'text', difficulty:3, tags:['concurrence','data race'],
+      prompt:'Explique comment l’ownership rend une <b>data race</b> impossible à compiler.',
+      hint:'Une data race = accès concurrent + au moins une écriture + pas de synchro.',
+      keywords:['ownership','un seul','mutable','partage','send','sync','emprunt','écrivain'],
+      model:'Une data race exige que deux threads accèdent à la même donnée simultanément avec au moins une écriture. En Rust : soit la donnée est <b>déplacée</b> (un seul propriétaire, un seul thread y accède), soit elle est partagée mais alors la règle « un seul <code>&mut</code> » et les traits <code>Send</code>/<code>Sync</code> imposent un verrou (<code>Mutex</code>) pour toute mutation. Les deux conditions ne peuvent coexister → la data race est inexprimable.',
+      explain:'C’est la « fearless concurrency » : les mêmes règles d’emprunt qui protègent le mono-thread (aliasing xor mutation) plus les marqueurs <code>Send</code>/<code>Sync</code> couvrent le multi-thread. Le compilateur refuse le code potentiellement racé au lieu de le laisser planter aléatoirement à l’exécution.'}
+  ]
+});
+
+/* ================= MODULE 16 — Modules, crates, packages, organisation ================= */
+COURSE.push({
+  type:'module', navtitle:'16 · Modules & projet',
+  title:'Module 16 — Modules, crates, packages & organisation',
+  sub:'Structurer un vrai projet Rust et adopter les conventions idiomatiques.',
+  lesson:
+    `<h3>Le vocabulaire</h3>
+    <table>
+      <tr><th>Terme</th><th>Définition</th></tr>
+      <tr><td><b>Crate</b></td><td>Unité de compilation : soit un <b>binaire</b> (<code>main.rs</code>), soit une <b>bibliothèque</b> (<code>lib.rs</code>).</td></tr>
+      <tr><td><b>Package</b></td><td>Un ou plusieurs crates + un <code>Cargo.toml</code>. (max 1 lib, plusieurs bins possibles.)</td></tr>
+      <tr><td><b>Module</b></td><td>Espace de noms interne à un crate (<code>mod</code>), pour organiser et contrôler la visibilité.</td></tr>
+    </table>
+    <h3>Déclarer des modules</h3>
+    `+code(`// src/main.rs
+mod reseau {                    // module
+    pub fn connecter() {}       // pub = visible à l'extérieur du module
+    fn secret() {}              // privé par défaut
+
+    pub mod client {            // sous-module
+        pub fn envoyer() {
+            super::connecter(); // super:: = module parent
+        }
+    }
+}
+
+fn main() {
+    reseau::connecter();               // chemin absolu depuis la racine
+    reseau::client::envoyer();
+}`)+
+    why(`Tout est <b>privé par défaut</b> en Rust : un item n’est visible hors de son module que si tu écris <code>pub</code>. Ce choix inverse la tendance de beaucoup de langages et pousse à une <b>encapsulation stricte</b> : ton API publique est explicite et minimale, le reste reste un détail d’implémentation modifiable.`)+
+    `<h3>Découper en fichiers</h3>
+    `+code(`// src/main.rs
+mod reseau;              // charge src/reseau.rs OU src/reseau/mod.rs
+
+// src/reseau.rs
+pub mod client;         // charge src/reseau/client.rs
+pub fn connecter() {}
+
+// src/reseau/client.rs
+pub fn envoyer() {}`)+
+    `<h3><code>use</code> — raccourcir les chemins</h3>
+    `+code(`use std::collections::HashMap;
+use reseau::client::envoyer;
+use std::io::{self, Write};        // groupes
+use std::fmt::Result as FmtResult; // alias
+
+envoyer();                          // au lieu de reseau::client::envoyer()`)+
+    py(`<code>mod</code> ≈ un module/package Python, mais la structure est déclarée <b>explicitement</b> (<code>mod nom;</code>) plutôt que déduite de l’arborescence + <code>__init__.py</code>. <code>use</code> ≈ <code>import</code>. Différence forte : la <b>visibilité privée par défaut</b> (Python n’a que la convention <code>_prefixe</code>).`)+
+    `<h3>Organisation d’un projet réaliste</h3>
+    `+code(`mon_app/
+├── Cargo.toml
+├── src/
+│   ├── main.rs         # binaire : orchestre
+│   ├── lib.rs          # bibliothèque : logique testable
+│   ├── config.rs       # mod config;
+│   └── domaine/
+│       ├── mod.rs      # mod domaine;
+│       └── modele.rs
+├── tests/              # tests d'INTÉGRATION (boîte noire)
+│   └── api.rs
+├── benches/            # benchmarks
+└── examples/           # exemples exécutables`)+
+    `<h3>Bonnes pratiques idiomatiques</h3>
+    <ul>
+      <li>Nommage : <code>snake_case</code> (fonctions/variables), <code>CamelCase</code> (types/traits), <code>SCREAMING_CASE</code> (constantes).</li>
+      <li>Préfère emprunter (<code>&str</code>, <code>&[T]</code>) plutôt que consommer, quand tu lis seulement.</li>
+      <li>Modélise les états impossibles hors d’atteinte avec des <b>enums</b> (« make illegal states unrepresentable »).</li>
+      <li>Gère les erreurs avec <code>Result</code> + <code>?</code> ; réserve <code>panic!/unwrap</code> aux bugs/prototypes. En biblio, exporte des erreurs typées (crates <code>thiserror</code>/<code>anyhow</code>).</li>
+      <li>Lance <code>cargo fmt</code> et <code>cargo clippy</code> systématiquement ; écris des tests (<code>#[test]</code>) et de la doc (<code>///</code> + <code>cargo doc</code>).</li>
+      <li>Mets la logique dans <code>lib.rs</code> (testable), garde <code>main.rs</code> mince.</li>
+    </ul>
+    `+code(`/// Additionne deux entiers. (commentaire de doc -> apparait dans cargo doc)
+///
+/// # Exemples
+/// \`\`\`
+/// assert_eq!(mon_crate::add(2, 3), 5);
+/// \`\`\`
+pub fn add(a: i32, b: i32) -> i32 { a + b }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_add() {
+        assert_eq!(add(2, 2), 4);
+    }
+}`)+
+    trap(`Erreur fréquente du débutant : oublier <code>pub</code> et obtenir <code>error[E0603]: function is private</code>. Rends public <b>uniquement</b> ce qui doit l’être ; garde le reste privé pour préserver ta liberté de refactoring.`),
+  quiz:[
+    { kind:'mcq', difficulty:1, tags:['modules','visibilité'],
+      prompt:'Par défaut, un item (fonction, struct…) dans un module est :',
+      choices:['public','privé (visible seulement dans son module et ses enfants)','déprécié','statique'],
+      answer:1, explain:'Tout est <b>privé par défaut</b>. Il faut <code>pub</code> pour exposer hors du module. Cela force une API publique explicite et minimale.'},
+    { kind:'mcq', difficulty:2, tags:['crate','package'],
+      prompt:'Quelle affirmation est correcte ?',
+      choices:[
+        'Un package contient exactement un crate',
+        'Un crate est soit un binaire, soit une bibliothèque ; un package peut contenir plusieurs crates (max 1 lib)',
+        'Un module et un crate sont synonymes',
+        'Un package ne peut pas avoir de binaire et de lib'],
+      answer:1, explain:'<b>Crate</b> = unité de compilation (bin ou lib). <b>Package</b> = Cargo.toml + ses crates (au plus une lib, plusieurs bins). <b>Module</b> = découpage interne d’un crate.'},
+    { kind:'predict', difficulty:2, tags:['visibilité'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`mod outils {
+    fn aide() -> i32 { 42 }
+}
+fn main() {
+    println!("{}", outils::aide());
+}`,
+      hint:'aide est-elle publique ?',
+      model:'Erreur E0603 : function aide is private.',
+      explain:'<code>aide</code> n’est pas <code>pub</code> → invisible hors du module <code>outils</code>. Correction : <code>pub fn aide()</code>. C’est la privacité par défaut de Rust.'},
+    { kind:'mcq', difficulty:2, tags:['use','chemins'],
+      prompt:'À quoi sert <code>use</code> ?',
+      choices:[
+        'À exécuter du code',
+        'À raccourcir un chemin en l’amenant dans la portée courante (comme <code>import</code>)',
+        'À rendre un item public',
+        'À créer un module'],
+      answer:1, explain:'<code>use</code> importe un chemin dans la portée pour éviter de le réécrire en entier. Il ne change pas la visibilité (sauf <code>pub use</code>, ré-export).'},
+    { kind:'text', difficulty:3, tags:['organisation','bonnes pratiques'],
+      prompt:'Pourquoi met-on la logique dans <code>lib.rs</code> et garde-t-on <code>main.rs</code> mince ? Cite un bénéfice concret.',
+      hint:'Pense aux tests d’intégration et à la réutilisation.',
+      keywords:['test','lib','réutilis','intégration','séparer','main','mince'],
+      model:'La logique dans <code>lib.rs</code> devient une <b>bibliothèque</b> réutilisable et surtout <b>testable</b> : les tests d’intégration dans <code>tests/</code> et d’autres binaires peuvent l’importer. <code>main.rs</code> ne fait qu’orchestrer (parsing d’arguments, I/O), ce qui est difficile à tester.',
+      explain:'Séparer « logique pure » (lib) de « point d’entrée » (bin) améliore testabilité, réutilisation (plusieurs binaires, exemples, benchmarks partagent la lib) et clarté de l’API publique. C’est une convention idiomatique répandue.'}
+  ]
+});
+
+/* ================= CHECKPOINT 4 — Intermédiaire confirmé ================= */
+COURSE.push({
+  type:'checkpoint', navtitle:'⚑ Checkpoint : Interm. confirmé',
+  title:'Checkpoint — Niveau Intermédiaire confirmé',
+  sub:'Synthèse des modules 11 à 16 : traits, lifetimes, iterators, smart pointers, concurrence, organisation.',
+  lesson:`<div class="callout why"><div class="h">🎯 Attendu</div>
+    Écrire du code générique contraint par des <b>traits</b>, comprendre les <b>lifetimes</b> et leurs messages d’erreur, manier <b>closures/iterators</b> idiomatiques, choisir le bon <b>smart pointer</b>, écrire de la <b>concurrence sûre</b>, et <b>organiser</b> un projet proprement. C’est le seuil du niveau avancé.</div>`,
+  exam:[
+    { kind:'mcq', difficulty:3, tags:['traits','dispatch'],
+      prompt:'<code>Vec&lt;Box&lt;dyn Trait&gt;&gt;</code> vs <code>Vec&lt;T&gt; où T: Trait</code> — différence essentielle ?',
+      choices:[
+        'Aucune',
+        'Le premier autorise des types <b>hétérogènes</b> (dispatch dynamique), le second un seul type concret (dispatch statique)',
+        'Le second est plus lent',
+        'Le premier ne compile pas'],
+      answer:1, explain:'<code>dyn</code> = objets-traits hétérogènes via vtable (dynamique). Génériques monomorphisés = un seul type par instanciation (statique, plus rapide, mais homogène).'},
+    { kind:'predict', difficulty:3, tags:['iterators'], expect:'12',
+      prompt:'Sortie ?',
+      code:`fn main() {
+    let v = vec![1, 2, 3, 4, 5];
+    let s: i32 = v.iter().filter(|&&x| x > 2).sum();
+    println!("{s}");
+}`,
+      model:'12',
+      explain:'<code>filter(x > 2)</code> garde 3, 4, 5 ; <code>sum</code> les additionne → 12. Les adaptateurs sont paresseux : le calcul se fait au moment du <code>sum</code>.'},
+    { kind:'mcq', difficulty:3, tags:['lifetimes'],
+      prompt:'<code>fn f&lt;\'a&gt;(x: &\'a str, y: &str) -> &\'a str</code> garantit que le résultat :',
+      choices:[
+        'vit aussi longtemps que <code>y</code>',
+        'vit aussi longtemps que <code>x</code>',
+        'est <code>\'static</code>',
+        'ne peut pas être une référence'],
+      answer:1, explain:'Seul <code>x</code> porte <code>\'a</code>, partagé avec la sortie. Le résultat est lié à <code>x</code>, pas à <code>y</code>. Renvoyer <code>y</code> ici ne compilerait pas.'},
+    { kind:'mcq', difficulty:3, tags:['smart pointers','concurrence'],
+      prompt:'Associe le bon outil : « partager un état mutable entre threads ».',
+      choices:['<code>Rc&lt;RefCell&lt;T&gt;&gt;</code>','<code>Box&lt;T&gt;</code>','<code>Arc&lt;Mutex&lt;T&gt;&gt;</code>','<code>&mut T</code>'],
+      answer:2, explain:'<code>Arc</code> (partage thread-safe) + <code>Mutex</code> (exclusion mutuelle). <code>Rc/RefCell</code> = mono-thread uniquement.'},
+    { kind:'code', difficulty:3, tags:['traits','génériques','iterators'],
+      prompt:'Écris <code>fn afficher_tous&lt;T: std::fmt::Display&gt;(items: &[T])</code> qui affiche chaque élément sur sa ligne. Puis explique pourquoi le trait bound est nécessaire.',
+      starter:'use std::fmt::Display;\n\nfn afficher_tous<T: Display>(items: &[T]) {\n    \n}',
+      hint:'for + println!("{}", x). Le {} exige Display.',
+      keywords:['for','println','Display','items'],
+      modelCode:true,
+      model:`use std::fmt::Display;
+
+fn afficher_tous<T: Display>(items: &[T]) {
+    for x in items {
+        println!("{x}");
+    }
+}
+// Le bound T: Display est requis car le formatage {} n'est
+// possible que si T sait s'afficher (implémente Display).`,
+      explain:'Sans <code>T: Display</code>, le compilateur refuse <code>println!("{x}")</code> (<code>E0277</code>) car un <code>T</code> arbitraire ne sait pas forcément se formater. Le trait bound déclare précisément la capacité utilisée.'},
+    { kind:'text', difficulty:3, tags:['bonnes pratiques','enums'],
+      prompt:'Que veut dire l’idiome « make illegal states unrepresentable » et comment les enums y aident ?',
+      hint:'Pense à un état qui ne devrait jamais coexister avec un autre.',
+      keywords:['enum','état','impossible','variante','type','compilation','invalide'],
+      model:'Concevoir les types pour qu’un état invalide ne puisse même pas être écrit. Les <b>enums</b> à variantes portant des données modélisent des états <b>mutuellement exclusifs</b> : ex. <code>enum Connexion { Deconnecte, EnCours, Connecte { session: Id } }</code> — impossible d’avoir un <code>session</code> quand on est <code>Deconnecte</code>. Le compilateur interdit les combinaisons absurdes.',
+      explain:'Plutôt qu’un struct avec des booléens/champs optionnels qui peuvent se contredire (ex. <code>connecte=true</code> mais <code>session=None</code>), l’enum encode la logique dans le type. Les bugs d’état deviennent des erreurs de compilation. C’est un pilier du design idiomatique en Rust.'}
+  ]
+});
+
+/* ================= EXAMEN FINAL ================= */
+COURSE.push({
+  type:'final', navtitle:'★ Examen final',
+  title:'Examen final — Tout le langage',
+  sub:'15 questions couvrant l’ensemble du parcours. À la fin : évaluation détaillée, niveau estimé et feuille de route.',
+  lesson:`<div class="callout py"><div class="h">📋 Consignes</div>
+    Réponds sans revenir en arrière tant que possible. Les questions balaient ownership, borrowing, lifetimes, traits, iterators, error handling, collections, concurrence et organisation. Ton <b>niveau estimé</b> et une <b>feuille de route</b> personnalisée s’affichent en bas de page (mis à jour en direct).</div>`,
+  exam:[
+    { kind:'predict', difficulty:2, tags:['ownership'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let s = String::from("hi");
+    let s2 = s;
+    println!("{s} {s2}");
+}`,
+      model:'Erreur E0382 : borrow of moved value s.', hint:'s est-il encore valide après le move ?',
+      explain:'<code>let s2 = s;</code> déplace la String ; <code>s</code> est invalide. Utilise <code>s.clone()</code> ou n’affiche que <code>s2</code>.'},
+    { kind:'mcq', difficulty:2, tags:['borrowing'],
+      prompt:'Combien de <code>&mut</code> simultanés sur une même donnée ?',
+      choices:['Autant qu’on veut','Un seul','Deux','Zéro'],
+      answer:1, explain:'Exactement un <code>&mut</code> à la fois (et alors aucun <code>&</code>). C’est la règle qui exclut les data races.'},
+    { kind:'predict', difficulty:2, tags:['expressions'], expect:'7',
+      prompt:'Valeur de x ?',
+      code:`fn main() {
+    let x = { let a = 3; let b = 4; a + b };
+    println!("{x}");
+}`,
+      model:'7', explain:'Le bloc est une expression valant sa dernière expression sans <code>;</code> : <code>a + b = 7</code>.'},
+    { kind:'mcq', difficulty:2, tags:['Option','Result'],
+      prompt:'Quel type pour « peut échouer avec une cause » ?',
+      choices:['<code>Option&lt;T&gt;</code>','<code>Result&lt;T,E&gt;</code>','<code>bool</code>','<code>Vec&lt;T&gt;</code>'],
+      answer:1, explain:'<code>Result&lt;T,E&gt;</code> porte l’erreur. <code>Option</code> exprime juste présence/absence.'},
+    { kind:'mcq', difficulty:3, tags:['?','propagation'],
+      prompt:'<code>?</code> sur un <code>Err(e)</code> dans une fonction qui renvoie <code>Result</code> :',
+      choices:['panique','met la valeur par défaut','fait <code>return Err(e)</code>','ignore l’erreur'],
+      answer:2, explain:'<code>?</code> propage l’erreur en quittant la fonction avec <code>Err(e)</code> (après conversion <code>From</code>).'},
+    { kind:'predict', difficulty:2, tags:['iterators'], expect:'[2, 4]',
+      prompt:'Contenu de r ?',
+      code:`fn main() {
+    let v = vec![1, 2, 3, 4];
+    let r: Vec<i32> = v.iter().filter(|&&x| x % 2 == 0).copied().collect();
+    println!("{r:?}");
+}`,
+      model:'[2, 4]', explain:'<code>filter</code> garde les pairs 2 et 4 ; <code>copied</code> transforme <code>&i32</code> en <code>i32</code> ; <code>collect</code> matérialise.'},
+    { kind:'mcq', difficulty:3, tags:['traits','génériques'],
+      prompt:'Pourquoi un <code>T</code> générique doit-il souvent porter un trait bound (ex. <code>T: Display</code>) ?',
+      choices:[
+        'Pour la syntaxe uniquement',
+        'Pour déclarer explicitement les capacités utilisées, vérifiées à la compilation',
+        'Pour rendre le code plus lent',
+        'Ce n’est jamais nécessaire'],
+      answer:1, explain:'Un <code>T</code> non contraint n’offre aucune opération. Le bound déclare ce dont le code a besoin (affichage, comparaison…), vérifié à la définition.'},
+    { kind:'mcq', difficulty:3, tags:['lifetimes'],
+      prompt:'Le rôle d’une annotation de durée de vie <code>\'a</code> est de :',
+      choices:[
+        'prolonger la vie d’une donnée',
+        'relier les durées de vie des références pour que le compilateur vérifie la validité',
+        'allouer sur le tas',
+        'activer le GC'],
+      answer:1, explain:'<code>\'a</code> ne change rien à la vie réelle : il exprime des relations vérifiables, empêchant les références pendouillantes.'},
+    { kind:'mcq', difficulty:2, tags:['smart pointers'],
+      prompt:'Pour un type récursif (liste chaînée), on a besoin de :',
+      choices:['<code>Rc</code>','<code>Box</code>','<code>RefCell</code>','<code>Mutex</code>'],
+      answer:1, explain:'<code>Box</code> introduit une indirection de taille fixe → borne la taille du type récursif.'},
+    { kind:'mcq', difficulty:3, tags:['RefCell'],
+      prompt:'<code>RefCell</code> déplace la vérification d’emprunt :',
+      choices:['à la compilation','à l’exécution (panique si violée)','au linker','elle est désactivée'],
+      answer:1, explain:'Mutabilité intérieure : <code>borrow()</code>/<code>borrow_mut()</code> vérifient au runtime, et paniquent en cas de violation.'},
+    { kind:'mcq', difficulty:3, tags:['concurrence'],
+      prompt:'Partager un compteur mutable entre threads :',
+      choices:['<code>Rc&lt;RefCell&lt;i32&gt;&gt;</code>','<code>Arc&lt;Mutex&lt;i32&gt;&gt;</code>','<code>Box&lt;i32&gt;</code>','un global mutable'],
+      answer:1, explain:'<code>Arc</code> (partage thread-safe) + <code>Mutex</code> (exclusion). <code>Rc/RefCell</code> ne sont pas <code>Send/Sync</code>.'},
+    { kind:'mcq', difficulty:2, tags:['modules','visibilité'],
+      prompt:'Visibilité par défaut d’un item dans un module :',
+      choices:['public','privé','protégé','statique'],
+      answer:1, explain:'Privé par défaut ; <code>pub</code> pour exposer. Encapsulation stricte, API explicite.'},
+    { kind:'predict', difficulty:3, tags:['borrowing'], expect:'erreur de compilation',
+      prompt:'Compile-t-il ?',
+      code:`fn main() {
+    let mut v = vec![1, 2, 3];
+    let r = &v[0];
+    v.push(4);
+    println!("{r}");
+}`,
+      model:'Erreur E0502.', hint:'push peut réallouer le Vec.',
+      explain:'<code>r</code> emprunte <code>v</code> en lecture et est utilisé après <code>push</code> (emprunt mutable) → conflit. Déplacer <code>println!</code> avant <code>push</code> corrige.'},
+    { kind:'code', difficulty:3, tags:['error handling','?'],
+      prompt:'Écris <code>fn parse_somme(entrees: &[&str]) -> Result&lt;i32, std::num::ParseIntError&gt;</code> qui parse chaque chaîne en i32 et renvoie leur somme, en propageant la 1re erreur avec <code>?</code>.',
+      starter:'fn parse_somme(entrees: &[&str]) -> Result<i32, std::num::ParseIntError> {\n    \n}',
+      hint:'Boucle + let n: i32 = s.parse()?; accumulateur.',
+      keywords:['parse','?','Ok','for','+='],
+      modelCode:true,
+      model:`fn parse_somme(entrees: &[&str]) -> Result<i32, std::num::ParseIntError> {
+    let mut total = 0;
+    for s in entrees {
+        let n: i32 = s.parse()?;   // propage la 1re erreur
+        total += n;
+    }
+    Ok(total)
+}
+// Idiomatique : entrees.iter().map(|s| s.parse::<i32>()).sum()`,
+      explain:'<code>?</code> extrait l’<code>i32</code> ou quitte avec l’erreur de parsing. La version avec <code>.sum()</code> sur un itérateur de <code>Result</code> renvoie directement un <code>Result</code> et court-circuite à la première erreur.'},
+    { kind:'text', difficulty:3, tags:['synthèse','ownership','traits'],
+      prompt:'En 3–4 phrases, explique à un développeur Python ce qui rend Rust fondamentalement différent, en citant ownership, borrowing et l’absence de GC.',
+      hint:'Sécurité mémoire à la compilation, coût zéro, erreurs comme valeurs.',
+      keywords:['ownership','borrow','gc','compilation','sûr','mémoire','coût','erreur'],
+      model:'Rust garantit la <b>sécurité mémoire sans ramasse-miettes</b> : l’<b>ownership</b> (un propriétaire unique, libération automatique) et le <b>borrowing</b> (lecteurs multiples XOR un écrivain) sont vérifiés <b>à la compilation</b>, éliminant use-after-free, double-free et data races sans coût à l’exécution. Là où Python résout « qui libère » via un GC au runtime et signale les échecs par exceptions, Rust résout tout statiquement et fait des erreurs des <b>valeurs typées</b> (<code>Result</code>/<code>Option</code>). Le prix est une phase d’apprentissage (ownership, lifetimes, traits) en échange de performances natives et d’une robustesse forte.',
+      explain:'Points clés attendus : sécurité mémoire garantie à la compilation, pas de GC (coût zéro), ownership/borrowing comme mécanismes centraux, erreurs comme valeurs plutôt qu’exceptions, et le compromis apprentissage ↔ performance/robustesse. Si tu as cité tout cela, tu as le modèle mental correct de Rust.'}
+  ]
+});
+</script>
+<script>
+/* ============================================================
+   MOTEUR : rendu, navigation, scoring, adaptativité
+   ============================================================ */
+const LS_KEY = "rust_cursus_v1";
+let state = load();
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || fresh(); }
+  catch(e){ return fresh(); }
+}
+function fresh(){ return { current:0, results:{}, current_q:{} }; }
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+/* --- Statistiques globales --- */
+function allQuestions(){
+  let arr=[];
+  COURSE.forEach((s,si)=>{ (s.quiz||s.exam||[]).forEach((q,qi)=>arr.push({si,qi,q})); });
+  return arr;
+}
+function globalScore(){
+  let correct=0,total=0;
+  Object.values(state.results).forEach(sec=>{
+    Object.values(sec).forEach(r=>{ total++; if(r==='ok')correct++; else if(r==='part')correct+=0.5; });
+  });
+  const totalQ = allQuestions().length;
+  return {correct, answered:total, totalQ, pct: totalQ? Math.round(correct/totalQ*100):0};
+}
+function levelInfo(){
+  const g=globalScore();
+  const p=g.pct;
+  let name='Débutant';
+  if(p>=85) name='Intermédiaire confirmé';
+  else if(p>=60) name='Intermédiaire';
+  else if(p>=35) name='Débutant avancé';
+  else if(p>=12) name='Débutant';
+  else name='Grand débutant';
+  return {name, pct:p};
+}
+
+/* --- Sidebar --- */
+function renderNav(){
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  COURSE.forEach((s,i)=>{
+    const div=document.createElement('div');
+    let cls='navitem';
+    if(i===state.current) cls+=' active';
+    if(s.type==='checkpoint') cls+=' cp';
+    if(s.type==='final') cls+=' final';
+    const done=sectionDone(i);
+    if(done) cls+=' done';
+    div.className=cls;
+    const icon = s.type==='checkpoint' ? '⚑' : s.type==='final' ? '★' : (done?'✓':(i+1));
+    div.innerHTML=`<span class="ic">${icon}</span><span>${s.navtitle||s.title}</span>`;
+    div.onclick=()=>{ state.current=i; save(); render(); if(window.innerWidth<=860) document.getElementById('sidebar').classList.remove('open'); };
+    nav.appendChild(div);
+  });
+  const li=levelInfo();
+  document.getElementById('lvlName').textContent='Niveau : '+li.name;
+  document.getElementById('lvlPct').textContent=li.pct+'%';
+  document.getElementById('lvlBar').style.width=li.pct+'%';
+}
+function sectionDone(i){
+  const s=COURSE[i]; const qs=(s.quiz||s.exam||[]);
+  if(!qs.length) return false;
+  const r=state.results[i]||{};
+  return Object.keys(r).length>=qs.length;
+}
+
+/* --- Rendu principal --- */
+function render(){
+  renderNav();
+  const s=COURSE[state.current];
+  const c=document.getElementById('content');
+  window.scrollTo(0,0);
+  if(s.type==='final'){ renderFinal(s); return; }
+  let html='';
+  html+=`<div class="kicker">${s.kicker||(s.type==='checkpoint'?'Checkpoint':'Module '+(sectionNumber(state.current)))}</div>`;
+  html+=`<h2 class="title">${s.title}</h2>`;
+  if(s.sub) html+=`<div class="sub">${s.sub}</div>`;
+  if(s.lesson){ html+=`<div class="card lesson">${s.lesson}</div>`; }
+  c.innerHTML=html;
+  const qs=(s.quiz||s.exam||[]);
+  if(qs.length){
+    const holder=document.createElement('div'); holder.id='quizHolder'; c.appendChild(holder);
+    startQuiz(state.current);
+  }
+  // navigation module suivant
+  const navFoot=document.createElement('div');
+  navFoot.style.cssText='display:flex;justify-content:space-between;margin-top:24px';
+  navFoot.innerHTML=`
+    <button class="btn" ${state.current===0?'disabled':''} id="prevSec">← Précédent</button>
+    <button class="btn primary" ${state.current===COURSE.length-1?'disabled':''} id="nextSec">Section suivante →</button>`;
+  c.appendChild(navFoot);
+  const pv=document.getElementById('prevSec'), nx=document.getElementById('nextSec');
+  if(pv) pv.onclick=()=>{state.current--;save();render();};
+  if(nx) nx.onclick=()=>{state.current++;save();render();};
+}
+function sectionNumber(idx){
+  let n=0; for(let i=0;i<=idx;i++){ if(COURSE[i].type==='module') n++; } return n;
+}
+
+/* --- Moteur de quiz : une question à la fois --- */
+function startQuiz(si){
+  const s=COURSE[si];
+  const qs=(s.quiz||s.exam||[]);
+  if(!state.current_q) state.current_q={};
+  // reprendre là où on s'est arrêté
+  let idx = state.current_q[si] ?? 0;
+  const answered = state.results[si]||{};
+  // aller à la première non répondue si en cours
+  if(idx>=qs.length) idx=qs.length-1;
+  renderQuestion(si, idx);
+}
+
+function renderQuestion(si, idx){
+  state.current_q[si]=idx; save();
+  const s=COURSE[si]; const qs=(s.quiz||s.exam||[]);
+  const q=qs[idx];
+  const holder=document.getElementById('quizHolder');
+  const results=state.results[si]||{};
+  const isExam = s.type==='checkpoint'||s.type==='final';
+
+  // barre de progression du quiz
+  let dots='';
+  qs.forEach((_,i)=>{
+    let d='dot';
+    if(results[i]==='ok')d+=' ok'; else if(results[i]==='bad')d+=' bad'; else if(results[i]==='part')d+=' part';
+    if(i===idx)d+=' cur';
+    dots+=`<span class="${d}" title="Q${i+1}"></span>`;
+  });
+
+  const dlabel={1:'Facile',2:'Moyen',3:'Difficile'}[q.difficulty||1];
+  let html=`<div class="card">
+    <div class="quizhead">
+      <div class="kicker">${isExam?'Examen':'Quiz'} — Question ${idx+1}/${qs.length}</div>
+      <span class="pill d${q.difficulty||1}">${dlabel}</span>
+    </div>
+    <div class="qprompt">${q.prompt}</div>`;
+  if(q.code) html+=code(q.code);
+
+  // corps selon type
+  if(q.kind==='mcq'||q.kind==='multi'){
+    html+=`<div class="choices" id="choices">`;
+    q.choices.forEach((ch,i)=>{
+      html+=`<div class="choice ${q.kind==='multi'?'multi':''}" data-i="${i}">
+        <span class="mk">${q.kind==='multi'?'':''}</span><div>${ch}</div></div>`;
+    });
+    html+=`</div>`;
+  } else if(q.kind==='tf'){
+    html+=`<div class="choices" id="choices">
+      <div class="choice" data-i="1"><span class="mk"></span><div>Vrai</div></div>
+      <div class="choice" data-i="0"><span class="mk"></span><div>Faux</div></div></div>`;
+  } else if(q.kind==='predict'){
+    html+=`<input class="answer" id="freeAns" placeholder="Écris la sortie attendue (ou 'erreur de compilation')..." autocomplete="off"/>`;
+  } else if(q.kind==='text'){
+    html+=`<textarea class="answer" id="freeAns" placeholder="Écris ta réponse ici..."></textarea>`;
+  } else if(q.kind==='code'){
+    html+=`<textarea class="answer" id="freeAns" placeholder="Écris ton code Rust ici...">${q.starter||''}</textarea>`;
+  }
+
+  html+=`<div class="hintbox" id="hintbox">💡 Indice : ${q.hint||'Relis la partie du cours correspondante.'}</div>`;
+  html+=`<div class="qfoot">
+      <div class="progressline">${dots}</div>
+      <div style="display:flex;gap:8px">
+        ${q.hint?`<button class="btn small ghost" id="hintBtn">Indice</button>`:''}
+        <button class="btn primary" id="checkBtn">Vérifier ma réponse</button>
+      </div>
+    </div>`;
+
+  // feedback
+  html+=`<div class="feedback" id="feedback"></div>`;
+  html+=`</div>`;
+  holder.innerHTML=html;
+
+  // interactions
+  let selected = q.kind==='multi'? new Set() : null;
+  const choiceEls=holder.querySelectorAll('.choice');
+  choiceEls.forEach(el=>{
+    el.onclick=()=>{
+      if(el.classList.contains('locked'))return;
+      if(q.kind==='multi'){
+        const i=+el.dataset.i;
+        if(selected.has(i)){selected.delete(i);el.classList.remove('sel');}
+        else{selected.add(i);el.classList.add('sel');}
+      }else{
+        choiceEls.forEach(e=>e.classList.remove('sel'));
+        el.classList.add('sel'); selected=+el.dataset.i;
+      }
+    };
+  });
+  const hintBtn=document.getElementById('hintBtn');
+  if(hintBtn) hintBtn.onclick=()=>document.getElementById('hintbox').classList.add('show');
+  document.getElementById('checkBtn').onclick=()=>checkAnswer(si,idx,q,selected,choiceEls);
+
+  // si déjà répondu, montrer l'état
+  if(results[idx]){ /* on laisse rejouable, ne bloque pas */ }
+}
+
+function checkAnswer(si,idx,q,selected,choiceEls){
+  const fb=document.getElementById('feedback');
+  let verdict='ok'; // ok | bad | part
+  let auto=true;
+
+  if(q.kind==='mcq'||q.kind==='tf'){
+    const ans = q.kind==='tf' ? (q.answer?1:0) : q.answer;
+    if(selected===null){ toast('Choisis une réponse.'); return; }
+    choiceEls.forEach(el=>{
+      const i=+el.dataset.i; el.classList.add('locked');
+      if(i===ans) el.classList.add('correct');
+      if(i===selected && i!==ans) el.classList.add('wrong');
+    });
+    verdict = selected===ans ? 'ok':'bad';
+  } else if(q.kind==='multi'){
+    if(!selected||selected.size===0){ toast('Sélectionne au moins une réponse.'); return; }
+    const ans=new Set(q.answer);
+    choiceEls.forEach(el=>{
+      const i=+el.dataset.i; el.classList.add('locked');
+      if(ans.has(i)) el.classList.add('correct');
+      if(selected.has(i)&&!ans.has(i)) el.classList.add('wrong');
+    });
+    const sel=[...selected].sort().join(','), good=[...ans].sort().join(',');
+    verdict = sel===good ? 'ok' : ( [...selected].every(x=>ans.has(x)) ? 'part':'bad');
+  } else {
+    // réponses libres : auto-évaluation par mots-clés + auto-évaluation utilisateur
+    auto=false;
+    const val=(document.getElementById('freeAns').value||'').trim();
+    if(!val){ toast('Écris ta réponse avant de vérifier.'); return; }
+    verdict = gradeFree(val,q);
+  }
+
+  // rendu feedback
+  const vlabel={ok:'✅ Correct',bad:'❌ Incorrect',part:'🟡 Partiellement correct'}[verdict];
+  let fbHtml=`<div class="verdict ${verdict}">${vlabel}</div>`;
+  if(!auto && q.model){ fbHtml+=`<div style="margin:8px 0"><strong>Réponse / solution attendue :</strong></div>`+ (q.modelCode?code(q.model):`<div>${q.model}</div>`); }
+  fbHtml+=`<div style="margin-top:10px"><strong>Explication détaillée :</strong><br>${q.explain}</div>`;
+
+  if(!auto){
+    fbHtml+=`<div class="selfassess">
+      <span class="lab">Auto-évaluation honnête — as-tu réussi ?</span>
+      <button class="btn small" data-v="ok">✅ Oui</button>
+      <button class="btn small" data-v="part">🟡 En partie</button>
+      <button class="btn small" data-v="bad">❌ Non</button>
+    </div>`;
+  }
+  fbHtml+=`<div class="qfoot" style="margin-top:16px">
+      <span style="color:var(--muted);font-size:13px" id="adaptNote"></span>
+      <button class="btn primary" id="nextQ">Question suivante →</button>
+    </div>`;
+  fb.innerHTML=fbHtml; fb.classList.add('show');
+  document.getElementById('checkBtn').disabled=true;
+
+  const s=COURSE[si]; const qs=(s.quiz||s.exam||[]);
+  const finishThis=(v)=>{
+    recordResult(si,idx,v);
+    adaptNote(si,idx,v);
+    const nextBtn=document.getElementById('nextQ');
+    nextBtn.onclick=()=>{
+      if(idx+1<qs.length){ renderQuestion(si,idx+1); }
+      else { showSectionSummary(si); }
+    };
+  };
+
+  if(auto){ finishThis(verdict); }
+  else{
+    // attendre l'auto-évaluation
+    fb.querySelectorAll('.selfassess .btn').forEach(b=>{
+      b.onclick=()=>{
+        fb.querySelectorAll('.selfassess .btn').forEach(x=>x.style.opacity=.4);
+        b.style.opacity=1;
+        finishThis(b.dataset.v);
+      };
+    });
+    // par défaut, on enregistre l'estimation par mots-clés tant que l'utilisateur n'a pas cliqué
+    finishThis(verdict);
+  }
+}
+
+function gradeFree(val,q){
+  const low=val.toLowerCase();
+  if(q.kind==='predict' && q.expect){
+    const norm=s=>s.toLowerCase().replace(/\s+/g,' ').trim();
+    if(norm(val)===norm(q.expect)) return 'ok';
+    // tolérance : contient l'essentiel
+    if(q.expect && norm(val).includes(norm(q.expect).slice(0,Math.max(3,q.expect.length-2)))) return 'part';
+    if(!q.keywords || !q.keywords.length) return 'bad';
+  }
+  if(q.keywords && q.keywords.length){
+    const hits=q.keywords.filter(k=>low.includes(k.toLowerCase())).length;
+    const ratio=hits/q.keywords.length;
+    if(ratio>=0.7) return 'ok';
+    if(ratio>=0.35) return 'part';
+    return 'bad';
+  }
+  return 'part';
+}
+
+function recordResult(si,idx,v){
+  if(!state.results[si]) state.results[si]={};
+  state.results[si][idx]=v; save(); renderNav();
+}
+
+/* Difficulté adaptative : message + suggestion */
+function adaptNote(si,idx,v){
+  const note=document.getElementById('adaptNote'); if(!note)return;
+  // regarde les 3 dernières réponses de la section
+  const r=state.results[si]||{};
+  const recent=[];
+  for(let i=Math.max(0,idx-2);i<=idx;i++){ if(r[i]) recent.push(r[i]); }
+  const bad=recent.filter(x=>x==='bad').length;
+  const ok=recent.filter(x=>x==='ok').length;
+  if(bad>=2){ note.innerHTML='🔻 <b>On ralentit.</b> Relis la section ci-dessus avant de continuer — ce concept est important.'; }
+  else if(ok>=3){ note.innerHTML='🔺 <b>Excellent enchaînement !</b> Tu peux viser les questions difficiles suivantes sans crainte.'; }
+  else if(v==='ok'){ note.innerHTML='👍 Bien joué.'; }
+  else if(v==='part'){ note.innerHTML='🟡 Presque — relis l’explication.'; }
+  else { note.innerHTML='Reprends le point correspondant dans le cours.'; }
+}
+
+/* Résumé de fin de section (module ou checkpoint) */
+function showSectionSummary(si){
+  const s=COURSE[si]; const qs=(s.quiz||s.exam||[]);
+  const r=state.results[si]||{};
+  let ok=0,part=0,bad=0;
+  qs.forEach((_,i)=>{ if(r[i]==='ok')ok++; else if(r[i]==='part')part++; else if(r[i]==='bad')bad++; });
+  const score=ok+part*0.5, pct=Math.round(score/qs.length*100);
+  const holder=document.getElementById('quizHolder');
+
+  // lacunes = questions manquées, regroupées par tag
+  const weakTags={};
+  qs.forEach((qq,i)=>{ if(r[i]==='bad'||r[i]==='part'){ (qq.tags||['divers']).forEach(t=>weakTags[t]=(weakTags[t]||0)+1); } });
+  const weakList=Object.entries(weakTags).sort((a,b)=>b[1]-a[1]);
+
+  let msg;
+  if(pct>=85) msg="Maîtrise solide 🎯 — tu peux avancer sereinement.";
+  else if(pct>=60) msg="Bon niveau 👍 — quelques points à consolider.";
+  else msg="À retravailler ⚠️ — révise la section avant de poursuivre.";
+
+  let html=`<div class="card summary">
+    <div class="kicker">${s.type==='checkpoint'?'Bilan du checkpoint':'Bilan du module'}</div>
+    <h2 class="title" style="font-size:24px">${msg}</h2>
+    <div class="statgrid">
+      <div class="stat"><div class="n" style="color:var(--ok)">${ok}</div><div class="l">Réussies</div></div>
+      <div class="stat"><div class="n" style="color:var(--warn)">${part}</div><div class="l">Partielles</div></div>
+      <div class="stat"><div class="n" style="color:var(--bad)">${bad}</div><div class="l">Manquées</div></div>
+      <div class="stat"><div class="n">${pct}%</div><div class="l">Score section</div></div>
+    </div>`;
+  if(weakList.length){
+    html+=`<h4 style="color:var(--acc2)">🎯 Révisions ciblées recommandées :</h4>`;
+    weakList.forEach(([t,n])=>{ html+=`<div class="weak"><b>${t}</b> — ${n} question(s) à revoir. Relis la partie correspondante puis rejoue le quiz.</div>`; });
+  } else {
+    html+=`<div class="weak" style="background:rgba(62,207,142,.1);border-color:rgba(62,207,142,.4)">Aucune lacune détectée sur cette section. 🌟</div>`;
+  }
+  html+=`<div class="qfoot" style="margin-top:18px">
+      <button class="btn" id="retryQuiz">↻ Rejouer le quiz</button>
+      <button class="btn primary" id="goNext">${si<COURSE.length-1?'Section suivante →':'Terminé'}</button>
+    </div></div>`;
+  holder.innerHTML=html;
+  document.getElementById('retryQuiz').onclick=()=>{ state.current_q[si]=0; save(); renderQuestion(si,0); };
+  const gn=document.getElementById('goNext');
+  gn.onclick=()=>{ if(si<COURSE.length-1){state.current=si+1;state.current_q[si]=0;save();render();} };
+}
+
+/* --- Examen final : bilan global détaillé --- */
+function renderFinal(s){
+  const c=document.getElementById('content');
+  const g=globalScore();
+  const li=levelInfo();
+  let html=`<div class="kicker">Examen final & évaluation</div>
+    <h2 class="title">${s.title}</h2>
+    <div class="sub">${s.sub||''}</div>`;
+  if(s.lesson) html+=`<div class="card lesson">${s.lesson}</div>`;
+  c.innerHTML=html;
+  const holder=document.createElement('div'); holder.id='quizHolder'; c.appendChild(holder);
+  startQuiz(state.current);
+
+  // bouton pour afficher l'évaluation globale
+  const evalCard=document.createElement('div');
+  evalCard.className='card summary';
+  evalCard.innerHTML=`<div class="kicker">Évaluation globale du parcours</div>
+    <h3 style="margin:6px 0">Ton niveau estimé : <span class="badge" style="background:linear-gradient(135deg,var(--acc),#b03400);color:#fff">${li.name}</span></h3>
+    <div class="statgrid">
+      <div class="stat"><div class="n">${g.pct}%</div><div class="l">Score global</div></div>
+      <div class="stat"><div class="n">${Math.round(g.correct)}</div><div class="l">Points obtenus</div></div>
+      <div class="stat"><div class="n">${g.answered}</div><div class="l">Questions traitées</div></div>
+      <div class="stat"><div class="n">${g.totalQ}</div><div class="l">Total questions</div></div>
+    </div>
+    <div id="roadmap"></div>`;
+  c.appendChild(evalCard);
+  renderRoadmap(li);
+
+  const navFoot=document.createElement('div');
+  navFoot.style.cssText='display:flex;justify-content:space-between;margin-top:24px';
+  navFoot.innerHTML=`<button class="btn" id="prevSec">← Précédent</button><span></span>`;
+  c.appendChild(navFoot);
+  document.getElementById('prevSec').onclick=()=>{state.current--;save();render();};
+}
+function renderRoadmap(li){
+  const el=document.getElementById('roadmap'); if(!el)return;
+  // lacunes globales par tag
+  const tagFail={};
+  COURSE.forEach((s,si)=>{ const qs=(s.quiz||s.exam||[]); const r=state.results[si]||{};
+    qs.forEach((q,i)=>{ if(r[i]==='bad'||r[i]==='part'){ (q.tags||[]).forEach(t=>tagFail[t]=(tagFail[t]||0)+1);} }); });
+  const weak=Object.entries(tagFail).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  let h=`<h4 style="color:var(--acc2)">🩺 Diagnostic de tes lacunes</h4>`;
+  if(weak.length){ h+='<ul>'; weak.forEach(([t,n])=>h+=`<li><b>${t}</b> — ${n} erreur(s). À retravailler en priorité.</li>`); h+='</ul>'; }
+  else h+='<p>Aucune lacune majeure détectée — excellent ! 🌟</p>';
+  h+=`<h4 style="color:var(--acc2)">🗺️ Feuille de route vers le niveau avancé</h4>
+  <ol>
+    <li><b>Lifetimes avancés & variance</b> : <code>'static</code>, HRTB (<code>for&lt;'a&gt;</code>), sous-typage des durées de vie.</li>
+    <li><b>Traits avancés</b> : types associés, <code>impl Trait</code>, objets-traits <code>dyn</code>, generic vs dynamic dispatch, <code>From/Into</code>, <code>Deref</code>.</li>
+    <li><b>Concurrence sûre</b> : <code>Arc&lt;Mutex&lt;T&gt;&gt;</code>, <code>Send</code>/<code>Sync</code>, <code>async/await</code> avec Tokio.</li>
+    <li><b>Gestion d’erreurs pro</b> : <code>thiserror</code>, <code>anyhow</code>, erreurs personnalisées, <code>?</code> avec conversion <code>From</code>.</li>
+    <li><b>Unsafe & FFI</b> : quand et comment, invariants, <code>MaybeUninit</code>, interfaçage C.</li>
+    <li><b>Écosystème</b> : <code>serde</code>, <code>clap</code>, <code>rayon</code>, tests d’intégration, benchmarks (<code>criterion</code>).</li>
+    <li><b>Projet réel</b> : construis un CLI ou un petit serveur web (axum) de bout en bout.</li>
+    <li>Lis <i>The Rust Programming Language</i> (le « Book »), fais <i>Rustlings</i> et <i>Rust by Example</i>.</li>
+  </ol>`;
+  el.innerHTML=h;
+}
+
+/* --- Contrôles UI --- */
+document.getElementById('resetBtn').onclick=()=>{
+  if(confirm('Réinitialiser toute ta progression ?')){ state=fresh(); save(); render(); toast('Progression réinitialisée.'); }
+};
+document.getElementById('menuBtn').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
+
+/* --- Démarrage : on attend que le contenu soit chargé --- */
+function boot(){ if(COURSE.length===0){ setTimeout(boot,30); return; } if(state.current>=COURSE.length) state.current=0; render(); }
+boot();
+</script>
+</body>
+</html>

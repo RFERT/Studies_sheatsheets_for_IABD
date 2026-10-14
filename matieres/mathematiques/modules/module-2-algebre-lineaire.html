@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 2 — Algèbre linéaire : Vecteurs, Matrices, SVD &amp; PCA</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+      svg: { fontCache: "global" }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 2</div>
+    <h1>Module 2 — Algèbre linéaire</h1>
+    <p class="subtitle">Le cœur mathématique du Machine Learning. Tes données sont des vecteurs, tes modèles sont des matrices, et apprendre revient souvent à faire de l'algèbre linéaire à grande échelle. Objectif : PCA et SVD démystifiées.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs du module</span>
+      Manipuler vecteurs et matrices ; comprendre le produit scalaire et la similarité cosinus ; voir une matrice comme une transformation ; résoudre un système et comprendre rang/base/dimension ; calculer valeurs et vecteurs propres ; comprendre intuitivement la SVD et la PCA.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#vecteurs">Vecteurs &amp; espaces vectoriels</a></li>
+        <li><a href="#produit">Produit scalaire, norme, cosinus</a></li>
+        <li><a href="#matrices">Matrices &amp; transformations</a></li>
+        <li><a href="#systemes">Systèmes, rang, base, dimension</a></li>
+        <li><a href="#det">Déterminant &amp; inverse</a></li>
+        <li><a href="#propres">Valeurs &amp; vecteurs propres</a></li>
+        <li><a href="#svd">SVD &amp; PCA</a></li>
+        <li><a href="#data">Applications Data / IA</a></li>
+        <li><a href="#exos">Exercices de synthèse</a></li>
+      </ol>
+    </div>
+
+    <!-- ===== 1 ===== -->
+    <section class="block" id="vecteurs">
+      <h2>1. Vecteurs &amp; espaces vectoriels</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        Un <strong>vecteur</strong> de \(\mathbb R^n\) est une liste ordonnée de \(n\) nombres : \(\mathbf v = (v_1,\dots,v_n)\). En Data, c'est une <strong>observation</strong> décrite par \(n\) variables (features). Un <strong>espace vectoriel</strong> est un ensemble stable par deux opérations : l'addition \(\mathbf u + \mathbf v\) et la multiplication par un scalaire \(\lambda\mathbf v\).
+      </div>
+      <div class="callout def">
+        <span class="label">Combinaison linéaire</span>
+        Une <strong>combinaison linéaire</strong> des vecteurs \(\mathbf v_1,\dots,\mathbf v_k\) est \(\lambda_1\mathbf v_1 + \dots + \lambda_k\mathbf v_k\). L'ensemble de toutes ces combinaisons est le <strong>sous-espace engendré</strong> (span). C'est LE concept central : presque tout, en algèbre linéaire, est une histoire de combinaisons linéaires.
+      </div>
+      <div class="callout data">
+        <span class="label">🔗 Lien Data</span>
+        Une ligne d'un dataset = un vecteur de features. Une image \(28\times 28\) = un vecteur de \(\mathbb R^{784}\). Un mot (word embedding) = un vecteur de \(\mathbb R^{300}\). <strong>Faire de la Data, c'est géométriser les données en points/vecteurs.</strong>
+      </div>
+    </section>
+
+    <!-- ===== 2 ===== -->
+    <section class="block" id="produit">
+      <h2>2. Produit scalaire, norme &amp; similarité cosinus</h2>
+      <div class="callout def">
+        <span class="label">Produit scalaire (dot product)</span>
+        \[ \mathbf u \cdot \mathbf v = \sum_{i=1}^n u_i v_i = u_1v_1 + \dots + u_nv_n \]
+        Géométriquement : \(\mathbf u\cdot\mathbf v = \|\mathbf u\|\,\|\mathbf v\|\cos\theta\), où \(\theta\) est l'angle entre les deux vecteurs.
+      </div>
+      <div class="callout def">
+        <span class="label">Norme &amp; distance</span>
+        <p>Norme euclidienne : \(\|\mathbf v\| = \sqrt{\mathbf v\cdot\mathbf v} = \sqrt{v_1^2 + \dots + v_n^2}\).</p>
+        <p>Distance : \(d(\mathbf u,\mathbf v) = \|\mathbf u - \mathbf v\|\). Deux vecteurs sont <strong>orthogonaux</strong> ssi \(\mathbf u\cdot\mathbf v = 0\).</p>
+      </div>
+      <div class="callout theorem">
+        <span class="label">⭐ Similarité cosinus — l'outil roi en Data</span>
+        \[ \cos\theta = \frac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|\,\|\mathbf v\|} \in [-1, 1] \]
+        Proche de \(1\) = très similaires (même direction) ; \(0\) = orthogonaux (sans rapport) ; \(-1\) = opposés. Insensible à la <em>longueur</em> des vecteurs, seulement à leur <em>direction</em>.
+      </div>
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA</span>
+        La similarité cosinus mesure la proximité de <strong>documents</strong> (TF-IDF), de <strong>mots</strong> (word2vec : « roi − homme + femme ≈ reine »), d'<strong>utilisateurs</strong> (reco). La <strong>recherche sémantique</strong> et les bases de données <strong>vectorielles</strong> (RAG des LLM) reposent dessus.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple résolu</span>
+        <p>\(\mathbf u=(1,2,2)\), \(\mathbf v=(2,0,1)\). \(\mathbf u\cdot\mathbf v = 2+0+2 = 4\). \(\|\mathbf u\|=\sqrt{1+4+4}=3\), \(\|\mathbf v\|=\sqrt{4+0+1}=\sqrt5\). Donc \(\cos\theta = \frac{4}{3\sqrt5}\approx 0{,}596\) — assez similaires.</p>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Deux vecteurs non nuls ont un produit scalaire nul. Que peut-on dire ?</div>
+        <div class="options">
+          <div class="opt">Ils sont égaux</div>
+          <div class="opt">Ils ont la même norme</div>
+          <div class="opt">Ils sont orthogonaux (angle de 90°)</div>
+          <div class="opt">Leur similarité cosinus vaut 1</div>
+        </div>
+        <div class="feedback" data-explain="\(\mathbf u\cdot\mathbf v=0\) avec des vecteurs non nuls signifie \(\cos\theta=0\), donc \(\theta=90°\) : orthogonaux. En Data, cela veut dire « aucune corrélation directionnelle »."></div>
+      </div>
+    </section>
+
+    <!-- ===== 3 ===== -->
+    <section class="block" id="matrices">
+      <h2>3. Matrices &amp; transformations linéaires</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        Une <strong>matrice</strong> \(A\) de taille \(m\times n\) est un tableau de nombres \(A_{ij}\) (\(m\) lignes, \(n\) colonnes). Opérations : addition (même taille), multiplication par un scalaire, <strong>transposée</strong> \(A^{\top}\) (\(A^{\top}_{ij}=A_{ji}\)).
+      </div>
+      <div class="callout def">
+        <span class="label">Produit matriciel</span>
+        Si \(A\) est \(m\times n\) et \(B\) est \(n\times p\), alors \(C=AB\) est \(m\times p\) avec
+        \[ C_{ij} = \sum_{k=1}^n A_{ik}B_{kj} \]
+        (ligne \(i\) de \(A\) « · » colonne \(j\) de \(B\)). ⚠️ <strong>Non commutatif</strong> : en général \(AB \neq BA\). Les dimensions intérieures doivent coïncider.
+      </div>
+      <div class="callout theorem">
+        <span class="label">Idée clé — une matrice EST une transformation</span>
+        Multiplier un vecteur par \(A\) (\(\mathbf x \mapsto A\mathbf x\)) applique une <strong>transformation linéaire</strong> : rotation, étirement, projection, cisaillement… Composer deux transformations = multiplier leurs matrices. C'est pourquoi une couche de réseau de neurones s'écrit \(\mathbf y = \sigma(W\mathbf x + \mathbf b)\).
+      </div>
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA</span>
+        Un <strong>dataset</strong> = une matrice \(X\) (lignes = observations, colonnes = features). Un <strong>batch</strong> traversant un réseau = une suite de produits matriciels (c'est pour ça qu'on utilise des GPU !). La <strong>rotation/augmentation d'images</strong> = transformations linéaires.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple résolu — produit</span>
+        <p>\(A=\begin{pmatrix}1&2\\0&1\end{pmatrix}\), \(\mathbf x=\begin{pmatrix}3\\4\end{pmatrix}\). Alors \(A\mathbf x = \begin{pmatrix}1\cdot3+2\cdot4\\0\cdot3+1\cdot4\end{pmatrix}=\begin{pmatrix}11\\4\end{pmatrix}\). (C'est un cisaillement horizontal.)</p>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">On veut calculer \(AB\) avec \(A\) de taille \(3\times 4\) et \(B\) de taille \(4\times 2\). Quelle est la taille du résultat ?</div>
+        <div class="options">
+          <div class="opt">\(3\times 2\)</div>
+          <div class="opt">\(4\times 4\)</div>
+          <div class="opt">Impossible</div>
+          <div class="opt">\(2\times 3\)</div>
+        </div>
+        <div class="feedback" data-explain="Les dimensions intérieures (4 et 4) coïncident, le produit est défini et a la taille des dimensions extérieures : \(3\times 2\)."></div>
+      </div>
+    </section>
+
+    <!-- ===== 4 ===== -->
+    <section class="block" id="systemes">
+      <h2>4. Systèmes linéaires, rang, base &amp; dimension</h2>
+      <p>Un système linéaire s'écrit \(A\mathbf x = \mathbf b\). Le résoudre = trouver tous les \(\mathbf x\). La méthode standard est le <strong>pivot de Gauss</strong> (élimination par opérations sur les lignes jusqu'à une forme échelonnée).</p>
+
+      <div class="callout def">
+        <span class="label">Indépendance, base, dimension</span>
+        <ul>
+          <li>Des vecteurs sont <strong>linéairement indépendants</strong> si aucune combinaison linéaire non triviale ne donne \(\mathbf 0\) (aucun n'est « redondant »).</li>
+          <li>Une <strong>base</strong> d'un espace = une famille indépendante qui l'engendre.</li>
+          <li>La <strong>dimension</strong> = le nombre de vecteurs d'une base (nombre de « directions indépendantes »).</li>
+        </ul>
+      </div>
+      <div class="callout def">
+        <span class="label">Rang</span>
+        Le <strong>rang</strong> de \(A\) = nombre de lignes (ou colonnes) linéairement indépendantes = dimension de l'espace engendré par ses colonnes. Il mesure l'« information réelle » contenue dans la matrice.
+      </div>
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA</span>
+        Un rang <strong>faible</strong> signifie que des features sont redondantes (corrélées) — c'est la <strong>multicolinéarité</strong>, qui perturbe la régression. Les <strong>recommandations</strong> (Netflix) reposent sur une <em>approximation de rang faible</em> de la matrice utilisateurs×films. Réduire la dimension = exploiter un rang effectif faible.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Les colonnes d'une matrice \(X\) (features) sont très corrélées. Son rang est donc…</div>
+        <div class="options">
+          <div class="opt">maximal (= nombre de colonnes)</div>
+          <div class="opt">inférieur au nombre de colonnes (features redondantes)</div>
+          <div class="opt">toujours égal à 1</div>
+          <div class="opt">négatif</div>
+        </div>
+        <div class="feedback" data-explain="Des colonnes corrélées sont (presque) combinaisons linéaires les unes des autres : elles n'ajoutent pas de direction indépendante, donc le rang chute en dessous du nombre de colonnes. C'est la multicolinéarité."></div>
+      </div>
+    </section>
+
+    <!-- ===== 5 ===== -->
+    <section class="block" id="det">
+      <h2>5. Déterminant &amp; inverse</h2>
+      <div class="callout def">
+        <span class="label">Déterminant</span>
+        Le <strong>déterminant</strong> \(\det(A)\) (matrice carrée) mesure le facteur de dilatation des volumes par la transformation. En \(2\times2\) : \(\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc\).
+        <ul>
+          <li>\(\det(A)=0\) ⇔ \(A\) n'est <strong>pas inversible</strong> (elle « écrase » l'espace, perd de l'information, rang non maximal).</li>
+          <li>\(\det(AB)=\det(A)\det(B)\).</li>
+        </ul>
+      </div>
+      <div class="callout def">
+        <span class="label">Matrice inverse</span>
+        \(A^{-1}\) vérifie \(AA^{-1}=A^{-1}A=I\) (identité). Elle existe ssi \(\det(A)\neq0\). Résoudre \(A\mathbf x=\mathbf b\) donne alors \(\mathbf x = A^{-1}\mathbf b\) (mais en pratique on résout sans inverser, c'est plus stable).
+      </div>
+      <div class="callout warning">
+        <span class="label">Attention numérique</span>
+        En Data, inverser une matrice presque singulière (\(\det\approx0\)) est <strong>instable</strong>. On préfère des méthodes robustes (QR, SVD, régularisation de Ridge qui ajoute \(\lambda I\) pour rendre la matrice inversible).
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">\(\det\begin{pmatrix}2&4\\1&2\end{pmatrix}\) vaut… et qu'en déduit-on ?</div>
+        <div class="options">
+          <div class="opt">\(8\), matrice inversible</div>
+          <div class="opt">\(-2\), inversible</div>
+          <div class="opt">\(2\), inversible</div>
+          <div class="opt">\(0\), matrice non inversible</div>
+        </div>
+        <div class="feedback" data-explain="\(2\cdot2 - 4\cdot1 = 0\). Déterminant nul ⇒ non inversible (la 2ᵉ ligne est la moitié de la 1ʳᵉ : colonnes/lignes dépendantes, rang 1)."></div>
+      </div>
+    </section>
+
+    <!-- ===== 6 ===== -->
+    <section class="block" id="propres">
+      <h2>6. Valeurs propres &amp; vecteurs propres</h2>
+      <div class="callout def">
+        <span class="label">Définition</span>
+        Un <strong>vecteur propre</strong> \(\mathbf v\neq\mathbf 0\) de \(A\) est un vecteur dont la <em>direction</em> est préservée par la transformation : \(A\mathbf v = \lambda\mathbf v\). Le scalaire \(\lambda\) est la <strong>valeur propre</strong> associée (facteur d'étirement sur cette direction).
+      </div>
+      <div class="callout def">
+        <span class="label">Calcul</span>
+        Les valeurs propres sont les racines du <strong>polynôme caractéristique</strong> \(\det(A-\lambda I)=0\). Pour chaque \(\lambda\), on résout \((A-\lambda I)\mathbf v=\mathbf 0\) pour trouver les vecteurs propres.
+      </div>
+      <div class="callout theorem">
+        <span class="label">Diagonalisation</span>
+        Si \(A\) (\(n\times n\)) possède \(n\) vecteurs propres indépendants, alors \(A = PDP^{-1}\) où \(D\) est diagonale (les valeurs propres) et \(P\) contient les vecteurs propres. Avantage : \(A^k = PD^kP^{-1}\) se calcule instantanément — utile pour les processus itératifs (chaînes de Markov, PageRank).
+      </div>
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA</span>
+        <strong>PageRank</strong> = vecteur propre dominant de la matrice du web. La <strong>PCA</strong> = vecteurs propres de la matrice de covariance. La <strong>stabilité</strong> d'un système dynamique (et la convergence d'un entraînement) se lit sur les valeurs propres.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple résolu</span>
+        <p>\(A=\begin{pmatrix}2&1\\0&3\end{pmatrix}\). Polynôme : \(\det\begin{pmatrix}2-\lambda&1\\0&3-\lambda\end{pmatrix}=(2-\lambda)(3-\lambda)=0\). Valeurs propres : \(\lambda_1=2,\ \lambda_2=3\). (Pour une matrice triangulaire, les valeurs propres sont sur la diagonale !)</p>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">\(A\mathbf v = \lambda\mathbf v\) avec \(\mathbf v\neq\mathbf0\). Que signifie géométriquement un vecteur propre ?</div>
+        <div class="options">
+          <div class="opt">Il est envoyé sur le vecteur nul</div>
+          <div class="opt">Sa direction est préservée, seule sa longueur est multipliée par \(\lambda\)</div>
+          <div class="opt">Il tourne de 90°</div>
+          <div class="opt">Il devient orthogonal à lui-même</div>
+        </div>
+        <div class="feedback" data-explain="La transformation ne change pas la direction d'un vecteur propre ; elle l'étire (ou le compresse/inverse) d'un facteur \(\lambda\). Ce sont les « axes naturels » de la transformation."></div>
+      </div>
+    </section>
+
+    <!-- ===== 7 ===== -->
+    <section class="block" id="svd">
+      <h2>7. SVD &amp; PCA — le sommet du module</h2>
+      <div class="callout def">
+        <span class="label">Décomposition en valeurs singulières (SVD)</span>
+        <strong>Toute</strong> matrice \(A\) (\(m\times n\), même non carrée) se décompose en
+        \[ A = U\Sigma V^{\top} \]
+        où \(U\) (\(m\times m\)) et \(V\) (\(n\times n\)) sont <strong>orthogonales</strong> (rotations) et \(\Sigma\) est « diagonale » avec les <strong>valeurs singulières</strong> \(\sigma_1\geq\sigma_2\geq\dots\geq0\) (l'importance de chaque direction). Interprétation : <em>toute transformation linéaire = rotation → étirement → rotation</em>.
+      </div>
+      <div class="callout theorem">
+        <span class="label">Approximation de rang faible (le super-pouvoir)</span>
+        En ne gardant que les \(k\) plus grandes valeurs singulières, on obtient la <strong>meilleure</strong> approximation de \(A\) de rang \(k\) (théorème d'Eckart–Young). C'est la base de la <strong>compression</strong>, du <strong>débruitage</strong> et des <strong>systèmes de recommandation</strong>.
+      </div>
+      <div class="callout def">
+        <span class="label">PCA (Analyse en Composantes Principales)</span>
+        <p>Objectif : réduire la dimension en gardant le maximum de <strong>variance</strong>. Recette :</p>
+        <ol>
+          <li>Centrer les données (soustraire la moyenne de chaque feature).</li>
+          <li>Calculer la matrice de <strong>covariance</strong> \(C=\frac1n X^{\top}X\).</li>
+          <li>En extraire les <strong>vecteurs propres</strong> (= composantes principales) et valeurs propres (= variance expliquée).</li>
+          <li>Projeter sur les \(k\) premières composantes.</li>
+        </ol>
+        <p>Équivalent à faire la SVD de \(X\) centrée. Les composantes principales sont orthogonales et classées par variance décroissante.</p>
+      </div>
+      <div class="callout data">
+        <span class="label">🔗 Lien Data / IA</span>
+        <strong>PCA :</strong> visualiser des données en 2D, réduire le bruit, accélérer l'entraînement, lutter contre la malédiction de la dimension. <strong>SVD :</strong> compression d'images, LSA (sémantique latente en NLP), recommandation (Netflix Prize), pseudo-inverse pour les moindres carrés.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 7.1</strong></div>
+        <div class="qtext">En PCA, que représentent les premières composantes principales ?</div>
+        <div class="options">
+          <div class="opt">Les features d'origine, inchangées</div>
+          <div class="opt">Les directions de plus faible variance</div>
+          <div class="opt">Les directions orthogonales de plus grande variance</div>
+          <div class="opt">Des vecteurs aléatoires</div>
+        </div>
+        <div class="feedback" data-explain="La PCA cherche les axes orthogonaux qui capturent le plus de variance. On garde les premiers (grande variance = beaucoup d'information) et on jette les derniers (souvent du bruit)."></div>
+      </div>
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 7.2</strong></div>
+        <div class="qtext">Quelle affirmation sur la SVD est vraie ?</div>
+        <div class="options">
+          <div class="opt">Toute matrice, même non carrée, admet une SVD</div>
+          <div class="opt">Seules les matrices inversibles ont une SVD</div>
+          <div class="opt">La SVD n'existe que pour les matrices symétriques</div>
+          <div class="opt">La SVD donne toujours des valeurs singulières négatives</div>
+        </div>
+        <div class="feedback" data-explain="La SVD est universelle : toute matrice \(m\times n\) se décompose en \(U\Sigma V^\top\). Les valeurs singulières sont toujours ≥ 0. C'est ce qui la rend si puissante."></div>
+      </div>
+    </section>
+
+    <!-- ===== DATA ===== -->
+    <section class="block" id="data">
+      <h2>8. Applications Data / IA — récapitulatif</h2>
+      <ul class="keys">
+        <li><strong>Représentation</strong> : données = vecteurs/matrices ; features, images, embeddings.</li>
+        <li><strong>Similarité cosinus</strong> : recherche sémantique, bases vectorielles (RAG), recommandation, NLP.</li>
+        <li><strong>Produit matriciel</strong> : propagation avant d'un réseau de neurones, batchs sur GPU.</li>
+        <li><strong>Moindres carrés / régression</strong> : \(\hat{\boldsymbol\beta} = (X^{\top}X)^{-1}X^{\top}\mathbf y\) — tout est matriciel.</li>
+        <li><strong>PCA / SVD</strong> : réduction de dimension, compression, débruitage, LSA, reco.</li>
+        <li><strong>Valeurs propres</strong> : PageRank, chaînes de Markov, stabilité, spectral clustering.</li>
+      </ul>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://www.3blue1brown.com/topics/linear-algebra" target="_blank">3Blue1Brown — Essence of Linear Algebra (visuel, incontournable)</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/D%C3%A9composition_en_valeurs_singuli%C3%A8res" target="_blank">SVD (Wikipédia)</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Analyse_en_composantes_principales" target="_blank">PCA (Wikipédia)</a>
+        <a class="pill-link" href="https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/" target="_blank">MIT 18.06 — Gilbert Strang</a>
+      </div>
+    </section>
+
+    <!-- ===== EXOS ===== -->
+    <section class="block" id="exos">
+      <h2>9. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Produit scalaire &amp; cosinus</h3>
+      <p>Soit \(\mathbf u=(3,4)\) et \(\mathbf v=(4,3)\). Calcule \(\mathbf u\cdot\mathbf v\), les normes, et la similarité cosinus.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>\(\mathbf u\cdot\mathbf v = 12+12 = 24\). \(\|\mathbf u\|=\|\mathbf v\|=\sqrt{9+16}=5\). \(\cos\theta = \frac{24}{25}=0{,}96\) → très similaires.</p>
+      </details>
+
+      <h3>Exercice 2 — Produit matriciel</h3>
+      <p>\(A=\begin{pmatrix}1&0\\2&1\end{pmatrix}\), \(B=\begin{pmatrix}1&2\\3&4\end{pmatrix}\). Calcule \(AB\) et \(BA\). Sont-ils égaux ?</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>\(AB=\begin{pmatrix}1&2\\5&8\end{pmatrix}\), \(BA=\begin{pmatrix}5&2\\11&4\end{pmatrix}\). <strong>Non égaux</strong> : le produit matriciel n'est pas commutatif.</p>
+      </details>
+
+      <h3>Exercice 3 — Valeurs propres</h3>
+      <p>Trouve les valeurs propres de \(A=\begin{pmatrix}4&1\\2&3\end{pmatrix}\).</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>\(\det(A-\lambda I)=(4-\lambda)(3-\lambda)-2 = \lambda^2 -7\lambda +10 = 0\). Racines : \(\lambda = \frac{7\pm\sqrt{49-40}}2 = \frac{7\pm3}2\), soit \(\lambda_1=5\) et \(\lambda_2=2\).</p>
+      </details>
+
+      <h3>Exercice 4 — Rang &amp; dépendance (⭐)</h3>
+      <p>Quel est le rang de \(M=\begin{pmatrix}1&2&3\\2&4&6\\0&1&1\end{pmatrix}\) ?</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>La ligne 2 = 2 × ligne 1 (dépendante). Restent les lignes \((1,2,3)\) et \((0,1,1)\), indépendantes. Donc <strong>rang = 2</strong>. La matrice n'est pas inversible (\(\det=0\)).</p>
+      </details>
+
+      <h3>Exercice 5 — PCA conceptuel (⭐⭐)</h3>
+      <p>Un dataset a 50 features fortement corrélées. La PCA montre que 3 composantes expliquent 95 % de la variance. Qu'est-ce que cela signifie et pourquoi est-ce utile ?</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Les données vivent essentiellement dans un sous-espace de dimension ~3 : le rang effectif est faible, les 50 features sont largement redondantes. On peut <strong>remplacer 50 colonnes par 3</strong> sans perdre grand-chose : entraînement plus rapide, moins de surapprentissage, visualisation possible, débruitage (les ~47 composantes jetées contiennent surtout du bruit). C'est la réduction de dimension en action.</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="2">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-2-algebre-lineaire.md" download>⬇️ Télécharger la fiche de révision (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-1-relations-binaires.html"><div class="dir">← Précédent</div><div class="ttl">Module 1 · Relations binaires</div></a>
+      <a class="next" href="../index.html"><div class="dir">Suite →</div><div class="ttl">Module 3 · bientôt</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 2 — Algèbre linéaire · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
