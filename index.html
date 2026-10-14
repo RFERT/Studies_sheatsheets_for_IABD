@@ -24,11 +24,28 @@
     <p>Un hub interactif et évolutif pour réviser, approfondir et maîtriser les compétences de la 3ᵉ année IABD — et au-delà, pour le monde professionnel.</p>
   </div>
 
+  <div class="search-wrap">
+    <div class="search-box" role="search">
+      <span class="search-ic">🔎</span>
+      <input id="search-input" type="search" autocomplete="off" spellcheck="false"
+        placeholder="Rechercher un cours, une notion, une section…  ( / )"
+        aria-label="Rechercher dans tous les cours" />
+      <kbd class="search-kbd">/</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+
   <div class="stats">
     <div class="stat"><div class="num" id="stat-subjects">—</div><div class="lbl">Matières</div></div>
     <div class="stat"><div class="num" id="stat-ready">—</div><div class="lbl">Prêtes</div></div>
     <div class="stat"><div class="num">200+</div><div class="lbl">Questions</div></div>
     <div class="stat"><div class="num">∞</div><div class="lbl">Extensible</div></div>
+  </div>
+
+  <div class="section" id="dashboard-section">
+    <h2>📈 Ma progression</h2>
+    <p class="sub">Suivi automatique et privé (stocké sur cet appareil). Il se met à jour dès que tu termines un module ou réponds à un quiz.</p>
+    <div id="dashboard"><!-- rendu par portal.js --></div>
   </div>
 
   <div class="section">
@@ -52,6 +69,7 @@
     Portail de cours ESGI · construit pour évoluer · <a href="ameliorations.html">feuille de route &amp; idées</a> · fait avec 💙
   </div>
 
+  <script src="assets/search-index.js"></script>
   <script src="assets/portal.js"></script>
 </body>
 </html>

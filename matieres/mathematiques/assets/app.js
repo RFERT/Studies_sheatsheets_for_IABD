@@ -120,6 +120,19 @@
     });
   }
 
+  /* ---------- Bouton Export PDF (impression navigateur) ---------- */
+  function initPrintButton() {
+    const ref = document.getElementById("mark-done");
+    if (!ref || !ref.parentNode) return;
+    const btn = document.createElement("button");
+    btn.className = "btn no-print";
+    btn.type = "button";
+    btn.textContent = "🖨️ Exporter en PDF";
+    btn.title = "Ouvre l'impression — choisis « Enregistrer au format PDF »";
+    btn.addEventListener("click", () => window.print());
+    ref.insertAdjacentElement("afterend", btn);
+  }
+
   /* ---------- Init ---------- */
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
@@ -127,5 +140,6 @@
     initReadingProgress();
     markModuleDoneButton();
     paintHomeProgress();
+    initPrintButton();
   });
 })();
