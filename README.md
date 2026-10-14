@@ -41,3 +41,14 @@ Après avoir ajouté ou modifié des cours :
 python assets/build-search-index.py
 ```
 Cela met à jour `assets/search-index.js` (et `.json`).
+
+## 📜 Convention : encart « Culture & histoire »
+Chaque cours peut inclure un encart **à l'écart du cours fonctionnel** (hors programme)
+qui raconte l'histoire de la notion, ses grands noms et pourquoi elle compte.
+- Dans un cours **statique** (maths) : une section `<section class="culture" id="culture">`
+  placée en fin de module (le style `.culture` est dans `matieres/mathematiques/assets/style.css`).
+- Dans le **cursus Rust** (dynamique) : un champ `culture:` (chaîne HTML) ajouté à une entrée
+  de `COURSE`, rendu automatiquement sous la leçon.
+- Structure type : un `.chead` (titre + badge), un `.csub`, un paragraphe d'intro,
+  `<h4>` thématiques, une liste `.names` (figures + dates), puis des liens `.clinks`.
+Les encarts sont automatiquement indexés dans la recherche (type « Culture & histoire »).

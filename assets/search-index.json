@@ -129,6 +129,15 @@
 "s": "Mathématiques",
 "emoji": "∑",
 "color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 0 — Fondations",
+"u": "matieres/mathematiques/modules/module-0-fondations.html#culture",
+"k": "Module 0 — Fondations histoire George Boole Georg Cantor Gottlob Frege David Hilbert Kurt Gödel Alan Turing"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
 "type": "module",
 "t": "Module 1 — Relations binaires",
 "u": "matieres/mathematiques/modules/module-1-relations-binaires.html",
@@ -205,6 +214,15 @@
 "t": "Exercices de synthèse",
 "u": "matieres/mathematiques/modules/module-1-relations-binaires.html#exos",
 "k": "Module 1 — Relations binaires"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 1 — Relations binaires",
+"u": "matieres/mathematiques/modules/module-1-relations-binaires.html#culture",
+"k": "Module 1 — Relations binaires histoire Augustus De Morgan Charles Sanders Peirce Richard Dedekind Garrett Birkhoff Edgar F. « Ted » Codd"
 },
 {
 "s": "Mathématiques",
@@ -300,6 +318,15 @@
 "s": "Mathématiques",
 "emoji": "∑",
 "color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 2 — Algèbre linéaire",
+"u": "matieres/mathematiques/modules/module-2-algebre-lineaire.html#culture",
+"k": "Module 2 — Algèbre linéaire histoire Les « Neuf Chapitres » Arthur Cayley & James Sylvester Hermann Grassmann Beltrami & Jordan Karl Pearson"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
 "type": "module",
 "t": "Module 3 — Probabilités",
 "u": "matieres/mathematiques/modules/module-3-probabilites.html",
@@ -390,6 +417,15 @@
 "s": "Mathématiques",
 "emoji": "∑",
 "color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 3 — Probabilités",
+"u": "matieres/mathematiques/modules/module-3-probabilites.html#culture",
+"k": "Module 3 — Probabilités histoire Blaise Pascal & Pierre de Fermat Jacob Bernoulli Thomas Bayes Pierre-Simon Laplace Andreï Kolmogorov"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
 "type": "module",
 "t": "Module 4 — Statistiques",
 "u": "matieres/mathematiques/modules/module-4-statistiques.html",
@@ -466,6 +502,15 @@
 "t": "Exercices de synthèse",
 "u": "matieres/mathematiques/modules/module-4-statistiques.html#exos",
 "k": "Module 4 — Statistiques"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 4 — Statistiques",
+"u": "matieres/mathematiques/modules/module-4-statistiques.html#culture",
+"k": "Module 4 — Statistiques histoire Gauss & Legendre Francis Galton Karl Pearson Ronald Fisher Neyman & Egon Pearson"
 },
 {
 "s": "Mathématiques",
@@ -552,6 +597,15 @@
 "s": "Mathématiques",
 "emoji": "∑",
 "color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 5 — Analyse & Optimisation",
+"u": "matieres/mathematiques/modules/module-5-optimisation.html#culture",
+"k": "Module 5 — Analyse & Optimisation histoire Joseph-Louis Lagrange Augustin-Louis Cauchy Leonid Kantorovich George Dantzig Rumelhart, Hinton & Williams"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
 "type": "module",
 "t": "Module 6 — Théorie des graphes",
 "u": "matieres/mathematiques/modules/module-6-graphes.html",
@@ -628,6 +682,15 @@
 "t": "Exercices de synthèse",
 "u": "matieres/mathematiques/modules/module-6-graphes.html#exos",
 "k": "Module 6 — Théorie des graphes"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 6 — Théorie des graphes",
+"u": "matieres/mathematiques/modules/module-6-graphes.html#culture",
+"k": "Module 6 — Théorie des graphes histoire Leonhard Euler Le théorème des 4 couleurs Edsger Dijkstra Paul Erdős Larry Page & Sergey Brin"
 },
 {
 "s": "Mathématiques",
@@ -714,6 +777,15 @@
 "s": "Mathématiques",
 "emoji": "∑",
 "color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 7 — Maths discrètes & Complexité",
+"u": "matieres/mathematiques/modules/module-7-discret-complexite.html#culture",
+"k": "Module 7 — Maths discrètes & Complexité histoire Alan Turing Bachmann & Landau Donald Knuth Stephen Cook & Leonid Levin Richard Karp"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
 "type": "module",
 "t": "Module 8 — Théorie de l'information",
 "u": "matieres/mathematiques/modules/module-8-information.html",
@@ -781,6 +853,15 @@
 "t": "Exercices de synthèse",
 "u": "matieres/mathematiques/modules/module-8-information.html#exos",
 "k": "Module 8 — Théorie de l'information"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 8 — Théorie de l'information",
+"u": "matieres/mathematiques/modules/module-8-information.html#culture",
+"k": "Module 8 — Théorie de l'information histoire Claude Shannon Nyquist & Hartley David Huffman Richard Hamming Ludwig Boltzmann"
 },
 {
 "s": "Mathématiques",
@@ -862,6 +943,15 @@
 "t": "Exercices de synthèse",
 "u": "matieres/mathematiques/modules/module-9-big-data.html#exos",
 "k": "Module 9 — Maths du Big Data"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 9 — Maths du Big Data",
+"u": "matieres/mathematiques/modules/module-9-big-data.html#culture",
+"k": "Module 9 — Maths du Big Data histoire Doug Laney Jeff Dean & Sanjay Ghemawat Doug Cutting Eric Brewer Matei Zaharia"
 },
 {
 "s": "Mathématiques",
@@ -970,6 +1060,15 @@
 "t": "Cursus Rust complet",
 "u": "matieres/rust/rust-cursus.html",
 "k": "ownership borrowing lifetimes traits cargo closures itérateurs concurrence enums pattern matching Result Option"
+},
+{
+"s": "Rust",
+"emoji": "🦀",
+"color": "#f74c00",
+"type": "culture",
+"t": "Culture & histoire de Rust",
+"u": "matieres/rust/rust-cursus.html",
+"k": "Graydon Hoare Mozilla Rust Foundation noyau Linux histoire philosophie sécurité mémoire"
 },
 {
 "s": "Rust",

@@ -295,7 +295,7 @@ function initSearch() {
     e, nt: normalize(e.t), ns: normalize(e.s), nk: normalize(e.k), ntype: normalize(e.type)
   }));
   const typeLabel = { module: "Module", section: "Section", fiche: "Fiche", cours: "Cours",
-    "matière": "Matière", page: "Page" };
+    "matière": "Matière", page: "Page", culture: "Culture & histoire" };
   let active = -1, current = [];
 
   function score(it, tokens) {

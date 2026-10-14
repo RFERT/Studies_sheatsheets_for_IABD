@@ -50,6 +50,12 @@ for f in sorted(mod_dir.glob("*.html")):
     for sm in re.finditer(r'<section[^>]*id="([^"]+)"[^>]*>\s*<h2[^>]*>(.*?)</h2>', txt, re.S):
         anchor, h2 = sm.group(1), clean(sm.group(2))
         add("math", "section", h2, f"{url}#{anchor}", page_title)
+    # Encart Culture & histoire (noms historiques indexés)
+    cm = re.search(r'<section class="culture"[^>]*id="culture".*?</section>', txt, re.S)
+    if cm:
+        names = [clean(x) for x in re.findall(r"<li><b>(.*?)</b>", cm.group(0))]
+        add("math", "culture", "Culture & histoire — " + page_title,
+            f"{url}#culture", page_title + " histoire " + " ".join(names))
 
 # ---- Fiches de révision téléchargeables ----
 fic_dir = ROOT / "matieres" / "mathematiques" / "fiches"
@@ -64,6 +70,8 @@ for f in sorted(fic_dir.glob("*.md")):
 # ---- Rust : cursus + révision express (sections) ----
 add("rust", "cours", "Cursus Rust complet", "matieres/rust/rust-cursus.html",
     "ownership borrowing lifetimes traits cargo closures itérateurs concurrence enums pattern matching Result Option")
+add("rust", "culture", "Culture & histoire de Rust", "matieres/rust/rust-cursus.html",
+    "Graydon Hoare Mozilla Rust Foundation noyau Linux histoire philosophie sécurité mémoire")
 rev = ROOT / "matieres" / "rust" / "revision-express.html"
 if rev.exists():
     rtxt = rev.read_text(encoding="utf-8")

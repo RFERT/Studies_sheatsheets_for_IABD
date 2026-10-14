@@ -58,6 +58,23 @@
     cursor:pointer;font-size:14px;font-family:inherit;transition:.15s
   }
   .btn:hover{border-color:var(--acc);color:#fff}
+  /* Encart Culture & histoire (à l'écart du cours) */
+  .culture{margin:28px 0;padding:20px 22px;border-radius:14px;border:1px solid rgba(255,207,92,.4);border-left:5px solid var(--warn);background:linear-gradient(180deg,rgba(255,207,92,.08),var(--panel))}
+  .culture .chead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+  .culture .cic{font-size:24px}
+  .culture .ctitle{font-size:19px;font-weight:800;color:var(--txt)}
+  .culture .ctag{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--warn);border:1px solid var(--warn);border-radius:99px;padding:2px 10px;background:rgba(255,207,92,.12)}
+  .culture .csub{color:var(--muted);font-size:13.5px;margin:2px 0 12px}
+  .culture h4{margin:16px 0 6px;font-size:12.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--warn)}
+  .culture p{color:var(--txt);opacity:.92;margin:8px 0}
+  .culture .names{list-style:none;padding:0;margin:8px 0;display:grid;gap:8px}
+  .culture .names li{padding-left:16px;position:relative;color:var(--txt);opacity:.92}
+  .culture .names li::before{content:"•";position:absolute;left:0;color:var(--warn);font-weight:700}
+  .culture .names b{color:#fff}
+  .culture .names .yr{color:var(--muted);font-size:12.5px}
+  .culture .clinks{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+  .culture .clinks a{font-size:13px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:var(--bg3);color:var(--acc2);text-decoration:none}
+  .culture .clinks a:hover{border-color:var(--warn)}
   .btn.small{padding:6px 10px;font-size:13px}
   .btn.primary{background:linear-gradient(135deg,var(--acc),#c93c00);border-color:transparent;color:#fff;font-weight:600}
   .btn.primary:hover{filter:brightness(1.08)}
@@ -298,6 +315,28 @@ rand = "0.8"
     py(`En Python, un script <code>hello.py</code> s’exécute directement avec <code>python hello.py</code>, sans compilation ni <code>main</code> obligatoire. En Rust, tout binaire a une fonction <code>main</code>, et le code est <b>compilé</b> en exécutable natif avant de tourner. <code>println!</code> est une <b>macro</b> (le <code>!</code> le signale), pas une fonction.`)+
     why(`<code>cargo check</code> existe parce que la compilation complète de Rust peut être lente (vérifications poussées + optimisations). <code>check</code> effectue toute l’analyse de types et d’emprunts <b>sans</b> générer de code machine : c’est la boucle de feedback rapide qu’on utilise en développement.`)+
     trap(`Ne confonds pas <b>debug</b> et <b>release</b>. Par défaut <code>cargo run</code> compile en mode debug : le binaire est lent et gros mais compile vite et garde les vérifications de débordement. Pour mesurer les performances, utilise toujours <code>--release</code>.`),
+  culture:
+    `<div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire de Rust</span><span class="ctag">hors programme · pour le plaisir</span></div>
+    <p class="csub">Un encart à l'écart du cours : d'où vient Rust, qui l'a créé, et pourquoi il séduit autant.</p>
+    <p>Rust n'est pas né dans un grand labo, mais du <b>ras-le-bol</b> d'un développeur : vers 2006, <b>Graydon Hoare</b>, excédé qu'un logiciel bogué fasse régulièrement tomber en panne l'ascenseur de son immeuble, se demande pourquoi on continue d'écrire des programmes qui plantent pour de simples erreurs de mémoire. Il lance Rust comme projet personnel.</p>
+    <h4>Repères &amp; grands noms</h4>
+    <ul class="names">
+      <li><b>Graydon Hoare</b> <span class="yr">(2006)</span> — créateur de Rust. Le nom viendrait de la « rouille » (<i>rust fungus</i>), un organisme réputé increvable.</li>
+      <li><b>Mozilla</b> <span class="yr">(2009→)</span> — sponsorise le projet et s'en sert pour moderniser Firefox (moteur Servo, puis Stylo en 2017).</li>
+      <li><b>Rust 1.0</b> <span class="yr">(mai 2015)</span> — première version stable : les garanties de compatibilité commencent.</li>
+      <li><b>Rust Foundation</b> <span class="yr">(2021)</span> — fondée par AWS, Google, Microsoft, Mozilla et Huawei pour gouverner le langage.</li>
+      <li><b>Le noyau Linux</b> <span class="yr">(2022)</span> — accepte officiellement Rust comme 2ᵉ langage après le C : une véritable consécration.</li>
+    </ul>
+    <h4>La philosophie</h4>
+    <p>Rust marie deux mondes : la <b>performance</b> du C/C++ et la <b>sûreté</b> des langages fonctionnels (ML, Haskell : types riches, pattern matching). Sa grande idée — l'<i>ownership</i> vérifié à la compilation — offre la « sécurité mémoire sans ramasse-miettes » et la « <i>fearless concurrency</i> » (concurrence sans peur), le tout en <i>zero-cost abstractions</i>.</p>
+    <h4>Pourquoi un tel engouement</h4>
+    <p>Microsoft et Google estiment qu'environ <b>70 %</b> de leurs failles de sécurité viennent de bugs mémoire — exactement ce que Rust élimine <b>à la compilation</b>. D'où son adoption dans l'infrastructure critique (Linux, Android, Windows, AWS Firecracker, Cloudflare, Discord, Dropbox). Bonus : élu langage « le plus admiré » du sondage Stack Overflow huit années de suite (2016-2023).</p>
+    <div class="clinks">
+      <a href="https://fr.wikipedia.org/wiki/Rust_(langage)" target="_blank">Rust (Wikipédia)</a>
+      <a href="https://en.wikipedia.org/wiki/Rust_(programming_language)" target="_blank">Histoire de Rust (EN)</a>
+      <a href="https://foundation.rust-lang.org/" target="_blank">Rust Foundation</a>
+      <a href="https://www.rust-lang.org/" target="_blank">rust-lang.org</a>
+    </div>`,
   quiz:[
     { kind:'mcq', difficulty:1, tags:['Cargo'],
       prompt:'Quelle commande vérifie que le code compile <b>sans</b> produire d’exécutable, pour un retour rapide ?',
@@ -2285,6 +2324,7 @@ function render(){
   html+=`<h2 class="title">${s.title}</h2>`;
   if(s.sub) html+=`<div class="sub">${s.sub}</div>`;
   if(s.lesson){ html+=`<div class="card lesson">${s.lesson}</div>`; }
+  if(s.culture){ html+=`<div class="culture">${s.culture}</div>`; }
   c.innerHTML=html;
   const qs=(s.quiz||s.exam||[]);
   if(qs.length){
