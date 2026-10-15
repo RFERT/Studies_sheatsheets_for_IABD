@@ -15,6 +15,7 @@ utilisable sur PC et sur téléphone (Samsung S26 Ultra), hors-ligne, et publiab
 | Portail | tableau de bord (progression, séries, objectif hebdo, calendrier d'activité), recherche globale, favoris, reprise du dernier module |
 | Outils | navbar commune, Pomodoro, couleur d'accent, flashcards (répétition espacée), quiz mélangeables, mode examen chronométré, export PDF (maths) |
 | Technique | PWA (manifest + service worker), thème clair/sombre, responsive mobile, guides « accès mobile » et « GitHub Pages » |
+| Industrialisation | **Système de cours Markdown « zéro build »** : un `.md` + une ligne dans `matieres/cours.js` → page, portail, navbar et recherche auto (moteur `cours.html`/`course.js`/`markdown.js`). Exemple : matière **Git**. Modèle `matieres/_MODELE-de-cours.md`, guide `docs/CREER-UN-COURS.md` |
 | Culture | encarts « Culture & histoire » dans les cours existants |
 
 Matières encore **à construire** : voir `SUBJECTS` dans `assets/portal.js` et la page `ameliorations.html`
@@ -30,6 +31,10 @@ Backlog (voir aussi `ameliorations.html`) :
 - **Visualisations interactives** (graphes, matrices, descente de gradient animée).
 - **MathJax/KaTeX en local** (supprimer la dépendance CDN pour un vrai hors-ligne).
 - **Design system partagé** : factoriser `style.css`/`app.js` dupliqués entre maths et python (quiz, thème, streak…).
+  ✅ *Première brique faite* : moteur de cours Markdown générique (`course.css`/`course.js`) réutilisable.
+- **Industrialisation des cours** ✅ *en place* (Markdown + manifeste). Pistes de suite : indexation fine des
+  **sections** des cours Markdown dans la recherche globale (étendre `build-search-index.py` au manifeste + `.md`) ;
+  migrer progressivement d'anciens cours HTML vers le format Markdown ; coloration syntaxique des blocs de code.
 - Raccourcis globaux (`g` puis `m`/`p`/`r` pour changer de matière, `t` pour le thème).
 - Auto-déploiement GitHub Pages (workflow Actions) et génération automatique de l'index de recherche.
 - Dette connue : `app.js` quasi dupliqués ; la liste `CORE` de `sw.js` est manuelle.

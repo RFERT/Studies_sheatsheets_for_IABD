@@ -553,7 +553,54 @@ function renderSubjects() {
   setT("stat-ready", ready);
 }
 
+/* ---------- Cours Markdown (manifeste matieres/cours.js) ---------- */
+/* Fusionne les matières déclarées dans window.COURS : cartes du portail
+   + entrées de recherche, sans rien coder à la main. */
+function mergeManifestCourses() {
+  if (!window.COURS || !Array.isArray(window.COURS.subjects)) return;
+  window.COURS.subjects.forEach((c) => {
+    if (!c || !c.code) return;
+    if (SUBJECTS.some((s) => (s.code || "").toLowerCase() === c.code.toLowerCase())) return;
+    const mods = Array.isArray(c.modules) ? c.modules : [];
+    const base = "cours.html?c=" + encodeURIComponent(c.code);
+    SUBJECTS.push({
+      code: c.code,
+      name: c.name,
+      emoji: c.emoji || "📘",
+      color: c.color || "#6c8cff",
+      status: mods.length ? "ready" : "soon",
+      href: mods.length ? base : undefined,
+      desc: c.desc || "",
+      tags: c.tags || [],
+      meta: mods.length ? (mods.length + " module" + (mods.length > 1 ? "s" : "")) : "À venir",
+      fromManifest: true,
+      progress: mods.length
+        ? { key: "cours-" + c.code.toLowerCase() + "-done", type: "doneMap", total: mods.length, unit: "modules" }
+        : undefined
+    });
+    // entrées de recherche : la matière + chaque module
+    if (Array.isArray(window.SEARCH_INDEX)) {
+      const kw = (c.tags || []).join(" ");
+      window.SEARCH_INDEX.push({
+        s: c.name, emoji: c.emoji || "📘", color: c.color || "#6c8cff",
+        type: "matière", t: c.name, u: base, k: (c.desc || "") + " " + kw
+      });
+      mods.forEach((m) => {
+        window.SEARCH_INDEX.push({
+          s: c.name, emoji: c.emoji || "📘", color: c.color || "#6c8cff",
+          type: "module", t: m.title, u: base + "&m=" + encodeURIComponent(m.id),
+          k: (m.desc || "") + " " + c.name + " " + kw
+        });
+      });
+    }
+  });
+  // regroupe les matières « prêtes » en tête (tri stable)
+  const rank = (s) => (s.status === "ready" ? 0 : s.status === "wip" ? 1 : 2);
+  SUBJECTS.sort((a, b) => rank(a) - rank(b));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  mergeManifestCourses();
   setFavicon("🎓");
   initTheme();
   updateStreak();

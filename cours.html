@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1016" />
+  <title>Cours — Portail IABD</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+  <link rel="stylesheet" href="assets/course.css" />
+</head>
+<body>
+  <header class="course-topbar topbar">
+    <div class="brand"><span class="logo">📚</span> <span class="txt">Cours</span></div>
+    <div class="spacer"></div>
+    <a class="btn" href="index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="read-progress"><span></span></div>
+
+  <main id="course-root" class="course-wrap">
+    <div class="course-loading">⏳ Chargement…</div>
+  </main>
+
+  <button class="to-top" title="Haut de page" aria-label="Haut de page">↑</button>
+
+  <script src="matieres/cours.js"></script>
+  <script src="assets/markdown.js"></script>
+  <script src="assets/course.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

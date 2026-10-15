@@ -128,6 +128,31 @@
   document.body.insertBefore(skip, document.body.firstChild);
 
   /* ---------- Menu « Cours » commun ---------- */
+  function ensureManifest(cb) {
+    if (window.COURS) return cb();
+    var existing = document.querySelector("script[data-cours-manifest]");
+    if (existing) { existing.addEventListener("load", cb); existing.addEventListener("error", cb); return; }
+    var s = document.createElement("script");
+    s.src = root + "matieres/cours.js";
+    s.setAttribute("data-cours-manifest", "1");
+    s.onload = cb; s.onerror = cb;
+    document.head.appendChild(s);
+  }
+  function addManifestToMenu(menu) {
+    ensureManifest(function () {
+      if (!window.COURS || !Array.isArray(window.COURS.subjects)) return;
+      var anchor = menu.querySelector('a[href*="rust-cursus"]');
+      if (!anchor) return;
+      var frag = window.COURS.subjects
+        .filter(function (s) { return s.modules && s.modules.length; })
+        .map(function (s) {
+          return '<a href="' + root + "cours.html?c=" + encodeURIComponent(s.code) +
+            '"><span>' + (s.emoji || "📘") + "</span> " + s.name + "</a>";
+        }).join("");
+      if (frag) anchor.insertAdjacentHTML("afterend", frag);
+    });
+  }
+
   var items = [
     { e: "🏠", t: "Accueil", h: root + "index.html" },
     { sep: 1 },
@@ -190,6 +215,7 @@
         sw.classList.add("on");
       });
     });
+    addManifestToMenu(menu);
   }
 
   /* ---------- Minuteur Pomodoro flottant ---------- */

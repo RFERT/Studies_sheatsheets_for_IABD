@@ -13,18 +13,24 @@ Aucune dépendance ni serveur requis : tout fonctionne en `file://`.
 index.html               Portail : tableau de bord, recherche, cartes de matières
 ameliorations.html       Feuille de route & idées d'évolution
 flashcards.html          Flashcards à répétition espacée (toutes matières)
+cours.html               Moteur de cours générique (rend les cours Markdown)
 manifest.webmanifest     Manifeste PWA (installable)
 sw.js                    Service worker (consultation hors-ligne)
 assets/
   portal.css             Design system du hub
   portal.js              Rendu des matières, progression, recherche, heatmap
   nav.js                 Navbar commune + Pomodoro + accent + accessibilité (toutes pages)
+  course.css / course.js Rendu des cours écrits en Markdown
+  markdown.js            Mini-parseur Markdown maison (sans dépendance)
   search-index.js        Index de recherche (généré — ne pas éditer à la main)
   build-search-index.py  Générateur de l'index (Python 3, sans dépendance)
 matieres/
+  cours.js               MANIFESTE des cours Markdown (source unique)
+  _MODELE-de-cours.md    Modèle + syntaxe pour créer un cours
   mathematiques/         Cours de maths (modules, fiches, examen blanc, aide-mémoire)
   rust/                  Cursus Rust + révision express + antisèche
   python/                Python & Data Science (6 modules, fiches, aide-mémoire)
+  git/                   Exemple de cours « industrialisé » (Markdown pur)
 ```
 
 ## ✨ Fonctionnalités
@@ -46,6 +52,19 @@ matieres/
 - **Thème clair/sombre** et design **responsive** mobile.
 
 ## ➕ Ajouter une matière
+
+### 🏭 Méthode « industrielle » (recommandée, sans coder)
+Écris un simple fichier **Markdown** et le moteur fabrique toute la page (sommaire, quiz,
+exercices, encarts, maths), l'ajoute au portail, à la navbar et à la recherche.
+1. Crée `matieres/<matiere>/md/` et écris tes modules en `.md`
+   (modèle : [`matieres/_MODELE-de-cours.md`](matieres/_MODELE-de-cours.md)).
+2. Déclare la matière dans [`matieres/cours.js`](matieres/cours.js) (manifeste).
+3. C'est tout — guide complet : [`docs/CREER-UN-COURS.md`](docs/CREER-UN-COURS.md).
+
+Exemple vivant : la matière **Git & GitHub** (`matieres/git/md/`), servie par `cours.html?c=GIT`.
+
+### ✍️ Méthode « HTML sur-mesure » (cours historiques)
+Pour un cours très spécifique (maths, python, rust), on peut toujours écrire des pages HTML dédiées :
 1. Crée un dossier dans `matieres/`.
 2. Ajoute une entrée dans le tableau `SUBJECTS` de [`assets/portal.js`](assets/portal.js).
 3. (Optionnel) Déclare la source dans [`assets/build-search-index.py`](assets/build-search-index.py).

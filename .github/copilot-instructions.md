@@ -19,6 +19,22 @@ Lis aussi `README.md` (structure, conventions) et `docs/CONTEXTE-PROJET.md` (ét
    Fichiers : tout `matieres/**`. Ne modifie le moteur (`assets/`, `app.js`) que si c'est vraiment nécessaire
    et signale-le.
 
+## 🏭 Système de cours « industrialisé » (Markdown, zéro build)
+Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans coder de page HTML.
+- Moteur : `cours.html` (coquille) + `assets/course.js` (rendu) + `assets/markdown.js` (parseur maison) + `assets/course.css`.
+- Source unique : `matieres/cours.js` → `window.COURS` (liste des matières + modules `{id,title,desc,badge,file}`).
+- Contenu : un `.md` par module avec front-matter (`title`, `subtitle`, `domains`, `tags`, `objectifs`, `niveau`, `duree`)
+  et des blocs `:::` : `def/tip/warn/info/note/goal`, `quiz` (`- [x]` = bonne réponse, `> ` = explication),
+  `exo` (`?? libellé` = solution repliable), `culture`. Maths LaTeX `\( \)` / `\[ \]` (MathJax).
+- Intégration AUTO : `portal.js` (`mergeManifestCourses`) crée la carte + les entrées de recherche ;
+  `nav.js` (`addManifestToMenu`) ajoute le cours au menu sur toutes les pages. URL : `cours.html?c=CODE[&m=ID]`.
+- Progression stockée sous `cours-<code>-done` (doneMap des modules).
+- Pour ajouter un cours : créer `matieres/<x>/md/*.md` + ajouter l'entrée dans `matieres/cours.js`. Rien d'autre.
+- Modèle : `matieres/_MODELE-de-cours.md` ; guide : `docs/CREER-UN-COURS.md`. Exemple : matière `GIT`.
+- ⚠️ Le rendu lit les `.md` via `fetch()` : OK sur GitHub Pages / `localhost` ; en `file://` certains navigateurs
+  bloquent (le moteur affiche alors un message d'aide). Préférer tester via `python -m http.server`.
+- Si tu ajoutes un fichier au moteur, pense à `sw.js` (`CORE` + bump `CACHE`).
+
 ## Règles techniques à respecter
 - **Chemins relatifs uniquement** (le site doit marcher en `file://`, en sous-dossier GitHub Pages, et sur mobile).
 - **Navbar commune** : injectée par `assets/nav.js` (ne pas la recopier dans chaque page). Il déclare aussi
@@ -34,9 +50,9 @@ Lis aussi `README.md` (structure, conventions) et `docs/CONTEXTE-PROJET.md` (ét
   clair sur fond sombre ; le code inline est assombri en thème clair).
 - **Stockage local** (privé à chaque utilisateur, ne rien envoyer à un serveur) — clés existantes :
   `esgi-portal-theme`, `cmd-theme` (maths/python), `rust-cheat-theme`, `cmd-done-modules` (maths),
-  `pds-done-modules` (python), `rust_cursus_v1` (Rust), `cmd-last-module`, `cmd-favorites`, `esgi-streak`,
-  `esgi-active-days`, `esgi-weekly-goal`, `esgi-flashcards`. Réutilise ces clés plutôt que d'en créer
-  de nouvelles sans raison ; documente toute nouvelle clé dans `docs/CONTEXTE-PROJET.md`.
+  `pds-done-modules` (python), `rust_cursus_v1` (Rust), `cours-<code>-done` (cours Markdown), `cmd-last-module`,
+  `cmd-favorites`, `esgi-streak`, `esgi-active-days`, `esgi-weekly-goal`, `esgi-flashcards`. Réutilise ces clés plutôt
+  que d'en créer de nouvelles sans raison ; documente toute nouvelle clé dans `docs/CONTEXTE-PROJET.md`.
 - Les moteurs `matieres/mathematiques/assets/app.js` et `matieres/python/assets/app.js` sont **dupliqués en
   grande partie** : toute évolution d'un quiz/outil commun doit être répercutée dans les deux (ou factorisée).
 - Raccourcis clavier existants : `/` et `Ctrl/⌘+K` (recherche). Ne pas les écraser.

@@ -3,7 +3,7 @@
    Stratégie : cache-first avec mise en cache à la volée.
    Ne fonctionne qu'en https:// ou localhost (pas en file://).
    ========================================================= */
-const CACHE = "esgi-cours-v1";
+const CACHE = "esgi-cours-v2";
 const CORE = [
   "./",
   "./index.html",
@@ -11,12 +11,17 @@ const CORE = [
   "./guide-mobile.html",
   "./guide-github-pages.html",
   "./flashcards.html",
+  "./cours.html",
   "./manifest.webmanifest",
   "./assets/portal.css",
   "./assets/portal.js",
+  "./assets/course.css",
+  "./assets/course.js",
+  "./assets/markdown.js",
   "./assets/nav.js",
   "./assets/search-index.js",
-  "./assets/icon.svg"
+  "./assets/icon.svg",
+  "./matieres/cours.js"
 ];
 
 self.addEventListener("install", (e) => {
