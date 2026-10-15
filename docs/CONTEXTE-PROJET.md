@@ -68,7 +68,10 @@ Backlog :
 > me résumer l'état et me proposer les 3 chantiers les plus utiles du backlog « SITE ».
 
 ### 📚 Pour la discussion COURS
-> Je continue le projet de portail de cours IABD (dépôt `Studies_sheatsheets_for_IABD`). Lis `.github/copilot-instructions.md`,
-> `README.md` et `docs/CONTEXTE-PROJET.md`. Dans cette discussion on ne travaille **que sur le contenu des cours**
-> (`matieres/**`) en respectant les conventions (quiz, fiches, antisèche reliée au cours, culture & histoire, mots-clés).
-> Aujourd'hui je veux travailler sur : **[matière / sujet]**. Mon partiel est le : **[date]**.
+L'agent trouve **tout seul** la marche à suivre : `.github/copilot-instructions.md` est chargé
+automatiquement, et `.github/instructions/creer-un-cours.instructions.md` (règle `applyTo: matieres/**`)
+s'attache dès qu'il crée/édite un fichier de cours. Tu n'as donc qu'à donner la tâche :
+> Je continue le projet de portail de cours IABD (dépôt `Studies_sheatsheets_for_IABD`). On travaille **uniquement
+> sur le contenu des cours** (`matieres/**`), via le système Markdown « zéro build » (voir le guide
+> `docs/CREER-UN-COURS.md` et le modèle `matieres/_MODELE-de-cours.md`). Aujourd'hui je veux un cours sur :
+> **[matière / sujet]**. Mon partiel est le : **[date]**.
