@@ -16,6 +16,7 @@ utilisable sur PC et sur téléphone (Samsung S26 Ultra), hors-ligne, et publiab
 | Outils | navbar commune, Pomodoro, couleur d'accent, flashcards (répétition espacée), quiz mélangeables, mode examen chronométré, export PDF (maths) |
 | Technique | PWA (manifest + service worker), thème clair/sombre, responsive mobile, guides « accès mobile » et « GitHub Pages » |
 | Industrialisation | **Système de cours Markdown « zéro build »** : un `.md` + une ligne dans `matieres/cours.js` → page, portail, navbar et recherche auto (moteur `cours.html`/`course.js`/`markdown.js`). Exemple : matière **Git**. Modèle `matieres/_MODELE-de-cours.md`, guide `docs/CREER-UN-COURS.md` |
+| Miroirs Markdown | Les cours **maths** (`matieres/mathematiques/md/`) et **python** (`matieres/python/md/`) existent aussi en `.md` (générés depuis le HTML). **Non câblés au manifeste** : les pages HTML restent les versions live, les `.md` sont une source éditable / base de future migration |
 | Culture | encarts « Culture & histoire » dans les cours existants |
 
 Matières encore **à construire** : voir `SUBJECTS` dans `assets/portal.js` et la page `ameliorations.html`
