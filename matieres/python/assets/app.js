@@ -106,13 +106,16 @@
   /* ---------- Quiz ---------- */
   function initQuizzes() {
     document.querySelectorAll(".quiz").forEach((quiz) => {
-      const answer = parseInt(quiz.getAttribute("data-answer"), 10);
-      const opts = Array.from(quiz.querySelectorAll(".opt"));
       let fb = quiz.querySelector(".feedback");
       if (!fb) { fb = document.createElement("div"); fb.className = "feedback"; quiz.appendChild(fb); }
       const explain = fb.getAttribute("data-explain") || "";
-      opts.forEach((opt, i) => {
+      Array.from(quiz.querySelectorAll(".opt")).forEach((opt) => {
         opt.addEventListener("click", () => {
+          if (quiz.classList.contains("answered")) return;
+          quiz.classList.add("answered");
+          const answer = parseInt(quiz.getAttribute("data-answer"), 10);
+          const opts = Array.from(quiz.querySelectorAll(".opt"));
+          const i = opts.indexOf(opt);
           opts.forEach((o) => o.classList.add("disabled"));
           opts[answer] && opts[answer].classList.add("correct");
           const ok = i === answer;
@@ -121,6 +124,41 @@
           fb.innerHTML = (ok ? "✅ <strong>Bravo !</strong> " : "❌ <strong>Pas tout à fait.</strong> ") + explain;
         });
       });
+    });
+  }
+
+  /* ---------- Mélanger les réponses ---------- */
+  function shuffleQuiz(quiz) {
+    const opts = Array.from(quiz.querySelectorAll(".opt"));
+    if (opts.length < 2) return;
+    const answer = parseInt(quiz.getAttribute("data-answer"), 10);
+    const correct = opts[answer];
+    const parent = opts[0].parentNode;
+    const fb = quiz.querySelector(".feedback");
+    quiz.classList.remove("answered");
+    opts.forEach((o) => o.classList.remove("disabled", "correct", "wrong"));
+    if (fb) fb.classList.remove("show", "ok", "ko");
+    const arr = opts.slice();
+    for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+    arr.forEach((o) => parent.appendChild(o));
+    quiz.setAttribute("data-answer", arr.indexOf(correct));
+  }
+  function initQuizShuffle() {
+    const quizzes = document.querySelectorAll(".quiz");
+    if (!quizzes.length) return;
+    const lesson = document.querySelector(".lesson");
+    const h1 = lesson && lesson.querySelector("h1");
+    if (!h1) return;
+    const bar = document.createElement("div");
+    bar.className = "quiz-tools no-print";
+    bar.innerHTML = '<button class="btn" id="shuffle-quiz" type="button">🔀 Mélanger les réponses</button>';
+    const anchor = lesson.querySelector(".readtime") || h1;
+    anchor.insertAdjacentElement("afterend", bar);
+    document.getElementById("shuffle-quiz").addEventListener("click", () => {
+      document.querySelectorAll(".quiz").forEach(shuffleQuiz);
+      const b = document.getElementById("shuffle-quiz");
+      b.textContent = "🔀 Remélangé !";
+      setTimeout(() => { b.textContent = "🔀 Mélanger les réponses"; }, 1200);
     });
   }
 
@@ -187,6 +225,7 @@
     initTheme();
     updateStreak();
     initQuizzes();
+    initQuizShuffle();
     initReadingProgress();
     initReadingTime();
     markModuleDoneButton();

@@ -60,6 +60,27 @@
   st.textContent = vars + css;
   document.head.appendChild(st);
 
+  /* ---------- PWA : manifest + thème + service worker ---------- */
+  (function pwa() {
+    if (!document.querySelector('link[rel="manifest"]')) {
+      var m = document.createElement("link");
+      m.rel = "manifest"; m.href = root + "manifest.webmanifest";
+      document.head.appendChild(m);
+    }
+    if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+      var at = document.createElement("link");
+      at.rel = "apple-touch-icon"; at.href = root + "assets/icon.svg";
+      document.head.appendChild(at);
+    }
+    var canSW = ("serviceWorker" in navigator) &&
+      (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1");
+    if (canSW) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register(root + "sw.js").catch(function () {});
+      });
+    }
+  })();
+
   /* ---------- Accent personnalisé (appliqué partout) ---------- */
   var ACCENTS = [
     { name: "Défaut", v: "" },
@@ -122,6 +143,8 @@
     { sep: 1 },
     { e: "📱", t: "Accès mobile", h: root + "guide-mobile.html" },
     { e: "🌐", t: "Publier (GitHub Pages)", h: root + "guide-github-pages.html" },
+    { sep: 1 },
+    { e: "🗂️", t: "Flashcards", h: root + "flashcards.html" },
     { e: "🚀", t: "Améliorations", h: root + "ameliorations.html" },
   ];
   var menuHTML = items.map(function (it) {

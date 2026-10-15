@@ -206,6 +206,21 @@ a:hover { text-decoration: underline; }
 .card-progress .pbar { flex: 1; }
 .card-progress .cp-lbl { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
+/* ---------- Objectif hebdomadaire ---------- */
+.goal-card { margin-top: 16px; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); }
+.goal-card.reached { border-color: var(--accent); }
+.goal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.goal-head b { font-size: 16px; }
+.goal-set { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.goal-set select { background: var(--bg-elev); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 4px 8px; font-family: inherit; font-size: 13px; cursor: pointer; }
+.goal-bar { margin: 4px 0 10px; }
+.goal-info { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.goal-num { font-weight: 700; color: var(--text); font-size: 14px; white-space: nowrap; }
+.goal-msg { color: var(--text-soft); font-size: 13px; flex: 1; text-align: right; }
+@media (max-width: 560px) { .goal-msg { text-align: left; } }
+
 /* ---------- Heatmap d'activité ---------- */
 .heatmap-card { margin-top: 16px; background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); }

@@ -152,6 +152,8 @@ add("math", "fiche", "Aide-mémoire maths (formulaire)", "matieres/mathematiques
 add("rust", "matière", "Rust", "matieres/rust/rust-cursus.html", "langage système")
 add("portal", "page", "Améliorations & feuille de route", "ameliorations.html",
     "roadmap idées compétences pro git docker ci cd mlops")
+add("portal", "page", "Flashcards — répétition espacée", "flashcards.html",
+    "flashcards répétition espacée spaced repetition révision mémorisation SM-2 cartes quiz")
 add("portal", "page", "Ouvrir le site sur mon téléphone (guide mobile)", "guide-mobile.html",
     "mobile téléphone smartphone samsung serveur local github pages hors-ligne installer")
 add("portal", "page", "Publier mon site avec GitHub Pages (guide)", "guide-github-pages.html",

@@ -1939,6 +1939,15 @@
 "emoji": "🎓",
 "color": "#27e0b0",
 "type": "page",
+"t": "Flashcards — répétition espacée",
+"u": "flashcards.html",
+"k": "flashcards répétition espacée spaced repetition révision mémorisation SM-2 cartes quiz"
+},
+{
+"s": "Portail",
+"emoji": "🎓",
+"color": "#27e0b0",
+"type": "page",
 "t": "Ouvrir le site sur mon téléphone (guide mobile)",
 "u": "guide-mobile.html",
 "k": "mobile téléphone smartphone samsung serveur local github pages hors-ligne installer"

@@ -197,6 +197,45 @@ function importProgress(file) {
 }
 
 /* ---------- Calendrier de révision (heatmap façon GitHub) ---------- */
+/* ---------- Objectif hebdomadaire ---------- */
+const GOAL_KEY = "esgi-weekly-goal";
+function activeDaysThisWeek() {
+  let days = {};
+  try { days = JSON.parse(localStorage.getItem("esgi-active-days")) || {}; } catch (e) {}
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const monday = new Date(today);
+  const dow = (today.getDay() + 6) % 7; // lundi = 0
+  monday.setDate(today.getDate() - dow);
+  const key = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  let n = 0;
+  for (let i = 0; i < 7; i++) { const d = new Date(monday); d.setDate(monday.getDate() + i); if (days[key(d)]) n++; }
+  return n;
+}
+function getGoal() { const g = parseInt(localStorage.getItem(GOAL_KEY), 10); return (g >= 1 && g <= 7) ? g : 4; }
+function buildGoal() {
+  const goal = getGoal();
+  const done = Math.min(activeDaysThisWeek(), 7);
+  const pct = Math.round(Math.min(done, goal) / goal * 100);
+  const reached = done >= goal;
+  const todayDone = (function () {
+    try { const days = JSON.parse(localStorage.getItem("esgi-active-days")) || {}; const d = new Date(); const k = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); return !!days[k]; } catch (e) { return false; }
+  })();
+  let msg;
+  if (reached) msg = "🎉 Objectif de la semaine atteint, bravo ! Chaque jour en plus est du bonus.";
+  else if (todayDone) msg = `Encore <b>${goal - done}</b> jour(s) de révision cette semaine pour tenir ton objectif. 💪`;
+  else msg = `⏰ Tu n'as pas encore révisé aujourd'hui — un petit module suffit pour avancer vers ton objectif.`;
+  const opts = [2, 3, 4, 5, 6, 7].map((n) => `<option value="${n}"${n === goal ? " selected" : ""}>${n} j/sem.</option>`).join("");
+  return `
+    <div class="goal-card${reached ? " reached" : ""}">
+      <div class="goal-head">
+        <b>🎯 Objectif de la semaine</b>
+        <label class="goal-set">Cible : <select id="goal-select">${opts}</select></label>
+      </div>
+      <div class="goal-bar">${progressBar(pct, reached ? "var(--accent)" : "var(--primary)")}</div>
+      <div class="goal-info"><span class="goal-num">${done} / ${goal} jours actifs</span><span class="goal-msg">${msg}</span></div>
+    </div>`;
+}
+
 function buildHeatmap() {
   let days = {};
   try { days = JSON.parse(localStorage.getItem("esgi-active-days")) || {}; } catch (e) {}
@@ -308,6 +347,7 @@ function renderDashboard() {
         <p class="dash-hint">${hint}</p>
       </div>
     </div>
+    ${buildGoal()}
     ${buildHeatmap()}
     ${favBlock}`;
 
@@ -321,6 +361,11 @@ function renderDashboard() {
   });
   const exp = document.getElementById("dash-export");
   if (exp) exp.addEventListener("click", exportProgress);
+  const goalSel = document.getElementById("goal-select");
+  if (goalSel) goalSel.addEventListener("change", () => {
+    localStorage.setItem(GOAL_KEY, goalSel.value);
+    renderDashboard();
+  });
   const imp = document.getElementById("dash-import");
   const file = document.getElementById("dash-file");
   if (imp && file) {

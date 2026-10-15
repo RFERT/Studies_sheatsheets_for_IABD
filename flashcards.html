@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Flashcards — Répétition espacée</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+  <style>
+    .fc-wrap { max-width: 760px; margin: 0 auto; padding: 10px 28px 60px; }
+    .fc-decks { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 18px; }
+    .fc-deck { cursor: pointer; border: 1px solid var(--border); background: var(--bg-card);
+      color: var(--text-soft); border-radius: 999px; padding: 7px 16px; font-size: 14px; font-family: inherit; }
+    .fc-deck.on { border-color: var(--primary); color: var(--text); background: color-mix(in srgb, var(--primary) 16%, transparent); }
+    .fc-deck .n { color: var(--muted); font-size: 12px; margin-left: 6px; }
+    .fc-stats { display: flex; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+    .fc-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 18px; text-align: center; }
+    .fc-stat .v { font-size: 24px; font-weight: 800; color: var(--primary); }
+    .fc-stat .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .fc-card { position: relative; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 18px; box-shadow: var(--shadow); min-height: 240px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center; padding: 30px 28px; cursor: pointer; }
+    .fc-tag { position: absolute; top: 14px; left: 16px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--muted); }
+    .fc-side { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
+    .fc-q { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.4; }
+    .fc-a { font-size: 19px; color: var(--text-soft); line-height: 1.5; }
+    .fc-a code, .fc-q code { background: var(--bg-elev); padding: 2px 7px; border-radius: 6px;
+      font-family: "Cascadia Code", Consolas, monospace; font-size: 0.86em; color: var(--primary); }
+    .fc-hint { text-align: center; color: var(--muted); font-size: 13px; margin: 12px 0; }
+    .fc-rate { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+    .fc-rate button { cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text);
+      border-radius: 11px; padding: 12px 8px; font-size: 14px; font-family: inherit; display: flex; flex-direction: column; gap: 3px; align-items: center; }
+    .fc-rate button small { font-size: 11px; color: var(--muted); }
+    .fc-rate button.again:hover { border-color: #ff6b81; }
+    .fc-rate button.hard:hover { border-color: #ffb454; }
+    .fc-rate button.good:hover { border-color: var(--accent); }
+    .fc-rate button.easy:hover { border-color: var(--primary); }
+    .fc-done { text-align: center; background: var(--bg-card); border: 1px solid var(--accent);
+      border-radius: 16px; padding: 34px 24px; box-shadow: var(--shadow); }
+    .fc-done h2 { margin: 0 0 8px; }
+    .fc-reset { font-size: 12px; margin-top: 14px; }
+    @media (max-width: 560px) {
+      .fc-wrap { padding: 8px 16px 48px; }
+      .fc-q { font-size: 19px; } .fc-a { font-size: 17px; }
+      .fc-rate { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🗂️</span> <span>Flashcards<small>répétition espacée</small></span></div>
+    <div class="spacer"></div>
+    <a class="btn" href="index.html">← Portail</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero" style="padding-bottom:4px">
+    <span class="eyebrow">Mémorisation durable</span>
+    <h1>Flashcards 🗂️</h1>
+    <p>La <strong>répétition espacée</strong> : chaque carte revient au bon moment (juste avant que tu l'oublies). Réponds honnêtement, l'algorithme planifie la suite. Ta progression est privée (ce navigateur).</p>
+  </div>
+
+  <div class="fc-wrap">
+    <div class="fc-decks" id="fc-decks"></div>
+    <div class="fc-stats" id="fc-stats"></div>
+    <div id="fc-stage"></div>
+    <div style="text-align:center">
+      <button class="btn fc-reset" id="fc-reset">↺ Réinitialiser la planification</button>
+    </div>
+  </div>
+
+  <div class="footer">Flashcards · répétition espacée (SM-2 simplifié) · révise malin 💙</div>
+
+  <script src="assets/nav.js"></script>
+  <script>
+  (function(){
+    /* Thème */
+    var TK="esgi-portal-theme";
+    function theme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem(TK,t);var b=document.getElementById("theme-toggle");if(b)b.textContent=t==="light"?"🌙 Sombre":"☀️ Clair";}
+    var saved=localStorage.getItem(TK); if(!saved){saved=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";}
+    theme(saved);
+    document.getElementById("theme-toggle").addEventListener("click",function(){theme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+    var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">🗂️</text></svg>';
+    var l=document.createElement("link");l.rel="icon";l.href="data:image/svg+xml,"+encodeURIComponent(svg);document.head.appendChild(l);
+
+    /* Jeu de cartes */
+    var CARDS = [
+      // Maths
+      ["math","Maths","Théorème de Bayes ?","<code>P(A|B) = P(B|A)·P(A) / P(B)</code>"],
+      ["math","Maths","Lois de De Morgan ?","¬(P∧Q) = ¬P∨¬Q &nbsp;et&nbsp; ¬(P∨Q) = ¬P∧¬Q"],
+      ["math","Maths","Similarité cosinus ?","cos θ = (x·y) / (‖x‖·‖y‖) ∈ [−1, 1]"],
+      ["math","Maths","Entropie de Shannon ?","<code>H(X) = −Σ pᵢ·log₂ pᵢ</code> (en bits)"],
+      ["math","Maths","Variance V(X) via espérances ?","V(X) = E[X²] − E[X]²"],
+      ["math","Maths","Règle de la descente de gradient ?","<code>θ ← θ − η·∇J(θ)</code> (η = taux d'apprentissage)"],
+      ["math","Maths","NumPy : <code>@</code> vs <code>*</code> ?","<code>@</code> = produit matriciel · <code>*</code> = terme à terme"],
+      ["math","Maths","Complexité d'une recherche dichotomique ?","O(log n)"],
+      ["math","Maths","Cardinal |A∪B| (inclusion-exclusion) ?","|A| + |B| − |A∩B|"],
+      ["math","Maths","Régression linéaire (moindres carrés), β̂ ?","β̂ = (XᵀX)⁻¹ Xᵀ y"],
+      // Python
+      ["python","Python","Que renvoie <code>input()</code> ?","Toujours une <code>str</code> → convertir avec <code>int()</code>/<code>float()</code>"],
+      ["python","Python","Liste vs générateur ?","Liste = tout en mémoire · générateur = <strong>lazy</strong>, à la demande (s'épuise)"],
+      ["python","Python","Piège de l'argument par défaut mutable ?","<code>def f(x, lst=[])</code> partage la liste → utiliser <code>None</code> puis <code>lst = lst or []</code>"],
+      ["python","Python","Rôle de <code>@functools.wraps</code> ?","Préserve le nom et la docstring de la fonction décorée"],
+      ["python","Python","pandas : <code>loc</code> vs <code>iloc</code> ?","<code>loc</code> = étiquette (bornes incluses) · <code>iloc</code> = position (bornes exclues)"],
+      ["python","Python","<code>groupby</code> suit quel schéma ?","split → apply → combine"],
+      ["python","Python","Opérateurs de masque NumPy/pandas ?","<code>&amp;</code> <code>|</code> <code>~</code> avec parenthèses (jamais <code>and</code>/<code>or</code>)"],
+      ["python","Python","Broadcasting : dimensions compatibles si… ?","elles sont égales, ou l'une vaut 1 (comparées de droite à gauche)"],
+      ["python","Python","Scaler/imputer : <code>fit</code> sur quoi ?","Sur le <strong>train</strong> seulement (sinon fuite de données)"],
+      ["python","Python","Standardisation (z-score) ?","<code>(x − μ) / σ</code> → moyenne 0, écart-type 1"],
+      // Rust
+      ["rust","Rust","Règle d'or ownership/borrowing ?","À tout instant : N lecteurs <strong>XOR</strong> 1 écrivain"],
+      ["rust","Rust","Move vs Copy ?","Tas (<code>String</code>/<code>Vec</code>) = move (invalide l'ancien) · pile (<code>i32</code>…) = Copy"],
+      ["rust","Rust","<code>&amp;T</code> vs <code>&amp;mut T</code> ?","<code>&amp;T</code> lecture (plusieurs) · <code>&amp;mut T</code> écriture (un seul, pas avec un <code>&amp;T</code>)"],
+      ["rust","Rust","<code>Option&lt;T&gt;</code> remplace quoi ?","<code>null</code> → <code>Some(v)</code> ou <code>None</code>"],
+      ["rust","Rust","L'opérateur <code>?</code> (Result) ?","Propage l'<code>Err</code> immédiatement, sinon déballe la valeur"],
+      ["rust","Rust","Le <code>;</code> final change quoi ?","<code>x</code> (valeur de retour) vs <code>x;</code> (renvoie <code>()</code>)"],
+      ["rust","Rust","Un <code>match</code> doit être… ?","Exhaustif (ajouter <code>_</code> pour le reste des cas)"],
+      ["rust","Rust","À quoi sert un lifetime <code>'a</code> ?","Garantir qu'une référence ne survit pas à la donnée pointée (vérifié à la compilation)"],
+      ["rust","Rust","Macro vs fonction ?","Une macro finit par <code>!</code> : <code>println!</code>, <code>vec!</code>, <code>format!</code>"],
+      ["rust","Rust","<code>cargo check</code> vs <code>build</code> ?","<code>check</code> analyse sans produire de binaire (boucle de feedback rapide)"]
+    ];
+    var DECKS = { math:{name:"∑ Maths",color:"#6c8cff"}, python:{name:"🐍 Python",color:"#3b82f6"}, rust:{name:"🦀 Rust",color:"#f74c00"} };
+
+    var KEY="esgi-flashcards";
+    function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};} }
+    function save(s){ localStorage.setItem(KEY, JSON.stringify(s)); }
+    function todayNum(){ return Math.floor(Date.now()/86400000); }
+
+    var state=load();
+    function cardState(i){ return state[i] || {ease:2.3, int:0, due:0}; }
+    function schedule(i, rating){
+      var c=cardState(i); var t=todayNum();
+      if(rating==="again"){ c.ease=Math.max(1.5,c.ease-0.2); c.int=0; c.due=t; }
+      else if(rating==="hard"){ c.ease=Math.max(1.5,c.ease-0.15); c.int=Math.max(1,Math.round(c.int*1.2)||1); c.due=t+c.int; }
+      else if(rating==="good"){ c.int = c.int<1?1:Math.round(c.int*c.ease); c.due=t+c.int; }
+      else if(rating==="easy"){ c.ease=c.ease+0.15; c.int = c.int<1?2:Math.round(c.int*c.ease*1.3); c.due=t+c.int; }
+      state[i]=c; save(state);
+    }
+
+    var deck="all", queue=[], flipped=false, cur=null;
+    function dueList(d){
+      var t=todayNum(); var arr=[];
+      CARDS.forEach(function(c,i){ if(d!=="all" && c[0]!==d) return; if(cardState(i).due<=t) arr.push(i); });
+      // mélange
+      for(var k=arr.length-1;k>0;k--){ var j=Math.floor(Math.random()*(k+1)); var tmp=arr[k];arr[k]=arr[j];arr[j]=tmp; }
+      return arr;
+    }
+    function countDue(d){ var t=todayNum(),n=0; CARDS.forEach(function(c,i){ if(d!=="all"&&c[0]!==d)return; if(cardState(i).due<=t)n++; }); return n; }
+
+    function renderDecks(){
+      var host=document.getElementById("fc-decks"); var html="";
+      html+='<button class="fc-deck'+(deck==="all"?" on":"")+'" data-d="all">Toutes <span class="n">'+countDue("all")+'</span></button>';
+      Object.keys(DECKS).forEach(function(k){
+        html+='<button class="fc-deck'+(deck===k?" on":"")+'" data-d="'+k+'">'+DECKS[k].name+' <span class="n">'+countDue(k)+'</span></button>';
+      });
+      host.innerHTML=html;
+      host.querySelectorAll(".fc-deck").forEach(function(b){ b.addEventListener("click",function(){ deck=b.getAttribute("data-d"); start(); }); });
+    }
+    function renderStats(){
+      var total=CARDS.filter(function(c){return deck==="all"||c[0]===deck;}).length;
+      var learned=0; CARDS.forEach(function(c,i){ if((deck==="all"||c[0]===deck) && cardState(i).int>=4) learned++; });
+      document.getElementById("fc-stats").innerHTML=
+        '<div class="fc-stat"><div class="v">'+countDue(deck)+'</div><div class="l">à réviser</div></div>'+
+        '<div class="fc-stat"><div class="v">'+learned+'</div><div class="l">bien ancrées</div></div>'+
+        '<div class="fc-stat"><div class="v">'+total+'</div><div class="l">cartes</div></div>';
+    }
+    function render(){
+      renderDecks(); renderStats();
+      var stage=document.getElementById("fc-stage");
+      if(cur===null){
+        stage.innerHTML='<div class="fc-done"><h2>🎉 Tout est à jour !</h2><p class="sub" style="color:var(--muted)">Aucune carte à réviser pour « '+(deck==="all"?"toutes les matières":DECKS[deck].name)+' ». Reviens demain, ou change de paquet.</p></div>';
+        return;
+      }
+      var c=CARDS[cur]; var col=DECKS[c[0]].color;
+      if(!flipped){
+        stage.innerHTML='<div class="fc-card" id="fc-card"><span class="fc-tag" style="color:'+col+'">'+c[1]+'</span><div class="fc-side">Question</div><div class="fc-q">'+c[2]+'</div></div><div class="fc-hint">Clique la carte ou appuie sur <b>Espace</b> pour révéler</div>';
+        document.getElementById("fc-card").addEventListener("click", flip);
+      } else {
+        stage.innerHTML='<div class="fc-card" id="fc-card"><span class="fc-tag" style="color:'+col+'">'+c[1]+'</span><div class="fc-side">Réponse</div><div class="fc-a">'+c[3]+'</div></div>'+
+          '<div class="fc-rate">'+
+          '<button class="again" data-r="again">😵 À revoir<small>bientôt</small></button>'+
+          '<button class="hard" data-r="hard">😓 Difficile<small>&lt; 2 j</small></button>'+
+          '<button class="good" data-r="good">🙂 Bien<small>+ qq jours</small></button>'+
+          '<button class="easy" data-r="easy">😎 Facile<small>+ longtemps</small></button>'+
+          '</div><div class="fc-hint">Raccourcis : <b>1</b> À revoir · <b>2</b> Difficile · <b>3</b> Bien · <b>4</b> Facile</div>';
+        document.querySelectorAll(".fc-rate button").forEach(function(b){ b.addEventListener("click",function(){ rate(b.getAttribute("data-r")); }); });
+      }
+    }
+    function flip(){ flipped=true; render(); }
+    function rate(r){
+      schedule(cur, r);
+      if(r==="again"){ queue.push(cur); } // revu en fin de session
+      next();
+    }
+    function next(){ flipped=false; cur = queue.length? queue.shift() : null; render(); }
+    function start(){ queue=dueList(deck); cur=queue.length?queue.shift():null; flipped=false; render(); }
+
+    document.addEventListener("keydown",function(e){
+      if(cur===null) return;
+      if(!flipped && (e.key===" "||e.key==="Enter")){ e.preventDefault(); flip(); return; }
+      if(flipped){ var map={"1":"again","2":"hard","3":"good","4":"easy"}; if(map[e.key]){ e.preventDefault(); rate(map[e.key]); } }
+    });
+    document.getElementById("fc-reset").addEventListener("click",function(){
+      if(confirm("Réinitialiser la planification de toutes les flashcards ?")){ state={}; save(state); start(); }
+    });
+
+    start();
+  })();
+  </script>
+</body>
+</html>

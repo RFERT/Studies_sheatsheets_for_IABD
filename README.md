@@ -12,6 +12,9 @@ Aucune dépendance ni serveur requis : tout fonctionne en `file://`.
 ```
 index.html               Portail : tableau de bord, recherche, cartes de matières
 ameliorations.html       Feuille de route & idées d'évolution
+flashcards.html          Flashcards à répétition espacée (toutes matières)
+manifest.webmanifest     Manifeste PWA (installable)
+sw.js                    Service worker (consultation hors-ligne)
 assets/
   portal.css             Design system du hub
   portal.js              Rendu des matières, progression, recherche, heatmap
@@ -34,6 +37,9 @@ matieres/
   aux accents, liens profonds, mots-clés enrichis depuis le code et les termes clés).
 - **Antisèches / aide-mémoire** par matière (référence rapide filtrable : Rust, Python, maths),
   chaque carte liant la **section de cours** correspondante.
+- **Flashcards** à répétition espacée (SM-2 simplifié), **quiz mélangeables**, **mode examen
+  chronométré** (timer + score), **objectif hebdomadaire** et **calendrier d'activité**.
+- **PWA** installable et consultable **hors-ligne** (manifest + service worker).
 - **Cursus Rust** : navigation groupée par niveau + **liens profonds par ancre**
   (`rust-cursus.html#m5` ouvre le Module 5 ; URLs partageables, back/forward navigateur).
 - **Export PDF** des cours de maths (bouton 🖨️ ou impression du navigateur).

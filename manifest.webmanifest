@@ -1,0 +1,15 @@
+{
+  "name": "Mes cours ESGI — IABD",
+  "short_name": "Cours ESGI",
+  "description": "Portail de cours IABD : maths, Python & Data Science, Rust. Révision interactive, hors-ligne.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0e1016",
+  "theme_color": "#0f1117",
+  "lang": "fr",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

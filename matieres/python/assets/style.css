@@ -241,6 +241,9 @@ pre code .st  { color: #8fd98f; }
 pre code .fn  { color: #c79bff; }
 pre code .nu  { color: #ffcf5c; }
 pre code .op  { color: #e39bd0; }
+/* Thème clair : code inline plus contrasté (le code dans <pre> reste clair sur fond sombre) */
+[data-theme="light"] code { color: #1e3a8a; }
+[data-theme="light"] pre code { color: #d7dcff; }
 .out { background: #0b0e1c; border: 1px dashed var(--border); border-left: 3px solid var(--accent-2);
   border-radius: 8px; padding: 8px 12px; margin: 8px 0; font-family: "Cascadia Code","Consolas",monospace;
   font-size: 0.85em; color: #9fb0d8; white-space: pre-wrap; }
@@ -417,6 +420,10 @@ mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
 .readtime { display: inline-block; font-size: 13px; color: var(--muted);
   background: var(--bg-elev); border: 1px solid var(--border); border-radius: 999px;
   padding: 3px 12px; margin: 2px 0 14px; }
+
+/* ---------- Outils de quiz (mélanger) ---------- */
+.quiz-tools { margin: 0 0 18px; }
+.quiz-tools .btn { font-size: 13px; }
 
 /* ---------- Bouton retour en haut ---------- */
 .to-top { position: fixed; right: 18px; bottom: 18px; z-index: 60;
