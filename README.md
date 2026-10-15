@@ -28,7 +28,10 @@ matieres/
   localement et privé.
 - **Recherche globale** dans tous les cours et sections (raccourci `/`, insensible
   aux accents, liens profonds vers les sections).
-- **Antisèches / aide-mémoire** par matière (référence rapide filtrable : Rust et maths).
+- **Antisèches / aide-mémoire** par matière (référence rapide filtrable : Rust, Python, maths),
+  chaque carte liant la **section de cours** correspondante.
+- **Cursus Rust** : navigation groupée par niveau + **liens profonds par ancre**
+  (`rust-cursus.html#m5` ouvre le Module 5 ; URLs partageables, back/forward navigateur).
 - **Export PDF** des cours de maths (bouton 🖨️ ou impression du navigateur).
 - **Thème clair/sombre** et design **responsive** mobile.
 

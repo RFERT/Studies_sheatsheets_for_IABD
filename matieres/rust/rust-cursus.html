@@ -76,6 +76,9 @@
   .culture .clinks a{font-size:13px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:var(--bg3);color:var(--acc2);text-decoration:none}
   .culture .clinks a:hover{border-color:var(--warn)}
   .btn.small{padding:6px 10px;font-size:13px}
+  .navgroup{font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:800;margin:16px 0 5px;padding:0 4px;display:flex;align-items:center;gap:8px}
+  .navgroup::after{content:"";flex:1;height:1px;background:var(--line)}
+  .navgroup:first-child{margin-top:4px}
   .btn.primary{background:linear-gradient(135deg,var(--acc),#c93c00);border-color:transparent;color:#fff;font-weight:600}
   .btn.primary:hover{filter:brightness(1.08)}
   .btn.ghost{background:transparent}
@@ -2284,9 +2287,46 @@ function levelInfo(){
   return {name, pct:p};
 }
 
+/* --- Blocs de niveau (regroupement sidebar) --- */
+let blockStart = {};
+function computeBlocks(){
+  blockStart = {};
+  let startIdx = 0;
+  for(let i=0;i<COURSE.length;i++){
+    const s=COURSE[i];
+    if(s.type==='checkpoint'){
+      const name=(s.navtitle||'').replace(/^⚑\s*Checkpoint\s*:\s*/,'').trim() || 'Niveau';
+      blockStart[startIdx]=name;
+      startIdx=i+1;
+    }
+  }
+  if(startIdx<COURSE.length){
+    const last=COURSE[COURSE.length-1];
+    blockStart[startIdx] = last.type==='final' ? 'Intermédiaire → Examen' : 'Perfectionnement';
+  }
+}
+
+/* --- Deep-linking par ancre (#m5, #checkpoint-1, #final) --- */
+let suppressHash=false;
+function anchorFor(i){
+  const s=COURSE[i];
+  if(s.type==='final') return 'final';
+  if(s.type==='checkpoint'){ let n=0; for(let k=0;k<=i;k++) if(COURSE[k].type==='checkpoint') n++; return 'checkpoint-'+n; }
+  return 'm'+sectionNumber(i);
+}
+function indexForAnchor(a){
+  if(!a) return null;
+  a=String(a).replace(/^#/,'');
+  for(let i=0;i<COURSE.length;i++){ if(anchorFor(i)===a) return i; }
+  const m=a.match(/^module-(\d+)$/); // tolère la forme longue
+  if(m){ for(let i=0;i<COURSE.length;i++){ if(COURSE[i].type==='module' && String(sectionNumber(i))===m[1]) return i; } }
+  return null;
+}
+
 /* --- Sidebar --- */
 function renderNav(){
   const nav=document.getElementById('nav'); nav.innerHTML='';
+  computeBlocks();
   COURSE.forEach((s,i)=>{
     const div=document.createElement('div');
     let cls='navitem';
@@ -2299,6 +2339,11 @@ function renderNav(){
     const icon = s.type==='checkpoint' ? '⚑' : s.type==='final' ? '★' : (done?'✓':(i+1));
     div.innerHTML=`<span class="ic">${icon}</span><span>${s.navtitle||s.title}</span>`;
     div.onclick=()=>{ state.current=i; save(); render(); if(window.innerWidth<=860) document.getElementById('sidebar').classList.remove('open'); };
+    // en-tête de niveau avant le 1er élément d'un bloc
+    if(blockStart.hasOwnProperty(i)){
+      const h=document.createElement('div'); h.className='navgroup'; h.textContent=blockStart[i];
+      nav.appendChild(h);
+    }
     nav.appendChild(div);
   });
   const li=levelInfo();
@@ -2317,6 +2362,8 @@ function sectionDone(i){
 function render(){
   renderNav();
   const s=COURSE[state.current];
+  const a=anchorFor(state.current);
+  if(location.hash.replace(/^#/,'')!==a){ suppressHash=true; location.hash=a; }
   const c=document.getElementById('content');
   window.scrollTo(0,0);
   if(s.type==='final'){ renderFinal(s); return; }
@@ -2672,7 +2719,18 @@ document.getElementById('resetBtn').onclick=()=>{
 document.getElementById('menuBtn').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
 
 /* --- Démarrage : on attend que le contenu soit chargé --- */
-function boot(){ if(COURSE.length===0){ setTimeout(boot,30); return; } if(state.current>=COURSE.length) state.current=0; render(); }
+window.addEventListener('hashchange', function(){
+  if(suppressHash){ suppressHash=false; return; }
+  const idx=indexForAnchor(location.hash);
+  if(idx!=null && idx!==state.current){ state.current=idx; save(); render(); }
+});
+function boot(){
+  if(COURSE.length===0){ setTimeout(boot,30); return; }
+  const idx=indexForAnchor(location.hash);
+  if(idx!=null) state.current=idx;
+  if(state.current>=COURSE.length) state.current=0;
+  render();
+}
 boot();
 </script>
 </body>

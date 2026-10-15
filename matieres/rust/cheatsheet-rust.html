@@ -40,6 +40,8 @@ a{color:var(--acc2)}
 .cols{column-width:360px;column-gap:18px}
 .cs-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 18px 16px;margin:0 0 18px;display:inline-block;width:100%}
 .cs-card h2{font-size:17px;margin:4px 0 10px;padding-bottom:7px;border-bottom:2px solid color-mix(in srgb,var(--acc) 40%,transparent);display:flex;align-items:center;gap:8px}
+.cs-card h2 .courselink{margin-left:auto;font-size:11px;font-weight:600;color:var(--acc2);border:1px solid var(--line);background:var(--bg3);border-radius:999px;padding:3px 9px;text-decoration:none;white-space:nowrap;transition:.15s}
+.cs-card h2 .courselink:hover{border-color:var(--acc);color:#fff}
 .cs-card h3{font-size:14px;color:var(--acc2);margin:14px 0 5px;text-transform:uppercase;letter-spacing:.4px}
 .cs-card p{margin:7px 0}
 code{background:var(--bg3);padding:2px 6px;border-radius:5px;font-family:var(--mono);font-size:.88em;color:var(--acc2)}
@@ -104,7 +106,7 @@ td code{font-size:.86em;white-space:nowrap}
 
     <!-- IO / INPUT -->
     <div class="cs-card">
-      <h2>⌨️ Entrées / sorties (I/O)</h2>
+      <h2>⌨️ Entrées / sorties (I/O)<a class="courselink" href="rust-cursus.html#m4">📘 Module 4</a></h2>
       <h3>Lire une ligne au clavier (stdin)</h3>
       <pre><code><span class="kw">use</span> std::io::{<span class="ty">self</span>, <span class="ty">Write</span>};
 
@@ -127,7 +129,7 @@ io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span cla
 
     <!-- BASES -->
     <div class="cs-card">
-      <h2>⚙️ Bases &amp; variables</h2>
+      <h2>⚙️ Bases &amp; variables<a class="courselink" href="rust-cursus.html#m2">📘 Module 2</a></h2>
       <pre><code><span class="kw">let</span> x = <span class="nu">5</span>;              <span class="cmt">// immuable</span>
 <span class="kw">let mut</span> y = <span class="nu">10</span>;         <span class="cmt">// mutable</span>
 <span class="kw">const</span> MAX: <span class="ty">u32</span> = <span class="nu">100</span>;  <span class="cmt">// constante (MAJ)</span>
@@ -138,7 +140,7 @@ io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span cla
 
     <!-- TYPES -->
     <div class="cs-card">
-      <h2>🔢 Types primitifs</h2>
+      <h2>🔢 Types primitifs<a class="courselink" href="rust-cursus.html#m2">📘 Module 2</a></h2>
       <table>
         <tr><th>Catégorie</th><th>Types</th></tr>
         <tr><td>Entiers signés</td><td><code>i8 i16 i32 i64 i128 isize</code></td></tr>
@@ -155,7 +157,7 @@ io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span cla
 
     <!-- CONTROLE -->
     <div class="cs-card">
-      <h2>🔀 Flux de contrôle</h2>
+      <h2>🔀 Flux de contrôle<a class="courselink" href="rust-cursus.html#m4">📘 Module 4</a></h2>
       <pre><code><span class="kw">if</span> n &gt; <span class="nu">0</span> { … } <span class="kw">else if</span> n &lt; <span class="nu">0</span> { … } <span class="kw">else</span> { … }
 <span class="kw">let</span> s = <span class="kw">if</span> ok { <span class="nu">1</span> } <span class="kw">else</span> { <span class="nu">0</span> }; <span class="cmt">// if = expression</span>
 
@@ -168,7 +170,7 @@ io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span cla
 
     <!-- FONCTIONS -->
     <div class="cs-card">
-      <h2>🛠️ Fonctions</h2>
+      <h2>🛠️ Fonctions<a class="courselink" href="rust-cursus.html#m4">📘 Module 4</a></h2>
       <pre><code><span class="kw">fn</span> <span class="fn">add</span>(a: <span class="ty">i32</span>, b: <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> {
     a + b          <span class="cmt">// PAS de ; = valeur de retour</span>
 }
@@ -178,7 +180,7 @@ io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span cla
 
     <!-- OWNERSHIP -->
     <div class="cs-card">
-      <h2>🔑 Ownership &amp; Borrowing</h2>
+      <h2>🔑 Ownership &amp; Borrowing<a class="courselink" href="rust-cursus.html#m5">📘 Modules 5-6</a></h2>
       <table>
         <tr><th>Règle</th><th>Détail</th></tr>
         <tr><td>1 propriétaire</td><td>Chaque valeur a un seul owner ; drop en fin de portée.</td></tr>
@@ -194,7 +196,7 @@ io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span cla
 
     <!-- STRING -->
     <div class="cs-card">
-      <h2>🔤 String &amp; &amp;str — méthodes</h2>
+      <h2>🔤 String &amp; &amp;str — méthodes<a class="courselink" href="rust-cursus.html#m9">📘 Module 9</a></h2>
       <table>
         <tr><th>Méthode</th><th>Effet</th></tr>
         <tr><td><code>.len()</code></td><td>Taille en octets</td></tr>
@@ -214,7 +216,7 @@ io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span cla
 
     <!-- VEC -->
     <div class="cs-card">
-      <h2>📚 Vec&lt;T&gt; — méthodes</h2>
+      <h2>📚 Vec&lt;T&gt; — méthodes<a class="courselink" href="rust-cursus.html#m9">📘 Module 9</a></h2>
       <table>
         <tr><th>Méthode</th><th>Effet</th></tr>
         <tr><td><code>vec![1,2,3]</code></td><td>Crée un vecteur</td></tr>
@@ -232,7 +234,7 @@ io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span cla
 
     <!-- HASHMAP -->
     <div class="cs-card">
-      <h2>🗃️ HashMap&lt;K,V&gt;</h2>
+      <h2>🗃️ HashMap&lt;K,V&gt;<a class="courselink" href="rust-cursus.html#m9">📘 Module 9</a></h2>
       <pre><code><span class="kw">use</span> std::collections::<span class="ty">HashMap</span>;
 <span class="kw">let mut</span> m = <span class="ty">HashMap</span>::<span class="fn">new</span>();
 m.<span class="fn">insert</span>(<span class="st">"a"</span>, <span class="nu">1</span>);
@@ -251,7 +253,7 @@ m.<span class="fn">get</span>(<span class="st">"a"</span>);                 <spa
 
     <!-- OPTION -->
     <div class="cs-card">
-      <h2>❓ Option&lt;T&gt;</h2>
+      <h2>❓ Option&lt;T&gt;<a class="courselink" href="rust-cursus.html#m8">📘 Module 8</a></h2>
       <p>Remplace <code>null</code> : <code>Some(v)</code> ou <code>None</code>.</p>
       <table>
         <tr><th>Méthode</th><th>Effet</th></tr>
@@ -269,7 +271,7 @@ m.<span class="fn">get</span>(<span class="st">"a"</span>);                 <spa
 
     <!-- RESULT -->
     <div class="cs-card">
-      <h2>✅ Result&lt;T,E&gt; &amp; erreurs</h2>
+      <h2>✅ Result&lt;T,E&gt; &amp; erreurs<a class="courselink" href="rust-cursus.html#m10">📘 Module 10</a></h2>
       <p><code>Ok(v)</code> ou <code>Err(e)</code>. L'opérateur <code>?</code> propage l'erreur.</p>
       <pre><code><span class="kw">fn</span> <span class="fn">lire</span>() -&gt; <span class="ty">Result</span>&lt;<span class="ty">String</span>, <span class="ty">io</span>::<span class="ty">Error</span>&gt; {
     <span class="kw">let</span> s = std::fs::<span class="fn">read_to_string</span>(<span class="st">"f.txt"</span>)?; <span class="cmt">// propage si Err</span>
@@ -287,7 +289,7 @@ m.<span class="fn">get</span>(<span class="st">"a"</span>);                 <spa
 
     <!-- MATCH -->
     <div class="cs-card">
-      <h2>🎯 Pattern matching</h2>
+      <h2>🎯 Pattern matching<a class="courselink" href="rust-cursus.html#m8">📘 Module 8</a></h2>
       <pre><code><span class="kw">match</span> n {
     <span class="nu">0</span> =&gt; <span class="st">"zéro"</span>,
     <span class="nu">1</span> | <span class="nu">2</span> =&gt; <span class="st">"petit"</span>,
@@ -302,7 +304,7 @@ m.<span class="fn">get</span>(<span class="st">"a"</span>);                 <spa
 
     <!-- STRUCT -->
     <div class="cs-card">
-      <h2>🏗️ Structs &amp; méthodes</h2>
+      <h2>🏗️ Structs &amp; méthodes<a class="courselink" href="rust-cursus.html#m7">📘 Module 7</a></h2>
       <pre><code><span class="kw">struct</span> <span class="ty">Point</span> { x: <span class="ty">f64</span>, y: <span class="ty">f64</span> }
 
 <span class="kw">impl</span> <span class="ty">Point</span> {
@@ -316,7 +318,7 @@ p.<span class="fn">norme</span>(); <span class="cmt">// 5.0</span></code></pre>
 
     <!-- ENUM -->
     <div class="cs-card">
-      <h2>🔖 Enums</h2>
+      <h2>🔖 Enums<a class="courselink" href="rust-cursus.html#m8">📘 Module 8</a></h2>
       <pre><code><span class="kw">enum</span> <span class="ty">Forme</span> {
     <span class="ty">Cercle</span>(<span class="ty">f64</span>),            <span class="cmt">// porte des données</span>
     <span class="ty">Rect</span>(<span class="ty">f64</span>, <span class="ty">f64</span>),
@@ -333,7 +335,7 @@ p.<span class="fn">norme</span>(); <span class="cmt">// 5.0</span></code></pre>
 
     <!-- TRAITS -->
     <div class="cs-card">
-      <h2>🧩 Traits (interfaces)</h2>
+      <h2>🧩 Traits (interfaces)<a class="courselink" href="rust-cursus.html#m11">📘 Module 11</a></h2>
       <pre><code><span class="kw">trait</span> <span class="ty">Decrire</span> { <span class="kw">fn</span> <span class="fn">desc</span>(&<span class="kw">self</span>) -&gt; <span class="ty">String</span>; }
 
 <span class="kw">impl</span> <span class="ty">Decrire</span> <span class="kw">for</span> <span class="ty">Point</span> {
@@ -345,7 +347,7 @@ p.<span class="fn">norme</span>(); <span class="cmt">// 5.0</span></code></pre>
 
     <!-- GENERICS -->
     <div class="cs-card">
-      <h2>🧬 Génériques &amp; lifetimes</h2>
+      <h2>🧬 Génériques &amp; lifetimes<a class="courselink" href="rust-cursus.html#m12">📘 Module 12</a></h2>
       <pre><code><span class="kw">fn</span> <span class="fn">max</span>&lt;<span class="ty">T</span>: <span class="ty">PartialOrd</span>&gt;(a: <span class="ty">T</span>, b: <span class="ty">T</span>) -&gt; <span class="ty">T</span> {
     <span class="kw">if</span> a &gt; b { a } <span class="kw">else</span> { b }
 }
@@ -358,7 +360,7 @@ p.<span class="fn">norme</span>(); <span class="cmt">// 5.0</span></code></pre>
 
     <!-- ITERATORS -->
     <div class="cs-card">
-      <h2>🔁 Iterators (lazy)</h2>
+      <h2>🔁 Iterators (lazy)<a class="courselink" href="rust-cursus.html#m13">📘 Module 13</a></h2>
       <table>
         <tr><th>Adaptateur</th><th>Effet</th></tr>
         <tr><td><code>.map(|x| …)</code></td><td>Transforme chaque élément</td></tr>
@@ -386,7 +388,7 @@ p.<span class="fn">norme</span>(); <span class="cmt">// 5.0</span></code></pre>
 
     <!-- CLOSURES -->
     <div class="cs-card">
-      <h2>λ Closures</h2>
+      <h2>λ Closures<a class="courselink" href="rust-cursus.html#m13">📘 Module 13</a></h2>
       <pre><code><span class="kw">let</span> ajoute = |a, b| a + b;      <span class="cmt">// infère les types</span>
 <span class="kw">let</span> x = <span class="nu">10</span>;
 <span class="kw">let</span> incr = |n| n + x;           <span class="cmt">// capture x (environnement)</span>
@@ -401,7 +403,7 @@ p.<span class="fn">norme</span>(); <span class="cmt">// 5.0</span></code></pre>
 
     <!-- SMART POINTERS -->
     <div class="cs-card">
-      <h2>📦 Smart pointers</h2>
+      <h2>📦 Smart pointers<a class="courselink" href="rust-cursus.html#m14">📘 Module 14</a></h2>
       <table>
         <tr><th>Type</th><th>Usage</th></tr>
         <tr><td><code>Box&lt;T&gt;</code></td><td>Sur le tas ; types récursifs (arbres)</td></tr>
@@ -415,7 +417,7 @@ p.<span class="fn">norme</span>(); <span class="cmt">// 5.0</span></code></pre>
 
     <!-- CONCURRENCE -->
     <div class="cs-card">
-      <h2>🧵 Concurrence</h2>
+      <h2>🧵 Concurrence<a class="courselink" href="rust-cursus.html#m15">📘 Module 15</a></h2>
       <pre><code><span class="kw">use</span> std::thread;
 <span class="kw">let</span> h = thread::<span class="fn">spawn</span>(|| { <span class="cmt">/* travail */</span> });
 h.<span class="fn">join</span>().<span class="fn">unwrap</span>();          <span class="cmt">// attend la fin</span>
@@ -429,7 +431,7 @@ rx.<span class="fn">recv</span>().<span class="fn">unwrap</span>();            <
 
     <!-- FORMATAGE -->
     <div class="cs-card">
-      <h2>🖨️ Affichage &amp; format!</h2>
+      <h2>🖨️ Affichage &amp; format!<a class="courselink" href="rust-cursus.html#m2">📘 Module 2</a></h2>
       <table>
         <tr><th>Motif</th><th>Effet</th></tr>
         <tr><td><code>{}</code></td><td>Affichage « Display »</td></tr>
@@ -446,7 +448,7 @@ rx.<span class="fn">recv</span>().<span class="fn">unwrap</span>();            <
 
     <!-- CARGO -->
     <div class="cs-card">
-      <h2>📦 Cargo (CLI)</h2>
+      <h2>📦 Cargo (CLI)<a class="courselink" href="rust-cursus.html#m1">📘 Module 1</a></h2>
       <table>
         <tr><th>Commande</th><th>Rôle</th></tr>
         <tr><td><code>cargo new projet</code></td><td>Crée un projet</td></tr>
@@ -463,7 +465,7 @@ rx.<span class="fn">recv</span>().<span class="fn">unwrap</span>();            <
 
     <!-- TESTS -->
     <div class="cs-card">
-      <h2>🧪 Tests</h2>
+      <h2>🧪 Tests<a class="courselink" href="rust-cursus.html#m16">📘 Module 16</a></h2>
       <pre><code><span class="cmt">#[cfg(test)]</span>
 <span class="kw">mod</span> tests {
     <span class="kw">use</span> <span class="kw">super</span>::*;
@@ -478,7 +480,7 @@ rx.<span class="fn">recv</span>().<span class="fn">unwrap</span>();            <
 
     <!-- MODULES -->
     <div class="cs-card">
-      <h2>🗂️ Modules &amp; visibilité</h2>
+      <h2>🗂️ Modules &amp; visibilité<a class="courselink" href="rust-cursus.html#m16">📘 Module 16</a></h2>
       <pre><code><span class="kw">mod</span> math {
     <span class="kw">pub fn</span> <span class="fn">carre</span>(x: <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> { x * x } <span class="cmt">// pub = public</span>
 }

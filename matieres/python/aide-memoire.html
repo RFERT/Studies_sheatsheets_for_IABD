@@ -41,6 +41,8 @@ a{color:var(--acc2)}
 .cols{column-width:370px;column-gap:18px;margin-top:12px}
 .cs-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 18px 16px;margin:0 0 18px;display:inline-block;width:100%}
 .cs-card h2{font-size:17px;margin:4px 0 8px;padding-bottom:7px;border-bottom:2px solid color-mix(in srgb,var(--acc) 40%,transparent);display:flex;align-items:center;gap:8px}
+.cs-card h2 .courselink{margin-left:auto;font-size:11px;font-weight:600;color:var(--acc2);border:1px solid var(--line);background:var(--bg3);border-radius:999px;padding:3px 9px;text-decoration:none;white-space:nowrap;transition:.15s}
+.cs-card h2 .courselink:hover{border-color:var(--acc)}
 .cs-card h3{font-size:13.5px;color:var(--acc2);margin:13px 0 4px;text-transform:uppercase;letter-spacing:.4px}
 .cs-card p{margin:6px 0}
 code{background:var(--bg3);padding:2px 6px;border-radius:5px;font-family:var(--mono);font-size:.88em;color:var(--acc2)}
@@ -109,7 +111,7 @@ td code{font-size:.86em}
 
     <!-- IO -->
     <div class="cs-card" data-cat="py">
-      <h2>⌨️ Entrées / sorties</h2>
+      <h2>⌨️ Entrées / sorties<a class="courselink" href="modules/module-0-python-avance.html#entrees">📘 Module 0</a></h2>
       <pre><code>nom = <span class="fn">input</span>(<span class="st">"Nom : "</span>)          <span class="cmt"># renvoie TOUJOURS un str</span>
 n   = <span class="ty">int</span>(<span class="fn">input</span>())             <span class="cmt"># conversion</span>
 nums = [<span class="ty">int</span>(x) <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">input</span>().<span class="fn">split</span>()]  <span class="cmt"># "3 5 8"</span>
@@ -124,7 +126,7 @@ nums = [<span class="ty">int</span>(x) <span class="kw">for</span> x <span class
 
     <!-- TYPES -->
     <div class="cs-card" data-cat="py">
-      <h2>🔢 Types &amp; structures</h2>
+      <h2>🔢 Types &amp; structures<a class="courselink" href="modules/module-0-python-avance.html">📘 Module 0</a></h2>
       <table>
         <tr><th>Type</th><th>Exemple</th></tr>
         <tr><td><code>int, float, bool, str</code></td><td><code>42, 3.14, True, "a"</code></td></tr>
@@ -139,7 +141,7 @@ d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st"
 
     <!-- COMPREHENSIONS -->
     <div class="cs-card" data-cat="py">
-      <h2>🔁 Compréhensions</h2>
+      <h2>🔁 Compréhensions<a class="courselink" href="modules/module-0-python-avance.html#comprehensions">📘 Module 0</a></h2>
       <pre><code>[x**<span class="nu">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">10</span>)]              <span class="cmt"># liste</span>
 [x <span class="kw">for</span> x <span class="kw">in</span> xs <span class="kw">if</span> x &gt; <span class="nu">0</span>]            <span class="cmt"># filtre</span>
 [<span class="st">"+"</span> <span class="kw">if</span> x&gt;<span class="nu">0</span> <span class="kw">else</span> <span class="st">"-"</span> <span class="kw">for</span> x <span class="kw">in</span> xs]  <span class="cmt"># ternaire</span>
@@ -151,7 +153,7 @@ d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st"
 
     <!-- STR -->
     <div class="cs-card" data-cat="py">
-      <h2>🔤 Chaînes (str)</h2>
+      <h2>🔤 Chaînes (str)<a class="courselink" href="modules/module-0-python-avance.html">📘 Module 0</a></h2>
       <table>
         <tr><th>Méthode</th><th>Effet</th></tr>
         <tr><td><code>.split(",")</code> / <code>.join(xs)</code></td><td>Découpe / assemble</td></tr>
@@ -170,7 +172,7 @@ d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st"
 
     <!-- LIST/DICT METHODS -->
     <div class="cs-card" data-cat="py">
-      <h2>📚 list &amp; dict — méthodes</h2>
+      <h2>📚 list &amp; dict — méthodes<a class="courselink" href="modules/module-0-python-avance.html">📘 Module 0</a></h2>
       <table>
         <tr><th>list</th><th>Effet</th></tr>
         <tr><td><code>.append(x)</code> / <code>.extend(xs)</code></td><td>Ajoute 1 / plusieurs</td></tr>
@@ -189,7 +191,7 @@ d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st"
 
     <!-- FUNCTIONS -->
     <div class="cs-card" data-cat="py">
-      <h2>🛠️ Fonctions &amp; lambda</h2>
+      <h2>🛠️ Fonctions &amp; lambda<a class="courselink" href="modules/module-0-python-avance.html#fonctions">📘 Module 0</a></h2>
       <pre><code><span class="kw">def</span> <span class="fn">f</span>(a, b=<span class="nu">10</span>, *args, **kwargs):
     <span class="kw">return</span> a + b
 
@@ -201,7 +203,7 @@ d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st"
 
     <!-- GENERATORS/DECORATORS -->
     <div class="cs-card" data-cat="py">
-      <h2>⚙️ Générateurs &amp; décorateurs</h2>
+      <h2>⚙️ Générateurs &amp; décorateurs<a class="courselink" href="modules/module-0-python-avance.html#generateurs">📘 Module 0</a></h2>
       <pre><code><span class="kw">def</span> <span class="fn">compte</span>(n):
     i = <span class="nu">0</span>
     <span class="kw">while</span> i &lt; n:
@@ -221,7 +223,7 @@ d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st"
 
     <!-- ERREURS -->
     <div class="cs-card" data-cat="py">
-      <h2>⚠️ Erreurs</h2>
+      <h2>⚠️ Erreurs<a class="courselink" href="modules/module-0-python-avance.html#erreurs">📘 Module 0</a></h2>
       <pre><code><span class="kw">try</span>:
     n = <span class="ty">int</span>(x)
 <span class="kw">except</span> <span class="ty">ValueError</span> <span class="kw">as</span> e:
@@ -237,7 +239,7 @@ d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st"
 
     <!-- STDLIB -->
     <div class="cs-card" data-cat="py">
-      <h2>🧰 Builtins &amp; stdlib utiles</h2>
+      <h2>🧰 Builtins &amp; stdlib utiles<a class="courselink" href="modules/module-0-python-avance.html#stdlib">📘 Module 0</a></h2>
       <table>
         <tr><th>Outil</th><th>Rôle</th></tr>
         <tr><td><code>enumerate(xs)</code></td><td>(index, valeur)</td></tr>
@@ -253,7 +255,7 @@ d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st"
 
     <!-- NUMPY CREATE -->
     <div class="cs-card" data-cat="numpy">
-      <h2>🔵 NumPy — créer &amp; infos</h2>
+      <h2>🔵 NumPy — créer &amp; infos<a class="courselink" href="modules/module-1-numpy.html#creer">📘 Module 1</a></h2>
       <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
 np.<span class="fn">array</span>([<span class="nu">1</span>,<span class="nu">2</span>,<span class="nu">3</span>])
 np.<span class="fn">zeros</span>((<span class="nu">2</span>,<span class="nu">3</span>)); np.<span class="fn">ones</span>(<span class="nu">5</span>); np.<span class="fn">full</span>((<span class="nu">2</span>,<span class="nu">2</span>),<span class="nu">7</span>)
@@ -265,7 +267,7 @@ a.<span class="fn">reshape</span>(<span class="nu">3</span>,-<span class="nu">1<
 
     <!-- NUMPY OPS -->
     <div class="cs-card" data-cat="numpy">
-      <h2>🔵 NumPy — opérations</h2>
+      <h2>🔵 NumPy — opérations<a class="courselink" href="modules/module-1-numpy.html#vecto">📘 Module 1</a></h2>
       <pre><code>a * <span class="nu">2</span>; a + b; a ** <span class="nu">2</span>        <span class="cmt"># vectorisé</span>
 np.<span class="fn">sqrt</span>(a); np.<span class="fn">exp</span>(a); np.<span class="fn">log</span>(a)
 a[a &gt; <span class="nu">0</span>]                  <span class="cmt"># masque booléen</span>
@@ -279,7 +281,7 @@ a @ b                    <span class="cmt"># produit matriciel (≠ a*b)</span><
 
     <!-- BROADCASTING -->
     <div class="cs-card" data-cat="numpy">
-      <h2>🔵 Broadcasting</h2>
+      <h2>🔵 Broadcasting<a class="courselink" href="modules/module-1-numpy.html#broadcast">📘 Module 1</a></h2>
       <p>Opérer sur des formes différentes : dimensions compatibles si égales ou si l'une vaut 1 (comparées de droite à gauche).</p>
       <pre><code>M + <span class="nu">10</span>                       <span class="cmt"># scalaire partout</span>
 M + np.<span class="fn">array</span>([<span class="nu">1</span>,<span class="nu">2</span>,<span class="nu">3</span>])        <span class="cmt"># (3,) sur chaque ligne</span>
@@ -290,7 +292,7 @@ Z = (X - X.<span class="fn">mean</span>(axis=<span class="nu">0</span>)) / X.<sp
 
     <!-- PANDAS LOAD -->
     <div class="cs-card" data-cat="pandas">
-      <h2>🟢 Pandas — charger &amp; explorer</h2>
+      <h2>🟢 Pandas — charger &amp; explorer<a class="courselink" href="modules/module-2-pandas.html#charger">📘 Module 2</a></h2>
       <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
 df = pd.<span class="fn">read_csv</span>(<span class="st">"data.csv"</span>)
 df.<span class="fn">head</span>(); df.<span class="fn">info</span>(); df.<span class="fn">describe</span>()
@@ -303,7 +305,7 @@ df.<span class="fn">to_csv</span>(<span class="st">"out.csv"</span>, index=<span
 
     <!-- PANDAS SELECT -->
     <div class="cs-card" data-cat="pandas">
-      <h2>🟢 Pandas — sélection &amp; filtre</h2>
+      <h2>🟢 Pandas — sélection &amp; filtre<a class="courselink" href="modules/module-2-pandas.html#selection">📘 Module 2</a></h2>
       <pre><code>df[<span class="st">"col"</span>]; df[[<span class="st">"a"</span>,<span class="st">"b"</span>]]
 df.<span class="fn">loc</span>[<span class="nu">0</span>, <span class="st">"col"</span>]        <span class="cmt"># par étiquette (bornes incluses)</span>
 df.<span class="fn">iloc</span>[<span class="nu">0</span>, <span class="nu">1</span>]           <span class="cmt"># par position (bornes exclues)</span>
@@ -316,7 +318,7 @@ df.<span class="fn">query</span>(<span class="st">"age &gt; 24"</span>)</code></
 
     <!-- PANDAS TRANSFORM -->
     <div class="cs-card" data-cat="pandas">
-      <h2>🟢 Pandas — transformer</h2>
+      <h2>🟢 Pandas — transformer<a class="courselink" href="modules/module-2-pandas.html#colonnes">📘 Module 2</a></h2>
       <pre><code>df[<span class="st">"x2"</span>] = df[<span class="st">"x"</span>] * <span class="nu">2</span>
 df[<span class="st">"c"</span>] = df[<span class="st">"c"</span>].<span class="fn">str</span>.<span class="fn">upper</span>()      <span class="cmt"># .str vectorisé</span>
 df[<span class="st">"d"</span>] = pd.<span class="fn">to_datetime</span>(df[<span class="st">"d"</span>])
@@ -330,7 +332,7 @@ df.<span class="fn">sort_values</span>(<span class="st">"x"</span>, ascending=<s
 
     <!-- PANDAS GROUPBY/MERGE -->
     <div class="cs-card" data-cat="pandas">
-      <h2>🟢 Pandas — groupby &amp; merge</h2>
+      <h2>🟢 Pandas — groupby &amp; merge<a class="courselink" href="modules/module-2-pandas.html#groupby">📘 Module 2</a></h2>
       <pre><code>df.<span class="fn">groupby</span>(<span class="st">"ville"</span>)[<span class="st">"age"</span>].<span class="fn">mean</span>()
 df.<span class="fn">groupby</span>(<span class="st">"ville"</span>).<span class="fn">agg</span>(
     moy=(<span class="st">"age"</span>,<span class="st">"mean"</span>), n=(<span class="st">"age"</span>,<span class="st">"count"</span>))

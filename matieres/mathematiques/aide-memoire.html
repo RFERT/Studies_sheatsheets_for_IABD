@@ -46,6 +46,8 @@ a{color:var(--acc2)}
 .cols{column-width:370px;column-gap:18px;margin-top:12px}
 .cs-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 18px 16px;margin:0 0 18px;display:inline-block;width:100%}
 .cs-card h2{font-size:17px;margin:4px 0 6px;padding-bottom:7px;border-bottom:2px solid color-mix(in srgb,var(--acc) 40%,transparent);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cs-card h2 .courselink{margin-left:auto;font-size:11px;font-weight:600;color:var(--acc2);border:1px solid var(--line);background:var(--bg3);border-radius:999px;padding:3px 9px;text-decoration:none;white-space:nowrap;transition:.15s}
+.cs-card h2 .courselink:hover{border-color:var(--acc)}
 .cs-card h3{font-size:13.5px;color:var(--acc2);margin:13px 0 4px;text-transform:uppercase;letter-spacing:.4px}
 .cs-card p{margin:6px 0}
 .dom{font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:999px;text-transform:uppercase}
@@ -123,7 +125,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- LOGIQUE -->
     <div class="cs-card" data-cat="logique">
-      <h2>🧠 Logique &amp; connecteurs</h2>
+      <h2>🧠 Logique &amp; connecteurs<a class="courselink" href="modules/module-0-fondations.html">📘 Module 0</a></h2>
       <table>
         <tr><th>Nom</th><th>Symbole</th><th>Équiv.</th></tr>
         <tr><td>Négation</td><td>\(\neg P\)</td><td>non P</td></tr>
@@ -140,7 +142,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- ENSEMBLES -->
     <div class="cs-card" data-cat="logique">
-      <h2>🫙 Ensembles <span class="dom data">Data</span></h2>
+      <h2>🫙 Ensembles <span class="dom data">Data</span><a class="courselink" href="modules/module-0-fondations.html">📘 Module 0</a></h2>
       <table>
         <tr><th>Opération</th><th>Notation</th><th>SQL</th></tr>
         <tr><td>Union</td><td>\(A\cup B\)</td><td><code>UNION</code></td></tr>
@@ -155,7 +157,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- ALGEBRE : vecteurs -->
     <div class="cs-card" data-cat="algebre">
-      <h2>➗ Vecteurs <span class="dom ia">IA</span></h2>
+      <h2>➗ Vecteurs <span class="dom ia">IA</span><a class="courselink" href="modules/module-2-algebre-lineaire.html">📘 Module 2</a></h2>
       <h3>Norme &amp; produit scalaire</h3>
       \[\|x\|_2=\sqrt{\textstyle\sum_i x_i^2}\qquad x\cdot y=\sum_i x_i y_i\]
       <h3>Similarité cosinus</h3>
@@ -166,7 +168,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- ALGEBRE : matrices -->
     <div class="cs-card" data-cat="algebre">
-      <h2>🔲 Matrices <span class="dom ia">IA</span></h2>
+      <h2>🔲 Matrices <span class="dom ia">IA</span><a class="courselink" href="modules/module-2-algebre-lineaire.html">📘 Module 2</a></h2>
       <table>
         <tr><th>Objet</th><th>Formule / sens</th></tr>
         <tr><td>Produit</td><td>\((AB)_{ij}=\sum_k A_{ik}B_{kj}\)</td></tr>
@@ -183,7 +185,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- ALGEBRE : PCA/SVD -->
     <div class="cs-card" data-cat="algebre">
-      <h2>📉 PCA &amp; SVD <span class="dom ia">IA</span> <span class="dom data">Data</span></h2>
+      <h2>📉 PCA &amp; SVD <span class="dom ia">IA</span> <span class="dom data">Data</span><a class="courselink" href="modules/module-2-algebre-lineaire.html">📘 Module 2</a></h2>
       <h3>SVD</h3>
       \[A = U\Sigma V^\top\]
       <p>\(U,V\) orthogonales, \(\Sigma\) diagonale (valeurs singulières).</p>
@@ -200,7 +202,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- PROBAS : bases -->
     <div class="cs-card" data-cat="probas">
-      <h2>🎲 Probabilités — bases</h2>
+      <h2>🎲 Probabilités — bases<a class="courselink" href="modules/module-3-probabilites.html">📘 Module 3</a></h2>
       <table>
         <tr><th>Règle</th><th>Formule</th></tr>
         <tr><td>Bornes</td><td>\(0\le P(A)\le 1\)</td></tr>
@@ -215,7 +217,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- PROBAS : Bayes -->
     <div class="cs-card" data-cat="probas">
-      <h2>🔁 Théorème de Bayes <span class="dom ia">IA</span></h2>
+      <h2>🔁 Théorème de Bayes <span class="dom ia">IA</span><a class="courselink" href="modules/module-3-probabilites.html">📘 Module 3</a></h2>
       \[P(A\mid B)=\frac{P(B\mid A)\,P(A)}{P(B)}\]
       <div class="box"><span class="lb">Vocabulaire</span>\(P(A)\) = a priori · \(P(B\mid A)\) = vraisemblance · \(P(A\mid B)\) = a posteriori.</div>
       <div class="box tip"><span class="lb">Usage</span>Classification naïve bayésienne, filtres anti-spam, diagnostic.</div>
@@ -223,7 +225,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- PROBAS : lois -->
     <div class="cs-card" data-cat="probas">
-      <h2>📊 Lois &amp; espérance</h2>
+      <h2>📊 Lois &amp; espérance<a class="courselink" href="modules/module-3-probabilites.html">📘 Module 3</a></h2>
       <table>
         <tr><th>Grandeur</th><th>Formule</th></tr>
         <tr><td>Espérance</td><td>\(E[X]=\sum_i x_i\,p_i\)</td></tr>
@@ -243,7 +245,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- STATS -->
     <div class="cs-card" data-cat="stats">
-      <h2>📐 Statistiques <span class="dom data">Data</span></h2>
+      <h2>📐 Statistiques <span class="dom data">Data</span><a class="courselink" href="modules/module-4-statistiques.html">📘 Module 4</a></h2>
       <table>
         <tr><th>Indicateur</th><th>Formule</th></tr>
         <tr><td>Moyenne</td><td>\(\bar x=\tfrac1n\sum x_i\)</td></tr>
@@ -258,7 +260,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- OPTIM -->
     <div class="cs-card" data-cat="optim">
-      <h2>⛰️ Optimisation <span class="dom ia">IA</span></h2>
+      <h2>⛰️ Optimisation <span class="dom ia">IA</span><a class="courselink" href="modules/module-5-optimisation.html">📘 Module 5</a></h2>
       <h3>Dérivée &amp; gradient</h3>
       <p>Minimum/maximum : chercher \(f'(x)=0\). En dimension \(n\) : \(\nabla f=0\).</p>
       <h3>Descente de gradient</h3>
@@ -275,7 +277,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- GRAPHES -->
     <div class="cs-card" data-cat="graphes">
-      <h2>🕸️ Graphes <span class="dom bigdata">Big Data</span></h2>
+      <h2>🕸️ Graphes <span class="dom bigdata">Big Data</span><a class="courselink" href="modules/module-6-graphes.html">📘 Module 6</a></h2>
       <table>
         <tr><th>Notion</th><th>Détail</th></tr>
         <tr><td>Degré</td><td>Nb d'arêtes d'un sommet ; \(\sum \deg = 2|E|\)</td></tr>
@@ -292,7 +294,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- INFORMATION -->
     <div class="cs-card" data-cat="info">
-      <h2>📡 Information <span class="dom ia">IA</span></h2>
+      <h2>📡 Information <span class="dom ia">IA</span><a class="courselink" href="modules/module-8-information.html">📘 Module 8</a></h2>
       <h3>Entropie de Shannon</h3>
       \[H(X)=-\sum_i p_i\log_2 p_i\quad(\text{bits})\]
       <h3>Entropie croisée (perte ML)</h3>
@@ -304,7 +306,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- COMBINATOIRE -->
     <div class="cs-card" data-cat="complexite">
-      <h2>🔢 Combinatoire</h2>
+      <h2>🔢 Combinatoire<a class="courselink" href="modules/module-7-discret-complexite.html">📘 Module 7</a></h2>
       <table>
         <tr><th>Objet</th><th>Formule</th></tr>
         <tr><td>Factorielle</td><td>\(n! = n(n-1)\cdots 1\)</td></tr>
@@ -316,7 +318,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- COMPLEXITE -->
     <div class="cs-card" data-cat="complexite">
-      <h2>⏱️ Complexité (Big-O) <span class="dom bigdata">Big Data</span></h2>
+      <h2>⏱️ Complexité (Big-O) <span class="dom bigdata">Big Data</span><a class="courselink" href="modules/module-7-discret-complexite.html">📘 Module 7</a></h2>
       <table>
         <tr><th>Classe</th><th>Exemple</th></tr>
         <tr><td>\(O(1)\)</td><td>Accès tableau, hash</td></tr>
@@ -331,7 +333,7 @@ mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
 
     <!-- BIG DATA -->
     <div class="cs-card" data-cat="complexite">
-      <h2>🗄️ Big Data — structures <span class="dom bigdata">Big Data</span></h2>
+      <h2>🗄️ Big Data — structures <span class="dom bigdata">Big Data</span><a class="courselink" href="modules/module-9-big-data.html">📘 Module 9</a></h2>
       <table>
         <tr><th>Outil</th><th>Idée</th></tr>
         <tr><td>Filtre de Bloom</td><td>Teste l'appartenance en \(O(1)\) mémoire ; faux positifs possibles, jamais de faux négatif.</td></tr>
