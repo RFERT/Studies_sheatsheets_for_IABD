@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 4 — Nettoyage &amp; feature engineering</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🐍</span> Python &amp; Data Science</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 4</div>
+    <h1>Module 4 — Nettoyage &amp; feature engineering ⭐</h1>
+    <p class="subtitle">« Garbage in, garbage out. » 80 % du travail réel d'un data scientist, c'est préparer les données : nettoyer, encoder, mettre à l'échelle, créer des variables utiles. Un bon feature engineering bat souvent un modèle sophistiqué sur des données brutes.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Traiter valeurs manquantes et aberrantes ; encoder les variables catégorielles ; normaliser/standardiser le numérique ; extraire des features (dates, texte) ; comprendre et éviter la <strong>fuite de données</strong> (data leakage), l'erreur n°1 qui ruine un modèle.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#manquant">Valeurs manquantes</a></li>
+        <li><a href="#outliers">Valeurs aberrantes (outliers)</a></li>
+        <li><a href="#encodage">Encodage des catégories</a></li>
+        <li><a href="#scaling">Normalisation &amp; standardisation</a></li>
+        <li><a href="#features">Créer des features</a></li>
+        <li><a href="#leakage">Fuite de données ⭐</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="manquant">
+      <h2>1. Valeurs manquantes — stratégies</h2>
+      <table>
+        <tr><th>Stratégie</th><th>Quand</th></tr>
+        <tr><td>Supprimer la ligne</td><td>Peu de cas, manquant « au hasard »</td></tr>
+        <tr><td>Supprimer la colonne</td><td>Majorité de la colonne vide</td></tr>
+        <tr><td>Imputer (médiane/moyenne)</td><td>Numérique ; médiane = robuste aux outliers</td></tr>
+        <tr><td>Imputer (mode / « inconnu »)</td><td>Catégoriel</td></tr>
+        <tr><td>Indicateur de manque</td><td>Si le fait « manque » porte de l'info</td></tr>
+      </table>
+      <pre><code><span class="kw">from</span> sklearn.impute <span class="kw">import</span> <span class="ty">SimpleImputer</span>
+imp = <span class="ty">SimpleImputer</span>(strategy=<span class="st">"median"</span>)
+X_num = imp.<span class="fn">fit_transform</span>(X_num)       <span class="cmt"># apprend la médiane puis remplace</span>
+
+df[<span class="st">"a_manque"</span>] = df[<span class="st">"revenu"</span>].<span class="fn">isna</span>().<span class="fn">astype</span>(<span class="ty">int</span>)  <span class="cmt"># flag d'absence</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ Moyenne vs médiane</span>La moyenne est tirée par les valeurs extrêmes ; sur des revenus ou des prix, la <strong>médiane</strong> est presque toujours un meilleur choix d'imputation.</div>
+    </section>
+
+    <section class="block" id="outliers">
+      <h2>2. Valeurs aberrantes (outliers)</h2>
+      <p>Les détecter avec la règle de l'IQR (écart interquartile) ou le z-score.</p>
+      <pre><code>q1, q3 = df[<span class="st">"prix"</span>].<span class="fn">quantile</span>([<span class="nu">0.25</span>, <span class="nu">0.75</span>])
+iqr = q3 - q1
+bas, haut = q1 - <span class="nu">1.5</span>*iqr, q3 + <span class="nu">1.5</span>*iqr
+outliers = df[(df[<span class="st">"prix"</span>] &lt; bas) | (df[<span class="st">"prix"</span>] &gt; haut)]
+
+<span class="cmt"># Traiter : plafonner (winsoriser) plutôt que supprimer</span>
+df[<span class="st">"prix"</span>] = df[<span class="st">"prix"</span>].<span class="fn">clip</span>(bas, haut)</code></pre>
+      <div class="callout warning"><span class="label">⚠️ Un outlier n'est pas forcément une erreur</span>Une transaction énorme peut être une fraude <em>à détecter</em>, pas un bruit à supprimer. Comprends l'origine avant d'agir : supprimer aveuglément peut effacer le signal le plus intéressant.</div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Avec la règle de l'IQR, une valeur est « aberrante » si elle dépasse…</div>
+        <div class="options">
+          <div class="opt">la moyenne ± l'écart-type</div>
+          <div class="opt">Q1 − 1,5·IQR ou Q3 + 1,5·IQR</div>
+          <div class="opt">toujours 100</div>
+          <div class="opt">le maximum</div>
+        </div>
+        <div class="feedback" data-explain="La règle classique (celle du boxplot) : en dessous de Q1 − 1,5·IQR ou au-dessus de Q3 + 1,5·IQR, avec IQR = Q3 − Q1. Robuste car basée sur les quantiles."></div>
+      </div>
+    </section>
+
+    <section class="block" id="encodage">
+      <h2>3. Encodage des variables catégorielles ⭐</h2>
+      <p>Les modèles ne mangent que des nombres. Il faut transformer les catégories.</p>
+      <table>
+        <tr><th>Méthode</th><th>Pour…</th><th>Attention</th></tr>
+        <tr><td><strong>One-Hot</strong></td><td>Catégories sans ordre (ville, couleur)</td><td>Explose si bcp de modalités</td></tr>
+        <tr><td><strong>Ordinal</strong></td><td>Ordre naturel (petit&lt;moyen&lt;grand)</td><td>Impose un ordre faux sinon</td></tr>
+        <tr><td><strong>Target / mean</strong></td><td>Haute cardinalité</td><td>Risque de fuite (voir §6)</td></tr>
+        <tr><td><strong>Fréquence</strong></td><td>Haute cardinalité</td><td>Perd l'identité</td></tr>
+      </table>
+      <pre><code><span class="cmt"># One-hot avec pandas</span>
+pd.<span class="fn">get_dummies</span>(df, columns=[<span class="st">"ville"</span>], drop_first=<span class="kw">True</span>)
+
+<span class="cmt"># Avec scikit-learn (réutilisable dans un pipeline)</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="ty">OneHotEncoder</span>, <span class="ty">OrdinalEncoder</span>
+ohe = <span class="ty">OneHotEncoder</span>(handle_unknown=<span class="st">"ignore"</span>, sparse_output=<span class="kw">False</span>)
+X_cat = ohe.<span class="fn">fit_transform</span>(df[[<span class="st">"ville"</span>]])</code></pre>
+      <div class="callout warning"><span class="label">⚠️ Label encoding abusif</span>Encoder {Paris:0, Lyon:1, Nice:2} crée un <em>faux ordre</em> (« Nice &gt; Lyon ») que le modèle croira réel. Pour des catégories sans ordre, utilise le one-hot.</div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Pour une variable « couleur » (rouge, vert, bleu) sans ordre, quel encodage ?</div>
+        <div class="options">
+          <div class="opt">One-Hot (une colonne 0/1 par couleur)</div>
+          <div class="opt">Ordinal (0, 1, 2)</div>
+          <div class="opt">Standardisation</div>
+          <div class="opt">Aucun, on laisse le texte</div>
+        </div>
+        <div class="feedback" data-explain="Sans ordre naturel, le one-hot évite d'introduire une fausse hiérarchie. L'ordinal conviendrait à « petit &lt; moyen &lt; grand »."></div>
+      </div>
+    </section>
+
+    <section class="block" id="scaling">
+      <h2>4. Normalisation &amp; standardisation</h2>
+      <p>Beaucoup d'algorithmes (k-NN, SVM, descente de gradient, PCA) sont sensibles à l'échelle : une variable en milliers écrase une variable en unités.</p>
+      <table>
+        <tr><th>Technique</th><th>Formule</th><th>Résultat</th></tr>
+        <tr><td><strong>StandardScaler</strong></td><td>(x − μ) / σ</td><td>Moyenne 0, écart-type 1</td></tr>
+        <tr><td><strong>MinMaxScaler</strong></td><td>(x − min) / (max − min)</td><td>Entre 0 et 1</td></tr>
+        <tr><td><strong>RobustScaler</strong></td><td>(x − médiane) / IQR</td><td>Robuste aux outliers</td></tr>
+      </table>
+      <pre><code><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="ty">StandardScaler</span>
+sc = <span class="ty">StandardScaler</span>()
+X_train_s = sc.<span class="fn">fit_transform</span>(X_train)   <span class="cmt"># apprend μ, σ sur le TRAIN</span>
+X_test_s  = sc.<span class="fn">transform</span>(X_test)        <span class="cmt"># applique SANS réapprendre</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ fit sur le train uniquement</span>On apprend les paramètres (μ, σ) sur le <strong>train</strong>, puis on les applique au test. Faire <code>fit</code> sur l'ensemble complet = fuite de données (§6).</div>
+      <div class="callout data"><span class="label">🔗 Les arbres s'en fichent</span>Les modèles à base d'arbres (Random Forest, XGBoost) ne sont pas sensibles à l'échelle : le scaling y est inutile. Il est crucial pour les modèles « à distance » ou « à gradient ».</div>
+    </section>
+
+    <section class="block" id="features">
+      <h2>5. Créer des features (le nerf de la guerre)</h2>
+      <ul class="keys">
+        <li><strong>Dates</strong> → jour de la semaine, mois, week-end, heure, ancienneté. Une date brute est inutilisable ; ses composantes sont de l'or.</li>
+        <li><strong>Texte</strong> → longueur, nombre de mots, présence de mots-clés, TF-IDF (<code>TfidfVectorizer</code>).</li>
+        <li><strong>Agrégats</strong> → moyenne/somme par groupe (via <code>groupby().transform</code>), ratios, différences.</li>
+        <li><strong>Interactions</strong> → produits/ratios de variables (prix/surface = prix au m²).</li>
+        <li><strong>Binning</strong> → découper une variable continue en tranches (<code>pd.cut</code>).</li>
+        <li><strong>Transformations</strong> → <code>log1p</code> sur des variables très asymétriques (revenus, prix).</li>
+      </ul>
+      <pre><code>df[<span class="st">"prix_m2"</span>] = df[<span class="st">"prix"</span>] / df[<span class="st">"surface"</span>]
+df[<span class="st">"log_revenu"</span>] = np.<span class="fn">log1p</span>(df[<span class="st">"revenu"</span>])     <span class="cmt"># atténue l'asymétrie</span>
+df[<span class="st">"weekend"</span>] = df[<span class="st">"date"</span>].<span class="fn">dt</span>.dayofweek &gt;= <span class="nu">5</span></code></pre>
+      <div class="callout data"><span class="label">🔗 Le secret des bons modèles</span>En pratique (et sur Kaggle), ce sont souvent les <em>features</em> intelligentes — pas l'algorithme — qui font la différence. Connaître le domaine métier est ici un superpouvoir.</div>
+    </section>
+
+    <section class="block" id="leakage">
+      <h2>6. Fuite de données (data leakage) ⭐⭐</h2>
+      <p>La fuite = quand une information du futur ou du jeu de test « fuit » dans l'entraînement. Le modèle paraît excellent… puis s'effondre en production. C'est <strong>l'erreur n°1</strong> des débutants (et de quelques pros).</p>
+      <ul class="keys">
+        <li><strong>Scaler/imputer sur tout le dataset</strong> avant le split → les stats du test contaminent le train. ✅ Fais <code>fit</code> sur le train seul.</li>
+        <li><strong>Utiliser une variable non disponible au moment de la prédiction</strong> (ex. « date de remboursement » pour prédire un défaut). ✅ Ne garde que l'info connue à l'instant T.</li>
+        <li><strong>Target encoding naïf</strong> calculé sur tout le jeu → la cible fuit. ✅ Validation croisée interne.</li>
+        <li><strong>Doublons</strong> présents dans train ET test → score gonflé.</li>
+      </ul>
+      <div class="callout example"><span class="label">La parade : le Pipeline</span>Enchaîner préprocessing + modèle dans un <code>Pipeline</code> scikit-learn garantit que chaque étape ne voit que le train à chaque pli de validation. (Module 5.)</div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">Pourquoi standardiser <em>avant</em> de séparer train/test est-il une erreur ?</div>
+        <div class="options">
+          <div class="opt">Ça ralentit le calcul</div>
+          <div class="opt">Ça change les types de données</div>
+          <div class="opt">Les statistiques (μ, σ) du test fuient dans le train : fuite de données</div>
+          <div class="opt">Ce n'est pas une erreur</div>
+        </div>
+        <div class="feedback" data-explain="Calculer μ et σ sur l'ensemble complet utilise de l'information du test pour transformer le train : le modèle « a vu » le test. On ajuste le scaler sur le train uniquement, puis on applique au test."></div>
+      </div>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">Pourquoi « préparer la donnée » est le vrai métier.</p>
+      <p>Une enquête devenue célèbre affirmait que les data scientists passent environ <strong>80 % de leur temps</strong> à collecter et nettoyer les données, et se plaignent de cette corvée. Derrière la boutade se cache une vérité du métier : sans données propres, le modèle le plus brillant produit du vent.</p>
+      <h4>Repères &amp; idées</h4>
+      <ul class="names">
+        <li><b>« Garbage in, garbage out »</b> <span class="yr">(années 1950)</span> — adage né avec les premiers ordinateurs ; toujours la règle d'or.</li>
+        <li><b>Tukey &amp; l'EDA</b> <span class="yr">(1977)</span> — John Tukey impose l'<em>analyse exploratoire</em> : regarder et nettoyer avant de modéliser.</li>
+        <li><b>Andrew Ng &amp; le « Data-Centric AI »</b> <span class="yr">(2021)</span> — plaide pour améliorer les <em>données</em> plutôt que de complexifier les modèles.</li>
+        <li><b>Feature engineering</b> — longtemps l'arme secrète des vainqueurs de Kaggle, avant l'essor du deep learning qui apprend ses propres features.</li>
+      </ul>
+      <div class="clinks">
+        <a class="pill-link" href="https://scikit-learn.org/stable/modules/preprocessing.html" target="_blank">Préprocessing (scikit-learn)</a>
+        <a class="pill-link" href="https://en.wikipedia.org/wiki/Data_cleansing" target="_blank">Data cleansing</a>
+        <a class="pill-link" href="https://en.wikipedia.org/wiki/Leakage_(machine_learning)" target="_blank">Data leakage (EN)</a>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>7. Exercices</h2>
+      <h3>Exercice 1 — Imputation</h3>
+      <p>Impute la colonne <code>revenu</code> (numérique, avec outliers) et la colonne <code>pays</code> (catégorielle). Quelles stratégies ?</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>df[<span class="st">"revenu"</span>] = df[<span class="st">"revenu"</span>].<span class="fn">fillna</span>(df[<span class="st">"revenu"</span>].<span class="fn">median</span>())   <span class="cmt"># médiane (robuste)</span>
+df[<span class="st">"pays"</span>] = df[<span class="st">"pays"</span>].<span class="fn">fillna</span>(<span class="st">"inconnu"</span>)                    <span class="cmt"># catégorie dédiée</span></code></pre>
+      </details>
+      <h3>Exercice 2 — Fuite de données (⭐)</h3>
+      <p>Un collègue obtient 99 % d'accuracy en prédisant le churn, mais le modèle échoue en prod. Dans ses features : <code>date_de_resiliation</code>. Explique le problème.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p><code>date_de_resiliation</code> n'existe <strong>que</strong> pour les clients déjà partis : elle « révèle » la cible. Le modèle apprend « si cette date existe → churn », score parfait sur l'historique mais <strong>inutilisable</strong> au moment de prédire (la date n'est pas encore connue). C'est une fuite de données : retirer toute variable postérieure à l'instant de prédiction.</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="4">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-4-nettoyage-features.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-3-visualisation.html"><div class="dir">← Précédent</div><div class="ttl">Module 3 · Visualisation</div></a>
+      <a class="next" href="module-5-scikit-learn.html"><div class="dir">Suivant →</div><div class="ttl">Module 5 · scikit-learn</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 4 — Nettoyage &amp; features · Cours Python &amp; Data Science 🐍💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

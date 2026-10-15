@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 5 — scikit-learn &amp; workflow ML</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🐍</span> Python &amp; Data Science</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 5</div>
+    <h1>Module 5 — scikit-learn &amp; workflow ML 🤖</h1>
+    <p class="subtitle">Le pont vers le Machine Learning. scikit-learn offre une API d'une élégance rare : <code>fit</code>/<code>predict</code>/<code>transform</code>, la même pour des dizaines d'algorithmes. On voit le workflow complet, les métriques, les pipelines et la validation — les réflexes qui évitent de se mentir à soi-même.</p>
+
+    <div class="domains">
+      <span class="domain ia"><span class="dot"></span>IA</span>
+      <span class="domain data"><span class="dot"></span>DATA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Comprendre l'API <code>fit</code>/<code>predict</code>/<code>transform</code> ; séparer train/test ; choisir et lire les bonnes métriques ; construire un <strong>Pipeline</strong> ; valider avec la <strong>cross-validation</strong> ; optimiser avec <code>GridSearchCV</code> ; diagnostiquer sur/sous-apprentissage.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#api">L'API scikit-learn</a></li>
+        <li><a href="#split">Train / test split</a></li>
+        <li><a href="#metriques">Métriques</a></li>
+        <li><a href="#pipeline">Pipeline ⭐</a></li>
+        <li><a href="#cv">Validation croisée</a></li>
+        <li><a href="#tuning">Hyperparamètres (GridSearch)</a></li>
+        <li><a href="#diagnostic">Sur / sous-apprentissage</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="api">
+      <h2>1. L'API unifiée : fit / predict / transform</h2>
+      <p>Tout objet scikit-learn (<em>estimator</em>) suit le même contrat. Change de modèle = change une ligne.</p>
+      <pre><code><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> <span class="ty">LogisticRegression</span>
+
+model = <span class="ty">LogisticRegression</span>()
+model.<span class="fn">fit</span>(X_train, y_train)      <span class="cmt"># apprend</span>
+y_pred = model.<span class="fn">predict</span>(X_test)    <span class="cmt"># prédit</span>
+proba  = model.<span class="fn">predict_proba</span>(X_test)  <span class="cmt"># probabilités</span>
+model.<span class="fn">score</span>(X_test, y_test)     <span class="cmt"># métrique par défaut</span></code></pre>
+      <table>
+        <tr><th>Méthode</th><th>Qui</th><th>Rôle</th></tr>
+        <tr><td><code>fit</code></td><td>Tous</td><td>Apprend les paramètres</td></tr>
+        <tr><td><code>predict</code></td><td>Modèles</td><td>Prédit une sortie</td></tr>
+        <tr><td><code>transform</code></td><td>Préprocesseurs</td><td>Transforme les données</td></tr>
+        <tr><td><code>fit_transform</code></td><td>Préprocesseurs</td><td>fit + transform d'un coup</td></tr>
+      </table>
+      <div class="callout data"><span class="label">🔗 Supervisé vs non supervisé</span>Supervisé : on a une cible <code>y</code> (classification, régression). Non supervisé : pas de <code>y</code> (clustering avec <code>KMeans</code>, réduction avec <code>PCA</code>).</div>
+    </section>
+
+    <section class="block" id="split">
+      <h2>2. Train / test split</h2>
+      <pre><code><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="nu">0.2</span>, random_state=<span class="nu">42</span>,
+    stratify=y)   <span class="cmt"># stratify : garde les proportions de classes</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ Toujours évaluer sur des données jamais vues</span>Mesurer la performance sur le train donne un score optimiste et trompeur. Le test simule la « vraie vie ». Pour les séries temporelles, on ne mélange pas : on coupe dans le temps.</div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">À quoi sert <code>stratify=y</code> dans un problème de classification déséquilibré ?</div>
+        <div class="options">
+          <div class="opt">À conserver les mêmes proportions de classes dans train et test</div>
+          <div class="opt">À trier les données</div>
+          <div class="opt">À normaliser X</div>
+          <div class="opt">À supprimer les classes rares</div>
+        </div>
+        <div class="feedback" data-explain="La stratification garantit que chaque classe est représentée dans les mêmes proportions dans le train et le test — crucial si une classe est rare (fraude, maladie)."></div>
+      </div>
+    </section>
+
+    <section class="block" id="metriques">
+      <h2>3. Métriques : mesurer la bonne chose</h2>
+      <h3>Classification</h3>
+      <table>
+        <tr><th>Métrique</th><th>Répond à…</th></tr>
+        <tr><td><strong>Accuracy</strong></td><td>% de prédictions correctes (trompeur si déséquilibré)</td></tr>
+        <tr><td><strong>Précision</strong></td><td>Parmi les positifs prédits, combien sont vrais ?</td></tr>
+        <tr><td><strong>Rappel (recall)</strong></td><td>Parmi les vrais positifs, combien détectés ?</td></tr>
+        <tr><td><strong>F1-score</strong></td><td>Moyenne harmonique précision/rappel</td></tr>
+        <tr><td><strong>ROC-AUC</strong></td><td>Qualité du classement des probabilités</td></tr>
+      </table>
+      <pre><code><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report, confusion_matrix
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred))
+<span class="fn">confusion_matrix</span>(y_test, y_pred)</code></pre>
+      <div class="callout warning"><span class="label">⚠️ Le piège de l'accuracy</span>Sur un dataset à 99 % de cas négatifs (fraude), un modèle qui dit « jamais de fraude » a 99 % d'accuracy… et est inutile. Regarde <strong>rappel</strong> et <strong>F1</strong>.</div>
+      <h3>Régression</h3>
+      <table>
+        <tr><th>Métrique</th><th>Sens</th></tr>
+        <tr><td><strong>MAE</strong></td><td>Erreur absolue moyenne (même unité, robuste)</td></tr>
+        <tr><td><strong>RMSE</strong></td><td>Pénalise fort les grosses erreurs</td></tr>
+        <tr><td><strong>R²</strong></td><td>Part de variance expliquée (1 = parfait)</td></tr>
+      </table>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Détection de maladie rare : on veut surtout rater le moins de malades possible. Quelle métrique privilégier ?</div>
+        <div class="options">
+          <div class="opt">L'accuracy</div>
+          <div class="opt">La précision</div>
+          <div class="opt">Le rappel (recall)</div>
+          <div class="opt">Le R²</div>
+        </div>
+        <div class="feedback" data-explain="Le rappel mesure la proportion de vrais malades effectivement détectés. Le maximiser = minimiser les faux négatifs (malades manqués), ce qui est l'objectif ici."></div>
+      </div>
+    </section>
+
+    <section class="block" id="pipeline">
+      <h2>4. Pipeline : enchaîner proprement ⭐</h2>
+      <p>Un <code>Pipeline</code> enchaîne préprocessing + modèle en un seul objet. Avantage majeur : le préprocessing est <strong>réappris à chaque pli</strong> de validation → pas de fuite de données (Module 4 §6).</p>
+      <pre><code><span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> <span class="ty">Pipeline</span>
+<span class="kw">from</span> sklearn.compose <span class="kw">import</span> <span class="ty">ColumnTransformer</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="ty">StandardScaler</span>, <span class="ty">OneHotEncoder</span>
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="ty">RandomForestClassifier</span>
+
+pre = <span class="ty">ColumnTransformer</span>([
+    (<span class="st">"num"</span>, <span class="ty">StandardScaler</span>(), num_cols),
+    (<span class="st">"cat"</span>, <span class="ty">OneHotEncoder</span>(handle_unknown=<span class="st">"ignore"</span>), cat_cols),
+])
+pipe = <span class="ty">Pipeline</span>([
+    (<span class="st">"prep"</span>, pre),
+    (<span class="st">"model"</span>, <span class="ty">RandomForestClassifier</span>(random_state=<span class="nu">42</span>)),
+])
+pipe.<span class="fn">fit</span>(X_train, y_train)      <span class="cmt"># tout s'enchaîne</span>
+pipe.<span class="fn">predict</span>(X_test)</code></pre>
+      <div class="callout example"><span class="label">Pourquoi c'est pro</span>Un seul objet contient tout le traitement : facile à sauvegarder (<code>joblib.dump</code>), à déployer, et garanti sans fuite. C'est le standard en entreprise.</div>
+    </section>
+
+    <section class="block" id="cv">
+      <h2>5. Validation croisée (cross-validation)</h2>
+      <p>Un seul split peut être « chanceux ». La validation croisée en <em>k</em> plis entraîne/évalue k fois sur des découpes différentes, puis moyenne : une estimation bien plus fiable.</p>
+      <pre><code><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+scores = <span class="fn">cross_val_score</span>(pipe, X, y, cv=<span class="nu">5</span>, scoring=<span class="st">"f1"</span>)
+<span class="fn">print</span>(scores.<span class="fn">mean</span>(), <span class="st">"±"</span>, scores.<span class="fn">std</span>())</code></pre>
+      <div class="callout data"><span class="label">🔗 k-fold</span>Avec <code>cv=5</code> : 5 entraînements, chacun testé sur 1/5 des données jamais vu à l'entraînement de ce pli. L'écart-type des scores indique la <em>stabilité</em> du modèle.</div>
+    </section>
+
+    <section class="block" id="tuning">
+      <h2>6. Optimiser les hyperparamètres</h2>
+      <pre><code><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="ty">GridSearchCV</span>
+
+grid = {
+    <span class="st">"model__n_estimators"</span>: [<span class="nu">100</span>, <span class="nu">300</span>],
+    <span class="st">"model__max_depth"</span>: [<span class="kw">None</span>, <span class="nu">5</span>, <span class="nu">10</span>],
+}
+search = <span class="ty">GridSearchCV</span>(pipe, grid, cv=<span class="nu">5</span>, scoring=<span class="st">"f1"</span>, n_jobs=-<span class="nu">1</span>)
+search.<span class="fn">fit</span>(X_train, y_train)
+search.best_params_; search.best_score_</code></pre>
+      <div class="callout warning"><span class="label">⚠️ Paramètres vs hyperparamètres</span>Les <strong>paramètres</strong> sont appris par <code>fit</code> (poids). Les <strong>hyperparamètres</strong> sont fixés par toi (profondeur, nb d'arbres, régularisation) et optimisés par recherche. <code>RandomizedSearchCV</code> est plus rapide quand l'espace est grand.</div>
+    </section>
+
+    <section class="block" id="diagnostic">
+      <h2>7. Sur-apprentissage &amp; sous-apprentissage</h2>
+      <table>
+        <tr><th>Situation</th><th>Symptôme</th><th>Remède</th></tr>
+        <tr><td><strong>Overfitting</strong></td><td>Train ≫ test (modèle « par cœur »)</td><td>Régulariser, simplifier, plus de données</td></tr>
+        <tr><td><strong>Underfitting</strong></td><td>Train et test faibles</td><td>Modèle plus riche, meilleures features</td></tr>
+        <tr><td><strong>Bon</strong></td><td>Train ≈ test, tous deux bons</td><td>🎉</td></tr>
+      </table>
+      <div class="callout data"><span class="label">🔗 Compromis biais-variance</span>Sous-apprentissage = biais élevé (trop simple) ; sur-apprentissage = variance élevée (trop sensible aux données). Tout le ML consiste à trouver l'équilibre.</div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 7.1</strong></div>
+        <div class="qtext">Ton modèle a 99 % sur le train mais 65 % sur le test. Diagnostic ?</div>
+        <div class="options">
+          <div class="opt">Sous-apprentissage</div>
+          <div class="opt">Sur-apprentissage (overfitting)</div>
+          <div class="opt">Fuite de données</div>
+          <div class="opt">Le modèle est parfait</div>
+        </div>
+        <div class="feedback" data-explain="Grand écart train/test = le modèle a mémorisé le train sans généraliser : overfitting. Remèdes : régularisation, modèle plus simple, plus de données, moins de features."></div>
+      </div>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">scikit-learn : d'un projet d'été à l'outil ML le plus utilisé au monde.</p>
+      <p>En 2007, <strong>David Cournapeau</strong> lance scikit-learn pendant un Google Summer of Code. En 2010, une équipe de l'<strong>INRIA</strong> (institut de recherche français) reprend et structure le projet. Résultat : une bibliothèque à l'API si cohérente qu'elle est devenue le standard d'enseignement et d'industrie du ML classique.</p>
+      <h4>Repères</h4>
+      <ul class="names">
+        <li><b>David Cournapeau</b> <span class="yr">(2007)</span> — initie scikit-learn (le « scikit » = SciPy Toolkit).</li>
+        <li><b>INRIA</b> <span class="yr">(2010)</span> — Fabian Pedregosa, Gaël Varoquaux, Alexandre Gramfort &amp; al. professionnalisent le projet (fierté française 🇫🇷).</li>
+        <li><b>L'API fit/predict</b> — sa cohérence a inspiré presque toutes les bibliothèques ML suivantes.</li>
+        <li><b>Jupyter / IPython</b> <span class="yr">(Fernando Pérez, 2001→2014)</span> — le notebook qui a rendu la data science interactive et partageable.</li>
+      </ul>
+      <h4>Où ça mène</h4>
+      <p>scikit-learn couvre le ML « classique » (régression, arbres, SVM, clustering). Pour le deep learning (images, texte, LLM), on passe à <strong>PyTorch</strong> ou <strong>TensorFlow</strong> — mais les réflexes vus ici (split, métriques, validation, éviter la fuite) restent universels.</p>
+      <div class="clinks">
+        <a class="pill-link" href="https://scikit-learn.org/stable/" target="_blank">Doc scikit-learn</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Scikit-learn" target="_blank">scikit-learn (Wikipédia)</a>
+        <a class="pill-link" href="https://scikit-learn.org/stable/tutorial/index.html" target="_blank">Tutoriels officiels</a>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>8. Exercices</h2>
+      <h3>Exercice 1 — Choix de métrique</h3>
+      <p>Pour un filtre anti-spam, vaut-il mieux maximiser la précision ou le rappel ? Discute.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>On privilégie souvent la <strong>précision</strong> : classer à tort un mail important comme spam (faux positif) est très coûteux pour l'utilisateur. On accepte de laisser passer quelques spams (faux négatifs) pour ne pas perdre de vrais messages. C'est un arbitrage métier : le F1 (ou un seuil ajusté) équilibre les deux.</p>
+      </details>
+      <h3>Exercice 2 — Pipeline (⭐)</h3>
+      <p>Construis un pipeline : standardisation du numérique + one-hot du catégoriel + régression logistique, évalué en validation croisée 5 plis.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>pre = <span class="ty">ColumnTransformer</span>([
+    (<span class="st">"num"</span>, <span class="ty">StandardScaler</span>(), num_cols),
+    (<span class="st">"cat"</span>, <span class="ty">OneHotEncoder</span>(handle_unknown=<span class="st">"ignore"</span>), cat_cols),
+])
+pipe = <span class="ty">Pipeline</span>([(<span class="st">"prep"</span>, pre), (<span class="st">"clf"</span>, <span class="ty">LogisticRegression</span>(max_iter=<span class="nu">1000</span>))])
+<span class="fn">cross_val_score</span>(pipe, X, y, cv=<span class="nu">5</span>, scoring=<span class="st">"f1"</span>).<span class="fn">mean</span>()</code></pre>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="5">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-5-scikit-learn.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-4-nettoyage-features.html"><div class="dir">← Précédent</div><div class="ttl">Module 4 · Nettoyage &amp; features</div></a>
+      <a class="next" href="../aide-memoire.html"><div class="dir">Suivant →</div><div class="ttl">⚡ Aide-mémoire</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 5 — scikit-learn · Cours Python &amp; Data Science 🐍💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

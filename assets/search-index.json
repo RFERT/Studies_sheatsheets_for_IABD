@@ -954,6 +954,663 @@
 "k": "Module 9 — Maths du Big Data histoire Doug Laney Jeff Dean & Sanjay Ghemawat Doug Cutting Eric Brewer Matei Zaharia"
 },
 {
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "module",
+"t": "Module 0 — Python avancé & idiomatique 🐍",
+"u": "matieres/python/modules/module-0-python-avance.html",
+"k": "Le Python qu'on attend d'un professionnel : écrire un code pythonique, lisible, efficace et robuste. On suppose que tu connais déjà la syntaxe de base ; ici on muscle les idiomes qui font la différence en data et en entretien."
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Entrées / sorties & scripts",
+"u": "matieres/python/modules/module-0-python-avance.html#entrees",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Compréhensions (list / dict / set)",
+"u": "matieres/python/modules/module-0-python-avance.html#comprehensions",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Générateurs & itérateurs",
+"u": "matieres/python/modules/module-0-python-avance.html#generateurs",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Fonctions : *args, **kwargs, closures, lambda",
+"u": "matieres/python/modules/module-0-python-avance.html#fonctions",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Décorateurs",
+"u": "matieres/python/modules/module-0-python-avance.html#decorateurs",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Context managers (with)",
+"u": "matieres/python/modules/module-0-python-avance.html#context",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Typing & annotations",
+"u": "matieres/python/modules/module-0-python-avance.html#typing",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Dataclasses & méthodes spéciales",
+"u": "matieres/python/modules/module-0-python-avance.html#dataclass",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "functools & itertools (la boîte à outils)",
+"u": "matieres/python/modules/module-0-python-avance.html#stdlib",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Erreurs & robustesse",
+"u": "matieres/python/modules/module-0-python-avance.html#erreurs",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Syntaxe moderne (3.8 → 3.12)",
+"u": "matieres/python/modules/module-0-python-avance.html#moderne",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Exercices de synthèse",
+"u": "matieres/python/modules/module-0-python-avance.html#exos",
+"k": "Module 0 — Python avancé & idiomatique 🐍"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "culture",
+"t": "Culture & histoire — Module 0 — Python avancé & idiomatique 🐍",
+"u": "matieres/python/modules/module-0-python-avance.html#culture",
+"k": "Module 0 — Python avancé & idiomatique 🐍 histoire Guido van Rossum Le Zen de Python NumPy pandas Python 3"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "module",
+"t": "Module 1 — NumPy : le calcul vectoriel",
+"u": "matieres/python/modules/module-1-numpy.html",
+"k": "NumPy est la fondation de toute la data en Python : un tableau N-dimensionnel ultra-rapide (écrit en C) et la vectorisation, qui remplace les boucles Python par des opérations sur des tableaux entiers. Pandas, scikit-learn, PyTorch… tout repose dessus."
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Créer des tableaux",
+"u": "matieres/python/modules/module-1-numpy.html#creer",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "shape, dtype & axes",
+"u": "matieres/python/modules/module-1-numpy.html#attributs",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Vectorisation (le cœur de NumPy)",
+"u": "matieres/python/modules/module-1-numpy.html#vecto",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Indexation & slicing",
+"u": "matieres/python/modules/module-1-numpy.html#index",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Masques booléens",
+"u": "matieres/python/modules/module-1-numpy.html#masques",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Broadcasting",
+"u": "matieres/python/modules/module-1-numpy.html#broadcast",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Agrégations & axes",
+"u": "matieres/python/modules/module-1-numpy.html#agg",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Reshape & manipulation de forme",
+"u": "matieres/python/modules/module-1-numpy.html#reshape",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Algèbre linéaire & aléatoire",
+"u": "matieres/python/modules/module-1-numpy.html#linalg",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Exercices",
+"u": "matieres/python/modules/module-1-numpy.html#exos",
+"k": "Module 1 — NumPy : le calcul vectoriel"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "culture",
+"t": "Culture & histoire — Module 1 — NumPy : le calcul vectoriel",
+"u": "matieres/python/modules/module-1-numpy.html#culture",
+"k": "Module 1 — NumPy : le calcul vectoriel histoire Travis Oliphant Le concept d'ndarray BLAS / LAPACK Article Nature"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "module",
+"t": "Module 2 — Pandas : les données tabulaires",
+"u": "matieres/python/modules/module-2-pandas.html",
+"k": "Pandas est l'outil n°1 du data analyst : un tableur programmable. On charge, explore, filtre, agrège, joint et nettoie des données tabulaires avec une concision redoutable. C'est là que tu passeras le plus de temps en projet."
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Series & DataFrame",
+"u": "matieres/python/modules/module-2-pandas.html#objets",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Charger & explorer (le premier réflexe)",
+"u": "matieres/python/modules/module-2-pandas.html#charger",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Sélection : loc vs iloc",
+"u": "matieres/python/modules/module-2-pandas.html#selection",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Filtrer par condition (masques booléens)",
+"u": "matieres/python/modules/module-2-pandas.html#filtrer",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Créer & transformer des colonnes",
+"u": "matieres/python/modules/module-2-pandas.html#colonnes",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Valeurs manquantes (NaN)",
+"u": "matieres/python/modules/module-2-pandas.html#manquant",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "groupby : agréger par groupe",
+"u": "matieres/python/modules/module-2-pandas.html#groupby",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "merge & concat : combiner des tables",
+"u": "matieres/python/modules/module-2-pandas.html#merge",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "apply, dates, texte & pivot",
+"u": "matieres/python/modules/module-2-pandas.html#avance",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Exercices",
+"u": "matieres/python/modules/module-2-pandas.html#exos",
+"k": "Module 2 — Pandas : les données tabulaires"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "culture",
+"t": "Culture & histoire — Module 2 — Pandas : les données tabulaires",
+"u": "matieres/python/modules/module-2-pandas.html#culture",
+"k": "Module 2 — Pandas : les données tabulaires histoire Wes McKinney Le DataFrame Open source Apache Arrow"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "module",
+"t": "Module 3 — Visualisation de données 📊",
+"u": "matieres/python/modules/module-3-visualisation.html",
+"k": "Un graphique n'est pas une décoration : c'est un outil pour comprendre (analyse exploratoire) et convaincre (communication). On apprend l'anatomie de Matplotlib, la concision de Seaborn, et surtout : quel graphe pour quelle question."
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Anatomie de Matplotlib",
+"u": "matieres/python/modules/module-3-visualisation.html#anatomie",
+"k": "Module 3 — Visualisation de données 📊"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Les graphes essentiels",
+"u": "matieres/python/modules/module-3-visualisation.html#graphes",
+"k": "Module 3 — Visualisation de données 📊"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Seaborn : la statistique visuelle",
+"u": "matieres/python/modules/module-3-visualisation.html#seaborn",
+"k": "Module 3 — Visualisation de données 📊"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Quel graphe pour quelle question ?",
+"u": "matieres/python/modules/module-3-visualisation.html#choisir",
+"k": "Module 3 — Visualisation de données 📊"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Pièges & bonnes pratiques",
+"u": "matieres/python/modules/module-3-visualisation.html#pieges",
+"k": "Module 3 — Visualisation de données 📊"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Exercices",
+"u": "matieres/python/modules/module-3-visualisation.html#exos",
+"k": "Module 3 — Visualisation de données 📊"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "culture",
+"t": "Culture & histoire — Module 3 — Visualisation de données 📊",
+"u": "matieres/python/modules/module-3-visualisation.html#culture",
+"k": "Module 3 — Visualisation de données 📊 histoire John Snow Florence Nightingale Edward Tufte John Hunter Michael Waskom"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "module",
+"t": "Module 4 — Nettoyage & feature engineering",
+"u": "matieres/python/modules/module-4-nettoyage-features.html",
+"k": "« Garbage in, garbage out. » 80 % du travail réel d'un data scientist, c'est préparer les données : nettoyer, encoder, mettre à l'échelle, créer des variables utiles. Un bon feature engineering bat souvent un modèle sophistiqué sur des données brutes."
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Valeurs manquantes — stratégies",
+"u": "matieres/python/modules/module-4-nettoyage-features.html#manquant",
+"k": "Module 4 — Nettoyage & feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Valeurs aberrantes (outliers)",
+"u": "matieres/python/modules/module-4-nettoyage-features.html#outliers",
+"k": "Module 4 — Nettoyage & feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Encodage des variables catégorielles",
+"u": "matieres/python/modules/module-4-nettoyage-features.html#encodage",
+"k": "Module 4 — Nettoyage & feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Normalisation & standardisation",
+"u": "matieres/python/modules/module-4-nettoyage-features.html#scaling",
+"k": "Module 4 — Nettoyage & feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Créer des features (le nerf de la guerre)",
+"u": "matieres/python/modules/module-4-nettoyage-features.html#features",
+"k": "Module 4 — Nettoyage & feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Fuite de données (data leakage)",
+"u": "matieres/python/modules/module-4-nettoyage-features.html#leakage",
+"k": "Module 4 — Nettoyage & feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Exercices",
+"u": "matieres/python/modules/module-4-nettoyage-features.html#exos",
+"k": "Module 4 — Nettoyage & feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "culture",
+"t": "Culture & histoire — Module 4 — Nettoyage & feature engineering",
+"u": "matieres/python/modules/module-4-nettoyage-features.html#culture",
+"k": "Module 4 — Nettoyage & feature engineering histoire « Garbage in, garbage out » Tukey & l'EDA Andrew Ng & le « Data-Centric AI » Feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "module",
+"t": "Module 5 — scikit-learn & workflow ML 🤖",
+"u": "matieres/python/modules/module-5-scikit-learn.html",
+"k": "Le pont vers le Machine Learning. scikit-learn offre une API d'une élégance rare : fit/predict/transform, la même pour des dizaines d'algorithmes. On voit le workflow complet, les métriques, les pipelines et la validation — les réflexes qui évitent de se mentir à soi-même."
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "L'API unifiée : fit / predict / transform",
+"u": "matieres/python/modules/module-5-scikit-learn.html#api",
+"k": "Module 5 — scikit-learn & workflow ML 🤖"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Train / test split",
+"u": "matieres/python/modules/module-5-scikit-learn.html#split",
+"k": "Module 5 — scikit-learn & workflow ML 🤖"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Métriques : mesurer la bonne chose",
+"u": "matieres/python/modules/module-5-scikit-learn.html#metriques",
+"k": "Module 5 — scikit-learn & workflow ML 🤖"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Pipeline : enchaîner proprement",
+"u": "matieres/python/modules/module-5-scikit-learn.html#pipeline",
+"k": "Module 5 — scikit-learn & workflow ML 🤖"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Validation croisée (cross-validation)",
+"u": "matieres/python/modules/module-5-scikit-learn.html#cv",
+"k": "Module 5 — scikit-learn & workflow ML 🤖"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Optimiser les hyperparamètres",
+"u": "matieres/python/modules/module-5-scikit-learn.html#tuning",
+"k": "Module 5 — scikit-learn & workflow ML 🤖"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Sur-apprentissage & sous-apprentissage",
+"u": "matieres/python/modules/module-5-scikit-learn.html#diagnostic",
+"k": "Module 5 — scikit-learn & workflow ML 🤖"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "section",
+"t": "Exercices",
+"u": "matieres/python/modules/module-5-scikit-learn.html#exos",
+"k": "Module 5 — scikit-learn & workflow ML 🤖"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "culture",
+"t": "Culture & histoire — Module 5 — scikit-learn & workflow ML 🤖",
+"u": "matieres/python/modules/module-5-scikit-learn.html#culture",
+"k": "Module 5 — scikit-learn & workflow ML 🤖 histoire David Cournapeau INRIA L'API fit/predict Jupyter / IPython"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "matière",
+"t": "Python & Data Science",
+"u": "matieres/python/index.html",
+"k": "python numpy pandas data science visualisation matplotlib seaborn scikit-learn machine learning feature engineering"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "fiche",
+"t": "Antisèche Python & Data (aide-mémoire)",
+"u": "matieres/python/aide-memoire.html",
+"k": "cheat sheet référence rapide numpy pandas groupby comprehension broadcasting dict liste"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "fiche",
+"t": "Fiche de révision — Module 0 : Python avancé & idiomatique",
+"u": "matieres/python/fiches/fiche-0-python-avance.md",
+"k": "fiche révision téléchargeable python"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "fiche",
+"t": "Fiche de révision — Module 1 : NumPy",
+"u": "matieres/python/fiches/fiche-1-numpy.md",
+"k": "fiche révision téléchargeable python"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "fiche",
+"t": "Fiche de révision — Module 2 : Pandas",
+"u": "matieres/python/fiches/fiche-2-pandas.md",
+"k": "fiche révision téléchargeable python"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "fiche",
+"t": "Fiche de révision — Module 3 : Visualisation",
+"u": "matieres/python/fiches/fiche-3-visualisation.md",
+"k": "fiche révision téléchargeable python"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "fiche",
+"t": "Fiche de révision — Module 4 : Nettoyage & feature engineering",
+"u": "matieres/python/fiches/fiche-4-nettoyage-features.md",
+"k": "fiche révision téléchargeable python"
+},
+{
+"s": "Python & Data Science",
+"emoji": "🐍",
+"color": "#3b82f6",
+"type": "fiche",
+"t": "Fiche de révision — Module 5 : scikit-learn & workflow ML",
+"u": "matieres/python/fiches/fiche-5-scikit-learn.md",
+"k": "fiche révision téléchargeable python"
+},
+{
 "s": "Mathématiques",
 "emoji": "∑",
 "color": "#6c8cff",
@@ -1069,6 +1726,15 @@
 "t": "Culture & histoire de Rust",
 "u": "matieres/rust/rust-cursus.html",
 "k": "Graydon Hoare Mozilla Rust Foundation noyau Linux histoire philosophie sécurité mémoire"
+},
+{
+"s": "Rust",
+"emoji": "🦀",
+"color": "#f74c00",
+"type": "fiche",
+"t": "Antisèche Rust (cheat sheet)",
+"u": "matieres/rust/cheatsheet-rust.html",
+"k": "cheat sheet référence rapide syntaxe méthodes Vec HashMap Option Result match iterator cargo closures lifetimes traits"
 },
 {
 "s": "Rust",
@@ -1240,6 +1906,15 @@
 "t": "Mathématiques pour la Data & l'IA",
 "u": "matieres/mathematiques/index.html",
 "k": "logique relations binaires algèbre linéaire probabilités statistiques optimisation graphes information big data"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "fiche",
+"t": "Aide-mémoire maths (formulaire)",
+"u": "matieres/mathematiques/aide-memoire.html",
+"k": "formulaire antisèche formules Bayes gradient entropie matrice cosinus régression Big-O combinatoire règles"
 },
 {
 "s": "Rust",

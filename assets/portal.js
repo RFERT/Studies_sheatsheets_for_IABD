@@ -13,7 +13,8 @@ const SUBJECTS = [
     featured: true,
     href: "matieres/rust/rust-cursus.html",
     extra: [
-      { label: "🔥 Révision express partiel", href: "matieres/rust/revision-express.html" }
+      { label: "🔥 Révision express partiel", href: "matieres/rust/revision-express.html" },
+      { label: "⚡ Antisèche", href: "matieres/rust/cheatsheet-rust.html" }
     ],
     desc: "Du débutant total à l'intermédiaire : Cargo, ownership, borrowing, lifetimes, traits, closures, concurrence. 16 modules + examen final.",
     tags: ["Ownership", "Borrowing", "Lifetimes", "Traits"],
@@ -28,6 +29,9 @@ const SUBJECTS = [
     status: "ready",
     featured: true,
     href: "matieres/mathematiques/index.html",
+    extra: [
+      { label: "⚡ Aide-mémoire", href: "matieres/mathematiques/aide-memoire.html" }
+    ],
     desc: "Maths pour la Data, le Big Data & l'IA : logique, relations binaires, algèbre linéaire, probas, stats, optimisation, graphes, info, Big Data.",
     tags: ["Algèbre", "Probas", "Optimisation", "Big Data"],
     meta: "10 modules · 88 quiz · examen blanc",
@@ -38,10 +42,16 @@ const SUBJECTS = [
     name: "Python & Data Science",
     emoji: "🐍",
     color: "#3b82f6",
-    status: "soon",
-    desc: "NumPy, Pandas, visualisation, nettoyage de données, feature engineering, pipelines. À construire ensemble.",
-    tags: ["Pandas", "NumPy", "EDA"],
-    meta: "À venir"
+    status: "ready",
+    featured: true,
+    href: "matieres/python/index.html",
+    extra: [
+      { label: "⚡ Aide-mémoire", href: "matieres/python/aide-memoire.html" }
+    ],
+    desc: "Python avancé (générateurs, décorateurs, typing) puis la stack data : NumPy, Pandas, visualisation, feature engineering, scikit-learn. Niveau pro.",
+    tags: ["Pandas", "NumPy", "scikit-learn"],
+    meta: "6 modules · 30+ quiz",
+    progress: { key: "pds-done-modules", type: "doneMap", total: 6, unit: "modules" }
   },
   {
     code: "ML",
@@ -409,33 +419,37 @@ function renderSubjects() {
   if (!grid) return;
   grid.innerHTML = SUBJECTS.map((s) => {
     const clickable = s.status !== "soon" || s.href;
-    const tag = clickable && s.href ? "a" : "div";
+    const mainTag = clickable && s.href ? "a" : "div";
     const hrefAttr = clickable && s.href ? ` href="${s.href}"` : "";
     const statusTxt = { ready: "● Disponible", soon: "○ Bientôt", wip: "◐ En cours" }[s.status] || "";
     const extras = (s.extra || []).map((e) =>
-      `<a class="tag" href="${e.href}" style="border-color:${s.color};color:${s.color}">${e.label}</a>`
+      `<a class="tag extra" href="${e.href}" style="border-color:${s.color};color:${s.color}">${e.label}</a>`
     ).join("");
+    const extrasRow = extras ? `<div class="subject-extras">${extras}</div>` : "";
     const pr = readProgress(s);
     const prBlock = pr && pr.done > 0
       ? `<div class="card-progress">${progressBar(pr.pct, s.color)}<span class="cp-lbl">${pr.pct}% · ${pr.done}/${pr.total} ${pr.unit}</span></div>`
       : "";
     return `
-      <${tag} class="subject${s.status === "soon" && !s.href ? " locked" : ""}"${hrefAttr} style="--sc:${s.color}">
+      <div class="subject${s.status === "soon" && !s.href ? " locked" : ""}" style="--sc:${s.color}">
         ${s.featured ? '<div class="ribbon">PRÊT</div>' : ""}
-        <div class="banner">
-          <div class="emoji">${s.emoji}</div>
-          <div class="bt"><div class="code">${s.code}</div><div class="name">${s.name}</div></div>
-        </div>
-        <div class="body">
-          <p>${s.desc}</p>
-          <div class="tags">${s.tags.map((t) => `<span class="tag">${t}</span>`).join("")}${extras}</div>
-          ${prBlock}
-          <div class="foot">
-            <span class="status ${s.status}">${statusTxt} · ${s.meta}</span>
-            ${clickable && s.href ? `<span class="go">Ouvrir →</span>` : ""}
+        <${mainTag} class="subject-main"${hrefAttr}>
+          <div class="banner">
+            <div class="emoji">${s.emoji}</div>
+            <div class="bt"><div class="code">${s.code}</div><div class="name">${s.name}</div></div>
           </div>
-        </div>
-      </${tag}>`;
+          <div class="body">
+            <p>${s.desc}</p>
+            <div class="tags">${s.tags.map((t) => `<span class="tag">${t}</span>`).join("")}</div>
+            ${prBlock}
+            <div class="foot">
+              <span class="status ${s.status}">${statusTxt} · ${s.meta}</span>
+              ${clickable && s.href ? `<span class="go">Ouvrir →</span>` : ""}
+            </div>
+          </div>
+        </${mainTag}>
+        ${extrasRow}
+      </div>`;
   }).join("");
 
   // Stats dynamiques

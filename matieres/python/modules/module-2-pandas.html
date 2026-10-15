@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 2 — Pandas : données tabulaires</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🐍</span> Python &amp; Data Science</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 2</div>
+    <h1>Module 2 — Pandas : les données tabulaires ⭐</h1>
+    <p class="subtitle">Pandas est l'outil n°1 du data analyst : un tableur programmable. On charge, explore, filtre, agrège, joint et nettoie des données tabulaires avec une concision redoutable. C'est là que tu passeras le plus de temps en projet.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Manier <code>Series</code> et <code>DataFrame</code> ; charger/explorer un jeu de données ; sélectionner avec <code>loc</code>/<code>iloc</code> et filtrer par condition ; agréger avec <code>groupby</code> ; joindre avec <code>merge</code> ; gérer les valeurs manquantes ; transformer avec <code>apply</code> et les méthodes vectorisées.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#objets">Series &amp; DataFrame</a></li>
+        <li><a href="#charger">Charger &amp; explorer</a></li>
+        <li><a href="#selection">Sélection : loc / iloc</a></li>
+        <li><a href="#filtrer">Filtrer par condition</a></li>
+        <li><a href="#colonnes">Créer / transformer des colonnes</a></li>
+        <li><a href="#manquant">Valeurs manquantes</a></li>
+        <li><a href="#groupby">groupby (agréger) ⭐</a></li>
+        <li><a href="#merge">merge &amp; concat (joindre) ⭐</a></li>
+        <li><a href="#avance">apply, dates, texte, pivot</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="objets">
+      <h2>1. Series &amp; DataFrame</h2>
+      <p>Une <code>Series</code> = une colonne (valeurs + index). Un <code>DataFrame</code> = un tableau (plusieurs Series partageant un index).</p>
+      <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+s = pd.<span class="fn">Series</span>([<span class="nu">10</span>, <span class="nu">20</span>, <span class="nu">30</span>], index=[<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>])
+
+df = pd.<span class="fn">DataFrame</span>({
+    <span class="st">"nom"</span>: [<span class="st">"Ana"</span>, <span class="st">"Ben"</span>, <span class="st">"Cléo"</span>],
+    <span class="st">"age"</span>: [<span class="nu">25</span>, <span class="nu">30</span>, <span class="nu">22</span>],
+    <span class="st">"ville"</span>: [<span class="st">"Paris"</span>, <span class="st">"Lyon"</span>, <span class="st">"Paris"</span>],
+})</code></pre>
+      <div class="callout data"><span class="label">🔗 Sous le capot</span>Chaque colonne d'un DataFrame est un tableau NumPy typé. Tout ce que tu as appris au Module 1 (vectorisation, masques) s'applique ici.</div>
+    </section>
+
+    <section class="block" id="charger">
+      <h2>2. Charger &amp; explorer (le premier réflexe)</h2>
+      <pre><code>df = pd.<span class="fn">read_csv</span>(<span class="st">"data.csv"</span>)        <span class="cmt"># aussi : read_excel, read_json, read_parquet, read_sql</span>
+
+df.<span class="fn">head</span>(); df.<span class="fn">tail</span>(<span class="nu">3</span>)            <span class="cmt"># aperçu début / fin</span>
+df.shape                        <span class="cmt"># (lignes, colonnes)</span>
+df.<span class="fn">info</span>()                       <span class="cmt"># types &amp; valeurs non nulles</span>
+df.<span class="fn">describe</span>()                   <span class="cmt"># stats des colonnes numériques</span>
+df.columns; df.dtypes
+df[<span class="st">"ville"</span>].<span class="fn">value_counts</span>()      <span class="cmt"># fréquence des catégories</span>
+df[<span class="st">"age"</span>].<span class="fn">nunique</span>()            <span class="cmt"># nombre de valeurs distinctes</span></code></pre>
+      <div class="callout example"><span class="label">La check-list d'exploration (EDA)</span><code>.head()</code> → <code>.info()</code> → <code>.describe()</code> → <code>.isna().sum()</code> → <code>.value_counts()</code> sur les catégories. En 5 commandes tu « sens » un dataset.</div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Quelle méthode donne un résumé statistique (moyenne, min, quartiles) des colonnes numériques ?</div>
+        <div class="options">
+          <div class="opt"><code>df.describe()</code></div>
+          <div class="opt"><code>df.info()</code></div>
+          <div class="opt"><code>df.head()</code></div>
+          <div class="opt"><code>df.stats()</code></div>
+        </div>
+        <div class="feedback" data-explain="<code>describe()</code> renvoie count, mean, std, min, quartiles et max. <code>info()</code> donne types et valeurs non nulles ; <code>head()</code> affiche les premières lignes."></div>
+      </div>
+    </section>
+
+    <section class="block" id="selection">
+      <h2>3. Sélection : <code>loc</code> vs <code>iloc</code> ⭐</h2>
+      <pre><code>df[<span class="st">"age"</span>]                  <span class="cmt"># une colonne (Series)</span>
+df[[<span class="st">"nom"</span>, <span class="st">"age"</span>]]          <span class="cmt"># plusieurs colonnes (DataFrame)</span>
+
+df.<span class="fn">loc</span>[<span class="nu">0</span>, <span class="st">"nom"</span>]           <span class="cmt"># loc = par ÉTIQUETTE (nom)</span>
+df.<span class="fn">loc</span>[<span class="nu">0</span>:<span class="nu">2</span>, [<span class="st">"nom"</span>, <span class="st">"age"</span>]]  <span class="cmt"># bornes INCLUSES avec loc</span>
+df.<span class="fn">iloc</span>[<span class="nu">0</span>, <span class="nu">1</span>]              <span class="cmt"># iloc = par POSITION (entiers)</span>
+df.<span class="fn">iloc</span>[:<span class="nu">3</span>, :<span class="nu">2</span>]            <span class="cmt"># bornes exclues (comme Python)</span></code></pre>
+      <table>
+        <tr><th></th><th><code>loc</code></th><th><code>iloc</code></th></tr>
+        <tr><td>Clé</td><td>Étiquette (nom de ligne/colonne)</td><td>Position entière</td></tr>
+        <tr><td>Bornes</td><td>Incluses</td><td>Exclues</td></tr>
+      </table>
+      <div class="callout warning"><span class="label">⚠️ Confusion n°1</span>Avec <code>loc</code>, <code>0:2</code> renvoie 3 lignes (0, 1, 2) ; avec <code>iloc</code>, 2 lignes (0, 1). Choisis selon que tu raisonnes en <em>noms</em> ou en <em>positions</em>.</div>
+    </section>
+
+    <section class="block" id="filtrer">
+      <h2>4. Filtrer par condition (masques booléens)</h2>
+      <pre><code>df[df[<span class="st">"age"</span>] &gt; <span class="nu">24</span>]                       <span class="cmt"># lignes où age &gt; 24</span>
+df[(df[<span class="st">"age"</span>] &gt; <span class="nu">24</span>) &amp; (df[<span class="st">"ville"</span>] == <span class="st">"Paris"</span>)]  <span class="cmt"># &amp; / | + parenthèses</span>
+df[df[<span class="st">"ville"</span>].<span class="fn">isin</span>([<span class="st">"Paris"</span>, <span class="st">"Lyon"</span>])]      <span class="cmt"># appartenance</span>
+df.<span class="fn">query</span>(<span class="st">"age &gt; 24 and ville == 'Paris'"</span>)  <span class="cmt"># syntaxe lisible</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ SettingWithCopyWarning</span>Pour modifier un sous-ensemble, utilise <code>df.loc[masque, "col"] = valeur</code> plutôt que <code>df[masque]["col"] = ...</code> (qui opère sur une copie et n'a pas d'effet).</div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Pourquoi <code>df[df.a &gt; 5 and df.b &lt; 3]</code> plante-t-il ?</div>
+        <div class="options">
+          <div class="opt">Il manque un <code>.loc</code></div>
+          <div class="opt"><code>a</code> et <code>b</code> ne sont pas numériques</div>
+          <div class="opt">Il faut <code>&amp;</code> et des parenthèses, pas <code>and</code> (qui ne marche pas sur des Series)</div>
+          <div class="opt"><code>df</code> est vide</div>
+        </div>
+        <div class="feedback" data-explain="Sur des Series, on combine les masques avec <code>&amp;</code> (et), <code>|</code> (ou), chaque condition entre parenthèses : <code>df[(df.a &gt; 5) &amp; (df.b &lt; 3)]</code>. <code>and</code>/<code>or</code> ne fonctionnent que sur des booléens scalaires."></div>
+      </div>
+    </section>
+
+    <section class="block" id="colonnes">
+      <h2>5. Créer &amp; transformer des colonnes</h2>
+      <pre><code>df[<span class="st">"age_mois"</span>] = df[<span class="st">"age"</span>] * <span class="nu">12</span>          <span class="cmt"># vectorisé</span>
+df[<span class="st">"majeur"</span>] = df[<span class="st">"age"</span>] &gt;= <span class="nu">18</span>
+df[<span class="st">"cat"</span>] = pd.<span class="fn">cut</span>(df[<span class="st">"age"</span>], [<span class="nu">0</span>, <span class="nu">25</span>, <span class="nu">60</span>, <span class="nu">120</span>],
+                  labels=[<span class="st">"jeune"</span>, <span class="st">"adulte"</span>, <span class="st">"senior"</span>])  <span class="cmt"># binning</span>
+df = df.<span class="fn">rename</span>(columns={<span class="st">"nom"</span>: <span class="st">"prenom"</span>})
+df = df.<span class="fn">drop</span>(columns=[<span class="st">"age_mois"</span>])
+df[<span class="st">"ville"</span>] = df[<span class="st">"ville"</span>].<span class="fn">str</span>.<span class="fn">upper</span>()         <span class="cmt"># accesseur .str vectorisé</span></code></pre>
+      <div class="callout data"><span class="label">🔗 Accesseurs</span><code>.str</code> (texte), <code>.dt</code> (dates), <code>.cat</code> (catégories) appliquent des opérations vectorisées sur toute une colonne, sans boucle.</div>
+    </section>
+
+    <section class="block" id="manquant">
+      <h2>6. Valeurs manquantes (NaN)</h2>
+      <pre><code>df.<span class="fn">isna</span>().<span class="fn">sum</span>()                 <span class="cmt"># nombre de NaN par colonne</span>
+df.<span class="fn">dropna</span>()                     <span class="cmt"># supprime les lignes avec NaN</span>
+df.<span class="fn">dropna</span>(subset=[<span class="st">"age"</span>])       <span class="cmt"># seulement si age manque</span>
+df[<span class="st">"age"</span>].<span class="fn">fillna</span>(df[<span class="st">"age"</span>].<span class="fn">median</span>())  <span class="cmt"># impute par la médiane</span>
+df[<span class="st">"ville"</span>].<span class="fn">fillna</span>(<span class="st">"inconnu"</span>)       <span class="cmt"># impute une catégorie</span>
+df.<span class="fn">ffill</span>()                      <span class="cmt"># propage la dernière valeur (séries temporelles)</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ Supprimer ou imputer ?</span>Supprimer est simple mais perd de l'information (et peut biaiser). Imputer (médiane pour le numérique, mode/« inconnu » pour les catégories) préserve les lignes. Le bon choix dépend du <em>pourquoi</em> la donnée manque.</div>
+    </section>
+
+    <section class="block" id="groupby">
+      <h2>7. <code>groupby</code> : agréger par groupe ⭐⭐</h2>
+      <p>Le schéma <strong>split → apply → combine</strong> : on découpe par clé, on agrège chaque groupe, on recombine.</p>
+      <pre><code>df.<span class="fn">groupby</span>(<span class="st">"ville"</span>)[<span class="st">"age"</span>].<span class="fn">mean</span>()        <span class="cmt"># âge moyen par ville</span>
+df.<span class="fn">groupby</span>(<span class="st">"ville"</span>).<span class="fn">size</span>()                <span class="cmt"># effectif par ville</span>
+
+<span class="cmt"># Plusieurs agrégations d'un coup</span>
+df.<span class="fn">groupby</span>(<span class="st">"ville"</span>).<span class="fn">agg</span>(
+    age_moyen=(<span class="st">"age"</span>, <span class="st">"mean"</span>),
+    age_max=(<span class="st">"age"</span>, <span class="st">"max"</span>),
+    effectif=(<span class="st">"age"</span>, <span class="st">"count"</span>),
+)
+
+<span class="cmt"># Grouper par plusieurs clés</span>
+df.<span class="fn">groupby</span>([<span class="st">"ville"</span>, <span class="st">"majeur"</span>])[<span class="st">"age"</span>].<span class="fn">mean</span>()</code></pre>
+      <div class="callout example"><span class="label">transform : agréger en gardant la forme</span>
+      <pre><code><span class="cmt"># moyenne du groupe, alignée sur chaque ligne (utile pour centrer par groupe)</span>
+df[<span class="st">"age_moy_ville"</span>] = df.<span class="fn">groupby</span>(<span class="st">"ville"</span>)[<span class="st">"age"</span>].<span class="fn">transform</span>(<span class="st">"mean"</span>)</code></pre></div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 7.1</strong></div>
+        <div class="qtext">Que renvoie <code>df.groupby("ville")["age"].mean()</code> ?</div>
+        <div class="options">
+          <div class="opt">La moyenne globale des âges</div>
+          <div class="opt">Une Series : l'âge moyen pour chaque ville</div>
+          <div class="opt">Le nombre de personnes par ville</div>
+          <div class="opt">Une erreur</div>
+        </div>
+        <div class="feedback" data-explain="<code>groupby(\"ville\")</code> découpe par ville, puis <code>[\"age\"].mean()</code> calcule la moyenne de l'âge dans chaque groupe. Résultat indexé par ville."></div>
+      </div>
+    </section>
+
+    <section class="block" id="merge">
+      <h2>8. <code>merge</code> &amp; <code>concat</code> : combiner des tables ⭐</h2>
+      <p><code>merge</code> = jointure SQL (associer des lignes via une clé commune).</p>
+      <pre><code>clients = pd.<span class="fn">DataFrame</span>({<span class="st">"id"</span>: [<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>], <span class="st">"nom"</span>: [<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>]})
+cmds    = pd.<span class="fn">DataFrame</span>({<span class="st">"id"</span>: [<span class="nu">1</span>, <span class="nu">1</span>, <span class="nu">2</span>], <span class="st">"montant"</span>: [<span class="nu">10</span>, <span class="nu">20</span>, <span class="nu">5</span>]})
+
+pd.<span class="fn">merge</span>(clients, cmds, on=<span class="st">"id"</span>, how=<span class="st">"inner"</span>)   <span class="cmt"># seulement les id communs</span>
+pd.<span class="fn">merge</span>(clients, cmds, on=<span class="st">"id"</span>, how=<span class="st">"left"</span>)    <span class="cmt"># tous les clients</span></code></pre>
+      <table>
+        <tr><th><code>how</code></th><th>Garde…</th></tr>
+        <tr><td><code>inner</code></td><td>Les clés présentes des <strong>deux</strong> côtés (défaut)</td></tr>
+        <tr><td><code>left</code></td><td>Toutes les lignes de gauche</td></tr>
+        <tr><td><code>right</code></td><td>Toutes les lignes de droite</td></tr>
+        <tr><td><code>outer</code></td><td>L'union des deux</td></tr>
+      </table>
+      <h3>concat : empiler</h3>
+      <pre><code>pd.<span class="fn">concat</span>([df1, df2])              <span class="cmt"># empile les lignes (axis=0)</span>
+pd.<span class="fn">concat</span>([df1, df2], axis=<span class="nu">1</span>)      <span class="cmt"># colle les colonnes</span></code></pre>
+      <div class="callout data"><span class="label">🔗 merge = JOIN</span><code>how="inner"</code> ↔ <code>INNER JOIN</code>, <code>how="left"</code> ↔ <code>LEFT JOIN</code>. Si tu connais SQL, tu connais déjà <code>merge</code>.</div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 8.1</strong></div>
+        <div class="qtext">Tu veux garder <em>tous</em> les clients, même ceux sans commande. Quel <code>how</code> ?</div>
+        <div class="options">
+          <div class="opt"><code>inner</code></div>
+          <div class="opt"><code>right</code></div>
+          <div class="opt"><code>cross</code></div>
+          <div class="opt"><code>left</code> (si clients est à gauche)</div>
+        </div>
+        <div class="feedback" data-explain="<code>how=\"left\"</code> conserve toutes les lignes de la table de gauche (clients) ; les colonnes de commande seront NaN pour les clients sans commande."></div>
+      </div>
+    </section>
+
+    <section class="block" id="avance">
+      <h2>9. apply, dates, texte &amp; pivot</h2>
+      <h3>apply / map (quand la vectorisation ne suffit pas)</h3>
+      <pre><code>df[<span class="st">"initiale"</span>] = df[<span class="st">"prenom"</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> s: s[<span class="nu">0</span>])
+df[<span class="st">"age2"</span>] = df[<span class="st">"age"</span>].<span class="fn">map</span>({<span class="nu">25</span>: <span class="st">"jeune"</span>})   <span class="cmt"># remplacement par dict</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ apply est lent</span>Préfère toujours les opérations vectorisées (<code>.str</code>, <code>.dt</code>, arithmétique) ; <code>apply</code> boucle en Python. Garde-le pour la logique qui ne se vectorise pas.</div>
+      <h3>Dates (.dt)</h3>
+      <pre><code>df[<span class="st">"date"</span>] = pd.<span class="fn">to_datetime</span>(df[<span class="st">"date"</span>])
+df[<span class="st">"annee"</span>] = df[<span class="st">"date"</span>].<span class="fn">dt</span>.year
+df[<span class="st">"jour_sem"</span>] = df[<span class="st">"date"</span>].<span class="fn">dt</span>.day_name()</code></pre>
+      <h3>Pivot (tableau croisé)</h3>
+      <pre><code>df.<span class="fn">pivot_table</span>(index=<span class="st">"ville"</span>, columns=<span class="st">"majeur"</span>,
+               values=<span class="st">"age"</span>, aggfunc=<span class="st">"mean"</span>)</code></pre>
+      <h3>Trier &amp; exporter</h3>
+      <pre><code>df.<span class="fn">sort_values</span>(<span class="st">"age"</span>, ascending=<span class="kw">False</span>)
+df.<span class="fn">to_csv</span>(<span class="st">"sortie.csv"</span>, index=<span class="kw">False</span>)</code></pre>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">Comment un outil né dans la finance est devenu le couteau suisse de la data.</p>
+      <p>En 2008, <strong>Wes McKinney</strong>, analyste quantitatif chez AQR Capital, en a assez de jongler entre Excel et des scripts bricolés pour manipuler des séries financières. Il crée pandas (de « <em>panel data</em> ») pour avoir, en Python, la souplesse d'un tableur avec la puissance du code.</p>
+      <h4>Repères</h4>
+      <ul class="names">
+        <li><b>Wes McKinney</b> <span class="yr">(2008)</span> — créateur de pandas ; auteur de <i>Python for Data Analysis</i>, la référence.</li>
+        <li><b>Le DataFrame</b> — concept emprunté au langage <strong>R</strong> (<code>data.frame</code>), lui-même inspiré des tableurs.</li>
+        <li><b>Open source</b> <span class="yr">(2009)</span> — libéré, pandas explose avec la montée de la data science (2012+).</li>
+        <li><b>Apache Arrow</b> <span class="yr">(2016)</span> — McKinney s'attaque ensuite à la performance mémoire inter-langages ; pandas 2.0 (2023) s'appuie sur Arrow.</li>
+      </ul>
+      <h4>L'écosystème aujourd'hui</h4>
+      <p>pandas reste la porte d'entrée, mais pour le très gros volume, des alternatives au même « look » émergent : <strong>Polars</strong> (ultra-rapide, en Rust 🦀), <strong>Dask</strong> et <strong>Spark</strong> (distribué). Apprendre pandas, c'est apprendre un vocabulaire (filtrer, grouper, joindre) qui se transpose partout.</p>
+      <div class="clinks">
+        <a class="pill-link" href="https://pandas.pydata.org/docs/" target="_blank">Doc pandas</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Pandas" target="_blank">pandas (Wikipédia)</a>
+        <a class="pill-link" href="https://wesmckinney.com/book/" target="_blank">Python for Data Analysis (livre)</a>
+        <a class="pill-link" href="https://pola.rs/" target="_blank">Polars (alternative Rust)</a>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>10. Exercices</h2>
+      <h3>Exercice 1 — Filtrage</h3>
+      <p>Sélectionne les lignes où <code>age &gt; 30</code> <em>et</em> <code>ville</code> vaut « Paris », en ne gardant que les colonnes <code>nom</code> et <code>age</code>.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>df.<span class="fn">loc</span>[(df[<span class="st">"age"</span>] &gt; <span class="nu">30</span>) &amp; (df[<span class="st">"ville"</span>] == <span class="st">"Paris"</span>), [<span class="st">"nom"</span>, <span class="st">"age"</span>]]</code></pre>
+      </details>
+      <h3>Exercice 2 — groupby (⭐)</h3>
+      <p>Calcule, pour chaque ville, l'âge moyen et le nombre de personnes, trié par effectif décroissant.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>(df.<span class="fn">groupby</span>(<span class="st">"ville"</span>)
+   .<span class="fn">agg</span>(age_moyen=(<span class="st">"age"</span>, <span class="st">"mean"</span>), effectif=(<span class="st">"age"</span>, <span class="st">"count"</span>))
+   .<span class="fn">sort_values</span>(<span class="st">"effectif"</span>, ascending=<span class="kw">False</span>))</code></pre>
+      </details>
+      <h3>Exercice 3 — Jointure (⭐)</h3>
+      <p>Associe chaque commande au nom de son client (garde toutes les commandes), puis calcule le montant total par client.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>(cmds.<span class="fn">merge</span>(clients, on=<span class="st">"id"</span>, how=<span class="st">"left"</span>)
+     .<span class="fn">groupby</span>(<span class="st">"nom"</span>)[<span class="st">"montant"</span>].<span class="fn">sum</span>())</code></pre>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="2">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-2-pandas.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-1-numpy.html"><div class="dir">← Précédent</div><div class="ttl">Module 1 · NumPy</div></a>
+      <a class="next" href="module-3-visualisation.html"><div class="dir">Suivant →</div><div class="ttl">Module 3 · Visualisation</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 2 — Pandas · Cours Python &amp; Data Science 🐍💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

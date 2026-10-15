@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 1 — NumPy : calcul vectoriel</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🐍</span> Python &amp; Data Science</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 1</div>
+    <h1>Module 1 — NumPy : le calcul vectoriel ⭐</h1>
+    <p class="subtitle">NumPy est la fondation de toute la data en Python : un tableau N-dimensionnel ultra-rapide (écrit en C) et la <strong>vectorisation</strong>, qui remplace les boucles Python par des opérations sur des tableaux entiers. Pandas, scikit-learn, PyTorch… tout repose dessus.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Créer et manipuler des <code>ndarray</code> ; comprendre <code>shape</code>, <code>dtype</code> et les axes ; vectoriser au lieu de boucler ; maîtriser l'indexation avancée et les masques booléens ; appliquer le <strong>broadcasting</strong> ; utiliser les fonctions d'agrégation, l'algèbre linéaire et l'aléatoire.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#creer">Créer des tableaux</a></li>
+        <li><a href="#attributs">shape, dtype, axes</a></li>
+        <li><a href="#vecto">Vectorisation</a></li>
+        <li><a href="#index">Indexation &amp; slicing</a></li>
+        <li><a href="#masques">Masques booléens</a></li>
+        <li><a href="#broadcast">Broadcasting ⭐</a></li>
+        <li><a href="#agg">Agrégations &amp; axes</a></li>
+        <li><a href="#reshape">Reshape &amp; manipulation</a></li>
+        <li><a href="#linalg">Algèbre linéaire &amp; aléatoire</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="creer">
+      <h2>1. Créer des tableaux</h2>
+      <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.<span class="fn">array</span>([<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>])              <span class="cmt"># depuis une liste</span>
+b = np.<span class="fn">array</span>([[<span class="nu">1</span>, <span class="nu">2</span>], [<span class="nu">3</span>, <span class="nu">4</span>]])       <span class="cmt"># 2D (matrice)</span>
+np.<span class="fn">zeros</span>((<span class="nu">2</span>, <span class="nu">3</span>)); np.<span class="fn">ones</span>((<span class="nu">3</span>,)); np.<span class="fn">full</span>((<span class="nu">2</span>,<span class="nu">2</span>), <span class="nu">7</span>)
+np.<span class="fn">arange</span>(<span class="nu">0</span>, <span class="nu">10</span>, <span class="nu">2</span>)             <span class="cmt"># [0 2 4 6 8]</span>
+np.<span class="fn">linspace</span>(<span class="nu">0</span>, <span class="nu">1</span>, <span class="nu">5</span>)            <span class="cmt"># [0. .25 .5 .75 1.]</span>
+np.<span class="fn">eye</span>(<span class="nu">3</span>)                          <span class="cmt"># identité 3x3</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ Liste ≠ ndarray</span>Un <code>ndarray</code> a un <strong>type unique</strong> et une taille fixe : c'est ce qui le rend rapide. Additionner deux listes Python les concatène ; additionner deux arrays fait une somme <em>élément par élément</em>.</div>
+    </section>
+
+    <section class="block" id="attributs">
+      <h2>2. shape, dtype &amp; axes</h2>
+      <pre><code>b = np.<span class="fn">array</span>([[<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>], [<span class="nu">4</span>, <span class="nu">5</span>, <span class="nu">6</span>]])
+b.shape      <span class="cmt"># (2, 3) -> 2 lignes, 3 colonnes</span>
+b.ndim       <span class="cmt"># 2 (nombre de dimensions)</span>
+b.size       <span class="cmt"># 6 (nombre total d'éléments)</span>
+b.dtype      <span class="cmt"># int64</span>
+b.<span class="fn">astype</span>(np.float32)   <span class="cmt"># conversion de type</span></code></pre>
+      <div class="callout data"><span class="label">🔗 Les axes</span>Pour un tableau 2D : <strong>axis=0</strong> = « vers le bas » (colonnes / sur les lignes), <strong>axis=1</strong> = « vers la droite » (lignes / sur les colonnes). <code>b.sum(axis=0)</code> somme chaque colonne → <code>[5 7 9]</code>.</div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Pour un tableau de forme <code>(3, 4)</code>, que donne <code>.sum(axis=1)</code> ?</div>
+        <div class="options">
+          <div class="opt">Un tableau de 4 valeurs (somme par colonne)</div>
+          <div class="opt">Un tableau de 3 valeurs (somme par ligne)</div>
+          <div class="opt">Un seul nombre</div>
+          <div class="opt">Une erreur</div>
+        </div>
+        <div class="feedback" data-explain="<code>axis=1</code> réduit la dimension des colonnes : on somme chaque ligne, il reste 3 valeurs. Mnémo : l'axe indiqué est celui qui <em>disparaît</em>."></div>
+      </div>
+    </section>
+
+    <section class="block" id="vecto">
+      <h2>3. Vectorisation (le cœur de NumPy) ⭐</h2>
+      <p>On applique des opérations sur des tableaux entiers, sans boucle Python. C'est à la fois plus court et <strong>10 à 100× plus rapide</strong>.</p>
+      <pre><code>x = np.<span class="fn">arange</span>(<span class="nu">1</span>, <span class="nu">6</span>)      <span class="cmt"># [1 2 3 4 5]</span>
+x * <span class="nu">2</span>                   <span class="cmt"># [2 4 6 8 10]</span>
+x + x                   <span class="cmt"># [2 4 6 8 10] (élément par élément)</span>
+x ** <span class="nu">2</span>                  <span class="cmt"># [1 4 9 16 25]</span>
+np.<span class="fn">sqrt</span>(x); np.<span class="fn">exp</span>(x); np.<span class="fn">log</span>(x)   <span class="cmt"># ufuncs vectorisées</span>
+(x &gt; <span class="nu">2</span>)                 <span class="cmt"># [False False True True True]</span></code></pre>
+      <div class="callout example"><span class="label">Boucle vs vectorisation</span>
+      <pre><code><span class="cmt"># ❌ lent (boucle Python)</span>
+r = [v**<span class="nu">2</span> <span class="kw">for</span> v <span class="kw">in</span> x]
+<span class="cmt"># ✅ rapide (vectorisé, calcul en C)</span>
+r = x**<span class="nu">2</span></code></pre></div>
+      <div class="callout warning"><span class="label">⚠️ Règle d'or</span>Si tu écris une boucle <code>for</code> sur un array NumPy, demande-toi toujours : « puis-je vectoriser ? ». 9 fois sur 10, oui.</div>
+    </section>
+
+    <section class="block" id="index">
+      <h2>4. Indexation &amp; slicing</h2>
+      <pre><code>a = np.<span class="fn">arange</span>(<span class="nu">10</span>)       <span class="cmt"># [0 1 2 3 4 5 6 7 8 9]</span>
+a[<span class="nu">2</span>]; a[-<span class="nu">1</span>]              <span class="cmt"># 2 ; 9</span>
+a[<span class="nu">2</span>:<span class="nu">5</span>]                 <span class="cmt"># [2 3 4]</span>
+a[::<span class="nu">2</span>]                  <span class="cmt"># [0 2 4 6 8]</span>
+
+b = np.<span class="fn">array</span>([[<span class="nu">1</span>,<span class="nu">2</span>,<span class="nu">3</span>],[<span class="nu">4</span>,<span class="nu">5</span>,<span class="nu">6</span>]])
+b[<span class="nu">0</span>, <span class="nu">1</span>]                <span class="cmt"># 2  (ligne 0, colonne 1)</span>
+b[:, <span class="nu">0</span>]                 <span class="cmt"># [1 4] (toute la colonne 0)</span>
+b[<span class="nu">1</span>, :]                 <span class="cmt"># [4 5 6] (toute la ligne 1)</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ Vue, pas copie !</span>Un slice NumPy est une <strong>vue</strong> : modifier <code>a[2:5]</code> modifie <code>a</code>. Pour un tableau indépendant, utilise <code>.copy()</code>.</div>
+      <h3>Fancy indexing</h3>
+      <pre><code>a[[<span class="nu">0</span>, <span class="nu">3</span>, <span class="nu">5</span>]]            <span class="cmt"># sélectionne ces indices -> [0 3 5]</span></code></pre>
+    </section>
+
+    <section class="block" id="masques">
+      <h2>5. Masques booléens ⭐</h2>
+      <p>Sélectionner/modifier selon une condition : omniprésent en nettoyage de données.</p>
+      <pre><code>a = np.<span class="fn">array</span>([<span class="nu">1</span>, -<span class="nu">2</span>, <span class="nu">3</span>, -<span class="nu">4</span>, <span class="nu">5</span>])
+a[a &gt; <span class="nu">0</span>]                 <span class="cmt"># [1 3 5]</span>
+a[a &lt; <span class="nu">0</span>] = <span class="nu">0</span>              <span class="cmt"># remplace les négatifs -> [1 0 3 0 5]</span>
+np.<span class="fn">where</span>(a &gt; <span class="nu">2</span>, <span class="st">"grand"</span>, <span class="st">"petit"</span>)  <span class="cmt"># ternaire vectorisé</span>
+(a &gt; <span class="nu">0</span>).<span class="fn">sum</span>()            <span class="cmt"># compte les valeurs positives</span>
+((a &gt; <span class="nu">0</span>) &amp; (a &lt; <span class="nu">4</span>))       <span class="cmt"># &amp; = et, | = ou (PAS and/or !)</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ Opérateurs</span>Avec les tableaux NumPy, on utilise <code>&amp;</code>, <code>|</code>, <code>~</code> (et parenthèses !), jamais <code>and</code>/<code>or</code>/<code>not</code> qui lèvent une erreur sur un array.</div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Comment compter le nombre d'éléments &gt; 10 dans un array <code>a</code> ?</div>
+        <div class="options">
+          <div class="opt"><code>len(a &gt; 10)</code></div>
+          <div class="opt"><code>count(a, &gt;10)</code></div>
+          <div class="opt"><code>(a &gt; 10).sum()</code></div>
+          <div class="opt"><code>a.count(10)</code></div>
+        </div>
+        <div class="feedback" data-explain="<code>a &gt; 10</code> donne un masque de booléens ; <code>True</code> vaut 1, donc <code>.sum()</code> compte combien sont vrais. Idiome ultra-courant."></div>
+      </div>
+    </section>
+
+    <section class="block" id="broadcast">
+      <h2>6. Broadcasting ⭐⭐</h2>
+      <p>Le broadcasting permet d'opérer sur des tableaux de formes différentes en « étirant » automatiquement la plus petite, <strong>sans copie mémoire</strong>.</p>
+      <pre><code>M = np.<span class="fn">array</span>([[<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>],
+              [<span class="nu">4</span>, <span class="nu">5</span>, <span class="nu">6</span>]])   <span class="cmt"># (2, 3)</span>
+M + <span class="nu">10</span>                 <span class="cmt"># scalaire diffusé partout</span>
+M + np.<span class="fn">array</span>([<span class="nu">10</span>, <span class="nu">20</span>, <span class="nu">30</span>])   <span class="cmt"># (3,) ajouté à chaque ligne</span>
+M * np.<span class="fn">array</span>([[<span class="nu">1</span>], [<span class="nu">0</span>]])      <span class="cmt"># (2,1) : multiplie ligne par ligne</span></code></pre>
+      <div class="callout data"><span class="label">🔗 Règle</span>Deux dimensions sont compatibles si elles sont <strong>égales</strong> ou si <strong>l'une vaut 1</strong>. On compare les shapes de droite à gauche. Exemple phare : <strong>centrer</strong> des données → <code>X - X.mean(axis=0)</code> (soustrait la moyenne de chaque colonne).</div>
+      <div class="callout example"><span class="label">Standardisation (z-score) en une ligne</span>
+      <pre><code>Z = (X - X.<span class="fn">mean</span>(axis=<span class="nu">0</span>)) / X.<span class="fn">std</span>(axis=<span class="nu">0</span>)</code></pre></div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1</strong></div>
+        <div class="qtext">Un tableau <code>(3, 4)</code> et un tableau <code>(4,)</code> : l'addition est-elle possible ?</div>
+        <div class="options">
+          <div class="opt">Oui : le <code>(4,)</code> est diffusé sur chacune des 3 lignes</div>
+          <div class="opt">Non : les formes diffèrent</div>
+          <div class="opt">Oui mais seulement avec <code>np.add</code></div>
+          <div class="opt">Non, il faut un <code>(3,)</code></div>
+        </div>
+        <div class="feedback" data-explain="En comparant de droite à gauche : 4==4 (OK), puis 3 contre rien → le (4,) est étiré sur les 3 lignes. Résultat (3, 4)."></div>
+      </div>
+    </section>
+
+    <section class="block" id="agg">
+      <h2>7. Agrégations &amp; axes</h2>
+      <table>
+        <tr><th>Fonction</th><th>Rôle</th></tr>
+        <tr><td><code>.sum()</code> <code>.mean()</code> <code>.std()</code></td><td>Somme, moyenne, écart-type</td></tr>
+        <tr><td><code>.min()</code> <code>.max()</code></td><td>Extrêmes</td></tr>
+        <tr><td><code>.argmin()</code> <code>.argmax()</code></td><td>Indice du min/max</td></tr>
+        <tr><td><code>.cumsum()</code></td><td>Somme cumulée</td></tr>
+        <tr><td><code>np.median</code>, <code>np.percentile</code></td><td>Médiane, quantiles</td></tr>
+        <tr><td><code>.any()</code> <code>.all()</code></td><td>Au moins un / tous vrais</td></tr>
+      </table>
+      <pre><code>M.<span class="fn">sum</span>()            <span class="cmt"># total global</span>
+M.<span class="fn">sum</span>(axis=<span class="nu">0</span>)      <span class="cmt"># par colonne -> [5 7 9]</span>
+M.<span class="fn">mean</span>(axis=<span class="nu">1</span>)     <span class="cmt"># moyenne par ligne</span></code></pre>
+    </section>
+
+    <section class="block" id="reshape">
+      <h2>8. Reshape &amp; manipulation de forme</h2>
+      <pre><code>a = np.<span class="fn">arange</span>(<span class="nu">12</span>)
+a.<span class="fn">reshape</span>(<span class="nu">3</span>, <span class="nu">4</span>)      <span class="cmt"># 3 lignes, 4 colonnes</span>
+a.<span class="fn">reshape</span>(<span class="nu">3</span>, -<span class="nu">1</span>)     <span class="cmt"># -1 = « calcule toi-même » (ici 4)</span>
+M.T                     <span class="cmt"># transposée</span>
+M.<span class="fn">flatten</span>()           <span class="cmt"># aplatit en 1D</span>
+np.<span class="fn">concatenate</span>([a, b]); np.<span class="fn">vstack</span>([a, b]); np.<span class="fn">hstack</span>([a, b])
+a[:, np.newaxis]        <span class="cmt"># ajoute une dimension (3,) -> (3,1)</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ reshape conserve le nombre d'éléments</span><code>reshape(3, 4)</code> exige exactement 12 éléments, sinon <code>ValueError</code>.</div>
+    </section>
+
+    <section class="block" id="linalg">
+      <h2>9. Algèbre linéaire &amp; aléatoire</h2>
+      <pre><code>A = np.<span class="fn">array</span>([[<span class="nu">1</span>, <span class="nu">2</span>], [<span class="nu">3</span>, <span class="nu">4</span>]])
+A @ A                   <span class="cmt"># produit matriciel (ou np.dot)</span>
+A * A                   <span class="cmt"># produit ÉLÉMENT PAR ÉLÉMENT (≠ @)</span>
+np.linalg.<span class="fn">inv</span>(A)        <span class="cmt"># inverse</span>
+np.linalg.<span class="fn">det</span>(A)        <span class="cmt"># déterminant</span>
+np.linalg.<span class="fn">eig</span>(A)        <span class="cmt"># valeurs/vecteurs propres</span>
+np.linalg.<span class="fn">norm</span>(v)       <span class="cmt"># norme d'un vecteur</span></code></pre>
+      <div class="callout warning"><span class="label">⚠️ @ vs *</span><code>@</code> = produit matriciel (lignes × colonnes) ; <code>*</code> = produit terme à terme. Confusion classique en examen et en ML.</div>
+      <h3>Aléatoire (reproductible)</h3>
+      <pre><code>rng = np.random.<span class="fn">default_rng</span>(<span class="nu">42</span>)   <span class="cmt"># graine = reproductibilité</span>
+rng.<span class="fn">random</span>((<span class="nu">2</span>, <span class="nu">3</span>))        <span class="cmt"># uniformes [0,1)</span>
+rng.<span class="fn">normal</span>(<span class="nu">0</span>, <span class="nu">1</span>, <span class="nu">1000</span>)     <span class="cmt"># gaussienne</span>
+rng.<span class="fn">integers</span>(<span class="nu">0</span>, <span class="nu">10</span>, <span class="nu">5</span>)      <span class="cmt"># entiers</span>
+rng.<span class="fn">choice</span>(data, <span class="nu">100</span>)       <span class="cmt"># échantillonnage</span></code></pre>
+      <div class="callout data"><span class="label">🔗 Reproductibilité</span>Fixer la graine (<code>seed</code>) garantit que tes expériences ML donnent les mêmes résultats — indispensable pour comparer des modèles et débugger.</div>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">Comment un tableau est devenu le socle de toute la science computationnelle en Python.</p>
+      <p>Dans les années 1990, calculer en Python était lent et fragmenté. Deux bibliothèques rivales, <em>Numeric</em> et <em>Numarray</em>, divisaient la communauté. En 2005, <strong>Travis Oliphant</strong> les unifie en une seule : <strong>NumPy</strong>. Ce geste a littéralement rendu possible l'écosystème scientifique Python d'aujourd'hui.</p>
+      <h4>Repères</h4>
+      <ul class="names">
+        <li><b>Travis Oliphant</b> <span class="yr">(2005)</span> — crée NumPy, puis co-fonde Anaconda et SciPy. Figure centrale de la PyData.</li>
+        <li><b>Le concept d'<code>ndarray</code></b> — un bloc mémoire contigu + des métadonnées (shape, strides) : d'où la vitesse.</li>
+        <li><b>BLAS / LAPACK</b> <span class="yr">(années 1970-90)</span> — les bibliothèques Fortran d'algèbre linéaire que NumPy appelle en coulisses.</li>
+        <li><b>Article <i>Nature</i></b> <span class="yr">(2020)</span> — « Array programming with NumPy » : reconnaissance scientifique de son rôle (imagerie des trous noirs, détection d'ondes gravitationnelles).</li>
+      </ul>
+      <h4>Pourquoi c'est rapide</h4>
+      <p>Une liste Python stocke des <em>pointeurs</em> vers des objets éparpillés ; un <code>ndarray</code> stocke les données <strong>côte à côte</strong>, d'un seul type. Les opérations s'exécutent alors en C/Fortran optimisé, en exploitant le cache du processeur et les instructions vectorielles (SIMD). C'est la différence entre interpréter et calculer.</p>
+      <div class="clinks">
+        <a class="pill-link" href="https://numpy.org/doc/stable/" target="_blank">Doc NumPy</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/NumPy" target="_blank">NumPy (Wikipédia)</a>
+        <a class="pill-link" href="https://www.nature.com/articles/s41586-020-2649-2" target="_blank">Article Nature 2020</a>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>10. Exercices</h2>
+      <h3>Exercice 1 — Vectorisation</h3>
+      <p>Sans boucle, calcule la distance euclidienne entre deux vecteurs <code>u</code> et <code>v</code>.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>np.<span class="fn">sqrt</span>(((u - v)**<span class="nu">2</span>).<span class="fn">sum</span>())   <span class="cmt"># ou np.linalg.norm(u - v)</span></code></pre>
+      </details>
+      <h3>Exercice 2 — Masque</h3>
+      <p>Remplace toutes les valeurs négatives d'un array par leur valeur absolue, sans boucle.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>a[a &lt; <span class="nu">0</span>] *= -<span class="nu">1</span>        <span class="cmt"># ou np.abs(a)</span></code></pre>
+      </details>
+      <h3>Exercice 3 — Standardisation (⭐)</h3>
+      <p>Standardise chaque colonne d'une matrice <code>X</code> (moyenne 0, écart-type 1) en une ligne.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>Z = (X - X.<span class="fn">mean</span>(axis=<span class="nu">0</span>)) / X.<span class="fn">std</span>(axis=<span class="nu">0</span>)</code></pre>
+        <p>Le broadcasting diffuse les vecteurs <code>mean</code> et <code>std</code> (shape <code>(n_colonnes,)</code>) sur chaque ligne.</p>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="1">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-1-numpy.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-0-python-avance.html"><div class="dir">← Précédent</div><div class="ttl">Module 0 · Python avancé</div></a>
+      <a class="next" href="module-2-pandas.html"><div class="dir">Suivant →</div><div class="ttl">Module 2 · Pandas</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 1 — NumPy · Cours Python &amp; Data Science 🐍💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

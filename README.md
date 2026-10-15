@@ -18,8 +18,9 @@ assets/
   search-index.js        Index de recherche (généré — ne pas éditer à la main)
   build-search-index.py  Générateur de l'index (Python 3, sans dépendance)
 matieres/
-  mathematiques/         Cours de maths (modules, fiches, examen blanc)
-  rust/                  Cursus Rust + révision express
+  mathematiques/         Cours de maths (modules, fiches, examen blanc, aide-mémoire)
+  rust/                  Cursus Rust + révision express + antisèche
+  python/                Python & Data Science (6 modules, fiches, aide-mémoire)
 ```
 
 ## ✨ Fonctionnalités
@@ -27,6 +28,7 @@ matieres/
   localement et privé.
 - **Recherche globale** dans tous les cours et sections (raccourci `/`, insensible
   aux accents, liens profonds vers les sections).
+- **Antisèches / aide-mémoire** par matière (référence rapide filtrable : Rust et maths).
 - **Export PDF** des cours de maths (bouton 🖨️ ou impression du navigateur).
 - **Thème clair/sombre** et design **responsive** mobile.
 
@@ -52,3 +54,12 @@ qui raconte l'histoire de la notion, ses grands noms et pourquoi elle compte.
 - Structure type : un `.chead` (titre + badge), un `.csub`, un paragraphe d'intro,
   `<h4>` thématiques, une liste `.names` (figures + dates), puis des liens `.clinks`.
 Les encarts sont automatiquement indexés dans la recherche (type « Culture & histoire »).
+
+## ⚡ Convention : antisèche / aide-mémoire
+Chaque matière peut fournir une page **antisèche** autonome (référence rapide) :
+- Rust : `matieres/rust/cheatsheet-rust.html` (syntaxe, méthodes, paradigmes).
+- Maths : `matieres/mathematiques/aide-memoire.html` (formules, règles, marches à suivre).
+Patron : un **filtre de recherche instantané** (raccourci `/`), des cartes `.cs-card`
+en colonnes (`column-width`), styles d'impression, thème auto. Pour les maths, des
+**puces de catégorie** filtrent par domaine. Déclare chaque page dans
+`build-search-index.py` et ajoute un lien `extra` dans `SUBJECTS` (`portal.js`).

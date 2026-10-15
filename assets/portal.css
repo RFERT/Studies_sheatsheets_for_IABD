@@ -107,6 +107,8 @@ a:hover { text-decoration: underline; }
   box-shadow: var(--shadow); transition: transform 0.18s ease, border-color 0.18s ease;
 }
 .subject:hover { transform: translateY(-5px); border-color: var(--sc, var(--primary)); text-decoration: none; }
+.subject-main { display: flex; flex-direction: column; flex: 1; color: inherit; text-decoration: none; }
+.subject-main:hover { text-decoration: none; }
 .subject .banner {
   height: 92px; display: flex; align-items: center; gap: 14px; padding: 0 22px;
   background: linear-gradient(135deg, var(--sc, var(--primary)), color-mix(in srgb, var(--sc, var(--primary)) 40%, #000));
@@ -128,6 +130,9 @@ a:hover { text-decoration: underline; }
 .subject .status.soon { color: var(--muted); }
 .subject .status.wip { color: #ffb454; }
 .subject .go { font-size: 14px; color: var(--sc, var(--primary)); font-weight: 700; }
+.subject-extras { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 22px 18px; margin-top: -4px; }
+.subject-extras .tag.extra { background: var(--bg-elev); font-weight: 600; transition: background 0.15s ease; }
+.subject-extras .tag.extra:hover { background: color-mix(in srgb, var(--sc, var(--primary)) 16%, var(--bg-elev)); text-decoration: none; }
 .subject.locked { opacity: 0.58; cursor: default; }
 .subject.locked:hover { transform: none; }
 .subject .ribbon {

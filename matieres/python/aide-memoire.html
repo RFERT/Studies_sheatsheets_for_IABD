@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1117" />
+<title>Python &amp; Data Science — Antisèche</title>
+<style>
+:root{
+  --bg:#0e1016; --bg2:#151824; --bg3:#1f2435; --card:#181c2a;
+  --txt:#eef1fb; --muted:#8891b4; --line:#2a3047;
+  --acc:#3b82f6; --acc2:#8fb4ff; --ok:#27e0b0; --warn:#ffb454; --bad:#ff6b81;
+  --mono:"JetBrains Mono","Fira Code",Consolas,monospace;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f4f6fc; --bg2:#fff; --bg3:#eef1ff; --card:#fff;
+  --txt:#141732; --muted:#5c6488; --line:#dbe1f5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1000px 500px at 85% -10%,#141f33,var(--bg) 55%) fixed;color:var(--txt);font-family:var(--sans);line-height:1.6;font-size:15.5px}
+a{color:var(--acc2)}
+.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;padding:11px 20px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--acc),var(--ok));display:grid;place-items:center;font-size:19px}
+.spacer{flex:1}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--bg3);color:var(--txt);padding:8px 13px;border-radius:9px;font-size:14px;font-family:inherit;text-decoration:none;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--acc)}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 22px 80px}
+.hero h1{font-size:clamp(26px,5vw,40px);margin:0 0 6px}
+.hero .sub{color:var(--muted);font-size:17px;margin:0 0 16px}
+.badge{display:inline-block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--ok);border:1px solid var(--line);background:var(--card);padding:4px 12px;border-radius:999px;font-weight:700}
+.filter{position:sticky;top:58px;z-index:30;margin:14px 0 6px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.filter input{flex:1;background:none;border:none;outline:none;color:var(--txt);font-size:16px;font-family:inherit;padding:9px 0;min-width:0}
+.filter .ic{opacity:.7}
+.filter kbd{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--bg3)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 2px}
+.chip{cursor:pointer;font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--muted)}
+.chip.on{color:var(--txt);border-color:var(--acc);background:color-mix(in srgb,var(--acc) 16%,transparent)}
+.nohit{display:none;color:var(--muted);text-align:center;padding:24px}
+.cols{column-width:370px;column-gap:18px;margin-top:12px}
+.cs-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 18px 16px;margin:0 0 18px;display:inline-block;width:100%}
+.cs-card h2{font-size:17px;margin:4px 0 8px;padding-bottom:7px;border-bottom:2px solid color-mix(in srgb,var(--acc) 40%,transparent);display:flex;align-items:center;gap:8px}
+.cs-card h3{font-size:13.5px;color:var(--acc2);margin:13px 0 4px;text-transform:uppercase;letter-spacing:.4px}
+.cs-card p{margin:6px 0}
+code{background:var(--bg3);padding:2px 6px;border-radius:5px;font-family:var(--mono);font-size:.88em;color:var(--acc2)}
+pre{background:#0b0e16;border:1px solid var(--line);border-radius:9px;padding:11px 13px;overflow-x:auto;margin:9px 0}
+pre code{background:none;color:#e6e9ef;padding:0;font-size:12.8px;line-height:1.55}
+.cmt{color:#6b7a99;font-style:italic}.kw{color:#ff8a5c}.ty{color:#5aa9ff}.st{color:#8fd98f}.fn{color:#c79bff}.nu{color:#ffcf5c}
+table{border-collapse:collapse;width:100%;font-size:13.3px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:5px 9px;text-align:left;vertical-align:top}
+th{background:var(--bg3)}
+td code{font-size:.86em}
+.box{border-left:4px solid var(--acc);background:var(--bg3);border-radius:0 9px 9px 0;padding:9px 13px;margin:10px 0;font-size:13.5px}
+.box .lb{font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px;color:var(--acc2)}
+.box.warn{border-color:var(--bad)}.box.warn .lb{color:var(--bad)}
+.box.tip{border-color:var(--ok)}.box.tip .lb{color:var(--ok)}
+.foot{text-align:center;color:var(--muted);padding:38px 20px;border-top:1px solid var(--line);margin-top:26px}
+@media(max-width:600px){
+  html,body{overflow-x:hidden}
+  .top{padding:10px 14px;gap:8px;flex-wrap:wrap}
+  .brand{font-size:15px}
+  .btn{padding:9px 11px;font-size:13px;min-height:42px;display:inline-flex;align-items:center}
+  .wrap{padding:20px 14px 60px}
+  .hero h1{font-size:26px}
+  .filter{top:54px}
+  .cols{column-width:auto;columns:1}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+  div[style*="text-align:center"] .btn{display:block;width:100%;margin:8px 0;justify-content:center}
+}
+@media print{
+  .top,.filter,.chips,.foot,.btn{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  .cs-card{break-inside:avoid;border:1px solid #ccc}
+  .cols{column-width:320px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">🐍</span> Python — Antisèche</div>
+  <div class="spacer"></div>
+  <a class="btn" href="index.html">📘 Cours</a>
+  <a class="btn" href="../../index.html">← Portail</a>
+  <button class="btn" id="tt">☀️ Clair</button>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="badge">Référence rapide · Python · NumPy · Pandas</span>
+    <h1>Antisèche Python &amp; Data 🐍</h1>
+    <p class="sub">Syntaxe, méthodes et recettes data à portée de main. Tape pour filtrer ⌨️</p>
+  </div>
+
+  <div class="filter">
+    <span class="ic">🔎</span>
+    <input id="q" type="search" placeholder="Filtrer : « groupby », « comprehension », « broadcasting », « dict »… ( / )" aria-label="Filtrer l'antisèche" />
+    <kbd>/</kbd>
+  </div>
+  <div class="chips" id="chips">
+    <span class="chip on" data-f="all">Tout</span>
+    <span class="chip" data-f="py">Python</span>
+    <span class="chip" data-f="numpy">NumPy</span>
+    <span class="chip" data-f="pandas">Pandas</span>
+  </div>
+  <div class="nohit" id="nohit">Aucune carte ne correspond. Essaie un autre mot-clé.</div>
+
+  <div class="cols" id="cards">
+
+    <!-- IO -->
+    <div class="cs-card" data-cat="py">
+      <h2>⌨️ Entrées / sorties</h2>
+      <pre><code>nom = <span class="fn">input</span>(<span class="st">"Nom : "</span>)          <span class="cmt"># renvoie TOUJOURS un str</span>
+n   = <span class="ty">int</span>(<span class="fn">input</span>())             <span class="cmt"># conversion</span>
+nums = [<span class="ty">int</span>(x) <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">input</span>().<span class="fn">split</span>()]  <span class="cmt"># "3 5 8"</span>
+
+<span class="fn">print</span>(a, b, sep=<span class="st">"-"</span>, end=<span class="st">"\n"</span>)
+<span class="fn">print</span>(<span class="ty">f</span><span class="st">"{nom} : {n}"</span>)          <span class="cmt"># f-string</span></code></pre>
+      <h3>Fichiers</h3>
+      <pre><code><span class="kw">with</span> <span class="fn">open</span>(<span class="st">"f.txt"</span>, encoding=<span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> ligne <span class="kw">in</span> f:
+        <span class="fn">print</span>(ligne.<span class="fn">strip</span>())</code></pre>
+    </div>
+
+    <!-- TYPES -->
+    <div class="cs-card" data-cat="py">
+      <h2>🔢 Types &amp; structures</h2>
+      <table>
+        <tr><th>Type</th><th>Exemple</th></tr>
+        <tr><td><code>int, float, bool, str</code></td><td><code>42, 3.14, True, "a"</code></td></tr>
+        <tr><td><code>list</code> (mutable, ordonnée)</td><td><code>[1, 2, 3]</code></td></tr>
+        <tr><td><code>tuple</code> (immuable)</td><td><code>(1, 2)</code></td></tr>
+        <tr><td><code>dict</code> (clé→valeur)</td><td><code>{"a": 1}</code></td></tr>
+        <tr><td><code>set</code> (uniques)</td><td><code>{1, 2, 3}</code></td></tr>
+      </table>
+      <pre><code>a, *reste = [<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>]   <span class="cmt"># 1, [2,3,4]</span>
+d = {<span class="st">"x"</span>: <span class="nu">1</span>} | {<span class="st">"y"</span>: <span class="nu">2</span>}   <span class="cmt"># fusion (3.9+)</span></code></pre>
+    </div>
+
+    <!-- COMPREHENSIONS -->
+    <div class="cs-card" data-cat="py">
+      <h2>🔁 Compréhensions</h2>
+      <pre><code>[x**<span class="nu">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">10</span>)]              <span class="cmt"># liste</span>
+[x <span class="kw">for</span> x <span class="kw">in</span> xs <span class="kw">if</span> x &gt; <span class="nu">0</span>]            <span class="cmt"># filtre</span>
+[<span class="st">"+"</span> <span class="kw">if</span> x&gt;<span class="nu">0</span> <span class="kw">else</span> <span class="st">"-"</span> <span class="kw">for</span> x <span class="kw">in</span> xs]  <span class="cmt"># ternaire</span>
+{m: <span class="fn">len</span>(m) <span class="kw">for</span> m <span class="kw">in</span> mots}           <span class="cmt"># dict</span>
+{x % <span class="nu">5</span> <span class="kw">for</span> x <span class="kw">in</span> xs}                <span class="cmt"># set</span>
+(x <span class="kw">for</span> x <span class="kw">in</span> xs)                   <span class="cmt"># générateur (lazy)</span></code></pre>
+      <div class="box"><span class="lb">Règle</span>Filtre (<code>if</code> seul) <strong>après</strong> le <code>for</code> ; transformation (<code>if/else</code>) <strong>avant</strong> le <code>for</code>.</div>
+    </div>
+
+    <!-- STR -->
+    <div class="cs-card" data-cat="py">
+      <h2>🔤 Chaînes (str)</h2>
+      <table>
+        <tr><th>Méthode</th><th>Effet</th></tr>
+        <tr><td><code>.split(",")</code> / <code>.join(xs)</code></td><td>Découpe / assemble</td></tr>
+        <tr><td><code>.strip()</code></td><td>Enlève les espaces aux bords</td></tr>
+        <tr><td><code>.lower()</code> / <code>.upper()</code></td><td>Casse</td></tr>
+        <tr><td><code>.replace(a, b)</code></td><td>Remplace</td></tr>
+        <tr><td><code>.startswith</code> / <code>.endswith</code></td><td>Tests</td></tr>
+        <tr><td><code>"x" in s</code></td><td>Sous-chaîne présente</td></tr>
+        <tr><td><code>.find</code> / <code>.count</code></td><td>Position / nombre</td></tr>
+      </table>
+      <pre><code><span class="ty">f</span><span class="st">"{x:.2f}"</span>   <span class="cmt"># 2 décimales</span>
+<span class="ty">f</span><span class="st">"{x:_}"</span>    <span class="cmt"># séparateur de milliers</span>
+<span class="ty">f</span><span class="st">"{x:.0%}"</span>  <span class="cmt"># pourcentage</span>
+<span class="ty">f</span><span class="st">"{x=}"</span>     <span class="cmt"># debug: x=valeur</span></code></pre>
+    </div>
+
+    <!-- LIST/DICT METHODS -->
+    <div class="cs-card" data-cat="py">
+      <h2>📚 list &amp; dict — méthodes</h2>
+      <table>
+        <tr><th>list</th><th>Effet</th></tr>
+        <tr><td><code>.append(x)</code> / <code>.extend(xs)</code></td><td>Ajoute 1 / plusieurs</td></tr>
+        <tr><td><code>.insert(i,x)</code> / <code>.pop(i)</code></td><td>Insère / retire</td></tr>
+        <tr><td><code>.sort()</code> / <code>sorted(xs)</code></td><td>Trie (en place / copie)</td></tr>
+        <tr><td><code>.index(x)</code> / <code>.count(x)</code></td><td>Position / occurrences</td></tr>
+      </table>
+      <table>
+        <tr><th>dict</th><th>Effet</th></tr>
+        <tr><td><code>.get(k, defaut)</code></td><td>Valeur sûre</td></tr>
+        <tr><td><code>.keys()/.values()/.items()</code></td><td>Vues</td></tr>
+        <tr><td><code>.setdefault(k, d)</code></td><td>Lit ou initialise</td></tr>
+        <tr><td><code>d.update(d2)</code></td><td>Fusionne</td></tr>
+      </table>
+    </div>
+
+    <!-- FUNCTIONS -->
+    <div class="cs-card" data-cat="py">
+      <h2>🛠️ Fonctions &amp; lambda</h2>
+      <pre><code><span class="kw">def</span> <span class="fn">f</span>(a, b=<span class="nu">10</span>, *args, **kwargs):
+    <span class="kw">return</span> a + b
+
+<span class="fn">sorted</span>(mots, key=<span class="kw">lambda</span> m: <span class="fn">len</span>(m))
+<span class="fn">max</span>(pts, key=<span class="kw">lambda</span> p: p[<span class="nu">1</span>])
+<span class="fn">f</span>(*args, **kwargs)        <span class="cmt"># déballage</span></code></pre>
+      <div class="box warn"><span class="lb">Piège</span>Jamais de défaut mutable : <code>def f(x, lst=[])</code> partage la liste. Utilise <code>lst=None</code> puis <code>lst = lst or []</code>.</div>
+    </div>
+
+    <!-- GENERATORS/DECORATORS -->
+    <div class="cs-card" data-cat="py">
+      <h2>⚙️ Générateurs &amp; décorateurs</h2>
+      <pre><code><span class="kw">def</span> <span class="fn">compte</span>(n):
+    i = <span class="nu">0</span>
+    <span class="kw">while</span> i &lt; n:
+        <span class="kw">yield</span> i      <span class="cmt"># lazy</span>
+        i += <span class="nu">1</span>
+
+<span class="kw">import</span> functools
+<span class="kw">def</span> <span class="fn">deco</span>(fn):
+    @functools.<span class="fn">wraps</span>(fn)
+    <span class="kw">def</span> <span class="fn">w</span>(*a, **k):
+        <span class="kw">return</span> <span class="fn">fn</span>(*a, **k)
+    <span class="kw">return</span> w
+
+@functools.<span class="fn">lru_cache</span>
+<span class="kw">def</span> <span class="fn">fib</span>(n): <span class="kw">return</span> n <span class="kw">if</span> n&lt;<span class="nu">2</span> <span class="kw">else</span> <span class="fn">fib</span>(n-<span class="nu">1</span>)+<span class="fn">fib</span>(n-<span class="nu">2</span>)</code></pre>
+    </div>
+
+    <!-- ERREURS -->
+    <div class="cs-card" data-cat="py">
+      <h2>⚠️ Erreurs</h2>
+      <pre><code><span class="kw">try</span>:
+    n = <span class="ty">int</span>(x)
+<span class="kw">except</span> <span class="ty">ValueError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="st">"erreur:"</span>, e)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"ok"</span>)          <span class="cmt"># si pas d'exception</span>
+<span class="kw">finally</span>:
+    ...                   <span class="cmt"># toujours</span>
+
+<span class="kw">raise</span> <span class="ty">ValueError</span>(<span class="st">"message clair"</span>)</code></pre>
+      <div class="box"><span class="lb">EAFP</span>Style pythonique : « essaie, et gère l'erreur » plutôt que tout vérifier avant.</div>
+    </div>
+
+    <!-- STDLIB -->
+    <div class="cs-card" data-cat="py">
+      <h2>🧰 Builtins &amp; stdlib utiles</h2>
+      <table>
+        <tr><th>Outil</th><th>Rôle</th></tr>
+        <tr><td><code>enumerate(xs)</code></td><td>(index, valeur)</td></tr>
+        <tr><td><code>zip(a, b)</code></td><td>Associe deux itérables</td></tr>
+        <tr><td><code>map/filter</code></td><td>Transforme / filtre</td></tr>
+        <tr><td><code>any/all</code></td><td>Au moins un / tous</td></tr>
+        <tr><td><code>sum/min/max</code></td><td>Agrégations</td></tr>
+        <tr><td><code>collections.Counter</code></td><td>Comptage</td></tr>
+        <tr><td><code>collections.defaultdict</code></td><td>Dict avec défaut</td></tr>
+        <tr><td><code>itertools.combinations</code></td><td>Combinatoire</td></tr>
+      </table>
+    </div>
+
+    <!-- NUMPY CREATE -->
+    <div class="cs-card" data-cat="numpy">
+      <h2>🔵 NumPy — créer &amp; infos</h2>
+      <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+np.<span class="fn">array</span>([<span class="nu">1</span>,<span class="nu">2</span>,<span class="nu">3</span>])
+np.<span class="fn">zeros</span>((<span class="nu">2</span>,<span class="nu">3</span>)); np.<span class="fn">ones</span>(<span class="nu">5</span>); np.<span class="fn">full</span>((<span class="nu">2</span>,<span class="nu">2</span>),<span class="nu">7</span>)
+np.<span class="fn">arange</span>(<span class="nu">0</span>,<span class="nu">10</span>,<span class="nu">2</span>); np.<span class="fn">linspace</span>(<span class="nu">0</span>,<span class="nu">1</span>,<span class="nu">5</span>)
+np.<span class="fn">eye</span>(<span class="nu">3</span>)
+a.shape; a.dtype; a.ndim; a.size
+a.<span class="fn">reshape</span>(<span class="nu">3</span>,-<span class="nu">1</span>); a.T; a.<span class="fn">astype</span>(<span class="ty">float</span>)</code></pre>
+    </div>
+
+    <!-- NUMPY OPS -->
+    <div class="cs-card" data-cat="numpy">
+      <h2>🔵 NumPy — opérations</h2>
+      <pre><code>a * <span class="nu">2</span>; a + b; a ** <span class="nu">2</span>        <span class="cmt"># vectorisé</span>
+np.<span class="fn">sqrt</span>(a); np.<span class="fn">exp</span>(a); np.<span class="fn">log</span>(a)
+a[a &gt; <span class="nu">0</span>]                  <span class="cmt"># masque booléen</span>
+a[a &lt; <span class="nu">0</span>] = <span class="nu">0</span>
+(a &gt; <span class="nu">0</span>).<span class="fn">sum</span>()             <span class="cmt"># compte</span>
+np.<span class="fn">where</span>(a&gt;<span class="nu">0</span>, <span class="st">"+"</span>, <span class="st">"-"</span>)
+a.<span class="fn">sum</span>(axis=<span class="nu">0</span>); a.<span class="fn">mean</span>(axis=<span class="nu">1</span>)
+a @ b                    <span class="cmt"># produit matriciel (≠ a*b)</span></code></pre>
+      <div class="box warn"><span class="lb">Opérateurs</span>Masques : <code>&amp;</code>, <code>|</code>, <code>~</code> (+ parenthèses), jamais <code>and/or</code>.</div>
+    </div>
+
+    <!-- BROADCASTING -->
+    <div class="cs-card" data-cat="numpy">
+      <h2>🔵 Broadcasting</h2>
+      <p>Opérer sur des formes différentes : dimensions compatibles si égales ou si l'une vaut 1 (comparées de droite à gauche).</p>
+      <pre><code>M + <span class="nu">10</span>                       <span class="cmt"># scalaire partout</span>
+M + np.<span class="fn">array</span>([<span class="nu">1</span>,<span class="nu">2</span>,<span class="nu">3</span>])        <span class="cmt"># (3,) sur chaque ligne</span>
+<span class="cmt"># Standardisation (z-score)</span>
+Z = (X - X.<span class="fn">mean</span>(axis=<span class="nu">0</span>)) / X.<span class="fn">std</span>(axis=<span class="nu">0</span>)</code></pre>
+      <div class="box tip"><span class="lb">Aléatoire</span><code>rng = np.random.default_rng(42)</code> puis <code>rng.normal(0,1,n)</code> — graine = reproductible.</div>
+    </div>
+
+    <!-- PANDAS LOAD -->
+    <div class="cs-card" data-cat="pandas">
+      <h2>🟢 Pandas — charger &amp; explorer</h2>
+      <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+df = pd.<span class="fn">read_csv</span>(<span class="st">"data.csv"</span>)
+df.<span class="fn">head</span>(); df.<span class="fn">info</span>(); df.<span class="fn">describe</span>()
+df.shape; df.columns; df.dtypes
+df[<span class="st">"c"</span>].<span class="fn">value_counts</span>()
+df[<span class="st">"c"</span>].<span class="fn">nunique</span>()
+df.<span class="fn">isna</span>().<span class="fn">sum</span>()            <span class="cmt"># NaN par colonne</span>
+df.<span class="fn">to_csv</span>(<span class="st">"out.csv"</span>, index=<span class="kw">False</span>)</code></pre>
+    </div>
+
+    <!-- PANDAS SELECT -->
+    <div class="cs-card" data-cat="pandas">
+      <h2>🟢 Pandas — sélection &amp; filtre</h2>
+      <pre><code>df[<span class="st">"col"</span>]; df[[<span class="st">"a"</span>,<span class="st">"b"</span>]]
+df.<span class="fn">loc</span>[<span class="nu">0</span>, <span class="st">"col"</span>]        <span class="cmt"># par étiquette (bornes incluses)</span>
+df.<span class="fn">iloc</span>[<span class="nu">0</span>, <span class="nu">1</span>]           <span class="cmt"># par position (bornes exclues)</span>
+df[df[<span class="st">"age"</span>] &gt; <span class="nu">24</span>]
+df[(df.a&gt;<span class="nu">5</span>) &amp; (df.b&lt;<span class="nu">3</span>)]   <span class="cmt"># &amp; | + parenthèses</span>
+df[df[<span class="st">"v"</span>].<span class="fn">isin</span>([<span class="st">"A"</span>,<span class="st">"B"</span>])]
+df.<span class="fn">query</span>(<span class="st">"age &gt; 24"</span>)</code></pre>
+      <div class="box warn"><span class="lb">Modifier</span>Toujours <code>df.loc[masque, "col"] = v</code> (évite SettingWithCopyWarning).</div>
+    </div>
+
+    <!-- PANDAS TRANSFORM -->
+    <div class="cs-card" data-cat="pandas">
+      <h2>🟢 Pandas — transformer</h2>
+      <pre><code>df[<span class="st">"x2"</span>] = df[<span class="st">"x"</span>] * <span class="nu">2</span>
+df[<span class="st">"c"</span>] = df[<span class="st">"c"</span>].<span class="fn">str</span>.<span class="fn">upper</span>()      <span class="cmt"># .str vectorisé</span>
+df[<span class="st">"d"</span>] = pd.<span class="fn">to_datetime</span>(df[<span class="st">"d"</span>])
+df[<span class="st">"an"</span>] = df[<span class="st">"d"</span>].<span class="fn">dt</span>.year
+df = df.<span class="fn">rename</span>(columns={<span class="st">"a"</span>:<span class="st">"b"</span>})
+df = df.<span class="fn">drop</span>(columns=[<span class="st">"x"</span>])
+df[<span class="st">"x"</span>].<span class="fn">fillna</span>(df[<span class="st">"x"</span>].<span class="fn">median</span>())
+df.<span class="fn">dropna</span>(subset=[<span class="st">"x"</span>])
+df.<span class="fn">sort_values</span>(<span class="st">"x"</span>, ascending=<span class="kw">False</span>)</code></pre>
+    </div>
+
+    <!-- PANDAS GROUPBY/MERGE -->
+    <div class="cs-card" data-cat="pandas">
+      <h2>🟢 Pandas — groupby &amp; merge</h2>
+      <pre><code>df.<span class="fn">groupby</span>(<span class="st">"ville"</span>)[<span class="st">"age"</span>].<span class="fn">mean</span>()
+df.<span class="fn">groupby</span>(<span class="st">"ville"</span>).<span class="fn">agg</span>(
+    moy=(<span class="st">"age"</span>,<span class="st">"mean"</span>), n=(<span class="st">"age"</span>,<span class="st">"count"</span>))
+df.<span class="fn">groupby</span>(<span class="st">"v"</span>)[<span class="st">"a"</span>].<span class="fn">transform</span>(<span class="st">"mean"</span>)  <span class="cmt"># même forme</span>
+
+pd.<span class="fn">merge</span>(a, b, on=<span class="st">"id"</span>, how=<span class="st">"left"</span>)
+pd.<span class="fn">concat</span>([a, b])          <span class="cmt"># empile</span>
+df.<span class="fn">pivot_table</span>(index=<span class="st">"v"</span>, values=<span class="st">"a"</span>, aggfunc=<span class="st">"mean"</span>)</code></pre>
+      <div class="box tip"><span class="lb">how</span><code>inner</code> (communs) · <code>left</code> (tout à gauche) · <code>outer</code> (union).</div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center;margin:30px 0">
+    <a class="btn" id="pdf" href="#">🖨️ Exporter en PDF</a>
+    <a class="btn" href="index.html">📘 Revenir aux cours</a>
+  </div>
+</div>
+
+<div class="foot">Antisèche Python &amp; Data Science · garde-la ouverte en codant 🐍💙</div>
+
+<script>
+(function(){
+  var TK="cmd-theme";
+  function theme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem(TK,t);var b=document.getElementById("tt");if(b)b.textContent=t==="light"?"🌙 Sombre":"☀️ Clair";}
+  var saved=localStorage.getItem(TK);
+  if(!saved){saved=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";}
+  theme(saved);
+  document.getElementById("tt").addEventListener("click",function(){theme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">🐍</text></svg>';
+  var l=document.createElement("link");l.rel="icon";l.href="data:image/svg+xml,"+encodeURIComponent(svg);document.head.appendChild(l);
+
+  var q=document.getElementById("q"), cards=[].slice.call(document.querySelectorAll(".cs-card")), nohit=document.getElementById("nohit");
+  var chips=[].slice.call(document.querySelectorAll(".chip")), cat="all";
+  function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();}
+  function apply(){
+    var t=norm(q.value.trim()), hits=0;
+    cards.forEach(function(c){
+      var okCat = cat==="all" || c.getAttribute("data-cat")===cat;
+      var okTxt = !t || norm(c.textContent).indexOf(t)>=0;
+      var ok = okCat && okTxt; c.style.display = ok ? "" : "none"; if(ok) hits++;
+    });
+    nohit.style.display = hits? "none":"block";
+  }
+  q.addEventListener("input",apply);
+  chips.forEach(function(ch){ ch.addEventListener("click",function(){
+    chips.forEach(function(x){x.classList.remove("on");}); ch.classList.add("on");
+    cat=ch.getAttribute("data-f"); apply();
+  });});
+  document.addEventListener("keydown",function(e){
+    if(e.key==="/" && document.activeElement!==q){e.preventDefault();q.focus();}
+    if(e.key==="Escape"){q.value="";apply();q.blur();}
+  });
+  document.getElementById("pdf").addEventListener("click",function(e){e.preventDefault();window.print();});
+})();
+</script>
+</body>
+</html>

@@ -25,6 +25,7 @@ def rel(p):
 SUBJECTS = {
     "math": {"name": "Mathématiques", "emoji": "∑",  "color": "#6c8cff"},
     "rust": {"name": "Rust",          "emoji": "🦀", "color": "#f74c00"},
+    "python": {"name": "Python & Data Science", "emoji": "🐍", "color": "#3b82f6"},
     "portal": {"name": "Portail",     "emoji": "🎓", "color": "#27e0b0"},
 }
 
@@ -57,6 +58,41 @@ for f in sorted(mod_dir.glob("*.html")):
         add("math", "culture", "Culture & histoire — " + page_title,
             f"{url}#culture", page_title + " histoire " + " ".join(names))
 
+# ---- Modules de Python : même structure ----
+py_dir = ROOT / "matieres" / "python" / "modules"
+for f in sorted(py_dir.glob("*.html")):
+    txt = f.read_text(encoding="utf-8")
+    url = rel(f)
+    m = re.search(r"<h1[^>]*>(.*?)</h1>", txt, re.S)
+    page_title = clean(m.group(1)) if m else f.stem
+    sub = re.search(r'<p class="subtitle"[^>]*>(.*?)</p>', txt, re.S)
+    add("python", "module", page_title, url, clean(sub.group(1)) if sub else "")
+    for sm in re.finditer(r'<section[^>]*id="([^"]+)"[^>]*>\s*<h2[^>]*>(.*?)</h2>', txt, re.S):
+        anchor, h2 = sm.group(1), clean(sm.group(2))
+        add("python", "section", h2, f"{url}#{anchor}", page_title)
+    cm = re.search(r'<section class="culture"[^>]*id="culture".*?</section>', txt, re.S)
+    if cm:
+        names = [clean(x) for x in re.findall(r"<li><b>(.*?)</b>", cm.group(0))]
+        add("python", "culture", "Culture & histoire — " + page_title,
+            f"{url}#culture", page_title + " histoire " + " ".join(names))
+
+add("python", "matière", "Python & Data Science",
+    "matieres/python/index.html",
+    "python numpy pandas data science visualisation matplotlib seaborn scikit-learn machine learning feature engineering")
+add("python", "fiche", "Antisèche Python & Data (aide-mémoire)",
+    "matieres/python/aide-memoire.html",
+    "cheat sheet référence rapide numpy pandas groupby comprehension broadcasting dict liste")
+
+# ---- Fiches Python téléchargeables ----
+py_fic = ROOT / "matieres" / "python" / "fiches"
+for f in sorted(py_fic.glob("*.md")):
+    first = ""
+    for line in f.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#"):
+            first = clean(line.lstrip("# ").replace("🐍", ""))
+            break
+    add("python", "fiche", first or f.stem, rel(f), "fiche révision téléchargeable python")
+
 # ---- Fiches de révision téléchargeables ----
 fic_dir = ROOT / "matieres" / "mathematiques" / "fiches"
 for f in sorted(fic_dir.glob("*.md")):
@@ -72,6 +108,8 @@ add("rust", "cours", "Cursus Rust complet", "matieres/rust/rust-cursus.html",
     "ownership borrowing lifetimes traits cargo closures itérateurs concurrence enums pattern matching Result Option")
 add("rust", "culture", "Culture & histoire de Rust", "matieres/rust/rust-cursus.html",
     "Graydon Hoare Mozilla Rust Foundation noyau Linux histoire philosophie sécurité mémoire")
+add("rust", "fiche", "Antisèche Rust (cheat sheet)", "matieres/rust/cheatsheet-rust.html",
+    "cheat sheet référence rapide syntaxe méthodes Vec HashMap Option Result match iterator cargo closures lifetimes traits")
 rev = ROOT / "matieres" / "rust" / "revision-express.html"
 if rev.exists():
     rtxt = rev.read_text(encoding="utf-8")
@@ -85,6 +123,8 @@ if rev.exists():
 add("math", "matière", "Mathématiques pour la Data & l'IA",
     "matieres/mathematiques/index.html",
     "logique relations binaires algèbre linéaire probabilités statistiques optimisation graphes information big data")
+add("math", "fiche", "Aide-mémoire maths (formulaire)", "matieres/mathematiques/aide-memoire.html",
+    "formulaire antisèche formules Bayes gradient entropie matrice cosinus régression Big-O combinatoire règles")
 add("rust", "matière", "Rust", "matieres/rust/rust-cursus.html", "langage système")
 add("portal", "page", "Améliorations & feuille de route", "ameliorations.html",
     "roadmap idées compétences pro git docker ci cd mlops")

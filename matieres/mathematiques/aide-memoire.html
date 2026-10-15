@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1117" />
+<title>Maths pour la Data — Aide-mémoire / Formulaire</title>
+<script>
+  window.MathJax = { tex: { inlineMath: [["\\(","\\)"]], displayMath: [["\\[","\\]"]] }, svg: { fontCache: "global" } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+:root{
+  --bg:#0e1016; --bg2:#151824; --bg3:#1f2435; --card:#181c2a;
+  --txt:#eef1fb; --muted:#8891b4; --line:#2a3047;
+  --acc:#6c8cff; --acc2:#9db2ff; --ok:#27e0b0; --warn:#ffb454; --bad:#ff6b81;
+  --data:#3b82f6; --bigdata:#ffb454; --ia:#27e0b0;
+  --mono:"JetBrains Mono","Fira Code",Consolas,monospace;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f4f6fc; --bg2:#fff; --bg3:#eef1ff; --card:#fff;
+  --txt:#141732; --muted:#5c6488; --line:#dbe1f5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1000px 500px at 85% -10%,#1a1430,var(--bg) 55%) fixed;color:var(--txt);font-family:var(--sans);line-height:1.6;font-size:15.5px}
+a{color:var(--acc2)}
+.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;padding:11px 20px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--acc),var(--ok));display:grid;place-items:center;font-size:19px;color:#0b0e1c}
+.spacer{flex:1}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--bg3);color:var(--txt);padding:8px 13px;border-radius:9px;font-size:14px;font-family:inherit;text-decoration:none;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--acc)}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 22px 80px}
+.hero h1{font-size:clamp(26px,5vw,40px);margin:0 0 6px}
+.hero .sub{color:var(--muted);font-size:17px;margin:0 0 16px}
+.badge{display:inline-block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--ok);border:1px solid var(--line);background:var(--card);padding:4px 12px;border-radius:999px;font-weight:700}
+.filter{position:sticky;top:58px;z-index:30;margin:14px 0 6px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.filter input{flex:1;background:none;border:none;outline:none;color:var(--txt);font-size:16px;font-family:inherit;padding:9px 0;min-width:0}
+.filter .ic{opacity:.7}
+.filter kbd{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--bg3)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 2px}
+.chip{cursor:pointer;font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--muted)}
+.chip.on{color:var(--txt);border-color:var(--acc);background:color-mix(in srgb,var(--acc) 16%,transparent)}
+.nohit{display:none;color:var(--muted);text-align:center;padding:24px}
+.cols{column-width:370px;column-gap:18px;margin-top:12px}
+.cs-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 18px 16px;margin:0 0 18px;display:inline-block;width:100%}
+.cs-card h2{font-size:17px;margin:4px 0 6px;padding-bottom:7px;border-bottom:2px solid color-mix(in srgb,var(--acc) 40%,transparent);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cs-card h3{font-size:13.5px;color:var(--acc2);margin:13px 0 4px;text-transform:uppercase;letter-spacing:.4px}
+.cs-card p{margin:6px 0}
+.dom{font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:999px;text-transform:uppercase}
+.dom.data{color:var(--data);border:1px solid var(--data);background:color-mix(in srgb,var(--data) 14%,transparent)}
+.dom.bigdata{color:var(--bigdata);border:1px solid var(--bigdata);background:color-mix(in srgb,var(--bigdata) 14%,transparent)}
+.dom.ia{color:var(--ia);border:1px solid var(--ia);background:color-mix(in srgb,var(--ia) 14%,transparent)}
+code{background:var(--bg3);padding:2px 6px;border-radius:5px;font-family:var(--mono);font-size:.88em;color:var(--acc2)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:5px 9px;text-align:left;vertical-align:middle}
+th{background:var(--bg3)}
+.box{border-left:4px solid var(--acc);background:var(--bg3);border-radius:0 9px 9px 0;padding:9px 13px;margin:10px 0;font-size:13.5px}
+.box .lb{font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px;color:var(--acc2)}
+.box.tip{border-color:var(--ok)}.box.tip .lb{color:var(--ok)}
+.box.warn{border-color:var(--bad)}.box.warn .lb{color:var(--bad)}
+.box.key{border-color:var(--warn)}.box.key .lb{color:var(--warn)}
+ol.steps{margin:6px 0;padding-left:20px}
+ol.steps li{margin:4px 0}
+.foot{text-align:center;color:var(--muted);padding:38px 20px;border-top:1px solid var(--line);margin-top:26px}
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+@media(max-width:600px){
+  html,body{overflow-x:hidden}
+  .top{padding:10px 14px;gap:8px;flex-wrap:wrap}
+  .brand{font-size:15px}
+  .btn{padding:9px 11px;font-size:13px;min-height:42px;display:inline-flex;align-items:center}
+  .wrap{padding:20px 14px 60px}
+  .hero h1{font-size:26px}
+  .filter{top:54px}
+  .cols{column-width:auto;columns:1}
+  table{display:block;overflow-x:auto}
+  div[style*="text-align:center"] .btn{display:block;width:100%;margin:8px 0;justify-content:center}
+}
+@media print{
+  .top,.filter,.chips,.foot,.btn{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  .cs-card{break-inside:avoid;border:1px solid #ccc}
+  .cols{column-width:320px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">∑</span> Maths — Aide-mémoire</div>
+  <div class="spacer"></div>
+  <a class="btn" href="index.html">📘 Cours</a>
+  <a class="btn" href="../../index.html">← Portail</a>
+  <button class="btn" id="tt">☀️ Clair</button>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="badge">Formulaire express · Data · Big Data · IA</span>
+    <h1>Aide-mémoire maths ∑</h1>
+    <p class="sub">Les formules, règles et marches à suivre essentielles, à dégainer pour une question rapide. Tape pour filtrer ⌨️</p>
+  </div>
+
+  <div class="filter">
+    <span class="ic">🔎</span>
+    <input id="q" type="search" placeholder="Filtrer : « Bayes », « gradient », « entropie », « matrice »… ( / )" aria-label="Filtrer le formulaire" />
+    <kbd>/</kbd>
+  </div>
+  <div class="chips" id="chips">
+    <span class="chip on" data-f="all">Tout</span>
+    <span class="chip" data-f="logique">Logique &amp; ensembles</span>
+    <span class="chip" data-f="algebre">Algèbre linéaire</span>
+    <span class="chip" data-f="probas">Probabilités</span>
+    <span class="chip" data-f="stats">Statistiques</span>
+    <span class="chip" data-f="optim">Optimisation</span>
+    <span class="chip" data-f="graphes">Graphes</span>
+    <span class="chip" data-f="info">Information</span>
+    <span class="chip" data-f="complexite">Complexité</span>
+  </div>
+  <div class="nohit" id="nohit">Aucune carte ne correspond. Essaie un autre mot-clé.</div>
+
+  <div class="cols" id="cards">
+
+    <!-- LOGIQUE -->
+    <div class="cs-card" data-cat="logique">
+      <h2>🧠 Logique &amp; connecteurs</h2>
+      <table>
+        <tr><th>Nom</th><th>Symbole</th><th>Équiv.</th></tr>
+        <tr><td>Négation</td><td>\(\neg P\)</td><td>non P</td></tr>
+        <tr><td>Et / Ou</td><td>\(P\land Q\) · \(P\lor Q\)</td><td>AND · OR</td></tr>
+        <tr><td>Implication</td><td>\(P\Rightarrow Q\)</td><td>\(\neg P\lor Q\)</td></tr>
+        <tr><td>Équivalence</td><td>\(P\Leftrightarrow Q\)</td><td>⇒ et ⇐</td></tr>
+      </table>
+      <h3>Lois de De Morgan</h3>
+      \[\neg(P\land Q)\equiv \neg P\lor\neg Q\qquad \neg(P\lor Q)\equiv \neg P\land\neg Q\]
+      <h3>Contraposée (⟺ équivalente)</h3>
+      \[(P\Rightarrow Q)\equiv(\neg Q\Rightarrow \neg P)\]
+      <div class="box"><span class="lb">Quantificateurs</span>Négation : \(\neg(\forall x\,P)\equiv \exists x\,\neg P\) et \(\neg(\exists x\,P)\equiv \forall x\,\neg P\).</div>
+    </div>
+
+    <!-- ENSEMBLES -->
+    <div class="cs-card" data-cat="logique">
+      <h2>🫙 Ensembles <span class="dom data">Data</span></h2>
+      <table>
+        <tr><th>Opération</th><th>Notation</th><th>SQL</th></tr>
+        <tr><td>Union</td><td>\(A\cup B\)</td><td><code>UNION</code></td></tr>
+        <tr><td>Intersection</td><td>\(A\cap B\)</td><td><code>INTERSECT</code></td></tr>
+        <tr><td>Différence</td><td>\(A\setminus B\)</td><td><code>EXCEPT</code></td></tr>
+        <tr><td>Produit cart.</td><td>\(A\times B\)</td><td><code>CROSS JOIN</code></td></tr>
+      </table>
+      <h3>Cardinal (inclusion-exclusion)</h3>
+      \[|A\cup B| = |A| + |B| - |A\cap B|\]
+      <p>Parties d'un ensemble : \(|\mathcal P(E)| = 2^{|E|}\).</p>
+    </div>
+
+    <!-- ALGEBRE : vecteurs -->
+    <div class="cs-card" data-cat="algebre">
+      <h2>➗ Vecteurs <span class="dom ia">IA</span></h2>
+      <h3>Norme &amp; produit scalaire</h3>
+      \[\|x\|_2=\sqrt{\textstyle\sum_i x_i^2}\qquad x\cdot y=\sum_i x_i y_i\]
+      <h3>Similarité cosinus</h3>
+      \[\cos(\theta)=\frac{x\cdot y}{\|x\|\,\|y\|}\in[-1,1]\]
+      <div class="box tip"><span class="lb">Usage</span>Cosinus ≈ 1 → vecteurs très similaires (recommandation, recherche sémantique, embeddings).</div>
+      <p>Distances : \(L_1=\sum|x_i-y_i|\) (Manhattan), \(L_2=\sqrt{\sum(x_i-y_i)^2}\) (euclidienne).</p>
+    </div>
+
+    <!-- ALGEBRE : matrices -->
+    <div class="cs-card" data-cat="algebre">
+      <h2>🔲 Matrices <span class="dom ia">IA</span></h2>
+      <table>
+        <tr><th>Objet</th><th>Formule / sens</th></tr>
+        <tr><td>Produit</td><td>\((AB)_{ij}=\sum_k A_{ik}B_{kj}\)</td></tr>
+        <tr><td>Transposée</td><td>\((A^\top)_{ij}=A_{ji}\)</td></tr>
+        <tr><td>Identité</td><td>\(AI=IA=A\)</td></tr>
+        <tr><td>Inverse</td><td>\(AA^{-1}=I\) (si \(\det A\neq 0\))</td></tr>
+        <tr><td>Déterminant 2×2</td><td>\(ad-bc\)</td></tr>
+      </table>
+      <div class="box warn"><span class="lb">Attention</span>\(AB\neq BA\) en général (non commutatif). \((AB)^\top=B^\top A^\top\).</div>
+      <h3>Valeurs/vecteurs propres</h3>
+      \[A v=\lambda v\]
+      <p>Base de la PCA, PageRank, diagonalisation.</p>
+    </div>
+
+    <!-- ALGEBRE : PCA/SVD -->
+    <div class="cs-card" data-cat="algebre">
+      <h2>📉 PCA &amp; SVD <span class="dom ia">IA</span> <span class="dom data">Data</span></h2>
+      <h3>SVD</h3>
+      \[A = U\Sigma V^\top\]
+      <p>\(U,V\) orthogonales, \(\Sigma\) diagonale (valeurs singulières).</p>
+      <h3>PCA — marche à suivre</h3>
+      <ol class="steps">
+        <li>Centrer (et souvent réduire) les données.</li>
+        <li>Calculer la matrice de covariance \(\;C=\tfrac1n X^\top X\).</li>
+        <li>Extraire valeurs/vecteurs propres de \(C\).</li>
+        <li>Garder les \(k\) plus grandes → axes principaux.</li>
+        <li>Projeter les données sur ces axes.</li>
+      </ol>
+      <div class="box tip"><span class="lb">But</span>Réduire la dimension en gardant un maximum de variance.</div>
+    </div>
+
+    <!-- PROBAS : bases -->
+    <div class="cs-card" data-cat="probas">
+      <h2>🎲 Probabilités — bases</h2>
+      <table>
+        <tr><th>Règle</th><th>Formule</th></tr>
+        <tr><td>Bornes</td><td>\(0\le P(A)\le 1\)</td></tr>
+        <tr><td>Complément</td><td>\(P(\bar A)=1-P(A)\)</td></tr>
+        <tr><td>Union</td><td>\(P(A\cup B)=P(A)+P(B)-P(A\cap B)\)</td></tr>
+        <tr><td>Conditionnelle</td><td>\(P(A\mid B)=\dfrac{P(A\cap B)}{P(B)}\)</td></tr>
+        <tr><td>Indépendance</td><td>\(P(A\cap B)=P(A)P(B)\)</td></tr>
+      </table>
+      <h3>Probabilités totales</h3>
+      \[P(A)=\sum_i P(A\mid B_i)P(B_i)\]
+    </div>
+
+    <!-- PROBAS : Bayes -->
+    <div class="cs-card" data-cat="probas">
+      <h2>🔁 Théorème de Bayes <span class="dom ia">IA</span></h2>
+      \[P(A\mid B)=\frac{P(B\mid A)\,P(A)}{P(B)}\]
+      <div class="box"><span class="lb">Vocabulaire</span>\(P(A)\) = a priori · \(P(B\mid A)\) = vraisemblance · \(P(A\mid B)\) = a posteriori.</div>
+      <div class="box tip"><span class="lb">Usage</span>Classification naïve bayésienne, filtres anti-spam, diagnostic.</div>
+    </div>
+
+    <!-- PROBAS : lois -->
+    <div class="cs-card" data-cat="probas">
+      <h2>📊 Lois &amp; espérance</h2>
+      <table>
+        <tr><th>Grandeur</th><th>Formule</th></tr>
+        <tr><td>Espérance</td><td>\(E[X]=\sum_i x_i\,p_i\)</td></tr>
+        <tr><td>Variance</td><td>\(V(X)=E[X^2]-E[X]^2\)</td></tr>
+        <tr><td>Écart-type</td><td>\(\sigma=\sqrt{V(X)}\)</td></tr>
+        <tr><td>Linéarité</td><td>\(E[aX+b]=aE[X]+b\)</td></tr>
+      </table>
+      <table>
+        <tr><th>Loi</th><th>Espérance</th></tr>
+        <tr><td>Bernoulli(p)</td><td>\(p\)</td></tr>
+        <tr><td>Binomiale(n,p)</td><td>\(np\)</td></tr>
+        <tr><td>Uniforme[a,b]</td><td>\(\tfrac{a+b}{2}\)</td></tr>
+        <tr><td>Normale \(\mathcal N(\mu,\sigma^2)\)</td><td>\(\mu\)</td></tr>
+      </table>
+      <div class="box key"><span class="lb">TCL</span>La moyenne de \(n\) variables i.i.d. tend vers une loi normale quand \(n\to\infty\).</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="cs-card" data-cat="stats">
+      <h2>📐 Statistiques <span class="dom data">Data</span></h2>
+      <table>
+        <tr><th>Indicateur</th><th>Formule</th></tr>
+        <tr><td>Moyenne</td><td>\(\bar x=\tfrac1n\sum x_i\)</td></tr>
+        <tr><td>Variance (éch.)</td><td>\(s^2=\tfrac1{n-1}\sum(x_i-\bar x)^2\)</td></tr>
+        <tr><td>Covariance</td><td>\(\text{cov}(x,y)=\tfrac1n\sum(x_i-\bar x)(y_i-\bar y)\)</td></tr>
+        <tr><td>Corrélation</td><td>\(r=\dfrac{\text{cov}(x,y)}{s_x s_y}\in[-1,1]\)</td></tr>
+      </table>
+      <h3>Régression linéaire (moindres carrés)</h3>
+      \[\hat\beta=(X^\top X)^{-1}X^\top y\]
+      <div class="box warn"><span class="lb">p-value</span>\(p<0{,}05\) = résultat « significatif » (convention). À manier avec esprit critique.</div>
+    </div>
+
+    <!-- OPTIM -->
+    <div class="cs-card" data-cat="optim">
+      <h2>⛰️ Optimisation <span class="dom ia">IA</span></h2>
+      <h3>Dérivée &amp; gradient</h3>
+      <p>Minimum/maximum : chercher \(f'(x)=0\). En dimension \(n\) : \(\nabla f=0\).</p>
+      <h3>Descente de gradient</h3>
+      \[\theta \leftarrow \theta - \eta\,\nabla_\theta J(\theta)\]
+      <div class="box"><span class="lb">\(\eta\) = taux d'apprentissage</span>Trop grand → diverge ; trop petit → lent. Variantes : SGD, Adam.</div>
+      <h3>Dérivées utiles</h3>
+      <table>
+        <tr><td>\((x^n)'\)</td><td>\(n x^{n-1}\)</td></tr>
+        <tr><td>\((e^x)'\)</td><td>\(e^x\)</td></tr>
+        <tr><td>\((\ln x)'\)</td><td>\(1/x\)</td></tr>
+        <tr><td>Chaîne</td><td>\((f\circ g)'=f'(g)\,g'\)</td></tr>
+      </table>
+    </div>
+
+    <!-- GRAPHES -->
+    <div class="cs-card" data-cat="graphes">
+      <h2>🕸️ Graphes <span class="dom bigdata">Big Data</span></h2>
+      <table>
+        <tr><th>Notion</th><th>Détail</th></tr>
+        <tr><td>Degré</td><td>Nb d'arêtes d'un sommet ; \(\sum \deg = 2|E|\)</td></tr>
+        <tr><td>Représentation</td><td>Liste d'adjacence (creux) / matrice (dense)</td></tr>
+        <tr><td>Parcours</td><td>BFS (file, + court en non pondéré) · DFS (pile)</td></tr>
+      </table>
+      <h3>Algorithmes clés</h3>
+      <table>
+        <tr><td>Dijkstra</td><td>+ court chemin, poids \(\ge 0\) — \(O((V{+}E)\log V)\)</td></tr>
+        <tr><td>Bellman-Ford</td><td>Poids négatifs — \(O(VE)\)</td></tr>
+        <tr><td>PageRank</td><td>Vecteur propre dominant de la matrice de transition</td></tr>
+      </table>
+    </div>
+
+    <!-- INFORMATION -->
+    <div class="cs-card" data-cat="info">
+      <h2>📡 Information <span class="dom ia">IA</span></h2>
+      <h3>Entropie de Shannon</h3>
+      \[H(X)=-\sum_i p_i\log_2 p_i\quad(\text{bits})\]
+      <h3>Entropie croisée (perte ML)</h3>
+      \[H(p,q)=-\sum_i p_i\log q_i\]
+      <h3>Divergence KL</h3>
+      \[D_{KL}(p\|q)=\sum_i p_i\log\frac{p_i}{q_i}\ge 0\]
+      <div class="box tip"><span class="lb">Usage</span>Cross-entropy = fonction de perte reine de la classification. Gain d'information = construction des arbres de décision.</div>
+    </div>
+
+    <!-- COMBINATOIRE -->
+    <div class="cs-card" data-cat="complexite">
+      <h2>🔢 Combinatoire</h2>
+      <table>
+        <tr><th>Objet</th><th>Formule</th></tr>
+        <tr><td>Factorielle</td><td>\(n! = n(n-1)\cdots 1\)</td></tr>
+        <tr><td>Arrangements</td><td>\(A_n^k=\dfrac{n!}{(n-k)!}\) (ordre)</td></tr>
+        <tr><td>Combinaisons</td><td>\(\binom{n}{k}=\dfrac{n!}{k!(n-k)!}\) (sans ordre)</td></tr>
+        <tr><td>Avec répétition</td><td>\(n^k\)</td></tr>
+      </table>
+    </div>
+
+    <!-- COMPLEXITE -->
+    <div class="cs-card" data-cat="complexite">
+      <h2>⏱️ Complexité (Big-O) <span class="dom bigdata">Big Data</span></h2>
+      <table>
+        <tr><th>Classe</th><th>Exemple</th></tr>
+        <tr><td>\(O(1)\)</td><td>Accès tableau, hash</td></tr>
+        <tr><td>\(O(\log n)\)</td><td>Recherche dichotomique</td></tr>
+        <tr><td>\(O(n)\)</td><td>Parcours linéaire</td></tr>
+        <tr><td>\(O(n\log n)\)</td><td>Tri efficace (merge, quick)</td></tr>
+        <tr><td>\(O(n^2)\)</td><td>Double boucle, tri naïf</td></tr>
+        <tr><td>\(O(2^n)\)</td><td>Sous-ensembles (explosif)</td></tr>
+      </table>
+      <div class="box"><span class="lb">Réflexe</span>On garde le terme dominant, sans constante : \(3n^2+5n \to O(n^2)\).</div>
+    </div>
+
+    <!-- BIG DATA -->
+    <div class="cs-card" data-cat="complexite">
+      <h2>🗄️ Big Data — structures <span class="dom bigdata">Big Data</span></h2>
+      <table>
+        <tr><th>Outil</th><th>Idée</th></tr>
+        <tr><td>Filtre de Bloom</td><td>Teste l'appartenance en \(O(1)\) mémoire ; faux positifs possibles, jamais de faux négatif.</td></tr>
+        <tr><td>MinHash / LSH</td><td>Estime la similarité (Jaccard) à grande échelle.</td></tr>
+        <tr><td>MapReduce</td><td><code>map</code> (découpe) → <code>shuffle</code> → <code>reduce</code> (agrège).</td></tr>
+      </table>
+      <p>Similarité de Jaccard : \(J(A,B)=\dfrac{|A\cap B|}{|A\cup B|}\).</p>
+    </div>
+
+  </div>
+
+  <div style="text-align:center;margin:30px 0">
+    <a class="btn" id="pdf" href="#">🖨️ Exporter en PDF</a>
+    <a class="btn" href="index.html">📘 Revenir aux cours complets</a>
+  </div>
+</div>
+
+<div class="foot">Aide-mémoire maths pour la Data · formulaire express · bonne révision ∑💙</div>
+
+<script>
+(function(){
+  var TK="cmd-theme";
+  function theme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem(TK,t);var b=document.getElementById("tt");if(b)b.textContent=t==="light"?"🌙 Sombre":"☀️ Clair";}
+  var saved=localStorage.getItem(TK);
+  if(!saved){saved=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";}
+  theme(saved);
+  document.getElementById("tt").addEventListener("click",function(){theme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">∑</text></svg>';
+  var l=document.createElement("link");l.rel="icon";l.href="data:image/svg+xml,"+encodeURIComponent(svg);document.head.appendChild(l);
+
+  var q=document.getElementById("q"), cards=[].slice.call(document.querySelectorAll(".cs-card")), nohit=document.getElementById("nohit");
+  var chips=[].slice.call(document.querySelectorAll(".chip")), cat="all";
+  function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();}
+  function apply(){
+    var t=norm(q.value.trim()), hits=0;
+    cards.forEach(function(c){
+      var okCat = cat==="all" || c.getAttribute("data-cat")===cat;
+      var okTxt = !t || norm(c.textContent).indexOf(t)>=0;
+      var ok = okCat && okTxt;
+      c.style.display = ok ? "" : "none";
+      if(ok) hits++;
+    });
+    nohit.style.display = hits? "none":"block";
+  }
+  q.addEventListener("input",apply);
+  chips.forEach(function(ch){ ch.addEventListener("click",function(){
+    chips.forEach(function(x){x.classList.remove("on");}); ch.classList.add("on");
+    cat=ch.getAttribute("data-f"); apply();
+  });});
+  document.addEventListener("keydown",function(e){
+    if(e.key==="/" && document.activeElement!==q){e.preventDefault();q.focus();}
+    if(e.key==="Escape"){q.value="";apply();q.blur();}
+  });
+  document.getElementById("pdf").addEventListener("click",function(e){e.preventDefault();window.print();});
+})();
+</script>
+</body>
+</html>

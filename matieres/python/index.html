@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Python &amp; Data Science — Cours interactif</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🐍</span> Python &amp; Data Science</div>
+    <div class="spacer"></div>
+    <a class="btn" href="aide-memoire.html">⚡ Aide-mémoire</a>
+    <a class="btn" href="../../index.html">← Tous mes cours</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero">
+    <h1>Python, de bon niveau → data scientist</h1>
+    <p>Un parcours <strong>complet et avancé</strong> : du Python idiomatique (générateurs, décorateurs, typing) jusqu'à la stack data (<strong>NumPy</strong>, <strong>Pandas</strong>, <strong>viz</strong>, <strong>feature engineering</strong>, <strong>scikit-learn</strong>). Pensé pour quelqu'un qui code déjà : on va loin, avec idiomes pro, pièges et bonnes pratiques.</p>
+    <div class="legend">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+      <span style="color:var(--muted)">← chaque module est étiqueté par domaine &amp; usage pro</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+
+      <a class="card module" href="modules/module-0-python-avance.html" data-module-card="0">
+        <div class="num">Module 0 · Python pro</div>
+        <h3>Python avancé &amp; idiomatique</h3>
+        <p>Compréhensions, générateurs, itérateurs, décorateurs, context managers, <code>typing</code>, dataclasses, dunder, <code>functools</code>/<code>itertools</code>, match. Le Python qu'on attend d'un pro.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Générateurs</span><span class="tag">Décorateurs</span><span class="tag">Typing</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-1-numpy.html" data-module-card="1">
+        <div class="num">Module 1 · Calcul</div>
+        <h3>NumPy — calcul vectoriel ⭐</h3>
+        <p><code>ndarray</code>, dtypes, vectorisation, <strong>broadcasting</strong>, indexation avancée, axes, masques booléens, algèbre linéaire, aléatoire. La fondation de toute la data.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">ndarray</span><span class="tag">Broadcasting</span><span class="tag">Vectorisation</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-2-pandas.html" data-module-card="2">
+        <div class="num">Module 2 · Manipulation</div>
+        <h3>Pandas — données tabulaires ⭐</h3>
+        <p><code>Series</code>/<code>DataFrame</code>, <code>loc</code>/<code>iloc</code>, filtrage, <strong>groupby</strong>, <strong>merge/join</strong>, valeurs manquantes, <code>apply</code>, pivot, dates. L'outil n°1 du data analyst.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></div>
+        <div class="tags"><span class="tag">DataFrame</span><span class="tag">groupby</span><span class="tag">merge</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-3-visualisation.html" data-module-card="3">
+        <div class="num">Module 3 · Dataviz</div>
+        <h3>Visualisation de données</h3>
+        <p>Anatomie Matplotlib (Figure/Axes), <code>pyplot</code>, Seaborn, le bon graphe selon la question, et les pièges qui trompent l'œil. Communiquer, pas juste tracer.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span></div>
+        <div class="tags"><span class="tag">Matplotlib</span><span class="tag">Seaborn</span><span class="tag">Storytelling</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-4-nettoyage-features.html" data-module-card="4">
+        <div class="num">Module 4 · Preprocessing</div>
+        <h3>Nettoyage &amp; feature engineering ⭐</h3>
+        <p>Valeurs manquantes, outliers, encodage (one-hot, ordinal, target), normalisation/standardisation, dates, texte, fuites de données. 80 % du travail réel en data.</p>
+        <div class="domains"><span class="domain data"><span class="dot"></span>DATA</span><span class="domain ia"><span class="dot"></span>IA</span></div>
+        <div class="tags"><span class="tag">Encoding</span><span class="tag">Scaling</span><span class="tag">Data leakage</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+      <a class="card module" href="modules/module-5-scikit-learn.html" data-module-card="5">
+        <div class="num">Module 5 · ML workflow</div>
+        <h3>scikit-learn &amp; workflow ML</h3>
+        <p>L'API <code>fit</code>/<code>predict</code>/<code>transform</code>, train/test split, métriques, <strong>Pipeline</strong>, validation croisée, <code>GridSearchCV</code>. Le pont vers le Machine Learning.</p>
+        <div class="domains"><span class="domain ia"><span class="dot"></span>IA</span><span class="domain data"><span class="dot"></span>DATA</span></div>
+        <div class="tags"><span class="tag">fit/predict</span><span class="tag">Pipeline</span><span class="tag">Cross-val</span></div>
+        <div class="status ready">● Disponible</div>
+      </a>
+
+    </div>
+
+    <div class="callout" style="margin-top:22px">
+      <span class="label">💡 Comment utiliser ce cours</span>
+      Si tu codes déjà en Python, survole le Module 0 (idiomes pro) puis fonce sur NumPy/Pandas. Fais les <strong>quiz</strong> au fil de l'eau, teste le code dans un notebook, et garde l'<a href="aide-memoire.html"><strong>aide-mémoire</strong></a> ouvert à côté. Ta progression est sauvegardée dans ton navigateur.
+    </div>
+  </div>
+
+  <div class="footer">
+    Cours Python &amp; Data Science · pensé pour aller loin · bonne session 🐍💙
+  </div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

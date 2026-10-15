@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 3 — Visualisation de données</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🐍</span> Python &amp; Data Science</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 3</div>
+    <h1>Module 3 — Visualisation de données 📊</h1>
+    <p class="subtitle">Un graphique n'est pas une décoration : c'est un outil pour <em>comprendre</em> (analyse exploratoire) et <em>convaincre</em> (communication). On apprend l'anatomie de Matplotlib, la concision de Seaborn, et surtout : quel graphe pour quelle question.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Comprendre la structure Figure / Axes de Matplotlib ; tracer les graphes essentiels ; utiliser Seaborn pour la stat visuelle ; choisir le bon graphe selon la question ; éviter les pièges qui trompent l'œil.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#anatomie">Anatomie de Matplotlib</a></li>
+        <li><a href="#graphes">Les graphes essentiels</a></li>
+        <li><a href="#seaborn">Seaborn (stat visuelle)</a></li>
+        <li><a href="#choisir">Quel graphe pour quelle question</a></li>
+        <li><a href="#pieges">Pièges &amp; bonnes pratiques</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="anatomie">
+      <h2>1. Anatomie de Matplotlib</h2>
+      <p>Deux objets clés : la <strong>Figure</strong> (la toile entière) et les <strong>Axes</strong> (une zone de tracé, avec ses axes x/y). On privilégie l'API « orientée objet » (<code>fig, ax</code>), plus claire et contrôlable.</p>
+      <pre><code><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nu">8</span>, <span class="nu">5</span>))
+ax.<span class="fn">plot</span>(x, y, label=<span class="st">"série 1"</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="st">"temps"</span>); ax.<span class="fn">set_ylabel</span>(<span class="st">"valeur"</span>)
+ax.<span class="fn">set_title</span>(<span class="st">"Mon graphe"</span>)
+ax.<span class="fn">legend</span>()
+fig.<span class="fn">savefig</span>(<span class="st">"figure.png"</span>, dpi=<span class="nu">150</span>, bbox_inches=<span class="st">"tight"</span>)
+plt.<span class="fn">show</span>()</code></pre>
+      <h3>Plusieurs sous-graphes</h3>
+      <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nu">1</span>, <span class="nu">2</span>, figsize=(<span class="nu">12</span>, <span class="nu">4</span>))
+axes[<span class="nu">0</span>].<span class="fn">hist</span>(data); axes[<span class="nu">1</span>].<span class="fn">scatter</span>(x, y)</code></pre>
+      <div class="callout warning"><span class="label">⚠️ pyplot « state-machine » vs objet</span><code>plt.plot()</code> agit sur le graphe « courant » (pratique en notebook, fragile en script). Dès que tu fais plusieurs sous-graphes, utilise <code>fig, ax = plt.subplots()</code> et les méthodes <code>ax.*</code>.</div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Dans Matplotlib, qu'est-ce qu'un objet <code>Axes</code> ?</div>
+        <div class="options">
+          <div class="opt">La fenêtre entière contenant tout</div>
+          <div class="opt">Une zone de tracé individuelle (avec ses axes x et y)</div>
+          <div class="opt">Uniquement l'axe des abscisses</div>
+          <div class="opt">La légende</div>
+        </div>
+        <div class="feedback" data-explain="La <strong>Figure</strong> est la toile entière ; elle contient un ou plusieurs <strong>Axes</strong>, chacun étant une zone de tracé complète avec ses propres axes x/y, titre et légende."></div>
+      </div>
+    </section>
+
+    <section class="block" id="graphes">
+      <h2>2. Les graphes essentiels</h2>
+      <table>
+        <tr><th>Graphe</th><th>Méthode</th><th>Pour…</th></tr>
+        <tr><td>Courbe</td><td><code>ax.plot</code></td><td>Évolution dans le temps</td></tr>
+        <tr><td>Nuage de points</td><td><code>ax.scatter</code></td><td>Relation entre 2 variables</td></tr>
+        <tr><td>Histogramme</td><td><code>ax.hist</code></td><td>Distribution d'une variable</td></tr>
+        <tr><td>Barres</td><td><code>ax.bar</code></td><td>Comparer des catégories</td></tr>
+        <tr><td>Boîte à moustaches</td><td><code>ax.boxplot</code></td><td>Dispersion &amp; outliers</td></tr>
+        <tr><td>Camembert</td><td><code>ax.pie</code></td><td>Proportions (à éviter souvent)</td></tr>
+      </table>
+      <h3>Tracer directement depuis pandas</h3>
+      <pre><code>df[<span class="st">"age"</span>].<span class="fn">plot</span>(kind=<span class="st">"hist"</span>, bins=<span class="nu">20</span>)
+df.<span class="fn">plot</span>(x=<span class="st">"date"</span>, y=<span class="st">"ventes"</span>, kind=<span class="st">"line"</span>)
+df[<span class="st">"ville"</span>].<span class="fn">value_counts</span>().<span class="fn">plot</span>(kind=<span class="st">"bar"</span>)</code></pre>
+      <div class="callout data"><span class="label">🔗 Astuce</span>pandas branche Matplotlib automatiquement : <code>df.plot()</code> suffit pour un aperçu rapide pendant l'exploration.</div>
+    </section>
+
+    <section class="block" id="seaborn">
+      <h2>3. Seaborn : la statistique visuelle</h2>
+      <p>Seaborn est bâti sur Matplotlib mais pense « statistique » : beaux graphes, intégration pandas, et calculs (régression, distributions) intégrés.</p>
+      <pre><code><span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+sns.<span class="fn">histplot</span>(data=df, x=<span class="st">"age"</span>, hue=<span class="st">"ville"</span>, kde=<span class="kw">True</span>)
+sns.<span class="fn">scatterplot</span>(data=df, x=<span class="st">"taille"</span>, y=<span class="st">"poids"</span>, hue=<span class="st">"sexe"</span>)
+sns.<span class="fn">boxplot</span>(data=df, x=<span class="st">"ville"</span>, y=<span class="st">"salaire"</span>)
+sns.<span class="fn">heatmap</span>(df.<span class="fn">corr</span>(numeric_only=<span class="kw">True</span>), annot=<span class="kw">True</span>, cmap=<span class="st">"coolwarm"</span>)
+sns.<span class="fn">pairplot</span>(df, hue=<span class="st">"classe"</span>)   <span class="cmt"># matrice de nuages (EDA express)</span></code></pre>
+      <div class="callout example"><span class="label">Le réflexe EDA</span>Une <code>heatmap</code> des corrélations + un <code>pairplot</code> donnent en deux lignes une vue d'ensemble des relations entre variables.</div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Quel graphe pour repérer rapidement les <strong>corrélations</strong> entre toutes les variables numériques ?</div>
+        <div class="options">
+          <div class="opt">Une heatmap de <code>df.corr()</code></div>
+          <div class="opt">Un camembert</div>
+          <div class="opt">Un histogramme</div>
+          <div class="opt">Un graphe en barres</div>
+        </div>
+        <div class="feedback" data-explain="Une heatmap de la matrice de corrélation montre d'un coup d'œil les paires fortement corrélées (positif/négatif), utile avant un modèle (multicolinéarité)."></div>
+      </div>
+    </section>
+
+    <section class="block" id="choisir">
+      <h2>4. Quel graphe pour quelle question ?</h2>
+      <ul class="keys">
+        <li><strong>Distribution d'une variable</strong> → histogramme, boxplot, KDE.</li>
+        <li><strong>Relation entre deux variables numériques</strong> → nuage de points (scatter).</li>
+        <li><strong>Évolution dans le temps</strong> → courbe (line).</li>
+        <li><strong>Comparer des catégories</strong> → barres (bar).</li>
+        <li><strong>Composition / parts d'un tout</strong> → barres empilées (plutôt que camembert).</li>
+        <li><strong>Corrélations multiples</strong> → heatmap, pairplot.</li>
+      </ul>
+      <div class="callout warning"><span class="label">⚠️ Le camembert, avec parcimonie</span>L'œil compare mal des angles. Au-delà de 3-4 parts, un graphe en barres est presque toujours plus lisible.</div>
+    </section>
+
+    <section class="block" id="pieges">
+      <h2>5. Pièges &amp; bonnes pratiques</h2>
+      <ul class="keys">
+        <li><strong>Axe Y tronqué</strong> : ne pas commencer à 0 exagère les différences — grand classique de la manipulation visuelle.</li>
+        <li><strong>Toujours étiqueter</strong> : titre, axes (avec unités), légende. Un graphe sans contexte ne vaut rien.</li>
+        <li><strong>Trop d'info tue l'info</strong> : une idée par graphe. Enlève le superflu (« data-ink ratio », Tufte).</li>
+        <li><strong>Couleurs accessibles</strong> : évite rouge/vert seuls (daltonisme) ; utilise des palettes perceptuelles (<code>viridis</code>).</li>
+        <li><strong>Échelle log</strong> quand les ordres de grandeur varient beaucoup (<code>ax.set_yscale("log")</code>).</li>
+      </ul>
+      <div class="callout data"><span class="label">🔗 Métier</span>En entreprise, 80 % de l'impact d'une analyse vient de sa <em>restitution</em>. Savoir raconter une histoire avec un graphe clair est une compétence aussi valorisée que modéliser.</div>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">La dataviz, de la rose de Nightingale aux bibliothèques Python.</p>
+      <p>Bien avant l'informatique, la visualisation sauvait des vies. En 1854, <strong>John Snow</strong> cartographie les cas de choléra à Londres et identifie une pompe à eau contaminée — acte de naissance de l'épidémiologie moderne. En 1858, <strong>Florence Nightingale</strong> invente son « diagramme en rose » pour convaincre l'armée britannique que l'hygiène tuait plus que les combats.</p>
+      <h4>Repères</h4>
+      <ul class="names">
+        <li><b>John Snow</b> <span class="yr">(1854)</span> — la carte du choléra, pionnière de la data géographique.</li>
+        <li><b>Florence Nightingale</b> <span class="yr">(1858)</span> — pionnière de la dataviz statistique au service de la décision.</li>
+        <li><b>Edward Tufte</b> <span class="yr">(1983)</span> — <i>The Visual Display of Quantitative Information</i> ; invente le « data-ink ratio » (maximiser l'info, minimiser l'encre).</li>
+        <li><b>John Hunter</b> <span class="yr">(2003)</span> — crée Matplotlib pour visualiser des signaux de neurologie ; en fait un standard open source.</li>
+        <li><b>Michael Waskom</b> <span class="yr">(2012)</span> — crée Seaborn pour rendre la stat visuelle élégante et simple.</li>
+      </ul>
+      <div class="clinks">
+        <a class="pill-link" href="https://matplotlib.org/stable/" target="_blank">Doc Matplotlib</a>
+        <a class="pill-link" href="https://seaborn.pydata.org/" target="_blank">Doc Seaborn</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/John_Snow_(m%C3%A9decin)" target="_blank">John Snow &amp; le choléra</a>
+        <a class="pill-link" href="https://www.data-to-viz.com/" target="_blank">data-to-viz (choisir son graphe)</a>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>6. Exercices</h2>
+      <h3>Exercice 1 — Choix du graphe</h3>
+      <p>Tu veux montrer la relation entre la surface d'un logement et son prix. Quel graphe, et pourquoi ?</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <p>Un <strong>nuage de points</strong> (<code>scatter</code>) : deux variables numériques continues, on cherche une tendance/corrélation. On peut ajouter une couleur (<code>hue</code>) pour une 3ᵉ variable (ville) et une droite de régression (<code>sns.regplot</code>).</p>
+      </details>
+      <h3>Exercice 2 — Figure propre</h3>
+      <p>Trace l'histogramme des âges avec titre, axes étiquetés et 20 classes, via l'API objet.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nu">8</span>, <span class="nu">5</span>))
+ax.<span class="fn">hist</span>(df[<span class="st">"age"</span>], bins=<span class="nu">20</span>)
+ax.<span class="fn">set_title</span>(<span class="st">"Distribution des âges"</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="st">"âge"</span>); ax.<span class="fn">set_ylabel</span>(<span class="st">"effectif"</span>)
+plt.<span class="fn">show</span>()</code></pre>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="3">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-3-visualisation.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-2-pandas.html"><div class="dir">← Précédent</div><div class="ttl">Module 2 · Pandas</div></a>
+      <a class="next" href="module-4-nettoyage-features.html"><div class="dir">Suivant →</div><div class="ttl">Module 4 · Nettoyage &amp; features</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 3 — Visualisation · Cours Python &amp; Data Science 🐍💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1117" />
+<title>Rust — Antisèche / Cheat Sheet</title>
+<style>
+:root{
+  --bg:#0f1117; --bg2:#171a23; --bg3:#1e2230; --card:#141822;
+  --txt:#e6e9ef; --muted:#9aa4b2; --line:#2a3040;
+  --acc:#f74c00; --acc2:#ffb27a; --ok:#3ecf8e; --bad:#ff5d6c; --warn:#ffcf5c;
+  --blue:#5aa9ff; --purple:#b98cff; --code:#0b0e16;
+  --mono:"JetBrains Mono","Fira Code",Consolas,monospace;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f6f7fb; --bg2:#fff; --bg3:#eef1f8; --card:#fff;
+  --txt:#161a24; --muted:#5a6478; --line:#dce1ec; --code:#1b1f2a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1100px 500px at 85% -10%,#1b1410,var(--bg) 55%) fixed;color:var(--txt);font-family:var(--sans);line-height:1.6;font-size:15.5px}
+a{color:var(--acc2)}
+.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;padding:11px 20px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--acc),#b03400);display:grid;place-items:center;font-size:18px}
+.spacer{flex:1}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--bg3);color:var(--txt);padding:8px 13px;border-radius:9px;font-size:14px;font-family:inherit;text-decoration:none;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--acc);color:#fff}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 22px 80px}
+.hero h1{font-size:clamp(26px,5vw,40px);margin:0 0 6px}
+.hero .sub{color:var(--muted);font-size:17px;margin:0 0 16px}
+.badge{display:inline-block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 12px;border-radius:999px;font-weight:700}
+/* Filtre de recherche instantané */
+.filter{position:sticky;top:58px;z-index:30;margin:14px 0 6px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.filter input{flex:1;background:none;border:none;outline:none;color:var(--txt);font-size:16px;font-family:inherit;padding:9px 0;min-width:0}
+.filter .ic{opacity:.7}
+.filter kbd{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--bg3)}
+.nohit{display:none;color:var(--muted);text-align:center;padding:24px}
+.cols{column-width:360px;column-gap:18px}
+.cs-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 18px 16px;margin:0 0 18px;display:inline-block;width:100%}
+.cs-card h2{font-size:17px;margin:4px 0 10px;padding-bottom:7px;border-bottom:2px solid color-mix(in srgb,var(--acc) 40%,transparent);display:flex;align-items:center;gap:8px}
+.cs-card h3{font-size:14px;color:var(--acc2);margin:14px 0 5px;text-transform:uppercase;letter-spacing:.4px}
+.cs-card p{margin:7px 0}
+code{background:var(--bg3);padding:2px 6px;border-radius:5px;font-family:var(--mono);font-size:.88em;color:var(--acc2)}
+pre{background:var(--code);border:1px solid var(--line);border-radius:9px;padding:11px 13px;overflow-x:auto;margin:9px 0}
+pre code{background:none;color:#e6e9ef;padding:0;font-size:12.8px;line-height:1.55}
+.cmt{color:#6b7a52}.kw{color:#ff8a5c}.ty{color:#5aa9ff}.st{color:#8fd98f}.fn{color:#c79bff}.nu{color:#ffcf5c}
+table{border-collapse:collapse;width:100%;font-size:13.3px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:5px 9px;text-align:left;vertical-align:top}
+th{background:var(--bg3)}
+td code{font-size:.86em;white-space:nowrap}
+.box{border-left:4px solid var(--acc);background:var(--bg3);border-radius:0 9px 9px 0;padding:9px 13px;margin:10px 0;font-size:13.5px}
+.box .lb{font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
+.box.warn{border-color:var(--bad)}.box.warn .lb{color:var(--bad)}
+.box.tip{border-color:var(--ok)}.box.tip .lb{color:var(--ok)}
+.box.key{border-color:var(--warn)}.box.key .lb{color:var(--warn)}
+.foot{text-align:center;color:var(--muted);padding:38px 20px;border-top:1px solid var(--line);margin-top:26px}
+@media(max-width:600px){
+  html,body{overflow-x:hidden}
+  .top{padding:10px 14px;gap:8px;flex-wrap:wrap}
+  .brand{font-size:15px}
+  .btn{padding:9px 11px;font-size:13px;min-height:42px;display:inline-flex;align-items:center}
+  .wrap{padding:20px 14px 60px}
+  .hero h1{font-size:26px}
+  .filter{top:54px}
+  .cols{column-width:auto;columns:1}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+  div[style*="text-align:center"] .btn{display:block;width:100%;margin:8px 0;justify-content:center}
+}
+@media print{
+  .top,.filter,.foot,.btn{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  .cs-card{break-inside:avoid;border:1px solid #ccc}
+  .cols{column-width:320px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">🦀</span> Rust — Antisèche</div>
+  <div class="spacer"></div>
+  <a class="btn" href="rust-cursus.html">📘 Cursus</a>
+  <a class="btn" href="revision-express.html">🔥 Révision</a>
+  <a class="btn" href="../../index.html">← Portail</a>
+  <button class="btn" id="tt">☀️ Clair</button>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="badge">Référence rapide · à garder ouverte en codant</span>
+    <h1>Antisèche Rust 🦀</h1>
+    <p class="sub">Syntaxe, méthodes et paradigmes essentiels, à portée de main pour une question express. Tape pour filtrer ⌨️</p>
+  </div>
+
+  <div class="filter">
+    <span class="ic">🔎</span>
+    <input id="q" type="search" placeholder="Filtrer : « HashMap », « Option », « match », « iterator »… ( / )" aria-label="Filtrer l'antisèche" />
+    <kbd>/</kbd>
+  </div>
+  <div class="nohit" id="nohit">Aucune carte ne correspond. Essaie un autre mot-clé.</div>
+
+  <div class="cols" id="cards">
+
+    <!-- IO / INPUT -->
+    <div class="cs-card">
+      <h2>⌨️ Entrées / sorties (I/O)</h2>
+      <h3>Lire une ligne au clavier (stdin)</h3>
+      <pre><code><span class="kw">use</span> std::io::{<span class="ty">self</span>, <span class="ty">Write</span>};
+
+<span class="kw">let mut</span> ligne = <span class="ty">String</span>::<span class="fn">new</span>();
+io::<span class="fn">stdin</span>().<span class="fn">read_line</span>(&<span class="kw">mut</span> ligne).<span class="fn">unwrap</span>();
+<span class="kw">let</span> ligne = ligne.<span class="fn">trim</span>();        <span class="cmt">// enlève le \n final</span></code></pre>
+      <h3>Lire un nombre</h3>
+      <pre><code><span class="kw">let</span> n: <span class="ty">i32</span> = ligne.<span class="fn">trim</span>().<span class="fn">parse</span>().<span class="fn">expect</span>(<span class="st">"pas un nombre"</span>);</code></pre>
+      <h3>Lire plusieurs valeurs sur une ligne</h3>
+      <pre><code><span class="kw">let</span> nums: <span class="ty">Vec</span>&lt;<span class="ty">i32</span>&gt; = ligne.<span class="fn">split_whitespace</span>()
+    .<span class="fn">map</span>(|x| x.<span class="fn">parse</span>().<span class="fn">unwrap</span>())
+    .<span class="fn">collect</span>();</code></pre>
+      <h3>Écrire (sortie)</h3>
+      <pre><code><span class="fn">println!</span>(<span class="st">"avec saut de ligne"</span>);
+<span class="fn">print!</span>(<span class="st">"sans saut "</span>); io::<span class="fn">stdout</span>().<span class="fn">flush</span>().<span class="fn">unwrap</span>(); <span class="cmt">// force l'affichage</span>
+<span class="fn">eprintln!</span>(<span class="st">"erreur sur stderr"</span>);</code></pre>
+      <div class="box warn"><span class="lb">Pièges</span><code>read_line</code> <strong>garde le <code>\n</code></strong> → toujours <code>.trim()</code>. <code>read_line</code> renvoie un <code>Result</code> (nb d'octets lus). Pour <code>print!</code> sans <code>\n</code>, pense à <code>flush()</code>.</div>
+      <div class="box"><span class="lb">Arguments CLI &amp; variables d'env.</span><code>std::env::args()</code> (itérateur d'arguments) · <code>std::env::var("CLE")</code> (variable d'environnement → <code>Result</code>).</div>
+    </div>
+
+    <!-- BASES -->
+    <div class="cs-card">
+      <h2>⚙️ Bases &amp; variables</h2>
+      <pre><code><span class="kw">let</span> x = <span class="nu">5</span>;              <span class="cmt">// immuable</span>
+<span class="kw">let mut</span> y = <span class="nu">10</span>;         <span class="cmt">// mutable</span>
+<span class="kw">const</span> MAX: <span class="ty">u32</span> = <span class="nu">100</span>;  <span class="cmt">// constante (MAJ)</span>
+<span class="kw">let</span> z: <span class="ty">i64</span> = <span class="nu">42</span>;       <span class="cmt">// type explicite</span>
+<span class="kw">let</span> x = x + <span class="nu">1</span>;          <span class="cmt">// shadowing (re-déclare)</span></code></pre>
+      <div class="box key"><span class="lb">★ À retenir</span>Immuable par défaut. <code>mut</code> pour modifier, <code>const</code> pour une vraie constante (type obligatoire), shadowing = redéclarer avec <code>let</code>.</div>
+    </div>
+
+    <!-- TYPES -->
+    <div class="cs-card">
+      <h2>🔢 Types primitifs</h2>
+      <table>
+        <tr><th>Catégorie</th><th>Types</th></tr>
+        <tr><td>Entiers signés</td><td><code>i8 i16 i32 i64 i128 isize</code></td></tr>
+        <tr><td>Entiers non signés</td><td><code>u8 u16 u32 u64 u128 usize</code></td></tr>
+        <tr><td>Flottants</td><td><code>f32 f64</code></td></tr>
+        <tr><td>Booléen / caractère</td><td><code>bool</code> · <code>char</code> (Unicode)</td></tr>
+        <tr><td>Texte</td><td><code>&amp;str</code> (vue) · <code>String</code> (possédé)</td></tr>
+        <tr><td>Composés</td><td><code>(i32, f64)</code> tuple · <code>[i32; 3]</code> tableau</td></tr>
+      </table>
+      <pre><code><span class="kw">let</span> t = (<span class="nu">1</span>, <span class="st">"a"</span>, <span class="nu">3.0</span>); <span class="cmt">// tuple</span>
+<span class="kw">let</span> (a, b, c) = t;         <span class="cmt">// déstructuration</span>
+<span class="kw">let</span> arr = [<span class="nu">0</span>; <span class="nu">5</span>];         <span class="cmt">// [0,0,0,0,0]</span></code></pre>
+    </div>
+
+    <!-- CONTROLE -->
+    <div class="cs-card">
+      <h2>🔀 Flux de contrôle</h2>
+      <pre><code><span class="kw">if</span> n &gt; <span class="nu">0</span> { … } <span class="kw">else if</span> n &lt; <span class="nu">0</span> { … } <span class="kw">else</span> { … }
+<span class="kw">let</span> s = <span class="kw">if</span> ok { <span class="nu">1</span> } <span class="kw">else</span> { <span class="nu">0</span> }; <span class="cmt">// if = expression</span>
+
+<span class="kw">loop</span> { <span class="kw">break</span>; }          <span class="cmt">// boucle infinie</span>
+<span class="kw">while</span> cond { … }
+<span class="kw">for</span> i <span class="kw">in</span> <span class="nu">0</span>..<span class="nu">5</span> { … }      <span class="cmt">// 0..5 exclusif, 0..=5 inclus</span>
+<span class="kw">for</span> x <span class="kw">in</span> &vec { … }       <span class="cmt">// itère par référence</span></code></pre>
+      <div class="box"><span class="lb">Valeur depuis loop</span><code>let v = loop { break 42; };</code></div>
+    </div>
+
+    <!-- FONCTIONS -->
+    <div class="cs-card">
+      <h2>🛠️ Fonctions</h2>
+      <pre><code><span class="kw">fn</span> <span class="fn">add</span>(a: <span class="ty">i32</span>, b: <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> {
+    a + b          <span class="cmt">// PAS de ; = valeur de retour</span>
+}
+<span class="kw">fn</span> <span class="fn">log</span>(msg: &<span class="ty">str</span>) { <span class="fn">println!</span>(<span class="st">"{}"</span>, msg); }</code></pre>
+      <div class="box warn"><span class="lb">Piège n°1</span><code>a + b</code> renvoie la valeur ; <code>a + b;</code> renvoie <code>()</code>. Le <strong>point-virgule final change tout</strong>.</div>
+    </div>
+
+    <!-- OWNERSHIP -->
+    <div class="cs-card">
+      <h2>🔑 Ownership &amp; Borrowing</h2>
+      <table>
+        <tr><th>Règle</th><th>Détail</th></tr>
+        <tr><td>1 propriétaire</td><td>Chaque valeur a un seul owner ; drop en fin de portée.</td></tr>
+        <tr><td>Move</td><td>Types tas (<code>String</code>,<code>Vec</code>) : <code>let b=a;</code> invalide <code>a</code>.</td></tr>
+        <tr><td>Copy</td><td>Types pile (<code>i32</code>,<code>bool</code>,<code>char</code>) : copiés, pas déplacés.</td></tr>
+        <tr><td><code>&amp;T</code></td><td>Emprunt lecture : plusieurs simultanés OK.</td></tr>
+        <tr><td><code>&amp;mut T</code></td><td>Emprunt écriture : un seul, et aucun <code>&amp;T</code> en même temps.</td></tr>
+      </table>
+      <pre><code><span class="kw">fn</span> <span class="fn">len</span>(s: &<span class="ty">String</span>) -&gt; <span class="ty">usize</span> { s.<span class="fn">len</span>() } <span class="cmt">// emprunte</span>
+<span class="kw">fn</span> <span class="fn">push</span>(s: &<span class="kw">mut</span> <span class="ty">String</span>) { s.<span class="fn">push_str</span>(<span class="st">"!"</span>); }</code></pre>
+      <div class="box key"><span class="lb">★ La règle d'or</span>À tout instant : soit <strong>N lecteurs</strong>, soit <strong>1 écrivain</strong>. Jamais les deux.</div>
+    </div>
+
+    <!-- STRING -->
+    <div class="cs-card">
+      <h2>🔤 String &amp; &amp;str — méthodes</h2>
+      <table>
+        <tr><th>Méthode</th><th>Effet</th></tr>
+        <tr><td><code>.len()</code></td><td>Taille en octets</td></tr>
+        <tr><td><code>.push_str("x")</code> / <code>.push('c')</code></td><td>Ajoute</td></tr>
+        <tr><td><code>.contains("a")</code></td><td>Sous-chaîne présente ?</td></tr>
+        <tr><td><code>.replace("a","b")</code></td><td>Remplace</td></tr>
+        <tr><td><code>.to_uppercase()</code> / <code>.to_lowercase()</code></td><td>Casse</td></tr>
+        <tr><td><code>.trim()</code></td><td>Enlève espaces aux bords</td></tr>
+        <tr><td><code>.split(',')</code></td><td>Itérateur de morceaux</td></tr>
+        <tr><td><code>.chars()</code> / <code>.bytes()</code></td><td>Itère caractères / octets</td></tr>
+        <tr><td><code>.parse::&lt;i32&gt;()</code></td><td>Texte → nombre (<code>Result</code>)</td></tr>
+        <tr><td><code>.starts_with</code>/<code>.ends_with</code></td><td>Test de préfixe/suffixe</td></tr>
+      </table>
+      <pre><code><span class="kw">let</span> n: <span class="ty">i32</span> = <span class="st">"42"</span>.<span class="fn">parse</span>().<span class="fn">unwrap</span>();
+<span class="kw">let</span> s = <span class="fn">format!</span>(<span class="st">"{}-{}"</span>, a, b); <span class="cmt">// construit une String</span></code></pre>
+    </div>
+
+    <!-- VEC -->
+    <div class="cs-card">
+      <h2>📚 Vec&lt;T&gt; — méthodes</h2>
+      <table>
+        <tr><th>Méthode</th><th>Effet</th></tr>
+        <tr><td><code>vec![1,2,3]</code></td><td>Crée un vecteur</td></tr>
+        <tr><td><code>.push(x)</code> / <code>.pop()</code></td><td>Ajoute en fin / retire (<code>Option</code>)</td></tr>
+        <tr><td><code>.get(i)</code></td><td>Accès sûr → <code>Option&lt;&amp;T&gt;</code></td></tr>
+        <tr><td><code>v[i]</code></td><td>Accès direct (panique si hors bornes)</td></tr>
+        <tr><td><code>.len()</code> / <code>.is_empty()</code></td><td>Taille / vide ?</td></tr>
+        <tr><td><code>.contains(&amp;x)</code></td><td>Présence</td></tr>
+        <tr><td><code>.sort()</code> / <code>.reverse()</code></td><td>Trie / inverse (en place)</td></tr>
+        <tr><td><code>.iter()</code></td><td>Itérateur de références</td></tr>
+        <tr><td><code>.remove(i)</code> / <code>.insert(i,x)</code></td><td>Retire / insère à l'index</td></tr>
+        <tr><td><code>.dedup()</code></td><td>Supprime doublons consécutifs</td></tr>
+      </table>
+    </div>
+
+    <!-- HASHMAP -->
+    <div class="cs-card">
+      <h2>🗃️ HashMap&lt;K,V&gt;</h2>
+      <pre><code><span class="kw">use</span> std::collections::<span class="ty">HashMap</span>;
+<span class="kw">let mut</span> m = <span class="ty">HashMap</span>::<span class="fn">new</span>();
+m.<span class="fn">insert</span>(<span class="st">"a"</span>, <span class="nu">1</span>);
+m.<span class="fn">get</span>(<span class="st">"a"</span>);                 <span class="cmt">// Option&lt;&amp;V&gt;</span>
+*m.<span class="fn">entry</span>(<span class="st">"a"</span>).<span class="fn">or_insert</span>(<span class="nu">0</span>) += <span class="nu">1</span>; <span class="cmt">// compteur</span>
+<span class="kw">for</span> (k, v) <span class="kw">in</span> &m { … }</code></pre>
+      <table>
+        <tr><th>Méthode</th><th>Effet</th></tr>
+        <tr><td><code>.insert(k,v)</code></td><td>Ajoute / remplace</td></tr>
+        <tr><td><code>.get(&amp;k)</code></td><td><code>Option&lt;&amp;V&gt;</code></td></tr>
+        <tr><td><code>.contains_key(&amp;k)</code></td><td>Clé présente ?</td></tr>
+        <tr><td><code>.entry(k).or_insert(d)</code></td><td>Valeur ou défaut (patron compteur)</td></tr>
+        <tr><td><code>.remove(&amp;k)</code></td><td>Retire</td></tr>
+      </table>
+    </div>
+
+    <!-- OPTION -->
+    <div class="cs-card">
+      <h2>❓ Option&lt;T&gt;</h2>
+      <p>Remplace <code>null</code> : <code>Some(v)</code> ou <code>None</code>.</p>
+      <table>
+        <tr><th>Méthode</th><th>Effet</th></tr>
+        <tr><td><code>.is_some()</code>/<code>.is_none()</code></td><td>Tests</td></tr>
+        <tr><td><code>.unwrap()</code></td><td>Valeur ou <strong>panique</strong></td></tr>
+        <tr><td><code>.unwrap_or(d)</code></td><td>Valeur ou défaut</td></tr>
+        <tr><td><code>.unwrap_or_else(||…)</code></td><td>Défaut calculé</td></tr>
+        <tr><td><code>.map(|x| …)</code></td><td>Transforme si <code>Some</code></td></tr>
+        <tr><td><code>.and_then(|x| …)</code></td><td>Chaîne qui renvoie une <code>Option</code></td></tr>
+        <tr><td><code>.ok_or(e)</code></td><td>Convertit en <code>Result</code></td></tr>
+      </table>
+      <pre><code><span class="kw">if let</span> <span class="ty">Some</span>(v) = opt { <span class="fn">println!</span>(<span class="st">"{}"</span>, v); }
+<span class="kw">let</span> n = opt.<span class="fn">unwrap_or</span>(<span class="nu">0</span>);</code></pre>
+    </div>
+
+    <!-- RESULT -->
+    <div class="cs-card">
+      <h2>✅ Result&lt;T,E&gt; &amp; erreurs</h2>
+      <p><code>Ok(v)</code> ou <code>Err(e)</code>. L'opérateur <code>?</code> propage l'erreur.</p>
+      <pre><code><span class="kw">fn</span> <span class="fn">lire</span>() -&gt; <span class="ty">Result</span>&lt;<span class="ty">String</span>, <span class="ty">io</span>::<span class="ty">Error</span>&gt; {
+    <span class="kw">let</span> s = std::fs::<span class="fn">read_to_string</span>(<span class="st">"f.txt"</span>)?; <span class="cmt">// propage si Err</span>
+    <span class="ty">Ok</span>(s)
+}</code></pre>
+      <table>
+        <tr><th>Méthode</th><th>Effet</th></tr>
+        <tr><td><code>?</code></td><td>Renvoie l'<code>Err</code> immédiatement, sinon déballe</td></tr>
+        <tr><td><code>.unwrap()</code>/<code>.expect("msg")</code></td><td>Valeur ou panique (+ message)</td></tr>
+        <tr><td><code>.unwrap_or(d)</code></td><td>Valeur ou défaut</td></tr>
+        <tr><td><code>.map_err(|e|…)</code></td><td>Transforme l'erreur</td></tr>
+        <tr><td><code>.is_ok()</code>/<code>.is_err()</code></td><td>Tests</td></tr>
+      </table>
+    </div>
+
+    <!-- MATCH -->
+    <div class="cs-card">
+      <h2>🎯 Pattern matching</h2>
+      <pre><code><span class="kw">match</span> n {
+    <span class="nu">0</span> =&gt; <span class="st">"zéro"</span>,
+    <span class="nu">1</span> | <span class="nu">2</span> =&gt; <span class="st">"petit"</span>,
+    <span class="nu">3</span>..=<span class="nu">9</span> =&gt; <span class="st">"moyen"</span>,     <span class="cmt">// intervalle</span>
+    n <span class="kw">if</span> n &lt; <span class="nu">0</span> =&gt; <span class="st">"négatif"</span>, <span class="cmt">// garde</span>
+    _ =&gt; <span class="st">"autre"</span>,          <span class="cmt">// obligatoire si non exhaustif</span>
+}</code></pre>
+      <div class="box warn"><span class="lb">Exhaustivité</span>Un <code>match</code> doit couvrir <strong>tous les cas</strong> : ajoute <code>_</code> pour le reste.</div>
+      <pre><code><span class="kw">if let</span> <span class="ty">Some</span>(x) = opt { … }   <span class="cmt">// un seul cas</span>
+<span class="kw">while let</span> <span class="ty">Some</span>(x) = it.<span class="fn">next</span>() { … }</code></pre>
+    </div>
+
+    <!-- STRUCT -->
+    <div class="cs-card">
+      <h2>🏗️ Structs &amp; méthodes</h2>
+      <pre><code><span class="kw">struct</span> <span class="ty">Point</span> { x: <span class="ty">f64</span>, y: <span class="ty">f64</span> }
+
+<span class="kw">impl</span> <span class="ty">Point</span> {
+    <span class="kw">fn</span> <span class="fn">new</span>(x: <span class="ty">f64</span>, y: <span class="ty">f64</span>) -&gt; <span class="ty">Self</span> { <span class="ty">Point</span>{x, y} } <span class="cmt">// assoc.</span>
+    <span class="kw">fn</span> <span class="fn">norme</span>(&<span class="kw">self</span>) -&gt; <span class="ty">f64</span> { (<span class="kw">self</span>.x*<span class="kw">self</span>.x + <span class="kw">self</span>.y*<span class="kw">self</span>.y).<span class="fn">sqrt</span>() }
+}
+<span class="kw">let</span> p = <span class="ty">Point</span>::<span class="fn">new</span>(<span class="nu">3.0</span>, <span class="nu">4.0</span>);
+p.<span class="fn">norme</span>(); <span class="cmt">// 5.0</span></code></pre>
+      <div class="box"><span class="lb">self</span><code>&amp;self</code> lecture · <code>&amp;mut self</code> modifie · <code>self</code> consomme · sans <code>self</code> = fonction associée (<code>Type::fn()</code>).</div>
+    </div>
+
+    <!-- ENUM -->
+    <div class="cs-card">
+      <h2>🔖 Enums</h2>
+      <pre><code><span class="kw">enum</span> <span class="ty">Forme</span> {
+    <span class="ty">Cercle</span>(<span class="ty">f64</span>),            <span class="cmt">// porte des données</span>
+    <span class="ty">Rect</span>(<span class="ty">f64</span>, <span class="ty">f64</span>),
+    <span class="ty">Vide</span>,
+}
+<span class="kw">fn</span> <span class="fn">aire</span>(f: &<span class="ty">Forme</span>) -&gt; <span class="ty">f64</span> {
+    <span class="kw">match</span> f {
+        <span class="ty">Forme</span>::<span class="ty">Cercle</span>(r) =&gt; <span class="nu">3.14</span> * r * r,
+        <span class="ty">Forme</span>::<span class="ty">Rect</span>(w, h) =&gt; w * h,
+        <span class="ty">Forme</span>::<span class="ty">Vide</span> =&gt; <span class="nu">0.0</span>,
+    }
+}</code></pre>
+    </div>
+
+    <!-- TRAITS -->
+    <div class="cs-card">
+      <h2>🧩 Traits (interfaces)</h2>
+      <pre><code><span class="kw">trait</span> <span class="ty">Decrire</span> { <span class="kw">fn</span> <span class="fn">desc</span>(&<span class="kw">self</span>) -&gt; <span class="ty">String</span>; }
+
+<span class="kw">impl</span> <span class="ty">Decrire</span> <span class="kw">for</span> <span class="ty">Point</span> {
+    <span class="kw">fn</span> <span class="fn">desc</span>(&<span class="kw">self</span>) -&gt; <span class="ty">String</span> { <span class="fn">format!</span>(<span class="st">"({},{})"</span>, <span class="kw">self</span>.x, <span class="kw">self</span>.y) }
+}</code></pre>
+      <div class="box tip"><span class="lb">Derive automatique</span><code>#[derive(Debug, Clone, PartialEq)]</code> au-dessus d'un type génère ces traits. <code>Debug</code> → affichage <code>{:?}</code>.</div>
+      <pre><code><span class="kw">fn</span> <span class="fn">afficher</span>(x: &<span class="kw">impl</span> <span class="ty">Decrire</span>) { … } <span class="cmt">// trait en paramètre</span></code></pre>
+    </div>
+
+    <!-- GENERICS -->
+    <div class="cs-card">
+      <h2>🧬 Génériques &amp; lifetimes</h2>
+      <pre><code><span class="kw">fn</span> <span class="fn">max</span>&lt;<span class="ty">T</span>: <span class="ty">PartialOrd</span>&gt;(a: <span class="ty">T</span>, b: <span class="ty">T</span>) -&gt; <span class="ty">T</span> {
+    <span class="kw">if</span> a &gt; b { a } <span class="kw">else</span> { b }
+}
+<span class="cmt">// lifetime : la sortie vit aussi longtemps que les entrées</span>
+<span class="kw">fn</span> <span class="fn">plus_long</span>&lt;<span class="ty">'a</span>&gt;(x: &<span class="ty">'a</span> <span class="ty">str</span>, y: &<span class="ty">'a</span> <span class="ty">str</span>) -&gt; &<span class="ty">'a</span> <span class="ty">str</span> {
+    <span class="kw">if</span> x.<span class="fn">len</span>() &gt; y.<span class="fn">len</span>() { x } <span class="kw">else</span> { y }
+}</code></pre>
+      <div class="box key"><span class="lb">★ Lifetimes</span>Des <strong>étiquettes</strong> (<code>'a</code>) qui garantissent qu'une référence ne survit jamais à la donnée pointée. Vérifié à la compilation, zéro coût à l'exécution.</div>
+    </div>
+
+    <!-- ITERATORS -->
+    <div class="cs-card">
+      <h2>🔁 Iterators (lazy)</h2>
+      <table>
+        <tr><th>Adaptateur</th><th>Effet</th></tr>
+        <tr><td><code>.map(|x| …)</code></td><td>Transforme chaque élément</td></tr>
+        <tr><td><code>.filter(|x| …)</code></td><td>Garde si vrai</td></tr>
+        <tr><td><code>.enumerate()</code></td><td>Paires <code>(index, val)</code></td></tr>
+        <tr><td><code>.zip(autre)</code></td><td>Associe deux itérateurs</td></tr>
+        <tr><td><code>.take(n)</code>/<code>.skip(n)</code></td><td>Prend / saute n</td></tr>
+        <tr><td><code>.rev()</code></td><td>Inverse</td></tr>
+        <tr><td><code>.flatten()</code></td><td>Aplatit les niveaux</td></tr>
+      </table>
+      <table>
+        <tr><th>Consommateur</th><th>Effet</th></tr>
+        <tr><td><code>.collect()</code></td><td>Construit <code>Vec</code>/<code>String</code>/<code>HashMap</code>…</td></tr>
+        <tr><td><code>.sum()</code>/<code>.product()</code></td><td>Somme / produit</td></tr>
+        <tr><td><code>.count()</code>/<code>.max()</code>/<code>.min()</code></td><td>Compte / extrêmes</td></tr>
+        <tr><td><code>.fold(init,|a,x| …)</code></td><td>Accumulation générale</td></tr>
+        <tr><td><code>.any(…)</code>/<code>.all(…)</code></td><td>Au moins un / tous</td></tr>
+        <tr><td><code>.find(…)</code>/<code>.position(…)</code></td><td>Premier qui matche</td></tr>
+        <tr><td><code>.for_each(…)</code></td><td>Effet de bord</td></tr>
+      </table>
+      <pre><code><span class="kw">let</span> somme: <span class="ty">i32</span> = v.<span class="fn">iter</span>().<span class="fn">filter</span>(|&&x| x &gt; <span class="nu">0</span>).<span class="fn">sum</span>();
+<span class="kw">let</span> carres: <span class="ty">Vec</span>&lt;_&gt; = (<span class="nu">1</span>..=<span class="nu">5</span>).<span class="fn">map</span>(|x| x*x).<span class="fn">collect</span>();</code></pre>
+      <div class="box"><span class="lb">Lazy</span>Rien ne s'exécute avant un <strong>consommateur</strong> (collect, sum, for…).</div>
+    </div>
+
+    <!-- CLOSURES -->
+    <div class="cs-card">
+      <h2>λ Closures</h2>
+      <pre><code><span class="kw">let</span> ajoute = |a, b| a + b;      <span class="cmt">// infère les types</span>
+<span class="kw">let</span> x = <span class="nu">10</span>;
+<span class="kw">let</span> incr = |n| n + x;           <span class="cmt">// capture x (environnement)</span>
+<span class="kw">let</span> conso = <span class="kw">move</span> || <span class="fn">println!</span>(<span class="st">"{}"</span>, x); <span class="cmt">// move = prend possession</span></code></pre>
+      <table>
+        <tr><th>Trait</th><th>Capture</th></tr>
+        <tr><td><code>Fn</code></td><td>Par référence (lecture)</td></tr>
+        <tr><td><code>FnMut</code></td><td>Par référence mutable</td></tr>
+        <tr><td><code>FnOnce</code></td><td>Par valeur (une seule fois)</td></tr>
+      </table>
+    </div>
+
+    <!-- SMART POINTERS -->
+    <div class="cs-card">
+      <h2>📦 Smart pointers</h2>
+      <table>
+        <tr><th>Type</th><th>Usage</th></tr>
+        <tr><td><code>Box&lt;T&gt;</code></td><td>Sur le tas ; types récursifs (arbres)</td></tr>
+        <tr><td><code>Rc&lt;T&gt;</code></td><td>Plusieurs propriétaires (lecture, mono-thread)</td></tr>
+        <tr><td><code>RefCell&lt;T&gt;</code></td><td>Mutabilité intérieure (vérif. runtime)</td></tr>
+        <tr><td><code>Arc&lt;T&gt;</code></td><td><code>Rc</code> thread-safe (atomique)</td></tr>
+        <tr><td><code>Mutex&lt;T&gt;</code></td><td>Verrou pour partage mutable entre threads</td></tr>
+      </table>
+      <div class="box"><span class="lb">Combos</span><code>Rc&lt;RefCell&lt;T&gt;&gt;</code> (graphe mono-thread) · <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> (partage multi-thread).</div>
+    </div>
+
+    <!-- CONCURRENCE -->
+    <div class="cs-card">
+      <h2>🧵 Concurrence</h2>
+      <pre><code><span class="kw">use</span> std::thread;
+<span class="kw">let</span> h = thread::<span class="fn">spawn</span>(|| { <span class="cmt">/* travail */</span> });
+h.<span class="fn">join</span>().<span class="fn">unwrap</span>();          <span class="cmt">// attend la fin</span>
+
+<span class="kw">use</span> std::sync::mpsc;         <span class="cmt">// canal (channel)</span>
+<span class="kw">let</span> (tx, rx) = mpsc::<span class="fn">channel</span>();
+thread::<span class="fn">spawn</span>(<span class="kw">move</span> || tx.<span class="fn">send</span>(<span class="nu">42</span>).<span class="fn">unwrap</span>());
+rx.<span class="fn">recv</span>().<span class="fn">unwrap</span>();            <span class="cmt">// 42</span></code></pre>
+      <div class="box key"><span class="lb">★ Fearless concurrency</span>Les <strong>data races</strong> sont bloquées à la compilation. Partage : <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> · communication : channels.</div>
+    </div>
+
+    <!-- FORMATAGE -->
+    <div class="cs-card">
+      <h2>🖨️ Affichage &amp; format!</h2>
+      <table>
+        <tr><th>Motif</th><th>Effet</th></tr>
+        <tr><td><code>{}</code></td><td>Affichage « Display »</td></tr>
+        <tr><td><code>{:?}</code> / <code>{:#?}</code></td><td>Debug / Debug joli</td></tr>
+        <tr><td><code>{:5}</code> / <code>{:&lt;5}</code> / <code>{:^5}</code></td><td>Largeur, alignement</td></tr>
+        <tr><td><code>{:.2}</code></td><td>2 décimales</td></tr>
+        <tr><td><code>{:08.2}</code></td><td>Largeur 8, zéros, 2 déc.</td></tr>
+        <tr><td><code>{:b}</code> / <code>{:x}</code> / <code>{:o}</code></td><td>Binaire / hexa / octal</td></tr>
+        <tr><td><code>{name}</code></td><td>Argument nommé / capturé</td></tr>
+      </table>
+      <pre><code><span class="fn">println!</span>(<span class="st">"{:.2}"</span>, <span class="nu">3.14159</span>);  <span class="cmt">// 3.14</span>
+<span class="fn">println!</span>(<span class="st">"{x} = {x:b}"</span>);     <span class="cmt">// capture la variable x</span></code></pre>
+    </div>
+
+    <!-- CARGO -->
+    <div class="cs-card">
+      <h2>📦 Cargo (CLI)</h2>
+      <table>
+        <tr><th>Commande</th><th>Rôle</th></tr>
+        <tr><td><code>cargo new projet</code></td><td>Crée un projet</td></tr>
+        <tr><td><code>cargo check</code></td><td>Vérifie sans compiler (rapide)</td></tr>
+        <tr><td><code>cargo build</code></td><td>Compile (debug)</td></tr>
+        <tr><td><code>cargo build --release</code></td><td>Compile optimisé</td></tr>
+        <tr><td><code>cargo run</code></td><td>Compile + exécute</td></tr>
+        <tr><td><code>cargo test</code></td><td>Lance les tests</td></tr>
+        <tr><td><code>cargo add crate</code></td><td>Ajoute une dépendance</td></tr>
+        <tr><td><code>cargo fmt</code> / <code>cargo clippy</code></td><td>Formate / lint</td></tr>
+        <tr><td><code>cargo doc --open</code></td><td>Génère &amp; ouvre la doc</td></tr>
+      </table>
+    </div>
+
+    <!-- TESTS -->
+    <div class="cs-card">
+      <h2>🧪 Tests</h2>
+      <pre><code><span class="cmt">#[cfg(test)]</span>
+<span class="kw">mod</span> tests {
+    <span class="kw">use</span> <span class="kw">super</span>::*;
+    <span class="cmt">#[test]</span>
+    <span class="kw">fn</span> <span class="fn">ca_marche</span>() {
+        <span class="fn">assert_eq!</span>(<span class="fn">add</span>(<span class="nu">2</span>, <span class="nu">2</span>), <span class="nu">4</span>);
+        <span class="fn">assert!</span>(<span class="nu">1</span> &lt; <span class="nu">2</span>);
+    }
+}</code></pre>
+      <div class="box"><span class="lb">Macros d'assertion</span><code>assert!</code> · <code>assert_eq!</code> · <code>assert_ne!</code>. Lancer : <code>cargo test</code>.</div>
+    </div>
+
+    <!-- MODULES -->
+    <div class="cs-card">
+      <h2>🗂️ Modules &amp; visibilité</h2>
+      <pre><code><span class="kw">mod</span> math {
+    <span class="kw">pub fn</span> <span class="fn">carre</span>(x: <span class="ty">i32</span>) -&gt; <span class="ty">i32</span> { x * x } <span class="cmt">// pub = public</span>
+}
+<span class="kw">use</span> <span class="kw">crate</span>::math::carre;   <span class="cmt">// importe</span>
+carre(<span class="nu">4</span>);</code></pre>
+      <table>
+        <tr><th>Mot-clé</th><th>Sens</th></tr>
+        <tr><td><code>mod</code></td><td>Déclare un module</td></tr>
+        <tr><td><code>pub</code></td><td>Rend public</td></tr>
+        <tr><td><code>use</code></td><td>Importe un chemin</td></tr>
+        <tr><td><code>crate</code>/<code>super</code>/<code>self</code></td><td>Racine / parent / module courant</td></tr>
+      </table>
+    </div>
+
+    <!-- PIEGES -->
+    <div class="cs-card">
+      <h2>⚠️ Pièges fréquents</h2>
+      <ul>
+        <li><strong>Le <code>;</code> final</strong> transforme une valeur de retour en <code>()</code>.</li>
+        <li><strong>Move</strong> : réutiliser une <code>String</code>/<code>Vec</code> après <code>let b=a;</code> → erreur.</li>
+        <li><strong>&amp; vs &amp;mut</strong> : pas de mutable tant qu'un immuable vit.</li>
+        <li><strong><code>match</code> non exhaustif</strong> : ajoute <code>_</code>.</li>
+        <li><strong>Oubli de <code>mut</code></strong> : « cannot assign twice ».</li>
+        <li><strong><code>unwrap()</code> sur <code>None</code>/<code>Err</code></strong> → panique.</li>
+        <li><strong>Référence pendante</strong> : renvoyer <code>&amp;</code> vers une variable locale.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div style="text-align:center;margin:30px 0">
+    <a class="btn" id="pdf" href="#">🖨️ Exporter en PDF</a>
+    <a class="btn" href="rust-cursus.html">📘 Approfondir avec le cursus</a>
+  </div>
+</div>
+
+<div class="foot">Antisèche Rust · référence rapide · garde-la ouverte en codant 🦀💙</div>
+
+<script>
+(function(){
+  var TK="rust-cheat-theme";
+  function theme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem(TK,t);var b=document.getElementById("tt");if(b)b.textContent=t==="light"?"🌙 Sombre":"☀️ Clair";}
+  var saved=localStorage.getItem(TK);
+  if(!saved){saved=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";}
+  theme(saved);
+  document.getElementById("tt").addEventListener("click",function(){theme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+  // favicon
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">🦀</text></svg>';
+  var l=document.createElement("link");l.rel="icon";l.href="data:image/svg+xml,"+encodeURIComponent(svg);document.head.appendChild(l);
+  // Filtre instantané
+  var q=document.getElementById("q"), cards=[].slice.call(document.querySelectorAll(".cs-card")), nohit=document.getElementById("nohit");
+  function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();}
+  q.addEventListener("input",function(){
+    var t=norm(q.value.trim()), hits=0;
+    cards.forEach(function(c){
+      var ok = !t || norm(c.textContent).indexOf(t)>=0;
+      c.style.display = ok ? "" : "none";
+      if(ok) hits++;
+    });
+    nohit.style.display = hits? "none":"block";
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="/" && document.activeElement!==q){e.preventDefault();q.focus();}
+    if(e.key==="Escape"){q.value="";q.dispatchEvent(new Event("input"));q.blur();}
+  });
+  // PDF
+  document.getElementById("pdf").addEventListener("click",function(e){e.preventDefault();window.print();});
+})();
+</script>
+</body>
+</html>

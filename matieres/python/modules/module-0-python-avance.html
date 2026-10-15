@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 0 — Python avancé &amp; idiomatique</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🐍</span> Python &amp; Data Science</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 0</div>
+    <h1>Module 0 — Python avancé &amp; idiomatique 🐍</h1>
+    <p class="subtitle">Le Python qu'on attend d'un professionnel : écrire un code <em>pythonique</em>, lisible, efficace et robuste. On suppose que tu connais déjà la syntaxe de base ; ici on muscle les idiomes qui font la différence en data et en entretien.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs du module</span>
+      Maîtriser les compréhensions et générateurs ; comprendre itérateurs et <code>lazy evaluation</code> ; écrire décorateurs et context managers ; annoter avec <code>typing</code> ; structurer avec dataclasses et méthodes spéciales ; exploiter <code>functools</code>/<code>itertools</code> ; gérer les erreurs proprement ; utiliser la syntaxe moderne (f-strings, walrus, <code>match</code>).
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#entrees">Entrées / sorties &amp; scripts</a></li>
+        <li><a href="#comprehensions">Compréhensions</a></li>
+        <li><a href="#generateurs">Générateurs &amp; itérateurs</a></li>
+        <li><a href="#fonctions">Fonctions : *args, closures, lambda</a></li>
+        <li><a href="#decorateurs">Décorateurs</a></li>
+        <li><a href="#context">Context managers (with)</a></li>
+        <li><a href="#typing">Typing &amp; annotations</a></li>
+        <li><a href="#dataclass">Dataclasses &amp; POO</a></li>
+        <li><a href="#stdlib">functools &amp; itertools</a></li>
+        <li><a href="#erreurs">Erreurs &amp; robustesse</a></li>
+        <li><a href="#moderne">Syntaxe moderne</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <!-- ========== 1. ENTREES ========== -->
+    <section class="block" id="entrees">
+      <h2>1. Entrées / sorties &amp; scripts</h2>
+      <p>La fonction <code>input()</code> lit une ligne au clavier et renvoie <strong>toujours une chaîne</strong> (<code>str</code>). À toi de convertir.</p>
+      <pre><code><span class="fn">nom</span> = <span class="fn">input</span>(<span class="st">"Ton prénom : "</span>)        <span class="cmt"># renvoie str</span>
+<span class="fn">age</span> = <span class="ty">int</span>(<span class="fn">input</span>(<span class="st">"Ton âge : "</span>))     <span class="cmt"># conversion explicite</span>
+<span class="fn">prix</span> = <span class="ty">float</span>(<span class="fn">input</span>(<span class="st">"Prix : "</span>))
+
+<span class="cmt"># Plusieurs nombres sur une ligne : "3 5 8"</span>
+<span class="fn">nums</span> = [<span class="ty">int</span>(x) <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">input</span>().<span class="fn">split</span>()]</code></pre>
+      <div class="callout warning"><span class="label">⚠️ Piège classique</span><code>int(input())</code> lève <code>ValueError</code> si l'utilisateur tape autre chose qu'un entier. En production, on encadre avec <code>try/except</code> (voir §10).</div>
+      <h3>Sortie : print &amp; f-strings</h3>
+      <pre><code><span class="fn">print</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, sep=<span class="st">"-"</span>, end=<span class="st">"!\n"</span>)   <span class="cmt"># a-b!</span>
+<span class="fn">print</span>(<span class="ty">f</span><span class="st">"{nom} a {age} ans"</span>)            <span class="cmt"># f-string (le plus lisible)</span>
+<span class="kw">import</span> sys; <span class="fn">print</span>(<span class="st">"erreur"</span>, file=sys.stderr)  <span class="cmt"># vers stderr</span></code></pre>
+      <h3>Script exécutable &amp; arguments</h3>
+      <pre><code><span class="kw">import</span> sys
+
+<span class="kw">def</span> <span class="fn">main</span>():
+    <span class="fn">print</span>(<span class="st">"Arguments :"</span>, sys.argv[<span class="nu">1</span>:])  <span class="cmt"># python prog.py a b -> ['a','b']</span>
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:        <span class="cmt"># ne s'exécute QUE si lancé directement</span>
+    <span class="fn">main</span>()</code></pre>
+      <div class="callout data"><span class="label">🔗 Lien Data</span>Pour de vrais outils en ligne de commande, on utilise <code>argparse</code> (standard) ou <code>click</code>/<code>typer</code>. Le garde <code>if __name__ == "__main__"</code> permet d'<em>importer</em> un script sans déclencher son exécution — essentiel pour les tests.</div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Que renvoie <code>input()</code> quand l'utilisateur tape <code>42</code> ?</div>
+        <div class="options">
+          <div class="opt">L'entier <code>42</code></div>
+          <div class="opt">La chaîne <code>"42"</code></div>
+          <div class="opt">Un <code>float</code> <code>42.0</code></div>
+          <div class="opt">Une liste <code>['4','2']</code></div>
+        </div>
+        <div class="feedback" data-explain="<code>input()</code> renvoie toujours une <code>str</code>. Pour obtenir un nombre, il faut convertir : <code>int(input())</code> ou <code>float(input())</code>."></div>
+      </div>
+    </section>
+
+    <!-- ========== 2. COMPREHENSIONS ========== -->
+    <section class="block" id="comprehensions">
+      <h2>2. Compréhensions (list / dict / set)</h2>
+      <p>Une compréhension remplace une boucle <code>+ append</code> par une expression concise et plus rapide.</p>
+      <pre><code><span class="cmt"># Liste</span>
+carres = [x**<span class="nu">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">10</span>)]
+pairs  = [x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">20</span>) <span class="kw">if</span> x % <span class="nu">2</span> == <span class="nu">0</span>]   <span class="cmt"># filtre</span>
+grille = [(i, j) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">3</span>) <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">3</span>)]  <span class="cmt"># double boucle</span>
+
+<span class="cmt"># Dict &amp; set</span>
+carte = {mot: <span class="fn">len</span>(mot) <span class="kw">for</span> mot <span class="kw">in</span> [<span class="st">"a"</span>, <span class="st">"bb"</span>, <span class="st">"ccc"</span>]}
+uniques = {x % <span class="nu">5</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">20</span>)}</code></pre>
+      <div class="callout example"><span class="label">if … else dans une compréhension</span>
+      <pre><code>signe = [<span class="st">"+"</span> <span class="kw">if</span> x &gt; <span class="nu">0</span> <span class="kw">else</span> <span class="st">"-"</span> <span class="kw">for</span> x <span class="kw">in</span> nums]  <span class="cmt"># ternaire AVANT le for</span>
+pos   = [x <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x &gt; <span class="nu">0</span>]            <span class="cmt"># filtre APRÈS le for</span></code></pre></div>
+      <div class="callout warning"><span class="label">⚠️ Lisibilité</span>Une compréhension sur 3 niveaux devient illisible. Au-delà de 2 <code>for</code> ou d'une logique complexe, repasse à une boucle classique ou un générateur.</div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Quelle expression garde uniquement les mots de plus de 3 lettres ?</div>
+        <div class="options">
+          <div class="opt"><code>[m if len(m) &gt; 3 for m in mots]</code></div>
+          <div class="opt"><code>[m for m in mots if len(m) &gt; 3 else None]</code></div>
+          <div class="opt"><code>[m for m in mots if len(m) &gt; 3]</code></div>
+          <div class="opt"><code>[for m in mots: len(m) &gt; 3]</code></div>
+        </div>
+        <div class="feedback" data-explain="Le <strong>filtre</strong> se place après le <code>for</code> avec un simple <code>if</code> (sans <code>else</code>). Un <code>if/else</code> ne sert qu'à transformer la valeur et se met <em>avant</em> le <code>for</code>."></div>
+      </div>
+    </section>
+
+    <!-- ========== 3. GENERATEURS ========== -->
+    <section class="block" id="generateurs">
+      <h2>3. Générateurs &amp; itérateurs ⭐</h2>
+      <p>Un <strong>générateur</strong> produit ses valeurs <em>à la demande</em> (lazy) au lieu de tout stocker en mémoire : idéal pour les gros volumes de données.</p>
+      <pre><code><span class="kw">def</span> <span class="fn">compte</span>(n):
+    i = <span class="nu">0</span>
+    <span class="kw">while</span> i &lt; n:
+        <span class="kw">yield</span> i          <span class="cmt"># "pause" et renvoie, reprend ensuite</span>
+        i += <span class="nu">1</span>
+
+<span class="kw">for</span> x <span class="kw">in</span> <span class="fn">compte</span>(<span class="nu">3</span>):
+    <span class="fn">print</span>(x)             <span class="cmt"># 0, 1, 2</span></code></pre>
+      <div class="callout data"><span class="label">🔗 Pourquoi c'est crucial en Data</span>Lire un fichier de 50 Go ligne par ligne, streamer des batches vers un modèle, enchaîner des transformations sans copier : le générateur garde une empreinte mémoire <strong>constante</strong>.</div>
+      <h3>Expression génératrice (parenthèses)</h3>
+      <pre><code>somme = <span class="fn">sum</span>(x**<span class="nu">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">10</span><span class="nu">00000</span>))  <span class="cmt"># aucune liste créée</span></code></pre>
+      <h3>Le protocole d'itération</h3>
+      <p>Un objet est <em>itérable</em> s'il implémente <code>__iter__</code> ; un <em>itérateur</em> implémente <code>__next__</code> et lève <code>StopIteration</code> à la fin. <code>for</code> fait tout ça pour toi.</p>
+      <pre><code>it = <span class="fn">iter</span>([<span class="nu">10</span>, <span class="nu">20</span>])
+<span class="fn">next</span>(it)   <span class="cmt"># 10</span>
+<span class="fn">next</span>(it)   <span class="cmt"># 20</span>
+<span class="fn">next</span>(it)   <span class="cmt"># lève StopIteration</span></code></pre>
+      <ul class="keys">
+        <li><strong>Générateur</strong> = fonction avec <code>yield</code> ; s'épuise après un parcours (on ne peut pas le relire).</li>
+        <li><strong>Lazy</strong> : rien n'est calculé tant qu'on ne consomme pas.</li>
+        <li><code>sum</code>, <code>any</code>, <code>all</code>, <code>max</code>, <code>min</code> consomment directement un générateur.</li>
+      </ul>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Principal avantage d'un générateur sur une liste pour traiter 10 millions de lignes ?</div>
+        <div class="options">
+          <div class="opt">Mémoire quasi constante (valeurs produites à la demande)</div>
+          <div class="opt">Il trie automatiquement les données</div>
+          <div class="opt">Il est toujours plus précis</div>
+          <div class="opt">Il peut être parcouru une infinité de fois</div>
+        </div>
+        <div class="feedback" data-explain="Le générateur ne garde pas tout en mémoire : il produit chaque valeur à la demande. Revers : il s'épuise après un seul parcours."></div>
+      </div>
+    </section>
+
+    <!-- ========== 4. FONCTIONS ========== -->
+    <section class="block" id="fonctions">
+      <h2>4. Fonctions : *args, **kwargs, closures, lambda</h2>
+      <pre><code><span class="kw">def</span> <span class="fn">f</span>(a, b=<span class="nu">10</span>, *args, **kwargs):
+    <span class="cmt"># a : positionnel · b : défaut · args : tuple · kwargs : dict</span>
+    <span class="fn">print</span>(a, b, args, kwargs)
+
+<span class="fn">f</span>(<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>, x=<span class="nu">5</span>)   <span class="cmt"># 1 2 (3, 4) {'x': 5}</span>
+
+<span class="cmt"># Déballage (unpacking)</span>
+args = [<span class="nu">1</span>, <span class="nu">2</span>]; kw = {<span class="st">"x"</span>: <span class="nu">9</span>}
+<span class="fn">f</span>(*args, **kw)</code></pre>
+      <div class="callout warning"><span class="label">⚠️ Piège n°1 des entretiens : argument par défaut mutable</span>
+      <pre><code><span class="kw">def</span> <span class="fn">ajoute</span>(x, liste=[]):   <span class="cmt"># ❌ la liste est partagée entre appels !</span>
+    liste.<span class="fn">append</span>(x); <span class="kw">return</span> liste
+<span class="fn">ajoute</span>(<span class="nu">1</span>); <span class="fn">ajoute</span>(<span class="nu">2</span>)        <span class="cmt"># [1, 2] au lieu de [2]</span></code></pre>
+      <span class="out">Correctif : <code>def ajoute(x, liste=None): liste = liste or []</code></span></div>
+      <h3>Closures (fonctions qui capturent leur environnement)</h3>
+      <pre><code><span class="kw">def</span> <span class="fn">multiplieur</span>(k):
+    <span class="kw">def</span> <span class="fn">interne</span>(x):
+        <span class="kw">return</span> x * k      <span class="cmt"># capture k</span>
+    <span class="kw">return</span> interne
+
+double = <span class="fn">multiplieur</span>(<span class="nu">2</span>); <span class="fn">double</span>(<span class="nu">5</span>)   <span class="cmt"># 10</span></code></pre>
+      <h3>lambda (fonction anonyme, 1 expression)</h3>
+      <pre><code>paires = <span class="fn">sorted</span>(mots, key=<span class="kw">lambda</span> m: <span class="fn">len</span>(m))  <span class="cmt"># tri par longueur</span>
+<span class="fn">max</span>(points, key=<span class="kw">lambda</span> p: p[<span class="nu">1</span>])            <span class="cmt"># max selon la 2e coord</span></code></pre>
+    </section>
+
+    <!-- ========== 5. DECORATEURS ========== -->
+    <section class="block" id="decorateurs">
+      <h2>5. Décorateurs ⭐</h2>
+      <p>Un décorateur <strong>enveloppe</strong> une fonction pour en modifier le comportement sans toucher son code : logging, cache, timing, authentification, retry…</p>
+      <pre><code><span class="kw">import</span> functools, time
+
+<span class="kw">def</span> <span class="fn">chrono</span>(fn):
+    @functools.<span class="fn">wraps</span>(fn)          <span class="cmt"># garde nom/doc de fn</span>
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        t0 = time.<span class="fn">perf_counter</span>()
+        r = <span class="fn">fn</span>(*args, **kwargs)
+        <span class="fn">print</span>(<span class="ty">f</span><span class="st">"{fn.__name__} : {time.perf_counter()-t0:.4f}s"</span>)
+        <span class="kw">return</span> r
+    <span class="kw">return</span> wrapper
+
+@chrono                          <span class="cmt"># sucre pour : lent = chrono(lent)</span>
+<span class="kw">def</span> <span class="fn">lent</span>():
+    <span class="kw">return</span> <span class="fn">sum</span>(<span class="fn">range</span>(<span class="nu">10</span><span class="nu">00000</span>))</code></pre>
+      <div class="callout data"><span class="label">🔗 En vrai</span><code>@functools.lru_cache</code> mémorise les résultats (mémoïsation) ; Flask/FastAPI utilisent <code>@app.route</code> ; pytest <code>@pytest.fixture</code> ; les décorateurs sont partout.</div>
+      <h3>Décorateur paramétré</h3>
+      <pre><code><span class="kw">def</span> <span class="fn">repete</span>(n):
+    <span class="kw">def</span> <span class="fn">deco</span>(fn):
+        @functools.<span class="fn">wraps</span>(fn)
+        <span class="kw">def</span> <span class="fn">w</span>(*a, **k):
+            <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n): r = <span class="fn">fn</span>(*a, **k)
+            <span class="kw">return</span> r
+        <span class="kw">return</span> w
+    <span class="kw">return</span> deco
+
+@repete(<span class="nu">3</span>)
+<span class="kw">def</span> <span class="fn">hello</span>(): <span class="fn">print</span>(<span class="st">"hi"</span>)</code></pre>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">À quoi sert <code>@functools.wraps(fn)</code> dans un décorateur ?</div>
+        <div class="options">
+          <div class="opt">À exécuter la fonction deux fois</div>
+          <div class="opt">À mettre le résultat en cache</div>
+          <div class="opt">À préserver le nom, la docstring et les métadonnées de la fonction d'origine</div>
+          <div class="opt">À rendre la fonction asynchrone</div>
+        </div>
+        <div class="feedback" data-explain="Sans <code>wraps</code>, la fonction décorée prend le nom <code>wrapper</code> et perd sa docstring, ce qui casse l'introspection et la doc. <code>wraps</code> recopie ces métadonnées."></div>
+      </div>
+    </section>
+
+    <!-- ========== 6. CONTEXT ========== -->
+    <section class="block" id="context">
+      <h2>6. Context managers (<code>with</code>)</h2>
+      <p>Le <code>with</code> garantit qu'une ressource est <strong>libérée</strong> (fichier fermé, verrou relâché) même en cas d'erreur.</p>
+      <pre><code><span class="kw">with</span> <span class="fn">open</span>(<span class="st">"data.csv"</span>, encoding=<span class="st">"utf-8"</span>) <span class="kw">as</span> f:
+    contenu = f.<span class="fn">read</span>()
+<span class="cmt"># fichier garanti fermé ici, même si read() plante</span></code></pre>
+      <h3>Créer le sien avec <code>@contextmanager</code></h3>
+      <pre><code><span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager
+
+@contextmanager
+<span class="kw">def</span> <span class="fn">timer</span>(label):
+    <span class="kw">import</span> time; t0 = time.<span class="fn">perf_counter</span>()
+    <span class="kw">try</span>:
+        <span class="kw">yield</span>                         <span class="cmt"># le bloc with s'exécute ici</span>
+    <span class="kw">finally</span>:
+        <span class="fn">print</span>(<span class="ty">f</span><span class="st">"{label}: {time.perf_counter()-t0:.3f}s"</span>)
+
+<span class="kw">with</span> <span class="fn">timer</span>(<span class="st">"calcul"</span>):
+    <span class="fn">sum</span>(<span class="fn">range</span>(<span class="nu">10</span><span class="nu">00000</span>))</code></pre>
+      <div class="callout example"><span class="label">Plusieurs ressources</span><code>with open("a") as a, open("b") as b:</code> — les deux sont fermées proprement.</div>
+    </section>
+
+    <!-- ========== 7. TYPING ========== -->
+    <section class="block" id="typing">
+      <h2>7. Typing &amp; annotations</h2>
+      <p>Les annotations de type ne changent <strong>rien à l'exécution</strong> (Python reste dynamique) mais documentent le code et permettent à <code>mypy</code>/l'IDE de détecter des bugs avant l'exécution.</p>
+      <pre><code><span class="kw">def</span> <span class="fn">moyenne</span>(xs: <span class="ty">list</span>[<span class="ty">float</span>]) -&gt; <span class="ty">float</span>:
+    <span class="kw">return</span> <span class="fn">sum</span>(xs) / <span class="fn">len</span>(xs)
+
+<span class="kw">from</span> typing <span class="kw">import</span> <span class="ty">Optional</span>, <span class="ty">Union</span>, <span class="ty">Callable</span>, <span class="ty">Any</span>
+
+age: <span class="ty">Optional</span>[<span class="ty">int</span>] = <span class="kw">None</span>        <span class="cmt"># int ou None (= int | None)</span>
+id_: <span class="ty">int</span> | <span class="ty">str</span> = <span class="st">"a1"</span>              <span class="cmt"># union moderne (3.10+)</span>
+transfo: <span class="ty">Callable</span>[[<span class="ty">int</span>], <span class="ty">str</span>] = <span class="ty">str</span>  <span class="cmt"># fonction int -> str</span></code></pre>
+      <div class="callout data"><span class="label">🔗 Lien Data</span>Dans les gros projets ML, le typing + <code>mypy</code> attrape les erreurs de forme (un <code>DataFrame</code> passé où on attend un <code>ndarray</code>) avant qu'elles ne coûtent des heures de debug.</div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 7.1</strong></div>
+        <div class="qtext">Les annotations de type en Python…</div>
+        <div class="options">
+          <div class="opt">empêchent l'exécution si le type est faux</div>
+          <div class="opt">sont indicatives : vérifiées par des outils (mypy, IDE), pas à l'exécution</div>
+          <div class="opt">accélèrent le programme</div>
+          <div class="opt">sont obligatoires depuis Python 3</div>
+        </div>
+        <div class="feedback" data-explain="Python reste dynamiquement typé : les annotations sont ignorées à l'exécution. Elles servent à la documentation et aux vérificateurs statiques comme mypy."></div>
+      </div>
+    </section>
+
+    <!-- ========== 8. DATACLASS ========== -->
+    <section class="block" id="dataclass">
+      <h2>8. Dataclasses &amp; méthodes spéciales</h2>
+      <p>Une <code>dataclass</code> génère automatiquement <code>__init__</code>, <code>__repr__</code>, <code>__eq__</code>… pour les objets « porteurs de données ».</p>
+      <pre><code><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+@dataclass
+<span class="kw">class</span> <span class="ty">Point</span>:
+    x: <span class="ty">float</span>
+    y: <span class="ty">float</span> = <span class="nu">0.0</span>
+    tags: <span class="ty">list</span>[<span class="ty">str</span>] = <span class="fn">field</span>(default_factory=<span class="ty">list</span>)  <span class="cmt"># défaut mutable sûr</span>
+
+    <span class="kw">def</span> <span class="fn">norme</span>(self) -&gt; <span class="ty">float</span>:
+        <span class="kw">return</span> (self.x**<span class="nu">2</span> + self.y**<span class="nu">2</span>) ** <span class="nu">0.5</span>
+
+p = <span class="ty">Point</span>(<span class="nu">3</span>, <span class="nu">4</span>)
+<span class="fn">print</span>(p)              <span class="cmt"># Point(x=3, y=4, tags=[])</span>
+<span class="fn">print</span>(p == <span class="ty">Point</span>(<span class="nu">3</span>, <span class="nu">4</span>))  <span class="cmt"># True (égalité par valeur)</span></code></pre>
+      <h3>Méthodes spéciales (dunder) utiles</h3>
+      <table>
+        <tr><th>Méthode</th><th>Déclenchée par</th></tr>
+        <tr><td><code>__init__</code></td><td>Construction <code>C(...)</code></td></tr>
+        <tr><td><code>__repr__</code> / <code>__str__</code></td><td><code>repr(x)</code> / <code>print(x)</code></td></tr>
+        <tr><td><code>__len__</code></td><td><code>len(x)</code></td></tr>
+        <tr><td><code>__getitem__</code></td><td><code>x[i]</code></td></tr>
+        <tr><td><code>__eq__</code>, <code>__lt__</code></td><td><code>==</code>, <code>&lt;</code> (tri)</td></tr>
+        <tr><td><code>__call__</code></td><td><code>x()</code></td></tr>
+        <tr><td><code>__enter__</code>/<code>__exit__</code></td><td><code>with x:</code></td></tr>
+      </table>
+      <div class="callout warning"><span class="label">⚠️ Défaut mutable</span>Dans une dataclass, un défaut <code>list</code>/<code>dict</code> doit passer par <code>field(default_factory=list)</code>, jamais <code>= []</code> (même piège qu'au §4).</div>
+    </section>
+
+    <!-- ========== 9. STDLIB ========== -->
+    <section class="block" id="stdlib">
+      <h2>9. functools &amp; itertools (la boîte à outils)</h2>
+      <h3>functools</h3>
+      <table>
+        <tr><th>Outil</th><th>Rôle</th></tr>
+        <tr><td><code>@lru_cache</code> / <code>@cache</code></td><td>Mémoïse les résultats (ex. récursion coûteuse)</td></tr>
+        <tr><td><code>reduce(f, it, init)</code></td><td>Réduction (accumulation)</td></tr>
+        <tr><td><code>partial(f, a)</code></td><td>Fige des arguments d'une fonction</td></tr>
+      </table>
+      <pre><code><span class="kw">from</span> functools <span class="kw">import</span> lru_cache, reduce, partial
+
+@lru_cache(maxsize=<span class="kw">None</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(n): <span class="kw">return</span> n <span class="kw">if</span> n &lt; <span class="nu">2</span> <span class="kw">else</span> <span class="fn">fib</span>(n-<span class="nu">1</span>) + <span class="fn">fib</span>(n-<span class="nu">2</span>)
+
+total = <span class="fn">reduce</span>(<span class="kw">lambda</span> a, b: a*b, [<span class="nu">1</span>,<span class="nu">2</span>,<span class="nu">3</span>,<span class="nu">4</span>])   <span class="cmt"># 24</span>
+inc = <span class="fn">partial</span>(<span class="fn">pow</span>, <span class="nu">2</span>)                           <span class="cmt"># 2**x</span></code></pre>
+      <h3>itertools</h3>
+      <table>
+        <tr><th>Outil</th><th>Rôle</th></tr>
+        <tr><td><code>chain(a, b)</code></td><td>Enchaîne des itérables</td></tr>
+        <tr><td><code>product(a, b)</code></td><td>Produit cartésien</td></tr>
+        <tr><td><code>combinations(it, k)</code></td><td>Combinaisons sans ordre</td></tr>
+        <tr><td><code>permutations(it, k)</code></td><td>Arrangements</td></tr>
+        <tr><td><code>groupby(it, key)</code></td><td>Regroupe des éléments consécutifs</td></tr>
+        <tr><td><code>accumulate(it)</code></td><td>Sommes cumulées</td></tr>
+        <tr><td><code>count</code>, <code>cycle</code>, <code>repeat</code></td><td>Itérateurs infinis</td></tr>
+      </table>
+      <pre><code><span class="kw">from</span> itertools <span class="kw">import</span> combinations, accumulate
+<span class="fn">list</span>(<span class="fn">combinations</span>([<span class="st">"a"</span>,<span class="st">"b"</span>,<span class="st">"c"</span>], <span class="nu">2</span>))   <span class="cmt"># [('a','b'),('a','c'),('b','c')]</span>
+<span class="fn">list</span>(<span class="fn">accumulate</span>([<span class="nu">1</span>,<span class="nu">2</span>,<span class="nu">3</span>,<span class="nu">4</span>]))        <span class="cmt"># [1, 3, 6, 10]</span></code></pre>
+    </section>
+
+    <!-- ========== 10. ERREURS ========== -->
+    <section class="block" id="erreurs">
+      <h2>10. Erreurs &amp; robustesse</h2>
+      <pre><code><span class="kw">try</span>:
+    n = <span class="ty">int</span>(<span class="fn">input</span>(<span class="st">"Nombre : "</span>))
+<span class="kw">except</span> <span class="ty">ValueError</span>:
+    <span class="fn">print</span>(<span class="st">"Pas un entier"</span>)
+<span class="kw">except</span> (<span class="ty">KeyboardInterrupt</span>, <span class="ty">EOFError</span>):
+    <span class="fn">print</span>(<span class="st">"Interrompu"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"OK :"</span>, n)       <span class="cmt"># si aucune exception</span>
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="st">"Toujours exécuté"</span>)   <span class="cmt"># nettoyage</span></code></pre>
+      <ul class="keys">
+        <li><strong>Sois spécifique</strong> : attrape <code>ValueError</code>, pas <code>except:</code> nu (qui masque tout, même <code>Ctrl-C</code>).</li>
+        <li><strong>EAFP</strong> (« demander pardon plutôt que la permission ») : essaie et gère l'erreur, plutôt que de tout vérifier avant — c'est le style pythonique.</li>
+        <li>Lève tes propres erreurs : <code>raise ValueError("message clair")</code>.</li>
+        <li>Crée des exceptions métier : <code>class DataError(Exception): ...</code>.</li>
+      </ul>
+      <div class="callout warning"><span class="label">⚠️ Anti-pattern</span><code>except Exception: pass</code> avale silencieusement les bugs. Au minimum, journalise (<code>logging</code>) ce qui se passe.</div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 10.1</strong></div>
+        <div class="qtext">Quel bloc s'exécute <em>toujours</em>, qu'il y ait eu une exception ou non ?</div>
+        <div class="options">
+          <div class="opt"><code>except</code></div>
+          <div class="opt"><code>else</code></div>
+          <div class="opt"><code>try</code></div>
+          <div class="opt"><code>finally</code></div>
+        </div>
+        <div class="feedback" data-explain="<code>finally</code> s'exécute systématiquement (nettoyage). <code>else</code> ne tourne que si aucune exception n'a été levée ; <code>except</code> uniquement en cas d'erreur correspondante."></div>
+      </div>
+    </section>
+
+    <!-- ========== 11. MODERNE ========== -->
+    <section class="block" id="moderne">
+      <h2>11. Syntaxe moderne (3.8 → 3.12)</h2>
+      <h3>f-strings avancées</h3>
+      <pre><code>x = <span class="nu">3.14159</span>
+<span class="fn">print</span>(<span class="ty">f</span><span class="st">"{x:.2f}"</span>)      <span class="cmt"># 3.14</span>
+<span class="fn">print</span>(<span class="ty">f</span><span class="st">"{x=}"</span>)         <span class="cmt"># x=3.14159 (debug, 3.8+)</span>
+<span class="fn">print</span>(<span class="ty">f</span><span class="st">"{1000000:_}"</span>)   <span class="cmt"># 1_000_000 (séparateur)</span>
+<span class="fn">print</span>(<span class="ty">f</span><span class="st">"{0.25:.0%}"</span>)    <span class="cmt"># 25%</span></code></pre>
+      <h3>Walrus <code>:=</code> (assignation dans une expression)</h3>
+      <pre><code><span class="kw">while</span> (ligne := <span class="fn">input</span>()) != <span class="st">"stop"</span>:
+    <span class="fn">print</span>(ligne)
+<span class="cmt"># évite d'appeler input() deux fois</span></code></pre>
+      <h3>Structural pattern matching (<code>match</code>, 3.10+)</h3>
+      <pre><code><span class="kw">def</span> <span class="fn">decrire</span>(p):
+    <span class="kw">match</span> p:
+        <span class="kw">case</span> (<span class="nu">0</span>, <span class="nu">0</span>):            <span class="kw">return</span> <span class="st">"origine"</span>
+        <span class="kw">case</span> (x, <span class="nu">0</span>):            <span class="kw">return</span> <span class="ty">f</span><span class="st">"sur l'axe X à {x}"</span>
+        <span class="kw">case</span> (x, y) <span class="kw">if</span> x == y:  <span class="kw">return</span> <span class="st">"diagonale"</span>
+        <span class="kw">case</span> _:                 <span class="kw">return</span> <span class="st">"ailleurs"</span></code></pre>
+      <div class="callout example"><span class="label">Autres idiomes utiles</span><code>a, *reste = [1,2,3,4]</code> (unpacking étendu) · <code>d1 | d2</code> (fusion de dicts, 3.9+) · <code>zip(a, b, strict=True)</code> (3.10+) · <code>enumerate(xs, start=1)</code>.</div>
+    </section>
+
+    <!-- ========== CULTURE ========== -->
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">Un encart à l'écart du cours : d'où vient Python et pourquoi il a conquis la data.</p>
+      <p>Python est né à Noël 1989 : <strong>Guido van Rossum</strong>, aux Pays-Bas, cherche un projet pour occuper les vacances et crée un langage lisible, successeur du langage ABC. Le nom ? Un hommage aux <em>Monty Python</em>, pas au serpent.</p>
+      <h4>Les grands noms &amp; repères</h4>
+      <ul class="names">
+        <li><b>Guido van Rossum</b> <span class="yr">(1991)</span> — créateur de Python ; « BDFL » (dictateur bienveillant à vie) jusqu'en 2018.</li>
+        <li><b>Le Zen de Python</b> <span class="yr">(Tim Peters, 1999)</span> — <code>import this</code> : « Beautiful is better than ugly », « Readability counts »…</li>
+        <li><b>NumPy</b> <span class="yr">(Travis Oliphant, 2006)</span> — unifie le calcul numérique ; socle de tout l'écosystème.</li>
+        <li><b>pandas</b> <span class="yr">(Wes McKinney, 2008)</span> — né dans un fonds d'investissement pour manipuler des séries financières.</li>
+        <li><b>Python 3</b> <span class="yr">(2008)</span> — rupture volontaire (print(), Unicode) ; migration achevée ~2020 (fin de Python 2).</li>
+      </ul>
+      <h4>Pourquoi Python a gagné la data</h4>
+      <p>Lisibilité + un écosystème scientifique exceptionnel (NumPy, pandas, scikit-learn, PyTorch, TensorFlow). Le langage sert de « colle » : le code critique tourne en C/Fortran optimisé, tandis que tu écris une logique claire et rapide à prototyper. Résultat : Python est devenu la <em>lingua franca</em> de la data science et de l'IA.</p>
+      <div class="clinks">
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Python_(langage)" target="_blank">Python (Wikipédia)</a>
+        <a class="pill-link" href="https://peps.python.org/pep-0020/" target="_blank">Le Zen de Python (PEP 20)</a>
+        <a class="pill-link" href="https://peps.python.org/pep-0008/" target="_blank">PEP 8 — style</a>
+        <a class="pill-link" href="https://docs.python.org/fr/3/" target="_blank">Doc officielle (FR)</a>
+      </div>
+    </section>
+
+    <!-- ========== EXOS ========== -->
+    <section class="block" id="exos">
+      <h2>12. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Compréhension</h3>
+      <p>Écris en une ligne la liste des carrés des nombres impairs de 1 à 20.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code>[x**<span class="nu">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">1</span>, <span class="nu">21</span>) <span class="kw">if</span> x % <span class="nu">2</span> == <span class="nu">1</span>]</code></pre>
+      </details>
+
+      <h3>Exercice 2 — Générateur</h3>
+      <p>Écris un générateur <code>fibonacci()</code> infini qui produit 0, 1, 1, 2, 3, 5, …</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code><span class="kw">def</span> <span class="fn">fibonacci</span>():
+    a, b = <span class="nu">0</span>, <span class="nu">1</span>
+    <span class="kw">while</span> <span class="kw">True</span>:
+        <span class="kw">yield</span> a
+        a, b = b, a + b
+
+<span class="kw">from</span> itertools <span class="kw">import</span> islice
+<span class="fn">list</span>(<span class="fn">islice</span>(<span class="fn">fibonacci</span>(), <span class="nu">7</span>))   <span class="cmt"># [0, 1, 1, 2, 3, 5, 8]</span></code></pre>
+      </details>
+
+      <h3>Exercice 3 — Décorateur de cache</h3>
+      <p>Sans <code>functools</code>, écris un décorateur <code>memoize</code> qui met en cache les résultats selon les arguments.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code><span class="kw">def</span> <span class="fn">memoize</span>(fn):
+    cache = {}
+    <span class="kw">def</span> <span class="fn">w</span>(*args):
+        <span class="kw">if</span> args <span class="kw">not</span> <span class="kw">in</span> cache:
+            cache[args] = <span class="fn">fn</span>(*args)
+        <span class="kw">return</span> cache[args]
+    <span class="kw">return</span> w</code></pre>
+        <p>Astuce : les <code>args</code> (un tuple) servent de clé car ils sont hachables. Attention si des arguments sont des listes (non hachables).</p>
+      </details>
+
+      <h3>Exercice 4 — Comptage (⭐)</h3>
+      <p>Compte la fréquence de chaque mot d'une phrase, sans <code>collections.Counter</code>, puis avec.</p>
+      <details class="solution">
+        <summary>Voir la solution</summary>
+        <pre><code><span class="cmt"># Manuel</span>
+freq = {}
+<span class="kw">for</span> m <span class="kw">in</span> phrase.<span class="fn">split</span>():
+    freq[m] = freq.<span class="fn">get</span>(m, <span class="nu">0</span>) + <span class="nu">1</span>
+
+<span class="cmt"># Pythonique</span>
+<span class="kw">from</span> collections <span class="kw">import</span> <span class="ty">Counter</span>
+freq = <span class="ty">Counter</span>(phrase.<span class="fn">split</span>())
+freq.<span class="fn">most_common</span>(<span class="nu">3</span>)   <span class="cmt"># top 3</span></code></pre>
+      </details>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="0">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-0-python-avance.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../index.html"><div class="dir">← Retour</div><div class="ttl">Accueil Python</div></a>
+      <a class="next" href="module-1-numpy.html"><div class="dir">Suivant →</div><div class="ttl">Module 1 · NumPy</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 0 — Python avancé · Cours Python &amp; Data Science 🐍💙</div>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
