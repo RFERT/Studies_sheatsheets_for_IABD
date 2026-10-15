@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -29,9 +29,22 @@
     <div class="search-box" role="search">
       <span class="search-ic">🔎</span>
       <input id="search-input" type="search" autocomplete="off" spellcheck="false"
-        placeholder="Rechercher un cours, une notion, une section…  ( / )"
-        aria-label="Rechercher dans tous les cours" />
-      <kbd class="search-kbd">/</kbd>
+        placeholder="Rechercher un cours, une notion, une section…  ( / ou Ctrl K )"
+        aria-label="Rechercher dans tous les cours (raccourcis : barre oblique ou Ctrl+K)" />
+      <div class="search-kbds" tabindex="0" aria-label="Aide sur la recherche">
+        <kbd class="search-kbd">/</kbd>
+        <kbd class="search-kbd">Ctrl&nbsp;K</kbd>
+        <div class="search-tip" role="tooltip">
+          <b>Recherche globale</b>
+          <p>Trouve n'importe quel cours, module, section, antisèche ou notion (même par mot-clé de code).</p>
+          <ul>
+            <li><kbd>/</kbd> ou <kbd>Ctrl K</kbd> — ouvrir la recherche</li>
+            <li><kbd>↑</kbd> <kbd>↓</kbd> — naviguer dans les résultats</li>
+            <li><kbd>Entrée</kbd> — ouvrir le résultat</li>
+            <li><kbd>Échap</kbd> — fermer</li>
+          </ul>
+        </div>
+      </div>
     </div>
     <div id="search-results" class="search-results" hidden></div>
   </div>
@@ -72,5 +85,6 @@
 
   <script src="assets/search-index.js"></script>
   <script src="assets/portal.js"></script>
+<script src="assets/nav.js"></script>
 </body>
 </html>

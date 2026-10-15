@@ -206,6 +206,23 @@ a:hover { text-decoration: underline; }
 .card-progress .pbar { flex: 1; }
 .card-progress .cp-lbl { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
+/* ---------- Heatmap d'activité ---------- */
+.heatmap-card { margin-top: 16px; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); }
+.hm-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.hm-head b { font-size: 16px; }
+.hm-sub { color: var(--muted); font-size: 13px; }
+.hm-grid { display: flex; gap: 3px; overflow-x: auto; padding-bottom: 4px; }
+.hm-col { display: flex; flex-direction: column; gap: 3px; }
+.hm-cell { width: 13px; height: 13px; border-radius: 3px; background: var(--bg-elev); flex: 0 0 auto; }
+.hm-cell.l1 { background: color-mix(in srgb, var(--primary) 32%, var(--bg-elev)); }
+.hm-cell.l2 { background: color-mix(in srgb, var(--primary) 55%, var(--bg-elev)); }
+.hm-cell.l3 { background: color-mix(in srgb, var(--primary) 78%, var(--bg-elev)); }
+.hm-cell.l4 { background: var(--primary); }
+.hm-cell.fut { opacity: 0.35; }
+.hm-legend { display: flex; align-items: center; gap: 4px; justify-content: flex-end; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.hm-legend .hm-cell { width: 11px; height: 11px; }
+
 /* ---------- Responsive ---------- */
 /* ---------- Recherche globale ---------- */
 .search-wrap { max-width: 680px; margin: 22px auto 0; padding: 0 28px; position: relative; z-index: 40; }
@@ -218,7 +235,24 @@ a:hover { text-decoration: underline; }
   font-size: 16px; font-family: inherit; padding: 12px 0; min-width: 0; }
 .search-box input::placeholder { color: var(--muted); }
 .search-kbd { font-size: 12px; color: var(--muted); border: 1px solid var(--border);
-  border-radius: 6px; padding: 2px 8px; background: var(--bg-elev); }
+  border-radius: 6px; padding: 2px 8px; background: var(--bg-elev); font-family: inherit; }
+/* Groupe de raccourcis + bulle d'aide */
+.search-kbds { position: relative; display: flex; align-items: center; gap: 5px; cursor: help; outline: none; }
+.search-tip { position: absolute; right: 0; top: calc(100% + 10px); z-index: 60; width: 300px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: var(--shadow); padding: 13px 15px; opacity: 0; visibility: hidden;
+  transform: translateY(-4px); transition: opacity 0.15s ease, transform 0.15s ease; text-align: left; }
+.search-kbds:hover .search-tip, .search-kbds:focus-within .search-tip,
+.search-kbds:focus .search-tip { opacity: 1; visibility: visible; transform: translateY(0); }
+.search-tip::before { content: ""; position: absolute; right: 18px; top: -6px; width: 11px; height: 11px;
+  background: var(--bg-card); border-left: 1px solid var(--border); border-top: 1px solid var(--border);
+  transform: rotate(45deg); }
+.search-tip b { color: var(--text); font-size: 14px; }
+.search-tip p { color: var(--text-soft); font-size: 13px; margin: 5px 0 9px; }
+.search-tip ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.search-tip li { color: var(--text-soft); font-size: 13px; display: flex; align-items: center; gap: 7px; }
+.search-tip kbd { font-size: 11px; color: var(--text); border: 1px solid var(--border);
+  border-radius: 5px; padding: 1px 6px; background: var(--bg-elev); font-family: inherit; }
 .search-results { position: absolute; left: 28px; right: 28px; top: calc(100% + 8px);
   background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
   box-shadow: var(--shadow); overflow: hidden; max-height: 60vh; overflow-y: auto; }
@@ -278,7 +312,7 @@ a:hover { text-decoration: underline; }
   .search-wrap { padding: 0 16px; margin-top: 16px; }
   .search-results { left: 16px; right: 16px; }
   .search-box input { font-size: 16px; padding: 11px 0; }
-  .search-kbd { display: none; }
+  .search-kbds { display: none; }
 
   .resume { flex-wrap: wrap; gap: 8px 12px; }
   .resume-go { flex-basis: 100%; }

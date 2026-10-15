@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
@@ -36,6 +36,12 @@ a{color:var(--acc2)}
 .filter input{flex:1;background:none;border:none;outline:none;color:var(--txt);font-size:16px;font-family:inherit;padding:9px 0;min-width:0}
 .filter .ic{opacity:.7}
 .filter kbd{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--bg3)}
+.kbd-help{position:relative;display:flex;align-items:center;gap:5px;cursor:help;outline:none}
+.kbd-help .tip{position:absolute;right:0;top:calc(100% + 10px);width:280px;background:var(--card);border:1px solid var(--line);border-radius:11px;box-shadow:0 14px 40px rgba(0,0,0,.45);padding:12px 14px;opacity:0;visibility:hidden;transform:translateY(-4px);transition:.15s;text-align:left;z-index:60;font-size:13px;color:var(--muted);line-height:1.5}
+.kbd-help:hover .tip,.kbd-help:focus-within .tip,.kbd-help:focus .tip{opacity:1;visibility:visible;transform:translateY(0)}
+.kbd-help .tip b{color:var(--txt);font-size:13.5px}
+.kbd-help .tip kbd{font-size:11px;color:var(--txt);border:1px solid var(--line);border-radius:5px;padding:1px 6px;background:var(--bg3)}
+@media(max-width:600px){.kbd-help{display:none}}
 .nohit{display:none;color:var(--muted);text-align:center;padding:24px}
 .cols{column-width:360px;column-gap:18px}
 .cs-card{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 18px 16px;margin:0 0 18px;display:inline-block;width:100%}
@@ -97,8 +103,11 @@ td code{font-size:.86em;white-space:nowrap}
 
   <div class="filter">
     <span class="ic">🔎</span>
-    <input id="q" type="search" placeholder="Filtrer : « HashMap », « Option », « match », « iterator »… ( / )" aria-label="Filtrer l'antisèche" />
-    <kbd>/</kbd>
+    <input id="q" type="search" placeholder="Filtrer : « HashMap », « Option », « match », « iterator »… ( / ou Ctrl K )" aria-label="Filtrer l'antisèche (raccourcis : / ou Ctrl+K)" />
+    <span class="kbd-help" tabindex="0" aria-label="Aide sur le filtre">
+      <kbd>/</kbd><kbd>Ctrl&nbsp;K</kbd>
+      <span class="tip"><b>Filtre instantané</b><br>N'affiche que les cartes contenant ton mot-clé (insensible aux accents).<br><br><kbd>/</kbd> ou <kbd>Ctrl K</kbd> cibler · <kbd>Échap</kbd> effacer</span>
+    </span>
   </div>
   <div class="nohit" id="nohit">Aucune carte ne correspond. Essaie un autre mot-clé.</div>
 
@@ -543,6 +552,7 @@ carre(<span class="nu">4</span>);</code></pre>
     nohit.style.display = hits? "none":"block";
   });
   document.addEventListener("keydown",function(e){
+    if((e.ctrlKey||e.metaKey) && (e.key==="k"||e.key==="K")){e.preventDefault();q.focus();q.select();return;}
     if(e.key==="/" && document.activeElement!==q){e.preventDefault();q.focus();}
     if(e.key==="Escape"){q.value="";q.dispatchEvent(new Event("input"));q.blur();}
   });
@@ -550,5 +560,6 @@ carre(<span class="nu">4</span>);</code></pre>
   document.getElementById("pdf").addEventListener("click",function(e){e.preventDefault();window.print();});
 })();
 </script>
+<script src="../../assets/nav.js"></script>
 </body>
 </html>

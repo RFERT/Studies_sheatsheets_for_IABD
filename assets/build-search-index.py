@@ -21,6 +21,22 @@ def clean(t):
 def rel(p):
     return p.relative_to(ROOT).as_posix()
 
+def kw_from(html_body):
+    """Extrait des mots-clés d'une section : termes en code/gras + libellés de tableaux."""
+    terms = re.findall(r"<code>(.*?)</code>|<strong>(.*?)</strong>|<b>(.*?)</b>|<th>(.*?)</th>",
+                       html_body, re.S)
+    seen, out = set(), []
+    for tup in terms:
+        for t in tup:
+            if not t:
+                continue
+            c = clean(t)
+            if c and len(c) <= 45:
+                wl = c.lower()
+                if wl not in seen:
+                    seen.add(wl); out.append(c)
+    return " ".join(out[:50])
+
 # Matières (miroir de portal.js, pour que la recherche trouve les matières)
 SUBJECTS = {
     "math": {"name": "Mathématiques", "emoji": "∑",  "color": "#6c8cff"},
@@ -48,9 +64,13 @@ for f in sorted(mod_dir.glob("*.html")):
     page_title = clean(m.group(1)) if m else f.stem
     sub = re.search(r'<p class="subtitle"[^>]*>(.*?)</p>', txt, re.S)
     add("math", "module", page_title, url, clean(sub.group(1)) if sub else "")
-    for sm in re.finditer(r'<section[^>]*id="([^"]+)"[^>]*>\s*<h2[^>]*>(.*?)</h2>', txt, re.S):
-        anchor, h2 = sm.group(1), clean(sm.group(2))
-        add("math", "section", h2, f"{url}#{anchor}", page_title)
+    for sm in re.finditer(r'<section[^>]*id="([^"]+)"[^>]*>(.*?)</section>', txt, re.S):
+        anchor, body = sm.group(1), sm.group(2)
+        hm = re.search(r"<h2[^>]*>(.*?)</h2>", body, re.S)
+        if not hm:
+            continue
+        h2 = clean(hm.group(1))
+        add("math", "section", h2, f"{url}#{anchor}", (page_title + " " + kw_from(body)).strip())
     # Encart Culture & histoire (noms historiques indexés)
     cm = re.search(r'<section class="culture"[^>]*id="culture".*?</section>', txt, re.S)
     if cm:
@@ -67,9 +87,13 @@ for f in sorted(py_dir.glob("*.html")):
     page_title = clean(m.group(1)) if m else f.stem
     sub = re.search(r'<p class="subtitle"[^>]*>(.*?)</p>', txt, re.S)
     add("python", "module", page_title, url, clean(sub.group(1)) if sub else "")
-    for sm in re.finditer(r'<section[^>]*id="([^"]+)"[^>]*>\s*<h2[^>]*>(.*?)</h2>', txt, re.S):
-        anchor, h2 = sm.group(1), clean(sm.group(2))
-        add("python", "section", h2, f"{url}#{anchor}", page_title)
+    for sm in re.finditer(r'<section[^>]*id="([^"]+)"[^>]*>(.*?)</section>', txt, re.S):
+        anchor, body = sm.group(1), sm.group(2)
+        hm = re.search(r"<h2[^>]*>(.*?)</h2>", body, re.S)
+        if not hm:
+            continue
+        h2 = clean(hm.group(1))
+        add("python", "section", h2, f"{url}#{anchor}", (page_title + " " + kw_from(body)).strip())
     cm = re.search(r'<section class="culture"[^>]*id="culture".*?</section>', txt, re.S)
     if cm:
         names = [clean(x) for x in re.findall(r"<li><b>(.*?)</b>", cm.group(0))]

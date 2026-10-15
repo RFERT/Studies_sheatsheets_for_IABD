@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -49,6 +49,12 @@
       <div class="tagrow">
         <span class="t">📈 Tableau de bord de progression</span>
         <span class="t">🔎 Recherche globale</span>
+        <span class="t">⌨️ Raccourcis clavier (/ , Ctrl K)</span>
+        <span class="t">🧭 Navbar commune (menu Cours)</span>
+        <span class="t">🍅 Minuteur Pomodoro</span>
+        <span class="t">📅 Calendrier d'activité</span>
+        <span class="t">🎨 Couleur d'accent</span>
+        <span class="t">♿ Accessibilité (skip-link)</span>
         <span class="t">⚡ Antisèches / aide-mémoire</span>
         <span class="t">📜 Encarts Culture &amp; histoire</span>
         <span class="t">🖨️ Export PDF</span>
@@ -76,8 +82,8 @@
           <li><b>Répétition espacée</b> (flashcards, algo SM-2, rappels J+1/J+3/J+7) <span class="prio p1">haute</span></li>
           <li><b>Mode examen chronométré</b> avec score et correction <span class="prio p2">moyenne</span></li>
           <li><b>Objectifs hebdomadaires</b> &amp; petits rappels (notifications navigateur) <span class="prio p2">moyenne</span></li>
-          <li><b>Calendrier de révision</b> (heatmap d'activité façon GitHub) <span class="prio p3">bonus</span></li>
-          <li><b>Minuteur Pomodoro</b> intégré aux sessions de révision <span class="prio p3">bonus</span></li>
+          <li><b>Calendrier de révision</b> (heatmap d'activité façon GitHub) <span class="prio p3">✅ fait</span></li>
+          <li><b>Minuteur Pomodoro</b> intégré aux sessions de révision <span class="prio p3">✅ fait</span></li>
           <li><b>Stats par notion</b> : repérer automatiquement les points faibles <span class="prio p3">bonus</span></li>
         </ul>
       </div>
@@ -100,8 +106,8 @@
           <li><b>Design system partagé</b> unifié entre toutes les matières <span class="prio p2">moyenne</span></li>
           <li><b>Déploiement GitHub Pages</b> automatisé (GitHub Actions) <span class="prio p3">bonus</span></li>
           <li><b>Vérificateur de liens</b> (script anti-régression) <span class="prio p3">bonus</span></li>
-          <li><b>Accessibilité</b> (contrastes AA, navigation clavier complète) <span class="prio p3">bonus</span></li>
-          <li><b>Thème personnalisable</b> (choisir sa couleur d'accent) <span class="prio p3">bonus</span></li>
+          <li><b>Accessibilité</b> (contrastes AA, navigation clavier complète) <span class="prio p3">✅ en partie (skip-link, focus visible)</span></li>
+          <li><b>Thème personnalisable</b> (choisir sa couleur d'accent) <span class="prio p3">✅ fait</span></li>
         </ul>
       </div>
     </div>
@@ -203,5 +209,6 @@
       document.getElementById("theme-toggle").addEventListener("click",function(){t(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
     })();
   </script>
+<script src="assets/nav.js"></script>
 </body>
 </html>

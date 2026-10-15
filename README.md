@@ -14,7 +14,8 @@ index.html               Portail : tableau de bord, recherche, cartes de matièr
 ameliorations.html       Feuille de route & idées d'évolution
 assets/
   portal.css             Design system du hub
-  portal.js              Rendu des matières, progression, recherche
+  portal.js              Rendu des matières, progression, recherche, heatmap
+  nav.js                 Navbar commune + Pomodoro + accent + accessibilité (toutes pages)
   search-index.js        Index de recherche (généré — ne pas éditer à la main)
   build-search-index.py  Générateur de l'index (Python 3, sans dépendance)
 matieres/
@@ -24,10 +25,13 @@ matieres/
 ```
 
 ## ✨ Fonctionnalités
-- **Tableau de bord de progression** (anneau global + barres par matière), stocké
-  localement et privé.
+- **Navbar commune** (menu « Cours ») sur chaque page, injectée par `assets/nav.js`
+  (chemins relatifs auto-calculés), avec sélecteur de **couleur d'accent**, **minuteur
+  Pomodoro** flottant et améliorations d'**accessibilité** (skip-link, focus visible).
+- **Tableau de bord de progression** (anneau global + barres par matière) + **calendrier
+  d'activité** (heatmap façon GitHub), stockés localement et privés.
 - **Recherche globale** dans tous les cours et sections (raccourci `/`, insensible
-  aux accents, liens profonds vers les sections).
+  aux accents, liens profonds, mots-clés enrichis depuis le code et les termes clés).
 - **Antisèches / aide-mémoire** par matière (référence rapide filtrable : Rust, Python, maths),
   chaque carte liant la **section de cours** correspondante.
 - **Cursus Rust** : navigation groupée par niveau + **liens profonds par ancre**

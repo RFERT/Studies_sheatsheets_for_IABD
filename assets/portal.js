@@ -196,6 +196,46 @@ function importProgress(file) {
   reader.readAsText(file);
 }
 
+/* ---------- Calendrier de révision (heatmap façon GitHub) ---------- */
+function buildHeatmap() {
+  let days = {};
+  try { days = JSON.parse(localStorage.getItem("esgi-active-days")) || {}; } catch (e) {}
+  const WEEKS = 18;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  // aller au dimanche de fin de semaine courante
+  const end = new Date(today); end.setDate(end.getDate() + (6 - end.getDay()));
+  const total = WEEKS * 7;
+  const cells = [];
+  let activeCount = 0;
+  const key = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  const months = [];
+  for (let i = total - 1; i >= 0; i--) {
+    const d = new Date(end); d.setDate(end.getDate() - i);
+    const c = days[key(d)] || 0;
+    if (c > 0 && d <= today) activeCount++;
+    let lvl = 0;
+    if (c >= 1) lvl = 1; if (c >= 3) lvl = 2; if (c >= 6) lvl = 3; if (c >= 10) lvl = 4;
+    const future = d > today;
+    cells.push({ lvl, future, label: key(d) + (c ? ` · ${c} visite(s)` : "") });
+  }
+  // colonnes (semaines) : 7 cellules chacune, l'ordre cells est chronologique
+  let cols = "";
+  for (let w = 0; w < WEEKS; w++) {
+    let col = "";
+    for (let dow = 0; dow < 7; dow++) {
+      const cell = cells[w * 7 + dow];
+      col += `<span class="hm-cell l${cell.lvl}${cell.future ? " fut" : ""}" title="${cell.label}"></span>`;
+    }
+    cols += `<div class="hm-col">${col}</div>`;
+  }
+  return `
+    <div class="heatmap-card">
+      <div class="hm-head"><b>📅 Calendrier de révision</b><span class="hm-sub">${activeCount} jour${activeCount > 1 ? "s" : ""} actif${activeCount > 1 ? "s" : ""} sur ~${WEEKS} semaines</span></div>
+      <div class="hm-grid">${cols}</div>
+      <div class="hm-legend">Moins <span class="hm-cell l0"></span><span class="hm-cell l1"></span><span class="hm-cell l2"></span><span class="hm-cell l3"></span><span class="hm-cell l4"></span> Plus</div>
+    </div>`;
+}
+
 function renderDashboard() {
   const host = document.getElementById("dashboard");
   if (!host) return;
@@ -268,6 +308,7 @@ function renderDashboard() {
         <p class="dash-hint">${hint}</p>
       </div>
     </div>
+    ${buildHeatmap()}
     ${favBlock}`;
 
   const rst = document.getElementById("dash-reset");
@@ -373,8 +414,16 @@ function initSearch() {
     } else if (ev.key === "Escape") { input.value = ""; panel.hidden = true; input.blur(); }
   });
   document.addEventListener("keydown", (ev) => {
-    if (ev.key === "/" && document.activeElement !== input &&
-        !/^(input|textarea|select)$/i.test((document.activeElement || {}).tagName || "")) {
+    const el = document.activeElement || {};
+    const typing = /^(input|textarea|select)$/i.test(el.tagName || "") || el.isContentEditable;
+    // Ctrl/⌘ + K : ouvrir la recherche depuis n'importe où
+    if ((ev.ctrlKey || ev.metaKey) && (ev.key === "k" || ev.key === "K")) {
+      ev.preventDefault();
+      input.focus(); input.select();
+      return;
+    }
+    // "/" : ouvrir la recherche (hors champ de saisie)
+    if (ev.key === "/" && !typing) {
       ev.preventDefault(); input.focus();
     }
   });
