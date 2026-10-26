@@ -11,7 +11,7 @@ objectifs: Comprendre l'information et l'entropie de Shannon ; connaître entrop
 L'information d'un événement de probabilité \(p\) est \(I = -\log_2 p\) (en **bits**). Un événement **rare** (p petit) apporte **beaucoup** d'information (grande surprise) ; un événement certain (p=1) n'apporte rien (\(I=0\)).
 :::
 
-::: info Exemple
+::: example Exemple
 Une pièce équilibrée : chaque résultat a \(p=1/2\), donc \(I=-\log_2(1/2)=1\) bit. Apprendre le résultat d'un lancer = 1 bit d'information. Un dé à 8 faces : \(-\log_2(1/8)=3\) bits.
 :::
 
@@ -30,13 +30,13 @@ Quel événement apporte le PLUS d'information ?
 L'**entropie** d'une variable \(X\) est l'information moyenne (l'incertitude) : \[ H(X) = -\sum_i p_i \log_2 p_i \] Mesurée en bits. Maximale quand tout est équiprobable (incertitude totale), nulle quand le résultat est certain.
 :::
 
-::: info Exemple
+::: example Exemple
 Pièce équilibrée : \(H=-(0{,}5\log_2 0{,}5 + 0{,}5\log_2 0{,}5)=1\) bit (max pour 2 issues).
 
 Pièce truquée (p=0,9 / 0,1) : \(H\approx 0{,}47\) bit — moins d'incertitude, donc moins d'information moyenne, donc **plus compressible**.
 :::
 
-::: info BIG DATA Lien — compression
+::: data BIG DATA Lien — compression
 L'entropie est la **limite théorique** de compression (théorème de Shannon) : on ne peut pas compresser en dessous de \(H\) bits/symbole sans perte. Huffman, ZIP, codage arithmétique s'en approchent.
 :::
 
@@ -68,7 +68,7 @@ Pour une vraie distribution \(p\) et une distribution prédite \(q\) : \[ H(p,q)
 \[ D_{KL}(p\,\|\,q) = \sum_i p_i \log\frac{p_i}{q_i} = H(p,q) - H(p) \ge 0 \] Mesure « combien \(q\) s'éloigne de \(p\) ». \(D_{KL}=0\) ssi \(q=p\). ⚠️ Non symétrique : \(D_{KL}(p\|q)\neq D_{KL}(q\|p)\).
 :::
 
-::: info IA Lien fondamental
+::: data IA Lien fondamental
 La **cross-entropy est LA fonction de perte** de la classification (régression logistique, réseaux de neurones, softmax). Minimiser la cross-entropy = rapprocher les prédictions \(q\) de la vérité \(p\) = maximum de vraisemblance (Module 4). La KL apparaît dans les VAE, la distillation, le RLHF.
 :::
 
@@ -96,7 +96,7 @@ Quelle propriété a la divergence KL ?
 L'**information mutuelle** \(I(X;Y) = H(X) - H(X\mid Y)\) mesure combien connaître \(Y\) réduit l'incertitude sur \(X\). \(I(X;Y)=0\) ssi \(X\) et \(Y\) sont indépendants.
 :::
 
-::: info DATA Lien
+::: data DATA Lien
 Sélection de features (garder les variables les plus informatives sur la cible), détection de dépendances non linéaires (là où la corrélation de Pearson échoue, Module 4).
 :::
 
@@ -115,7 +115,7 @@ Si \(X\) et \(Y\) sont indépendants, leur information mutuelle vaut…
 Lors de la construction d'un **arbre de décision**, on choisit à chaque nœud l'attribut qui maximise le **gain d'information** = réduction d'entropie après la séparation : \[ \text{Gain} = H(\text{avant}) - \sum_j \frac{n_j}{n} H(\text{branche}_j) \] On sépare là où l'on « purifie » le plus les classes.
 :::
 
-::: info IA Lien
+::: data IA Lien
 ID3, C4.5, et le critère de Gini (proche) dans CART / Random Forest / arbres de gradient (XGBoost). L'entropie guide les meilleurs splits.
 :::
 

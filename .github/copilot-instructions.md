@@ -24,8 +24,10 @@ Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans co
 - Moteur : `cours.html` (coquille) + `assets/course.js` (rendu) + `assets/markdown.js` (parseur maison) + `assets/course.css`.
 - Source unique : `matieres/cours.js` → `window.COURS` (liste des matières + modules `{id,title,desc,badge,file}`).
 - Contenu : un `.md` par module avec front-matter (`title`, `subtitle`, `domains`, `tags`, `objectifs`, `niveau`, `duree`)
-  et des blocs `:::` : `def/tip/warn/info/note/goal`, `quiz` (`- [x]` = bonne réponse, `> ` = explication),
-  `exo` (`?? libellé` = solution repliable), `culture`. Maths LaTeX `\( \)` / `\[ \]` (MathJax).
+  et des blocs `:::` : `def/theorem/example/tip/warn/info/note/goal/data/py/why`, `jobs` (carte métiers),
+  `quiz` (`- [x]` = bonne réponse, `> ` = explication), `exo` (`?? libellé` = solution repliable), `culture`.
+  Maths LaTeX `\( \)` / `\[ \]` (MathJax). Le moteur ajoute : sommaire auto, temps de lecture, coloration de
+  code (rust/python/bash/sql/js), bouton copier, culture stylée (noms + liens en pills).
 - Intégration AUTO : `portal.js` (`mergeManifestCourses`) crée la carte + les entrées de recherche ;
   `nav.js` (`addManifestToMenu`) ajoute le cours au menu sur toutes les pages. URL : `cours.html?c=CODE[&m=ID]`.
 - Progression stockée sous `cours-<code>-done` (doneMap des modules).

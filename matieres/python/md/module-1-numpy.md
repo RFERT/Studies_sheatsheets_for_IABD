@@ -18,7 +18,7 @@ np.linspace(0, 1, 5)            # [0. .25 .5 .75 1.]
 np.eye(3)                          # identité 3x3
 ```
 
-::: info Liste ≠ ndarray
+::: warn Liste ≠ ndarray
 Un `ndarray` a un **type unique** et une taille fixe : c'est ce qui le rend rapide. Additionner deux listes Python les concatène ; additionner deux arrays fait une somme *élément par élément*.
 :::
 
@@ -33,7 +33,7 @@ b.dtype      # int64
 b.astype(np.float32)   # conversion de type
 ```
 
-::: info Les axes
+::: data Les axes
 Pour un tableau 2D : **axis=0** = « vers le bas » (colonnes / sur les lignes), **axis=1** = « vers la droite » (lignes / sur les colonnes). `b.sum(axis=0)` somme chaque colonne → `[5 7 9]`.
 :::
 
@@ -59,7 +59,7 @@ np.sqrt(x); np.exp(x); np.log(x)   # ufuncs vectorisées
 (x > 2)                 # [False False True True True]
 ```
 
-::: info Boucle vs vectorisation
+::: example Boucle vs vectorisation
 ```
 # ❌ lent (boucle Python)
 r = [v**2 for v in x]
@@ -68,7 +68,7 @@ r = x**2
 ```
 :::
 
-::: info Règle d'or
+::: warn Règle d'or
 Si tu écris une boucle `for` sur un array NumPy, demande-toi toujours : « puis-je vectoriser ? ». 9 fois sur 10, oui.
 :::
 
@@ -86,7 +86,7 @@ b[:, 0]                 # [1 4] (toute la colonne 0)
 b[1, :]                 # [4 5 6] (toute la ligne 1)
 ```
 
-::: info Vue, pas copie !
+::: warn Vue, pas copie !
 Un slice NumPy est une **vue** : modifier `a[2:5]` modifie `a`. Pour un tableau indépendant, utilise `.copy()`.
 :::
 
@@ -109,7 +109,7 @@ np.where(a > 2, "grand", "petit")  # ternaire vectorisé
 ((a > 0) & (a < 4))       # & = et, | = ou (PAS and/or !)
 ```
 
-::: info Opérateurs
+::: warn Opérateurs
 Avec les tableaux NumPy, on utilise `&`, `|`, `~` (et parenthèses !), jamais `and`/`or`/`not` qui lèvent une erreur sur un array.
 :::
 
@@ -134,11 +134,11 @@ M + np.array([10, 20, 30])   # (3,) ajouté à chaque ligne
 M * np.array([[1], [0]])      # (2,1) : multiplie ligne par ligne
 ```
 
-::: info Règle
+::: data Règle
 Deux dimensions sont compatibles si elles sont **égales** ou si **l'une vaut 1**. On compare les shapes de droite à gauche. Exemple phare : **centrer** des données → `X - X.mean(axis=0)` (soustrait la moyenne de chaque colonne).
 :::
 
-::: info Standardisation (z-score) en une ligne
+::: example Standardisation (z-score) en une ligne
 ```
 Z = (X - X.mean(axis=0)) / X.std(axis=0)
 ```
@@ -182,7 +182,7 @@ np.concatenate([a, b]); np.vstack([a, b]); np.hstack([a, b])
 a[:, np.newaxis]        # ajoute une dimension (3,) -> (3,1)
 ```
 
-::: info reshape conserve le nombre d'éléments
+::: warn reshape conserve le nombre d'éléments
 `reshape(3, 4)` exige exactement 12 éléments, sinon `ValueError`.
 :::
 
@@ -198,7 +198,7 @@ np.linalg.eig(A)        # valeurs/vecteurs propres
 np.linalg.norm(v)       # norme d'un vecteur
 ```
 
-::: info @ vs *
+::: warn @ vs *
 `@` = produit matriciel (lignes × colonnes) ; `*` = produit terme à terme. Confusion classique en examen et en ML.
 :::
 
@@ -212,7 +212,7 @@ rng.integers(0, 10, 5)      # entiers
 rng.choice(data, 100)       # échantillonnage
 ```
 
-::: info Reproductibilité
+::: data Reproductibilité
 Fixer la graine (`seed`) garantit que tes expériences ML donnent les mêmes résultats — indispensable pour comparer des modèles et débugger.
 :::
 

@@ -12,7 +12,7 @@ objectifs: Maîtriser le dénombrement (produit, somme, arrangements, combinaiso
 - **Principe additif** : choix exclusifs (soit… soit…) → on additionne.
 :::
 
-::: info Exemple
+::: example Exemple
 Un mot de passe de 4 caractères parmi 62 (a-z, A-Z, 0-9) : \(62^4 = 14\,776\,336\) possibilités (multiplicatif, avec répétition).
 :::
 
@@ -33,11 +33,11 @@ Combien de codes PIN à 4 chiffres (0-9, répétition permise) existe-t-il ?
 - **Combinaisons** (ordre ne compte pas) : \(\displaystyle\binom nk = C_n^k = \frac{n!}{k!(n-k)!}\).
 :::
 
-::: info « L'ordre compte-t-il ? » — la question à se poser
+::: warn « L'ordre compte-t-il ? » — la question à se poser
 Podium (1er, 2e, 3e) → arrangement. Choisir un comité de 3 → combinaison. Mot de passe → arrangement (ou avec répétition). Main de cartes → combinaison.
 :::
 
-::: info Exemple
+::: example Exemple
 Tirer 5 cartes parmi 52 (ordre indifférent) : \(\binom{52}{5}=\frac{52!}{5!\,47!}=2\,598\,960\) mains possibles.
 :::
 
@@ -61,7 +61,7 @@ Pour un podium (or, argent, bronze) parmi 8 athlètes, on compte…
 
 ## 3. Binôme de Newton & triangle de Pascal
 
-::: info Formule du binôme
+::: theorem Formule du binôme
 \[ (a+b)^n = \sum_{k=0}^n \binom nk a^k b^{n-k} \] Les coefficients \(\binom nk\) sont ceux du **triangle de Pascal**, avec la relation \(\binom nk = \binom{n-1}{k-1} + \binom{n-1}{k}\).
 :::
 
@@ -80,11 +80,11 @@ Que vaut \(\sum_{k=0}^n \binom nk\) ?
 
 ## 4. Principe des tiroirs (pigeonhole)
 
-::: info Énoncé
+::: theorem Énoncé
 Si l'on range \(n\) objets dans \(k\) tiroirs avec \(n>k\), alors au moins un tiroir contient \(\ge 2\) objets. Plus fort : un tiroir contient au moins \(\lceil n/k\rceil\) objets.
 :::
 
-::: info BIG DATA Lien
+::: data BIG DATA Lien
 Garantit l'existence de **collisions de hachage** : avec plus de clés que de cases, deux clés tombent forcément dans la même case (base du Module 9). Fondamental pour dimensionner les tables de hachage.
 :::
 
@@ -113,7 +113,7 @@ On hache 1000 clés dans une table de 999 cases. Peut-on éviter toute collision
 | \(O(2^n)\) | exponentielle | force brute sur sous-ensembles |
 | \(O(n!)\) | factorielle | toutes les permutations (voyageur de commerce brut) |
 
-::: info Pourquoi c'est VITAL en Big Data
+::: warn Pourquoi c'est VITAL en Big Data
 Sur \(n=10^9\) (un milliard) : un algo \(O(n)\) fait un milliard d'opérations (ok), mais \(O(n^2)\) en fait \(10^{18}\) (infaisable !). La différence entre \(O(n\log n)\) et \(O(n^2)\) décide si votre job tourne en minutes ou en siècles.
 :::
 
@@ -151,7 +151,7 @@ Deux boucles imbriquées sur n éléments donnent typiquement…
 - **NP-complet** : les plus durs de NP (SAT, voyageur de commerce, sac à dos). On ne sait pas les résoudre efficacement → on utilise des **heuristiques/approximations**.
 - **P = NP ?** : la grande question ouverte (1 M$ à la clé).
 
-::: info IA Lien
+::: data IA Lien
 Beaucoup de problèmes d'optimisation réels sont NP-difficiles → l'IA/le ML fournissent des **approximations** rapides « assez bonnes » (routage, planification, clustering).
 :::
 

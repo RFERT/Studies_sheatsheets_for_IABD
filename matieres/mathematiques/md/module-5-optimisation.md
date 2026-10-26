@@ -18,7 +18,7 @@ La **dérivée** \(f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}\) est la **pente** de
 | \(\ln x\) | \(1/x\) |
 | \(\sin x\) | \(\cos x\) |
 
-::: info Règles essentielles
+::: theorem Règles essentielles
 Produit : \((uv)'=u'v+uv'\). Quotient : \((u/v)'=\frac{u'v-uv'}{v^2}\). **Composition (chain rule)** : \((f\circ g)'(x)=f'(g(x))\cdot g'(x)\) — la clé de la rétropropagation.
 :::
 
@@ -46,11 +46,11 @@ En un minimum local d'une fonction dérivable, la dérivée vaut…
 Pour \(f(x_1,\dots,x_n)\), la **dérivée partielle** \(\frac{\partial f}{\partial x_i}\) dérive par rapport à \(x_i\) (les autres fixes). Le **gradient** est le vecteur de toutes : \[ \nabla f = \left(\frac{\partial f}{\partial x_1},\dots,\frac{\partial f}{\partial x_n}\right) \]
 :::
 
-::: info Propriété clé
+::: theorem Propriété clé
 Le gradient \(\nabla f\) pointe dans la direction de **plus forte augmentation** de \(f\). Donc \(-\nabla f\) pointe vers la **plus forte diminution** : c'est la direction où aller pour *minimiser*. Tout l'apprentissage est là.
 :::
 
-::: info Exemple
+::: example Exemple
 \(f(x,y)=x^2+3y^2\). \(\frac{\partial f}{\partial x}=2x\), \(\frac{\partial f}{\partial y}=6y\), donc \(\nabla f=(2x,6y)\). Au point \((1,1)\) : \(\nabla f=(2,6)\).
 :::
 
@@ -78,11 +78,11 @@ Pour \(f(x,y)=x^2+y^2\), que vaut \(\nabla f\) au point \((3,4)\) ?
 \(f\) est **convexe** si son graphe est « en bol » : tout segment entre deux points de la courbe reste au-dessus d'elle. Critère : \(f''(x)\ge0\) (1D) ou Hessienne semi-définie positive (nD).
 :::
 
-::: info Pourquoi c'est crucial
+::: theorem Pourquoi c'est crucial
 Pour une fonction convexe, **tout minimum local est global** : la descente de gradient trouve LA solution. Les fonctions non convexes (réseaux profonds) ont des minima locaux et points-selles — d'où la difficulté de l'entraînement.
 :::
 
-::: info IA Lien
+::: data IA Lien
 Régression linéaire / logistique, SVM = problèmes **convexes** (optimum garanti). Deep learning = **non convexe** (on se contente d'un bon minimum local).
 :::
 
@@ -97,17 +97,17 @@ Pour une fonction convexe, un minimum local est…
 
 ## 4. Descente de gradient ⭐
 
-::: info L'algorithme (à connaître par cœur)
+::: theorem L'algorithme (à connaître par cœur)
 Pour minimiser une fonction de coût \(J(\theta)\), on répète : \[ \theta \leftarrow \theta - \eta\,\nabla J(\theta) \] où \(\eta\) est le **taux d'apprentissage** (learning rate). On fait de petits pas « vers le bas » jusqu'à convergence (gradient ≈ 0).
 :::
 
-::: info Exemple à la main
+::: example Exemple à la main
 \(J(\theta)=\theta^2\), \(\nabla J=2\theta\), \(\eta=0{,}1\), départ \(\theta_0=5\).
 
 \(\theta_1=5-0{,}1\times10=4\). \(\theta_2=4-0{,}1\times8=3{,}2\). \(\theta_3=3{,}2-0{,}1\times6{,}4=2{,}56\)… ça converge bien vers 0 (le minimum). ✔
 :::
 
-::: info Le learning rate, paramètre critique
+::: warn Le learning rate, paramètre critique
 Trop **petit** : convergence très lente. Trop **grand** : on « saute » le minimum, ça diverge (oscille et explose). Le régler est un art (voir variantes).
 :::
 
@@ -139,7 +139,7 @@ Un learning rate beaucoup trop grand provoque…
 | **Momentum** | accumule l'élan | traverse les plateaux |
 | **Adam** | learning rate adaptatif par paramètre | défaut moderne |
 
-::: info IA DATA Lien
+::: data IA DATA Lien
 Le **mini-batch SGD** rend l'apprentissage possible sur des datasets gigantesques (Big Data) : on n'a pas besoin de tout charger. **Adam** est l'optimiseur par défaut de la plupart des réseaux de neurones.
 :::
 
@@ -158,7 +158,7 @@ Pourquoi le mini-batch SGD est-il adapté au Big Data ?
 Un réseau de neurones est une **composition** de fonctions. Pour calculer le gradient de la perte par rapport à chaque poids, on applique la **règle de la chaîne** en remontant du coût vers les premières couches. C'est juste \((f\circ g)' = f'(g)\cdot g'\) appliqué à grande échelle.
 :::
 
-::: info IA Lien
+::: data IA Lien
 PyTorch / TensorFlow calculent ces gradients automatiquement (**autograd**). Comprendre la chain rule, c'est comprendre pourquoi/comment un réseau apprend.
 :::
 

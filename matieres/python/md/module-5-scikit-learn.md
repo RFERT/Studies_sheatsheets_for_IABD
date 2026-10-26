@@ -26,7 +26,7 @@ model.score(X_test, y_test)     # métrique par défaut
 | `transform` | Préprocesseurs | Transforme les données |
 | `fit_transform` | Préprocesseurs | fit + transform d'un coup |
 
-::: info Supervisé vs non supervisé
+::: data Supervisé vs non supervisé
 Supervisé : on a une cible `y` (classification, régression). Non supervisé : pas de `y` (clustering avec `KMeans`, réduction avec `PCA`).
 :::
 
@@ -40,7 +40,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y)   # stratify : garde les proportions de classes
 ```
 
-::: info Toujours évaluer sur des données jamais vues
+::: warn Toujours évaluer sur des données jamais vues
 Mesurer la performance sur le train donne un score optimiste et trompeur. Le test simule la « vraie vie ». Pour les séries temporelles, on ne mélange pas : on coupe dans le temps.
 :::
 
@@ -71,7 +71,7 @@ print(classification_report(y_test, y_pred))
 confusion_matrix(y_test, y_pred)
 ```
 
-::: info Le piège de l'accuracy
+::: warn Le piège de l'accuracy
 Sur un dataset à 99 % de cas négatifs (fraude), un modèle qui dit « jamais de fraude » a 99 % d'accuracy… et est inutile. Regarde **rappel** et **F1**.
 :::
 
@@ -114,7 +114,7 @@ pipe.fit(X_train, y_train)      # tout s'enchaîne
 pipe.predict(X_test)
 ```
 
-::: info Pourquoi c'est pro
+::: example Pourquoi c'est pro
 Un seul objet contient tout le traitement : facile à sauvegarder (`joblib.dump`), à déployer, et garanti sans fuite. C'est le standard en entreprise.
 :::
 
@@ -128,7 +128,7 @@ scores = cross_val_score(pipe, X, y, cv=5, scoring="f1")
 print(scores.mean(), "±", scores.std())
 ```
 
-::: info k-fold
+::: data k-fold
 Avec `cv=5` : 5 entraînements, chacun testé sur 1/5 des données jamais vu à l'entraînement de ce pli. L'écart-type des scores indique la *stabilité* du modèle.
 :::
 
@@ -146,7 +146,7 @@ search.fit(X_train, y_train)
 search.best_params_; search.best_score_
 ```
 
-::: info Paramètres vs hyperparamètres
+::: warn Paramètres vs hyperparamètres
 Les **paramètres** sont appris par `fit` (poids). Les **hyperparamètres** sont fixés par toi (profondeur, nb d'arbres, régularisation) et optimisés par recherche. `RandomizedSearchCV` est plus rapide quand l'espace est grand.
 :::
 
@@ -158,7 +158,7 @@ Les **paramètres** sont appris par `fit` (poids). Les **hyperparamètres** sont
 | **Underfitting** | Train et test faibles | Modèle plus riche, meilleures features |
 | **Bon** | Train ≈ test, tous deux bons | 🎉 |
 
-::: info Compromis biais-variance
+::: data Compromis biais-variance
 Sous-apprentissage = biais élevé (trop simple) ; sur-apprentissage = variance élevée (trop sensible aux données). Tout le ML consiste à trouver l'équilibre.
 :::
 

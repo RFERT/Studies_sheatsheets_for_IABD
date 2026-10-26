@@ -15,7 +15,7 @@ objectifs: Connaître le vocabulaire des graphes ; représenter un graphe (matri
 - **Connexe** : il existe un chemin entre toute paire de sommets.
 :::
 
-::: info DATA Lien
+::: data DATA Lien
 Réseau social : sommets = personnes, arêtes = amitiés (non orienté) ou « follow » (orienté). Web : pages + hyperliens. Un **graphe de connaissances** (Knowledge Graph) relie des entités.
 :::
 
@@ -35,7 +35,7 @@ Sur Twitter/X, « A suit B » (mais pas forcément l'inverse) se modélise par u
 | **Matrice d'adjacence** | \(A_{ij}=1\) si arête \(i\!\to\!j\) | \(O(V^2)\) | graphes denses, calculs matriciels |
 | **Liste d'adjacence** | pour chaque sommet, ses voisins | \(O(V+E)\) | graphes creux (réels) |
 
-::: info Astuce matricielle
+::: theorem Astuce matricielle
 Si \(A\) est la matrice d'adjacence, alors \((A^k)_{ij}\) = nombre de chemins de longueur exactement \(k\) de \(i\) à \(j\). (Lien direct avec le Module 2 et la composition de relations du Module 1 !)
 :::
 
@@ -55,7 +55,7 @@ Pour un réseau social réel (très creux, peu de connexions par personne), on p
 - **DFS** (profondeur, pile/stack ou récursion) : plonge aussi loin que possible avant de reculer. Utile pour cycles, composantes, tri topologique. \(O(V+E)\).
 :::
 
-::: info DATA IA Lien
+::: data DATA IA Lien
 BFS : « amis à distance 2 », recommandations de proximité, crawling web par niveaux. DFS : détection de cycles (dépendances), ordonnancement (DAG du Module 1), exploration.
 :::
 
@@ -86,7 +86,7 @@ Quelle structure de données est au cœur de BFS ?
 | **Floyd-Warshall** | tous les couples | \(O(V^3)\) |
 | **A*** | plus court chemin avec heuristique | jeux, GPS |
 
-::: info DATA Lien
+::: data DATA Lien
 GPS/itinéraires (Dijkstra/A*), routage réseau, logistique, détection d'arbitrage financier (Bellman-Ford avec poids = −log(taux)).
 :::
 
@@ -108,11 +108,11 @@ Pour un GPS avec des distances toutes positives, l'algorithme classique est…
 - **PageRank** : importance récursive (être pointé par des pages importantes).
 :::
 
-::: info PageRank — l'idée de Google
+::: theorem PageRank — l'idée de Google
 Une page est importante si des pages importantes pointent vers elle. Mathématiquement, le vecteur PageRank \(\mathbf r\) vérifie \(\mathbf r = M\mathbf r\) : c'est le **vecteur propre dominant** (valeur propre 1) de la matrice de transition \(M\) (lien Module 2 !). On le calcule en itérant \(\mathbf r \leftarrow M\mathbf r\) (power iteration).
 :::
 
-::: info BIG DATA IA Lien
+::: data BIG DATA IA Lien
 PageRank (recherche web, à l'échelle de milliards de pages, calculé via MapReduce). Centralité : détection d'influenceurs, de comptes frauduleux, de nœuds critiques. **GNN** (Graph Neural Networks) : deep learning sur graphes (reco, molécules, fraude).
 :::
 

@@ -255,21 +255,32 @@
   /* ---------- Conteneurs ::: ---------- */
   var CALLOUTS = {
     def: { cls: "def", label: "Définition", ico: "📘" },
+    theorem: { cls: "theorem", label: "Théorème", ico: "📐" },
+    theoreme: { cls: "theorem", label: "Théorème", ico: "📐" },
+    prop: { cls: "theorem", label: "Propriété", ico: "📐" },
     info: { cls: "info", label: "Info", ico: "ℹ️" },
+    example: { cls: "example", label: "Exemple", ico: "🔎" },
+    exemple: { cls: "example", label: "Exemple", ico: "🔎" },
     tip: { cls: "tip", label: "Astuce", ico: "💡" },
     astuce: { cls: "tip", label: "Astuce", ico: "💡" },
     warn: { cls: "warn", label: "Attention", ico: "⚠️" },
     piege: { cls: "warn", label: "Piège", ico: "⚠️" },
+    trap: { cls: "warn", label: "Piège", ico: "⚠️" },
     note: { cls: "note", label: "Note", ico: "📝" },
     goal: { cls: "goal", label: "Objectifs", ico: "🎯" },
     objectifs: { cls: "goal", label: "Objectifs", ico: "🎯" },
-    exemple: { cls: "info", label: "Exemple", ico: "🔎" }
+    data: { cls: "data", label: "Application Data / IA", ico: "📊" },
+    py: { cls: "py", label: "Côté Python", ico: "🐍" },
+    python: { cls: "py", label: "Côté Python", ico: "🐍" },
+    why: { cls: "why", label: "Pourquoi ?", ico: "🤔" },
+    pourquoi: { cls: "why", label: "Pourquoi ?", ico: "🤔" }
   };
 
   function renderContainer(type, title, buf, headings) {
     if (type === "quiz") return renderQuiz(title, buf);
     if (type === "exo" || type === "exercice") return renderExo(title, buf);
     if (type === "culture") return renderCulture(title, buf);
+    if (type === "jobs" || type === "metiers") return renderJobs(title, buf);
     var c = CALLOUTS[type];
     if (c) {
       var lab = title || c.label;
@@ -278,6 +289,11 @@
     }
     // type inconnu : simple encart
     return '<div class="callout">' + (title ? '<span class="label">' + esc(title) + "</span>" : "") +
+      renderBlocks(buf.join("\n"), null) + "</div>";
+  }
+
+  function renderJobs(title, buf) {
+    return '<div class="jobs"><div class="jhead">💼 ' + (esc(title) || "Usages & métiers") + "</div>" +
       renderBlocks(buf.join("\n"), null) + "</div>";
   }
 

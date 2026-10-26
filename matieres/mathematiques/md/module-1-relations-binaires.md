@@ -21,7 +21,7 @@ Exemples : « \(\leq\) » sur \(\mathbb{R}\), « divise » sur \(\mathbb{N}\), �
 | **Matrice booléenne** \(M\) | \(M_{ij}=1\) si \(x_i\,\mathcal R\,x_j\), sinon 0 | Calculs, clôtures, ordinateur |
 | **Graphe orienté** | Un arc \(x\to y\) si \(x\,\mathcal R\,y\) | Visualisation, intuition |
 
-::: info Exemple — relation « divise » sur \(\{1,2,3,6\}\)
+::: example Exemple — relation « divise » sur \(\{1,2,3,6\}\)
 \(\mathcal R = \{(1,1),(2,2),(3,3),(6,6),(1,2),(1,3),(1,6),(2,6),(3,6)\}\). Matrice (lignes/colonnes dans l'ordre 1,2,3,6) :
 
 ```
@@ -47,11 +47,11 @@ Tout le module repose sur ces propriétés. Apprends-les avec leur « lecture gr
 | **Transitive** | \((x\mathcal R y \wedge y\mathcal R z)\Rightarrow x\mathcal R z\) | Tout « raccourci » existe déjà |
 | **Totale (complète)** | \(\forall x,y,\; x\mathcal R y \vee y\mathcal R x\) | Deux éléments sont toujours comparables |
 
-::: info Antisymétrique ≠ « non symétrique » !
+::: warn Antisymétrique ≠ « non symétrique » !
 Antisymétrie n'interdit pas \(x\mathcal R x\) ; elle interdit seulement d'avoir \(x\mathcal R y\) *et* \(y\mathcal R x\) avec \(x\neq y\). Une relation peut être **à la fois** symétrique et antisymétrique : c'est le cas de l'égalité \(=\) (uniquement des couples \((x,x)\)).
 :::
 
-::: info Exemple résolu — prouver la transitivité
+::: example Exemple résolu — prouver la transitivité
 Montrons que « divise » (\(a\mid b\)) est transitive sur \(\mathbb N\). Supposons \(a\mid b\) et \(b\mid c\). Alors \(b = ka\) et \(c = k'b\) pour des entiers \(k,k'\). Donc \(c = k'(ka) = (k'k)a\), d'où \(a\mid c\). ∎
 :::
 
@@ -85,7 +85,7 @@ Intuition : « \(\sim\) » regroupe les éléments *indiscernables* pour un cert
 La **classe** de \(x\) est \(\;[x] = \{\, y \in E \;:\; y \sim x \,\}\). C'est l'ensemble de tous les éléments équivalents à \(x\). N'importe quel élément de la classe peut la *représenter*.
 :::
 
-::: info Théorème fondamental (équivalence  partition)
+::: theorem Théorème fondamental (équivalence  partition)
 Les classes d'équivalence d'une relation \(\sim\) sur \(E\) forment une **partition** de \(E\) : elles sont non vides, deux à deux disjointes, et leur union vaut \(E\). Réciproquement, toute partition de \(E\) définit une unique relation d'équivalence (« être dans le même paquet »). **Équivalence et partition, c'est la même chose vue de deux côtés.**
 :::
 
@@ -93,13 +93,13 @@ Les classes d'équivalence d'une relation \(\sim\) sur \(E\) forment une **parti
 L'ensemble des classes est le **quotient** \(E/\!\sim\; = \{\,[x] : x\in E\,\}\). Passer au quotient = « fusionner » les éléments équivalents en un seul point.
 :::
 
-::: info Exemple roi — congruence modulo \(n\)
+::: example Exemple roi — congruence modulo \(n\)
 Sur \(\mathbb Z\), on pose \(a \equiv b \pmod{n} \Leftrightarrow n \mid (a-b)\). C'est une relation d'équivalence (RST).
 
 Pour \(n=3\), les classes sont \([0]=\{\dots,-3,0,3,6\dots\}\), \([1]=\{\dots,-2,1,4\dots\}\), \([2]=\{\dots,-1,2,5\dots\}\). Le quotient \(\mathbb Z/3\mathbb Z = \{[0],[1],[2]\}\) a 3 éléments — c'est la base de l'arithmétique modulaire (hachage, cryptographie, codes correcteurs).
 :::
 
-::: info Lien Data / IA
+::: data Lien Data / IA
 **Un clustering est une partition** — donc une relation d'équivalence « être dans le même cluster ». La **déduplication** d'enregistrements regroupe en classes les doublons (« même entité réelle »). Le **sharding** par \(\text{clé} \bmod n\) répartit les données selon des classes de congruence.
 :::
 
@@ -130,7 +130,7 @@ Une relation \(\preceq\) sur \(E\) est une **relation d'ordre** (partiel) si ell
 - **Ordre total** : en plus, deux éléments sont toujours comparables (\(\forall x,y,\; x\preceq y \vee y\preceq x\)). Ex : \(\leq\) sur \(\mathbb R\).
 - **Ordre partiel** : certains éléments sont *incomparables*. Ex : l'inclusion \(\subseteq\) (\(\{1\}\) et \(\{2\}\) ne sont pas comparables), ou « divise » sur \(\mathbb N\).
 
-::: info Équivalence vs Ordre — le seul changement
+::: theorem Équivalence vs Ordre — le seul changement
 On passe de l'un à l'autre en changeant **une seule** propriété au milieu du « R_T » :
 
 Équivalence = R + **Symétrie** + T • Ordre = R + **Antisymétrie** + T.
@@ -148,7 +148,7 @@ On passe de l'un à l'autre en changeant **une seule** propriété au milieu du 
 | **Borne sup** \(\sup A\) | Le plus petit des majorants de \(A\) |
 | **Borne inf** \(\inf A\) | Le plus grand des minorants de \(A\) |
 
-::: info Minimal ≠ Minimum
+::: warn Minimal ≠ Minimum
 Un ordre partiel peut avoir **plusieurs** éléments minimaux mais **aucun** minimum. Ex : sur \(\{2,3,4,9\}\) ordonné par « divise », \(2\) et \(3\) sont tous deux minimaux (aucun diviseur strict dans l'ensemble), mais il n'y a pas de minimum (pas d'élément qui divise tous les autres).
 :::
 
@@ -156,7 +156,7 @@ Un ordre partiel peut avoir **plusieurs** éléments minimaux mais **aucun** min
 
 C'est le dessin épuré d'un ordre : on place les éléments par niveaux et on relie \(x\) à \(y\) (avec \(x\) en dessous) **seulement** si \(y\) *couvre* \(x\) — c'est-à-dire \(x\prec y\) sans élément intermédiaire. On **omet** les boucles (réflexivité) et les arcs déductibles par transitivité.
 
-::: info Exemple — diviseurs de 12 ordonnés par « divise »
+::: example Exemple — diviseurs de 12 ordonnés par « divise »
 ```
             12
            /   \
@@ -170,7 +170,7 @@ C'est le dessin épuré d'un ordre : on place les éléments par niveaux et on r
 \(1\) est le minimum, \(12\) le maximum. \(4\) et \(6\) sont incomparables (aucun ne divise l'autre). On lit \(\sup\{4,6\}=12\) et \(\inf\{4,6\}=2\).
 :::
 
-::: info Lien Data / IA
+::: data Lien Data / IA
 Un **DAG** (graphe orienté acyclique) représente un ordre partiel : dépendances de tâches (Airflow, Spark, Makefile), ordre de calcul des couches d'un réseau de neurones (rétropropagation), historique Git. Le **tri topologique** consiste à « linéariser » un ordre partiel en ordre total compatible.
 :::
 
@@ -202,7 +202,7 @@ Un **treillis** est un ensemble ordonné \((E,\preceq)\) dans lequel *toute pair
 - \((\mathbb N, \mid)\) (divisibilité) est un treillis : \(x\vee y = \text{ppcm}(x,y)\), \(x\wedge y = \text{pgcd}(x,y)\).
 - \((\{0,1\}^n, \leq \text{bit à bit})\) est un treillis : join = OU bit à bit, meet = ET bit à bit.
 
-::: info Lien Data / IA — là où ça devient puissant
+::: data Lien Data / IA — là où ça devient puissant
 - **Analyse formelle de concepts (FCA)** : les « concepts » (objets ↔ attributs) forment un **treillis de concepts** ; outil de fouille de données et d'ontologies.
 - **Treillis de version space** en apprentissage : les hypothèses cohérentes avec les données forment un treillis entre l'hypothèse la plus générale et la plus spécifique.
 - **CRDT** (bases de données distribuées) : les états forment un semi-treillis, la fusion = join — ce qui garantit la convergence sans conflit.
@@ -231,11 +231,11 @@ Dans le treillis \((\mathbb N,\mid)\), que vaut \(12 \vee 18\) (le join, c'est-�
 - **Clôture transitive** \(\mathcal R^{+}\) : ajouter tous les couples reliés par un *chemin*. Se calcule avec l'algorithme de **Warshall** (\(O(n^3)\)).
 :::
 
-::: info Exemple — clôture transitive = accessibilité
+::: example Exemple — clôture transitive = accessibilité
 Si \(\mathcal R\) = « il y a un vol direct de \(x\) à \(y\) », alors la clôture transitive \(\mathcal R^{+}\) = « on peut aller de \(x\) à \(y\) (avec escales) ». C'est exactement le calcul d'**accessibilité** dans un graphe.
 :::
 
-::: info Lien Data / IA — Union-Find
+::: data Lien Data / IA — Union-Find
 Pour maintenir dynamiquement les classes d'équivalence (clôture réflexive-symétrique-transitive de connexions), on utilise la structure **Union-Find** (presque \(O(1)\) amorti). Utilisée pour : composantes connexes, détection de cycles (Kruskal), déduplication, segmentation d'images.
 :::
 

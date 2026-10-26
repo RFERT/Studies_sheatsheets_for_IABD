@@ -253,7 +253,7 @@ Soit \(J(\theta)=(\theta-4)^2\), learning rate \(\eta=0{,}25\), départ \(\theta
 
 ## Partie C — Problème transversal Data (/20)
 
-::: info Contexte
+::: data Contexte
 Tu es Data Engineer. Tu dois dédupliquer et analyser **1 milliard** de documents textuels, trouver les quasi-doublons, compter les utilisateurs uniques, et préparer les données pour un modèle de classification.
 :::
 

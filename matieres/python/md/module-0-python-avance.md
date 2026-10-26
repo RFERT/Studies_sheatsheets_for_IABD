@@ -18,7 +18,7 @@ prix = float(input("Prix : "))
 nums = [int(x) for x in input().split()]
 ```
 
-::: info Piège classique
+::: warn Piège classique
 `int(input())` lève `ValueError` si l'utilisateur tape autre chose qu'un entier. En production, on encadre avec `try/except` (voir §10).
 :::
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":        # ne s'exécute QUE si lancé directement
     main()
 ```
 
-::: info Lien Data
+::: data Lien Data
 Pour de vrais outils en ligne de commande, on utilise `argparse` (standard) ou `click`/`typer`. Le garde `if __name__ == "__main__"` permet d'*importer* un script sans déclencher son exécution — essentiel pour les tests.
 :::
 
@@ -70,14 +70,14 @@ carte = {mot: len(mot) for mot in ["a", "bb", "ccc"]}
 uniques = {x % 5 for x in range(20)}
 ```
 
-::: info if … else dans une compréhension
+::: example if … else dans une compréhension
 ```
 signe = ["+" if x > 0 else "-" for x in nums]  # ternaire AVANT le for
 pos   = [x for x in nums if x > 0]            # filtre APRÈS le for
 ```
 :::
 
-::: info Lisibilité
+::: warn Lisibilité
 Une compréhension sur 3 niveaux devient illisible. Au-delà de 2 `for` ou d'une logique complexe, repasse à une boucle classique ou un générateur.
 :::
 
@@ -105,7 +105,7 @@ for x in compte(3):
     print(x)             # 0, 1, 2
 ```
 
-::: info Pourquoi c'est crucial en Data
+::: data Pourquoi c'est crucial en Data
 Lire un fichier de 50 Go ligne par ligne, streamer des batches vers un modèle, enchaîner des transformations sans copier : le générateur garde une empreinte mémoire **constante**.
 :::
 
@@ -153,7 +153,7 @@ args = [1, 2]; kw = {"x": 9}
 f(*args, **kw)
 ```
 
-::: info Piège n°1 des entretiens : argument par défaut mutable
+::: warn Piège n°1 des entretiens : argument par défaut mutable
 ```
 def ajoute(x, liste=[]):   # ❌ la liste est partagée entre appels !
     liste.append(x); return liste
@@ -200,7 +200,7 @@ def lent():
     return sum(range(1000000))
 ```
 
-::: info En vrai
+::: data En vrai
 `@functools.lru_cache` mémorise les résultats (mémoïsation) ; Flask/FastAPI utilisent `@app.route` ; pytest `@pytest.fixture` ; les décorateurs sont partout.
 :::
 
@@ -256,7 +256,7 @@ with timer("calcul"):
     sum(range(1000000))
 ```
 
-::: info Plusieurs ressources
+::: example Plusieurs ressources
 `with open("a") as a, open("b") as b:` — les deux sont fermées proprement.
 :::
 
@@ -275,7 +275,7 @@ id_: int | str = "a1"              # union moderne (3.10+)
 transfo: Callable[[int], str] = str  # fonction int -> str
 ```
 
-::: info Lien Data
+::: data Lien Data
 Dans les gros projets ML, le typing + `mypy` attrape les erreurs de forme (un `DataFrame` passé où on attend un `ndarray`) avant qu'elles ne coûtent des heures de debug.
 :::
 
@@ -321,7 +321,7 @@ print(p == Point(3, 4))  # True (égalité par valeur)
 | `__call__` | `x()` |
 | `__enter__`/`__exit__` | `with x:` |
 
-::: info Défaut mutable
+::: warn Défaut mutable
 Dans une dataclass, un défaut `list`/`dict` doit passer par `field(default_factory=list)`, jamais `= []` (même piège qu'au §4).
 :::
 
@@ -383,7 +383,7 @@ finally:
 - Lève tes propres erreurs : `raise ValueError("message clair")`.
 - Crée des exceptions métier : `class DataError(Exception): ...`.
 
-::: info Anti-pattern
+::: warn Anti-pattern
 `except Exception: pass` avale silencieusement les bugs. Au minimum, journalise (`logging`) ce qui se passe.
 :::
 
@@ -427,7 +427,7 @@ def decrire(p):
         case _:                 return "ailleurs"
 ```
 
-::: info Autres idiomes utiles
+::: example Autres idiomes utiles
 `a, *reste = [1,2,3,4]` (unpacking étendu) · `d1 | d2` (fusion de dicts, 3.9+) · `zip(a, b, strict=True)` (3.10+) · `enumerate(xs, start=1)`.
 :::
 

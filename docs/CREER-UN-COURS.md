@@ -69,7 +69,10 @@ La page du cours est servie par `cours.html?c=GIT` (index) et `cours.html?c=GIT&
 | Tableau | `\| A \| B \|` + ligne `\|---\|---\|` |
 | Bloc de code | ` ```python ... ``` ` |
 | Maths | `\( inline \)` et `\[ bloc \]` (LaTeX, via MathJax) |
-| Définition / astuce / piège | `::: def`, `::: tip`, `::: warn` … + `:::` |
+| Définition / théorème / exemple | `::: def`, `::: theorem`, `::: example` … + `:::` |
+| Astuce / piège / info / note | `::: tip`, `::: warn`, `::: info`, `::: note`, `::: goal` |
+| Data-IA / comparaison Python / pourquoi | `::: data`, `::: py`, `::: why` |
+| Usages & métiers | `::: jobs Titre` + un tableau Markdown |
 | Quiz | `::: quiz` avec `- [x]` pour la bonne réponse + `> explication` |
 | Exercice corrigé | `::: exo` … `?? Voir la solution` … `:::` |
 | Culture & histoire | `::: culture` … `:::` |

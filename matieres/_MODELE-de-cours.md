@@ -56,16 +56,45 @@ On ouvre avec `::: type Titre optionnel` et on ferme avec `:::` seul sur une lig
 Un encart **définition** (bleu). Idéal pour poser le vocabulaire.
 :::
 
+::: theorem Théorème / Propriété
+Encart vert pour un résultat formel à retenir.
+:::
+
+::: example Exemple résolu
+Encart bleu clair pour un exemple ou un cas concret. Alias : `::: exemple`.
+:::
+
 ::: tip Astuce
 Encart vert pour un conseil pratique. Alias : `::: astuce`.
 :::
 
 ::: warn Piège
-Encart orange pour une erreur fréquente. Alias : `::: piege`.
+Encart orange pour une erreur fréquente. Alias : `::: piege`, `::: trap`.
+:::
+
+::: data Application Data / IA
+Encart violet pour relier la notion à un usage Data, Big Data ou IA.
+:::
+
+::: py Côté Python
+Encart jaune pour comparer avec Python (ou un autre langage connu). Alias : `::: python`.
+:::
+
+::: why Pourquoi ?
+Encart bleu pour expliquer la raison d'être d'un concept. Alias : `::: pourquoi`.
 :::
 
 ::: info
-Encart neutre d'information. Autres types : `::: note`, `::: exemple`, `::: goal`.
+Encart neutre d'information. Autres types : `::: note`, `::: goal`.
+:::
+
+### Carte « usages & métiers »
+
+::: jobs Où ça sert dans la vraie vie
+| Métier / contexte | Usage concret |
+|---|---|
+| Data Engineer | Industrialiser des pipelines |
+| ML Engineer | Mettre un modèle en production |
 :::
 
 ### Quiz interactif

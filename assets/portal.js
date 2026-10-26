@@ -5,23 +5,6 @@
 
 const SUBJECTS = [
   {
-    code: "LANG",
-    name: "Rust",
-    emoji: "🦀",
-    color: "#f74c00",
-    status: "ready",
-    featured: true,
-    href: "matieres/rust/rust-cursus.html",
-    extra: [
-      { label: "🔥 Révision express partiel", href: "matieres/rust/revision-express.html" },
-      { label: "⚡ Antisèche", href: "matieres/rust/cheatsheet-rust.html" }
-    ],
-    desc: "Du débutant total à l'intermédiaire : Cargo, ownership, borrowing, lifetimes, traits, closures, concurrence. 16 modules + examen final.",
-    tags: ["Ownership", "Borrowing", "Lifetimes", "Traits"],
-    meta: "16 modules · 117 questions",
-    progress: { key: "rust_cursus_v1", type: "rustAnswered", total: 117, unit: "questions" }
-  },
-  {
     code: "MATH",
     name: "Mathématiques",
     emoji: "∑",
@@ -569,7 +552,9 @@ function mergeManifestCourses() {
       emoji: c.emoji || "📘",
       color: c.color || "#6c8cff",
       status: mods.length ? "ready" : "soon",
+      featured: !!c.featured,
       href: mods.length ? base : undefined,
+      extra: c.extra || undefined,
       desc: c.desc || "",
       tags: c.tags || [],
       meta: mods.length ? (mods.length + " module" + (mods.length > 1 ? "s" : "")) : "À venir",

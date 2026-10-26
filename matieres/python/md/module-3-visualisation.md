@@ -28,7 +28,7 @@ fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 axes[0].hist(data); axes[1].scatter(x, y)
 ```
 
-::: info pyplot « state-machine » vs objet
+::: warn pyplot « state-machine » vs objet
 `plt.plot()` agit sur le graphe « courant » (pratique en notebook, fragile en script). Dès que tu fais plusieurs sous-graphes, utilise `fig, ax = plt.subplots()` et les méthodes `ax.*`.
 :::
 
@@ -60,7 +60,7 @@ df.plot(x="date", y="ventes", kind="line")
 df["ville"].value_counts().plot(kind="bar")
 ```
 
-::: info Astuce
+::: data Astuce
 pandas branche Matplotlib automatiquement : `df.plot()` suffit pour un aperçu rapide pendant l'exploration.
 :::
 
@@ -78,7 +78,7 @@ sns.heatmap(df.corr(numeric_only=True), annot=True, cmap="coolwarm")
 sns.pairplot(df, hue="classe")   # matrice de nuages (EDA express)
 ```
 
-::: info Le réflexe EDA
+::: example Le réflexe EDA
 Une `heatmap` des corrélations + un `pairplot` donnent en deux lignes une vue d'ensemble des relations entre variables.
 :::
 
@@ -100,7 +100,7 @@ Quel graphe pour repérer rapidement les **corrélations** entre toutes les vari
 - **Composition / parts d'un tout** → barres empilées (plutôt que camembert).
 - **Corrélations multiples** → heatmap, pairplot.
 
-::: info Le camembert, avec parcimonie
+::: warn Le camembert, avec parcimonie
 L'œil compare mal des angles. Au-delà de 3-4 parts, un graphe en barres est presque toujours plus lisible.
 :::
 
@@ -112,7 +112,7 @@ L'œil compare mal des angles. Au-delà de 3-4 parts, un graphe en barres est pr
 - **Couleurs accessibles** : évite rouge/vert seuls (daltonisme) ; utilise des palettes perceptuelles (`viridis`).
 - **Échelle log** quand les ordres de grandeur varient beaucoup (`ax.set_yscale("log")`).
 
-::: info Métier
+::: data Métier
 En entreprise, 80 % de l'impact d'une analyse vient de sa *restitution*. Savoir raconter une histoire avec un graphe clair est une compétence aussi valorisée que modéliser.
 :::
 

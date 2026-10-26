@@ -49,7 +49,9 @@ Texte **gras**, *italique*, `code`, [lien](https://…), listes, tableaux.
 
 ## Blocs spéciaux `:::` (ouvrir `::: type Titre`, fermer `:::` seul)
 
-- `::: def` · `::: tip` · `::: warn` · `::: info` · `::: note` · `::: goal` → encarts.
+- `::: def` · `::: theorem` · `::: example` · `::: tip` · `::: warn` · `::: info` · `::: note` · `::: goal` → encarts.
+- `::: data` (application Data/IA, violet), `::: py` (comparaison Python, jaune), `::: why` (pourquoi, bleu).
+- `::: jobs Titre` → carte « usages & métiers » (met un tableau Markdown à l'intérieur).
 - Quiz interactif (la bonne réponse = `- [x]`, l'explication = ligne `>`) :
   ```markdown
   ::: quiz Quiz 1.1

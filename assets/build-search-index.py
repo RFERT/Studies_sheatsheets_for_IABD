@@ -127,11 +127,8 @@ for f in sorted(fic_dir.glob("*.md")):
             break
     add("math", "fiche", first or f.stem, rel(f), "fiche révision téléchargeable")
 
-# ---- Rust : cursus + révision express (sections) ----
-add("rust", "cours", "Cursus Rust complet", "matieres/rust/rust-cursus.html",
-    "ownership borrowing lifetimes traits cargo closures itérateurs concurrence enums pattern matching Result Option")
-add("rust", "culture", "Culture & histoire de Rust", "matieres/rust/rust-cursus.html",
-    "Graydon Hoare Mozilla Rust Foundation noyau Linux histoire philosophie sécurité mémoire")
+# ---- Rust : antisèche + révision express (le cursus est désormais en Markdown,
+#      indexé au runtime via le manifeste matieres/cours.js) ----
 add("rust", "fiche", "Antisèche Rust (cheat sheet)", "matieres/rust/cheatsheet-rust.html",
     "cheat sheet référence rapide syntaxe méthodes Vec HashMap Option Result match iterator cargo closures lifetimes traits")
 rev = ROOT / "matieres" / "rust" / "revision-express.html"
@@ -149,7 +146,6 @@ add("math", "matière", "Mathématiques pour la Data & l'IA",
     "logique relations binaires algèbre linéaire probabilités statistiques optimisation graphes information big data")
 add("math", "fiche", "Aide-mémoire maths (formulaire)", "matieres/mathematiques/aide-memoire.html",
     "formulaire antisèche formules Bayes gradient entropie matrice cosinus régression Big-O combinatoire règles")
-add("rust", "matière", "Rust", "matieres/rust/rust-cursus.html", "langage système")
 add("portal", "page", "Améliorations & feuille de route", "ameliorations.html",
     "roadmap idées compétences pro git docker ci cd mlops")
 add("portal", "page", "Flashcards — répétition espacée", "flashcards.html",

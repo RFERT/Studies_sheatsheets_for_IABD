@@ -23,7 +23,7 @@ X_num = imp.fit_transform(X_num)       # apprend la médiane puis remplace
 df["a_manque"] = df["revenu"].isna().astype(int)  # flag d'absence
 ```
 
-::: info Moyenne vs médiane
+::: warn Moyenne vs médiane
 La moyenne est tirée par les valeurs extrêmes ; sur des revenus ou des prix, la **médiane** est presque toujours un meilleur choix d'imputation.
 :::
 
@@ -41,7 +41,7 @@ outliers = df[(df["prix"] < bas) | (df["prix"] > haut)]
 df["prix"] = df["prix"].clip(bas, haut)
 ```
 
-::: info Un outlier n'est pas forcément une erreur
+::: warn Un outlier n'est pas forcément une erreur
 Une transaction énorme peut être une fraude *à détecter*, pas un bruit à supprimer. Comprends l'origine avant d'agir : supprimer aveuglément peut effacer le signal le plus intéressant.
 :::
 
@@ -75,7 +75,7 @@ ohe = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
 X_cat = ohe.fit_transform(df[["ville"]])
 ```
 
-::: info Label encoding abusif
+::: warn Label encoding abusif
 Encoder {Paris:0, Lyon:1, Nice:2} crée un *faux ordre* (« Nice > Lyon ») que le modèle croira réel. Pour des catégories sans ordre, utilise le one-hot.
 :::
 
@@ -105,11 +105,11 @@ X_train_s = sc.fit_transform(X_train)   # apprend μ, σ sur le TRAIN
 X_test_s  = sc.transform(X_test)        # applique SANS réapprendre
 ```
 
-::: info fit sur le train uniquement
+::: warn fit sur le train uniquement
 On apprend les paramètres (μ, σ) sur le **train**, puis on les applique au test. Faire `fit` sur l'ensemble complet = fuite de données (§6).
 :::
 
-::: info Les arbres s'en fichent
+::: data Les arbres s'en fichent
 Les modèles à base d'arbres (Random Forest, XGBoost) ne sont pas sensibles à l'échelle : le scaling y est inutile. Il est crucial pour les modèles « à distance » ou « à gradient ».
 :::
 
@@ -128,7 +128,7 @@ df["log_revenu"] = np.log1p(df["revenu"])     # atténue l'asymétrie
 df["weekend"] = df["date"].dt.dayofweek >= 5
 ```
 
-::: info Le secret des bons modèles
+::: data Le secret des bons modèles
 En pratique (et sur Kaggle), ce sont souvent les *features* intelligentes — pas l'algorithme — qui font la différence. Connaître le domaine métier est ici un superpouvoir.
 :::
 
@@ -141,7 +141,7 @@ La fuite = quand une information du futur ou du jeu de test « fuit » dans l'en
 - **Target encoding naïf** calculé sur tout le jeu → la cible fuit. ✅ Validation croisée interne.
 - **Doublons** présents dans train ET test → score gonflé.
 
-::: info La parade : le Pipeline
+::: example La parade : le Pipeline
 Enchaîner préprocessing + modèle dans un `Pipeline` scikit-learn garantit que chaque étape ne voit que le train à chaque pli de validation. (Module 5.)
 :::
 

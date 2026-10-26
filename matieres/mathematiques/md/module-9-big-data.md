@@ -11,11 +11,11 @@ objectifs: Comprendre le hachage et les collisions ; savoir ce qu'est un filtre 
 Une **fonction de hachage** \(h\) transforme une donnée (clé) de taille quelconque en un entier de taille fixe (l'empreinte), idéalement réparti uniformément. Propriétés voulues : rapide, déterministe, uniforme.
 :::
 
-::: info Collisions (lien Modules 1, 7)
+::: theorem Collisions (lien Modules 1, 7)
 Deux clés différentes peuvent avoir le même haché : c'est une **collision**. Par le principe des tiroirs, elles sont inévitables dès qu'il y a plus de clés que de cases. On les gère (chaînage, adressage ouvert) ou on les *exploite* (structures probabilistes ci-dessous).
 :::
 
-::: info BIG DATA Lien
+::: data BIG DATA Lien
 Hachage = base des **tables de hachage** (O(1) moyen), du **sharding** (répartir les données par \(h(\text{clé}) \bmod n\), lien congruence Module 1), du **consistent hashing** (équilibrage de charge, caches distribués).
 :::
 
@@ -34,11 +34,11 @@ Une collision de hachage se produit quand…
 Un **filtre de Bloom** teste l'appartenance à un ensemble de façon ultra-compacte. Un tableau de \(m\) bits + \(k\) fonctions de hachage. Pour *insérer* \(x\) : on met à 1 les bits \(h_1(x),\dots,h_k(x)\). Pour *tester* \(x\) : si l'un de ces bits est 0 → **absent à coup sûr** ; s'ils sont tous à 1 → **probablement présent**.
 :::
 
-::: info Compromis fondamental
+::: warn Compromis fondamental
 **Faux positifs possibles, faux négatifs impossibles.** On peut croire à tort qu'un élément est présent, jamais l'inverse. En échange : mémoire minuscule, tests en O(k). Taux de faux positifs ≈ \(\left(1 - e^{-kn/m}\right)^k\).
 :::
 
-::: info BIG DATA Lien
+::: data BIG DATA Lien
 Bases NoSQL (Cassandra, HBase, Bigtable) : éviter de lire le disque pour une clé absente. Navigateurs : URLs malveillantes. Caches, dédup, « cet utilisateur a-t-il déjà vu ce contenu ? ».
 :::
 
@@ -66,7 +66,7 @@ Quel type d'erreur un filtre de Bloom ne commet JAMAIS ?
 Compter le nombre d'**éléments distincts** (cardinalité) dans un flux massif, sans stocker tous les éléments. **HyperLogLog** estime ce nombre avec une précision ~2 % en utilisant seulement quelques **kilo-octets**, en observant le plus long préfixe de zéros dans les hachés (plus on voit de zéros, plus il y a probablement d'éléments distincts).
 :::
 
-::: info BIG DATA Lien
+::: data BIG DATA Lien
 « Combien de visiteurs uniques aujourd'hui ? » sur des milliards d'événements : Redis, Presto, BigQuery (`APPROX_COUNT_DISTINCT`) utilisent HyperLogLog. Compter l'exact coûterait trop de mémoire.
 :::
 
@@ -85,11 +85,11 @@ HyperLogLog sert à estimer…
 Pour deux ensembles \(A,B\) : \[ J(A,B) = \frac{|A\cap B|}{|A\cup B|} \in [0,1] \] 1 = identiques, 0 = disjoints. Mesure la similarité de deux ensembles (ex. mots de deux documents).
 :::
 
-::: info MinHash — l'astuce géniale
+::: theorem MinHash — l'astuce géniale
 En appliquant une permutation aléatoire \(h\) et en gardant le minimum des hachés, on a la propriété magique : \[ P\big(\min h(A) = \min h(B)\big) = J(A,B) \] En répétant avec \(k\) fonctions, on estime \(J\) en comparant de petites **signatures** au lieu des ensembles entiers. Compression énorme.
 :::
 
-::: info DATA Lien
+::: data DATA Lien
 Détection de **quasi-doublons** (pages web, articles), de plagiat, de similarité de documents à l'échelle du web.
 :::
 
@@ -117,7 +117,7 @@ La propriété clé de MinHash est que \(P(\min h(A)=\min h(B))\) égale…
 Problème : trouver les voisins proches parmi des milliards de vecteurs est trop coûteux en comparaison exhaustive (\(O(n^2)\)). **LSH** utilise des fonctions de hachage spéciales telles que les éléments **similaires** tombent dans la **même case** avec forte probabilité. On ne compare alors qu'au sein des cases.
 :::
 
-::: info IA BIG DATA Lien
+::: data IA BIG DATA Lien
 **Recherche de voisins approchés (ANN)** dans les bases vectorielles (recommandation, recherche d'images, RAG des LLM). Alternatives modernes : HNSW, FAISS. Transforme une recherche \(O(n)\) en quasi-\(O(1)\).
 :::
 
@@ -142,7 +142,7 @@ Les données arrivent en **flux continu**, vues une seule fois, trop volumineuse
 - **Reduce** : agréger les valeurs de chaque clé.
 :::
 
-::: info BIG DATA Lien
+::: data BIG DATA Lien
 Hadoop, Spark, Flink. Le fameux « word count » est le hello world de MapReduce. Le streaming alimente la détection de fraude en temps réel, les dashboards live, l'IoT.
 :::
 

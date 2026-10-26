@@ -1713,24 +1713,6 @@
 "s": "Rust",
 "emoji": "🦀",
 "color": "#f74c00",
-"type": "cours",
-"t": "Cursus Rust complet",
-"u": "matieres/rust/rust-cursus.html",
-"k": "ownership borrowing lifetimes traits cargo closures itérateurs concurrence enums pattern matching Result Option"
-},
-{
-"s": "Rust",
-"emoji": "🦀",
-"color": "#f74c00",
-"type": "culture",
-"t": "Culture & histoire de Rust",
-"u": "matieres/rust/rust-cursus.html",
-"k": "Graydon Hoare Mozilla Rust Foundation noyau Linux histoire philosophie sécurité mémoire"
-},
-{
-"s": "Rust",
-"emoji": "🦀",
-"color": "#f74c00",
 "type": "fiche",
 "t": "Antisèche Rust (cheat sheet)",
 "u": "matieres/rust/cheatsheet-rust.html",
@@ -1915,15 +1897,6 @@
 "t": "Aide-mémoire maths (formulaire)",
 "u": "matieres/mathematiques/aide-memoire.html",
 "k": "formulaire antisèche formules Bayes gradient entropie matrice cosinus régression Big-O combinatoire règles"
-},
-{
-"s": "Rust",
-"emoji": "🦀",
-"color": "#f74c00",
-"type": "matière",
-"t": "Rust",
-"u": "matieres/rust/rust-cursus.html",
-"k": "langage système"
 },
 {
 "s": "Portail",

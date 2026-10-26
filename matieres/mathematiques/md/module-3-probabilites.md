@@ -13,11 +13,11 @@ objectifs: Manier le vocabulaire probabiliste (univers, événements, indépenda
 - **Probabilité** \(P(A)\in[0,1]\).
 :::
 
-::: info Axiomes de Kolmogorov & règles
+::: theorem Axiomes de Kolmogorov & règles
 \[ 0\le P(A)\le 1,\quad P(\Omega)=1,\quad P(A\cup B)=P(A)+P(B)-P(A\cap B) \] Complémentaire : \(P(\bar A)=1-P(A)\). Si \(A,B\) incompatibles (\(A\cap B=\varnothing\)) : \(P(A\cup B)=P(A)+P(B)\).
 :::
 
-::: info Exemple
+::: example Exemple
 Dé équilibré : \(P(\text{pair})=\tfrac36=\tfrac12\). \(P(\text{pair ou} >4)=P(\{2,4,6\})+P(\{5\})=\tfrac36+\tfrac16=\tfrac46\) (5 est impair, aucune intersection avec pair sauf 6 déjà compté → on fait attention au crible).
 :::
 
@@ -49,11 +49,11 @@ Que vaut toujours \(P(\bar A)\) ?
 \(A\) et \(B\) sont **indépendants** ssi \(P(A\cap B)=P(A)P(B)\), c'est-à-dire \(P(A\mid B)=P(A)\) (savoir \(B\) n'apprend rien sur \(A\)).
 :::
 
-::: info Probabilités totales
+::: theorem Probabilités totales
 Si \(B_1,\dots,B_n\) forment une partition de \(\Omega\) : \[ P(A)=\sum_{i} P(A\mid B_i)\,P(B_i) \]
 :::
 
-::: info IA Lien
+::: data IA Lien
 L'hypothèse d'indépendance (naïve) est le cœur du classifieur **Naive Bayes** (anti-spam, classification de texte). Les **réseaux bayésiens** modélisent des dépendances conditionnelles complexes.
 :::
 
@@ -77,11 +77,11 @@ On tire 2 cartes sans remise dans un jeu de 52. Les deux tirages sont-ils indép
 
 ## 3. Théorème de Bayes ⭐
 
-::: info Formule de Bayes
+::: theorem Formule de Bayes
 \[ P(A\mid B) = \frac{P(B\mid A)\,P(A)}{P(B)} \] On **inverse** le conditionnement. \(P(A)\) = *a priori*, \(P(A\mid B)\) = *a posteriori* (après observation de \(B\)), \(P(B\mid A)\) = *vraisemblance*.
 :::
 
-::: info Exemple culte — test médical (piège d'intuition)
+::: example Exemple culte — test médical (piège d'intuition)
 Maladie touchant \(1\%\) de la population. Test : \(99\%\) de vrais positifs, \(5\%\) de faux positifs. Tu es positif. Quelle probabilité d'être malade ?
 
 \(P(M)=0{,}01\), \(P(+\mid M)=0{,}99\), \(P(+\mid \bar M)=0{,}05\).
@@ -91,7 +91,7 @@ Maladie touchant \(1\%\) de la population. Test : \(99\%\) de vrais positifs, \(
 \(P(M\mid +)=\dfrac{0{,}0099}{0{,}0594}\approx \mathbf{16{,}7\%}\) seulement ! La rareté de la maladie domine. C'est le **paradoxe du taux de base**.
 :::
 
-::: info IA DATA Lien
+::: data IA DATA Lien
 Bayes est partout : filtres anti-spam, diagnostic, A/B testing bayésien, mise à jour de croyances d'un modèle, détection de fraude. Toute l'**inférence bayésienne** en dépend.
 :::
 
@@ -151,7 +151,7 @@ Une **variable aléatoire** (VA) \(X\) associe un nombre à chaque résultat. **
 \[ f(x)=\frac{1}{\sigma\sqrt{2\pi}}\,e^{-\frac{(x-\mu)^2}{2\sigma^2}} \] Règle **68–95–99,7** : 68 % des valeurs dans \([\mu\pm\sigma]\), 95 % dans \([\mu\pm2\sigma]\), 99,7 % dans \([\mu\pm3\sigma]\).
 :::
 
-::: info DATA Lien
+::: data DATA Lien
 Poisson : requêtes serveur, arrivées de clics, pannes. Normale : erreurs de mesure, tailles, bruit. Binomiale : taux de conversion, A/B testing.
 :::
 
@@ -189,11 +189,11 @@ Quelle particularité a la loi de Poisson(λ) ?
 - **Variance** : \(\mathrm{Var}(X)=E[(X-E[X])^2]=E[X^2]-E[X]^2\). **Écart-type** : \(\sigma=\sqrt{\mathrm{Var}(X)}\).
 :::
 
-::: info Propriétés (à connaître)
+::: theorem Propriétés (à connaître)
 \[ E[aX+b]=aE[X]+b,\qquad \mathrm{Var}(aX+b)=a^2\mathrm{Var}(X) \] Linéarité de l'espérance (toujours vraie) : \(E[X+Y]=E[X]+E[Y]\). Si \(X,Y\) indépendants : \(\mathrm{Var}(X+Y)=\mathrm{Var}(X)+\mathrm{Var}(Y)\).
 :::
 
-::: info IA Lien — biais & variance
+::: data IA Lien — biais & variance
 Le compromis **biais-variance** gouverne le sur/sous-apprentissage. La variance mesure l'instabilité d'un modèle selon les données ; le biais, son erreur systématique.
 :::
 
@@ -217,15 +217,15 @@ Le compromis **biais-variance** gouverne le sur/sous-apprentissage. La variance 
 
 ## 7. Loi des grands nombres & Théorème central limite
 
-::: info Loi des grands nombres (LGN)
+::: theorem Loi des grands nombres (LGN)
 La moyenne empirique \(\bar X_n=\frac1n\sum X_i\) converge vers l'espérance \(\mu\) quand \(n\to\infty\). **Plus on a de données, plus la moyenne observée est fiable.** C'est le fondement de l'estimation.
 :::
 
-::: info Théorème central limite (TCL)
+::: theorem Théorème central limite (TCL)
 Pour \(n\) grand, la moyenne \(\bar X_n\) suit approximativement une **loi normale** : \[ \bar X_n \approx \mathcal N\!\left(\mu,\ \frac{\sigma^2}{n}\right) \] **Peu importe la loi de départ** (du moment que \(\sigma\) est fini). C'est pourquoi la gaussienne est partout.
 :::
 
-::: info BIG DATA Lien
+::: data BIG DATA Lien
 LGN = justification du **sampling** (échantillonnage) : estimer une statistique sur un échantillon plutôt que sur des téraoctets. TCL = base des **intervalles de confiance** et des tests A/B (Module 4).
 :::
 

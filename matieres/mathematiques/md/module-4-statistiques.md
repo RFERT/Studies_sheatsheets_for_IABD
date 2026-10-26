@@ -15,11 +15,11 @@ objectifs: Calculer et interpréter les statistiques descriptives ; comprendre l
 - **Quantiles** : quartiles Q1, Q2 (médiane), Q3 ; IQR = Q3−Q1.
 :::
 
-::: info Moyenne vs médiane
+::: warn Moyenne vs médiane
 Sur des salaires (distribution asymétrique), la **médiane** est bien plus représentative : quelques très hauts salaires tirent la moyenne vers le haut. Toujours regarder la distribution, pas qu'un seul chiffre (quartet d'Anscombe !).
 :::
 
-::: info DATA Lien
+::: data DATA Lien
 Boîte à moustaches (boxplot), détection d'**outliers** via l'IQR (au-delà de Q3 + 1,5·IQR), premiers pas de toute analyse exploratoire (EDA).
 :::
 
@@ -48,7 +48,7 @@ Pourquoi divise-t-on par \(n-1\) dans la variance empirique ?
 - **Corrélation de Pearson** : \(r=\dfrac{\mathrm{Cov}(X,Y)}{s_X s_Y}\in[-1,1]\) — intensité d'une relation *linéaire*.
 :::
 
-::: info Corrélation ≠ causalité
+::: warn Corrélation ≠ causalité
 Deux variables corrélées ne sont pas forcément liées causalement (variable cachée, hasard). Et \(r=0\) n'exclut pas une relation *non linéaire* (ex. \(y=x^2\)).
 :::
 
@@ -67,11 +67,11 @@ Le coefficient de corrélation de Pearson \(r\) mesure…
 Un **estimateur** \(\hat\theta\) calcule une quantité inconnue (ex. \(\bar x\) estime \(\mu\)). Bon estimateur = **sans biais** (\(E[\hat\theta]=\theta\)) et de **faible variance** (précis).
 :::
 
-::: info Intervalle de confiance (IC) pour une moyenne
+::: theorem Intervalle de confiance (IC) pour une moyenne
 Via le TCL, à 95 % : \[ \mathrm{IC}_{95\%} = \left[\bar x - 1{,}96\,\frac{s}{\sqrt n},\ \ \bar x + 1{,}96\,\frac{s}{\sqrt n}\right] \] Interprétation : si on répétait l'expérience, 95 % des IC construits contiendraient le vrai \(\mu\). La largeur décroît en \(1/\sqrt n\).
 :::
 
-::: info DATA BIG DATA Lien
+::: data DATA BIG DATA Lien
 Les « marges d'erreur » des sondages, les barres d'incertitude des dashboards, la taille d'échantillon nécessaire pour un A/B test : tout vient de l'IC.
 :::
 
@@ -107,11 +107,11 @@ Un bon estimateur est « sans biais ». Cela signifie…
 | On rejette \(H_0\) | **Erreur type I** (faux positif, proba α) | ✔ Bonne décision |
 | On garde \(H_0\) | ✔ Bonne décision | **Erreur type II** (faux négatif, proba β) |
 
-::: info Pièges classiques (très demandés)
+::: warn Pièges classiques (très demandés)
 La p-value n'est **PAS** « la probabilité que \(H_0\) soit vraie ». Ne pas rejeter \(H_0\) ≠ « \(H_0\) est vraie ». Et le **p-hacking** (tester plein de choses jusqu'à p<0,05) invalide les résultats.
 :::
 
-::: info DATA Lien
+::: data DATA Lien
 **A/B testing** = test d'hypothèses appliqué aux produits. La puissance (1−β) détermine la taille d'échantillon nécessaire.
 :::
 
@@ -152,7 +152,7 @@ On cherche \(\hat y = \beta_0 + \beta_1 x\) (ou \(\hat y = X\boldsymbol\beta\) e
 \(R^2\in[0,1]\) = proportion de variance expliquée par le modèle. \(R^2=1\) = ajustement parfait ; \(R^2=0\) = le modèle ne fait pas mieux que la moyenne.
 :::
 
-::: info IA Lien
+::: data IA Lien
 La régression linéaire est le « hello world » du ML supervisé. La **régularisation** (Ridge \(L_2\), Lasso \(L_1\)) évite le surapprentissage et gère la multicolinéarité.
 :::
 
@@ -180,7 +180,7 @@ Un \(R^2 = 0{,}85\) signifie…
 On choisit les paramètres \(\theta\) qui **maximisent la vraisemblance** des données observées : \(\hat\theta = \arg\max_\theta\ L(\theta) = \arg\max_\theta \prod_i P(x_i\mid\theta)\). En pratique on maximise la **log-vraisemblance** \(\sum_i \log P(x_i\mid\theta)\) (plus simple, mêmes maxima).
 :::
 
-::: info IA Lien fondamental
+::: data IA Lien fondamental
 Entraîner un modèle = souvent maximiser une vraisemblance = minimiser une **log-vraisemblance négative**. La **cross-entropy** (Module 8) en est un cas particulier. La régression par moindres carrés = MLE sous bruit gaussien.
 :::
 

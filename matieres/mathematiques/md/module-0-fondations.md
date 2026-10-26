@@ -26,7 +26,7 @@ Une **proposition** est un énoncé qui est soit **vrai** (V, ou 1), soit **faux
 | F | V | V | F | V | V | F |
 | F | F | V | F | F | V | V |
 
-::: info Piège classique — l'implication
+::: warn Piège classique — l'implication
 \(P \Rightarrow Q\) est **vraie** dès que \(P\) est fausse (« faux implique n'importe quoi »). Elle n'est fausse que dans le cas V ⇒ F. Exemple : « s'il fait \(-100°\)C alors je vole » est *vraie* car la prémisse est toujours fausse.
 :::
 
@@ -41,7 +41,7 @@ Une **tautologie** est une proposition toujours vraie. Quelques équivalences lo
 - **Distributivité :** \(P \wedge (Q \vee R) \Leftrightarrow (P\wedge Q)\vee(P\wedge R)\)
 - **Implication « déguisée » :** \((P \Rightarrow Q) \Leftrightarrow (\neg P \vee Q)\)
 
-::: info Exemple résolu
+::: example Exemple résolu
 Nions l'énoncé : « Si un nombre est pair *et* supérieur à 2, alors il n'est pas premier. »
 
 Posons \(P\) : « pair », \(Q\) : « \(>2\) », \(R\) : « premier ». L'énoncé est \((P \wedge Q) \Rightarrow \neg R\).
@@ -68,17 +68,17 @@ Quand une propriété dépend d'une variable (un **prédicat** \(P(x)\)), on qua
 - \(\exists!\, x \in E,\; P(x)\) : « il existe un **unique** \(x\) ».
 :::
 
-::: info Règle d'or — Négation des quantificateurs
+::: theorem Règle d'or — Négation des quantificateurs
 Pour nier, on **échange** \(\forall \leftrightarrow \exists\) et on nie le prédicat : \[ \neg\big(\forall x,\; P(x)\big) \Leftrightarrow \exists x,\; \neg P(x) \qquad\qquad \neg\big(\exists x,\; P(x)\big) \Leftrightarrow \forall x,\; \neg P(x) \]
 :::
 
-::: info L'ordre des quantificateurs compte !
+::: warn L'ordre des quantificateurs compte !
 \(\forall x\, \exists y,\; x < y\) (pour chaque \(x\), on peut trouver un \(y\) plus grand) — **VRAI** dans \(\mathbb{R}\).
 
 \(\exists y\, \forall x,\; x < y\) (il existe un \(y\) plus grand que *tous* les \(x\)) — **FAUX** dans \(\mathbb{R}\).
 :::
 
-::: info Exemple résolu — nier une définition de limite
+::: example Exemple résolu — nier une définition de limite
 « \(f\) converge vers \(\ell\) » s'écrit \(\forall \varepsilon >0,\; \exists N,\; \forall n \geq N,\; |u_n - \ell| < \varepsilon\).
 
 Sa négation (la suite ne converge pas vers \(\ell\)) :
@@ -117,7 +117,7 @@ Un **ensemble** est une collection d'objets appelés **éléments**. On note \(x
 | Complémentaire | \(\overline{A}\) ou \(A^c\) | \(\{x \in E : x \notin A\}\) |
 | Produit cartésien | \(A \times B\) | \(\{(a,b) : a\in A,\; b\in B\}\) |
 
-::: info Lois de De Morgan (ensembles)
+::: theorem Lois de De Morgan (ensembles)
 \[ \overline{A \cup B} = \overline{A} \cap \overline{B} \qquad\qquad \overline{A \cap B} = \overline{A} \cup \overline{B} \] On retrouve exactement les lois de De Morgan logiques — normal, un ensemble n'est qu'un prédicat déguisé !
 :::
 
@@ -127,7 +127,7 @@ Le **cardinal** \(|A|\) (ou \(\#A\)) est le nombre d'éléments. L'**ensemble de
 Si \(|E| = n\) alors \(|\mathcal{P}(E)| = 2^n\). Formule du crible : \(|A \cup B| = |A| + |B| - |A \cap B|\).
 :::
 
-::: info Exemple résolu
+::: example Exemple résolu
 Soit \(E = \{1,2,3\}\). Alors \(\mathcal{P}(E) = \{\emptyset, \{1\},\{2\},\{3\},\{1,2\},\{1,3\},\{2,3\},\{1,2,3\}\}\), soit \(2^3 = 8\) éléments. ✔
 :::
 
@@ -152,11 +152,11 @@ Une **application** \(f : E \to F\) associe à chaque \(x \in E\) (l'*ensemble d
 - **Bijective** : injective *et* surjective (correspondance parfaite 1-1). Elle admet alors une **réciproque** \(f^{-1}\).
 :::
 
-::: info Lien Data
+::: data Lien Data
 Une **fonction de hachage idéale** voudrait être injective (pas de collision). Un **index** de base de données est une bijection logique entre une clé et une ligne. L'**encodage one-hot** est une injection d'un ensemble de catégories vers \(\{0,1\}^n\).
 :::
 
-::: info Exemple résolu
+::: example Exemple résolu
 \(f:\mathbb{R}\to\mathbb{R},\; x\mapsto x^2\) n'est **ni** injective (\(f(-2)=f(2)\)) **ni** surjective (aucun \(x\) ne donne \(-1\)).
 
 Mais \(f:\mathbb{R}_{\geq 0}\to\mathbb{R}_{\geq 0},\; x\mapsto x^2\) est **bijective**, de réciproque \(y\mapsto \sqrt{y}\).
@@ -187,7 +187,7 @@ Pour montrer \(P \Rightarrow Q\), on montre \(\neg Q \Rightarrow \neg P\) (logiq
 
 On suppose \(P\) **et** \(\neg Q\), et on en déduit une contradiction.
 
-::: info Exemple culte — \(\sqrt{2}\) est irrationnel
+::: example Exemple culte — \(\sqrt{2}\) est irrationnel
 Supposons \(\sqrt2 = \tfrac{p}{q}\) **irréductible**. Alors \(p^2 = 2q^2\), donc \(p^2\) pair, donc \(p\) pair : \(p=2k\). D'où \(4k^2 = 2q^2\), soit \(q^2 = 2k^2\), donc \(q\) pair aussi. Mais alors \(p\) et \(q\) sont tous deux pairs — contradiction avec « irréductible ». ∎
 :::
 
@@ -206,13 +206,13 @@ Pour prouver « \(n^2\) impair \(\Rightarrow n\) impair », quelle méthode est 
 
 ## 6. Le raisonnement par récurrence
 
-::: info Principe de récurrence
+::: theorem Principe de récurrence
 1. **Initialisation** : montrer \(P(n_0)\).
 2. **Hérédité** : montrer \(\forall n \geq n_0,\; \big(P(n) \Rightarrow P(n+1)\big)\).
 3. **Conclusion** : alors \(P(n)\) est vraie pour tout \(n \geq n_0\).
 :::
 
-::: info Exemple résolu
+::: example Exemple résolu
 Montrons \(\displaystyle \sum_{k=1}^{n} k = \frac{n(n+1)}{2}\).
 
 **Initialisation** (\(n=1\)) : \(\sum = 1\) et \(\frac{1\cdot 2}{2} = 1\). ✔
@@ -220,11 +220,11 @@ Montrons \(\displaystyle \sum_{k=1}^{n} k = \frac{n(n+1)}{2}\).
 **Hérédité** : supposons \(\sum_{k=1}^n k = \frac{n(n+1)}{2}\). Alors \[\sum_{k=1}^{n+1} k = \frac{n(n+1)}{2} + (n+1) = (n+1)\Big(\frac{n}{2}+1\Big) = \frac{(n+1)(n+2)}{2}.\] C'est bien \(P(n+1)\). ∎
 :::
 
-::: info Erreurs qui coûtent cher
+::: warn Erreurs qui coûtent cher
 Oublier l'initialisation ; confondre « supposer \(P(n)\) » (autorisé, c'est l'hypothèse de récurrence) avec « supposer ce qu'on veut prouver ». Pour certaines suites, utiliser la **récurrence forte** : on suppose \(P(n_0),\dots,P(n)\) tous vrais.
 :::
 
-::: info Lien Data / Info
+::: data Lien Data / Info
 La récurrence est le pendant mathématique de la **récursivité** en programmation. Prouver qu'un algorithme récursif est correct = initialisation (cas de base) + hérédité (appel récursif). C'est aussi la base des preuves de complexité (ex. tri fusion en \(O(n\log n)\)).
 :::
 

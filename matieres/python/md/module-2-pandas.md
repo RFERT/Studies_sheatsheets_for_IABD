@@ -21,7 +21,7 @@ df = pd.DataFrame({
 })
 ```
 
-::: info Sous le capot
+::: data Sous le capot
 Chaque colonne d'un DataFrame est un tableau NumPy typé. Tout ce que tu as appris au Module 1 (vectorisation, masques) s'applique ici.
 :::
 
@@ -39,7 +39,7 @@ df["ville"].value_counts()      # fréquence des catégories
 df["age"].nunique()            # nombre de valeurs distinctes
 ```
 
-::: info La check-list d'exploration (EDA)
+::: example La check-list d'exploration (EDA)
 `.head()` → `.info()` → `.describe()` → `.isna().sum()` → `.value_counts()` sur les catégories. En 5 commandes tu « sens » un dataset.
 :::
 
@@ -69,7 +69,7 @@ df.iloc[:3, :2]            # bornes exclues (comme Python)
 | Clé | Étiquette (nom de ligne/colonne) | Position entière |
 | Bornes | Incluses | Exclues |
 
-::: info Confusion n°1
+::: warn Confusion n°1
 Avec `loc`, `0:2` renvoie 3 lignes (0, 1, 2) ; avec `iloc`, 2 lignes (0, 1). Choisis selon que tu raisonnes en *noms* ou en *positions*.
 :::
 
@@ -82,7 +82,7 @@ df[df["ville"].isin(["Paris", "Lyon"])]      # appartenance
 df.query("age > 24 and ville == 'Paris'")  # syntaxe lisible
 ```
 
-::: info SettingWithCopyWarning
+::: warn SettingWithCopyWarning
 Pour modifier un sous-ensemble, utilise `df.loc[masque, "col"] = valeur` plutôt que `df[masque]["col"] = ...` (qui opère sur une copie et n'a pas d'effet).
 :::
 
@@ -107,7 +107,7 @@ df = df.drop(columns=["age_mois"])
 df["ville"] = df["ville"].str.upper()         # accesseur .str vectorisé
 ```
 
-::: info Accesseurs
+::: data Accesseurs
 `.str` (texte), `.dt` (dates), `.cat` (catégories) appliquent des opérations vectorisées sur toute une colonne, sans boucle.
 :::
 
@@ -122,7 +122,7 @@ df["ville"].fillna("inconnu")       # impute une catégorie
 df.ffill()                      # propage la dernière valeur (séries temporelles)
 ```
 
-::: info Supprimer ou imputer ?
+::: warn Supprimer ou imputer ?
 Supprimer est simple mais perd de l'information (et peut biaiser). Imputer (médiane pour le numérique, mode/« inconnu » pour les catégories) préserve les lignes. Le bon choix dépend du *pourquoi* la donnée manque.
 :::
 
@@ -145,7 +145,7 @@ df.groupby("ville").agg(
 df.groupby(["ville", "majeur"])["age"].mean()
 ```
 
-::: info transform : agréger en gardant la forme
+::: example transform : agréger en gardant la forme
 ```
 # moyenne du groupe, alignée sur chaque ligne (utile pour centrer par groupe)
 df["age_moy_ville"] = df.groupby("ville")["age"].transform("mean")
@@ -187,7 +187,7 @@ pd.concat([df1, df2])              # empile les lignes (axis=0)
 pd.concat([df1, df2], axis=1)      # colle les colonnes
 ```
 
-::: info merge = JOIN
+::: data merge = JOIN
 `how="inner"` ↔ `INNER JOIN`, `how="left"` ↔ `LEFT JOIN`. Si tu connais SQL, tu connais déjà `merge`.
 :::
 
@@ -209,7 +209,7 @@ df["initiale"] = df["prenom"].apply(lambda s: s[0])
 df["age2"] = df["age"].map({25: "jeune"})   # remplacement par dict
 ```
 
-::: info apply est lent
+::: warn apply est lent
 Préfère toujours les opérations vectorisées (`.str`, `.dt`, arithmétique) ; `apply` boucle en Python. Garde-le pour la logique qui ne se vectorise pas.
 :::
 

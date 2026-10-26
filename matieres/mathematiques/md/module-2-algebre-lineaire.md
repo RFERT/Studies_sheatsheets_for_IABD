@@ -15,7 +15,7 @@ Un **vecteur** de \(\mathbb R^n\) est une liste ordonnée de \(n\) nombres : \(\
 Une **combinaison linéaire** des vecteurs \(\mathbf v_1,\dots,\mathbf v_k\) est \(\lambda_1\mathbf v_1 + \dots + \lambda_k\mathbf v_k\). L'ensemble de toutes ces combinaisons est le **sous-espace engendré** (span). C'est LE concept central : presque tout, en algèbre linéaire, est une histoire de combinaisons linéaires.
 :::
 
-::: info Lien Data
+::: data Lien Data
 Une ligne d'un dataset = un vecteur de features. Une image \(28\times 28\) = un vecteur de \(\mathbb R^{784}\). Un mot (word embedding) = un vecteur de \(\mathbb R^{300}\). **Faire de la Data, c'est géométriser les données en points/vecteurs.**
 :::
 
@@ -31,15 +31,15 @@ Norme euclidienne : \(\|\mathbf v\| = \sqrt{\mathbf v\cdot\mathbf v} = \sqrt{v_1
 Distance : \(d(\mathbf u,\mathbf v) = \|\mathbf u - \mathbf v\|\). Deux vecteurs sont **orthogonaux** ssi \(\mathbf u\cdot\mathbf v = 0\).
 :::
 
-::: info Similarité cosinus — l'outil roi en Data
+::: theorem Similarité cosinus — l'outil roi en Data
 \[ \cos\theta = \frac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|\,\|\mathbf v\|} \in [-1, 1] \] Proche de \(1\) = très similaires (même direction) ; \(0\) = orthogonaux (sans rapport) ; \(-1\) = opposés. Insensible à la *longueur* des vecteurs, seulement à leur *direction*.
 :::
 
-::: info Lien Data / IA
+::: data Lien Data / IA
 La similarité cosinus mesure la proximité de **documents** (TF-IDF), de **mots** (word2vec : « roi − homme + femme ≈ reine »), d'**utilisateurs** (reco). La **recherche sémantique** et les bases de données **vectorielles** (RAG des LLM) reposent dessus.
 :::
 
-::: info Exemple résolu
+::: example Exemple résolu
 \(\mathbf u=(1,2,2)\), \(\mathbf v=(2,0,1)\). \(\mathbf u\cdot\mathbf v = 2+0+2 = 4\). \(\|\mathbf u\|=\sqrt{1+4+4}=3\), \(\|\mathbf v\|=\sqrt{4+0+1}=\sqrt5\). Donc \(\cos\theta = \frac{4}{3\sqrt5}\approx 0{,}596\) — assez similaires.
 :::
 
@@ -62,15 +62,15 @@ Une **matrice** \(A\) de taille \(m\times n\) est un tableau de nombres \(A_{ij}
 Si \(A\) est \(m\times n\) et \(B\) est \(n\times p\), alors \(C=AB\) est \(m\times p\) avec \[ C_{ij} = \sum_{k=1}^n A_{ik}B_{kj} \] (ligne \(i\) de \(A\) « · » colonne \(j\) de \(B\)). ⚠️ **Non commutatif** : en général \(AB \neq BA\). Les dimensions intérieures doivent coïncider.
 :::
 
-::: info Idée clé — une matrice EST une transformation
+::: theorem Idée clé — une matrice EST une transformation
 Multiplier un vecteur par \(A\) (\(\mathbf x \mapsto A\mathbf x\)) applique une **transformation linéaire** : rotation, étirement, projection, cisaillement… Composer deux transformations = multiplier leurs matrices. C'est pourquoi une couche de réseau de neurones s'écrit \(\mathbf y = \sigma(W\mathbf x + \mathbf b)\).
 :::
 
-::: info Lien Data / IA
+::: data Lien Data / IA
 Un **dataset** = une matrice \(X\) (lignes = observations, colonnes = features). Un **batch** traversant un réseau = une suite de produits matriciels (c'est pour ça qu'on utilise des GPU !). La **rotation/augmentation d'images** = transformations linéaires.
 :::
 
-::: info Exemple résolu — produit
+::: example Exemple résolu — produit
 \(A=\begin{pmatrix}1&2\\0&1\end{pmatrix}\), \(\mathbf x=\begin{pmatrix}3\\4\end{pmatrix}\). Alors \(A\mathbf x = \begin{pmatrix}1\cdot3+2\cdot4\\0\cdot3+1\cdot4\end{pmatrix}=\begin{pmatrix}11\\4\end{pmatrix}\). (C'est un cisaillement horizontal.)
 :::
 
@@ -97,7 +97,7 @@ Un système linéaire s'écrit \(A\mathbf x = \mathbf b\). Le résoudre = trouve
 Le **rang** de \(A\) = nombre de lignes (ou colonnes) linéairement indépendantes = dimension de l'espace engendré par ses colonnes. Il mesure l'« information réelle » contenue dans la matrice.
 :::
 
-::: info Lien Data / IA
+::: data Lien Data / IA
 Un rang **faible** signifie que des features sont redondantes (corrélées) — c'est la **multicolinéarité**, qui perturbe la régression. Les **recommandations** (Netflix) reposent sur une *approximation de rang faible* de la matrice utilisateurs×films. Réduire la dimension = exploiter un rang effectif faible.
 :::
 
@@ -121,7 +121,7 @@ Les colonnes d'une matrice \(X\) (features) sont très corrélées. Son rang est
 \(A^{-1}\) vérifie \(AA^{-1}=A^{-1}A=I\) (identité). Elle existe ssi \(\det(A)\neq0\). Résoudre \(A\mathbf x=\mathbf b\) donne alors \(\mathbf x = A^{-1}\mathbf b\) (mais en pratique on résout sans inverser, c'est plus stable).
 :::
 
-::: info Attention numérique
+::: warn Attention numérique
 En Data, inverser une matrice presque singulière (\(\det\approx0\)) est **instable**. On préfère des méthodes robustes (QR, SVD, régularisation de Ridge qui ajoute \(\lambda I\) pour rendre la matrice inversible).
 :::
 
@@ -144,15 +144,15 @@ Un **vecteur propre** \(\mathbf v\neq\mathbf 0\) de \(A\) est un vecteur dont la
 Les valeurs propres sont les racines du **polynôme caractéristique** \(\det(A-\lambda I)=0\). Pour chaque \(\lambda\), on résout \((A-\lambda I)\mathbf v=\mathbf 0\) pour trouver les vecteurs propres.
 :::
 
-::: info Diagonalisation
+::: theorem Diagonalisation
 Si \(A\) (\(n\times n\)) possède \(n\) vecteurs propres indépendants, alors \(A = PDP^{-1}\) où \(D\) est diagonale (les valeurs propres) et \(P\) contient les vecteurs propres. Avantage : \(A^k = PD^kP^{-1}\) se calcule instantanément — utile pour les processus itératifs (chaînes de Markov, PageRank).
 :::
 
-::: info Lien Data / IA
+::: data Lien Data / IA
 **PageRank** = vecteur propre dominant de la matrice du web. La **PCA** = vecteurs propres de la matrice de covariance. La **stabilité** d'un système dynamique (et la convergence d'un entraînement) se lit sur les valeurs propres.
 :::
 
-::: info Exemple résolu
+::: example Exemple résolu
 \(A=\begin{pmatrix}2&1\\0&3\end{pmatrix}\). Polynôme : \(\det\begin{pmatrix}2-\lambda&1\\0&3-\lambda\end{pmatrix}=(2-\lambda)(3-\lambda)=0\). Valeurs propres : \(\lambda_1=2,\ \lambda_2=3\). (Pour une matrice triangulaire, les valeurs propres sont sur la diagonale !)
 :::
 
@@ -171,7 +171,7 @@ Si \(A\) (\(n\times n\)) possède \(n\) vecteurs propres indépendants, alors \(
 **Toute** matrice \(A\) (\(m\times n\), même non carrée) se décompose en \[ A = U\Sigma V^{\top} \] où \(U\) (\(m\times m\)) et \(V\) (\(n\times n\)) sont **orthogonales** (rotations) et \(\Sigma\) est « diagonale » avec les **valeurs singulières** \(\sigma_1\geq\sigma_2\geq\dots\geq0\) (l'importance de chaque direction). Interprétation : *toute transformation linéaire = rotation → étirement → rotation*.
 :::
 
-::: info Approximation de rang faible (le super-pouvoir)
+::: theorem Approximation de rang faible (le super-pouvoir)
 En ne gardant que les \(k\) plus grandes valeurs singulières, on obtient la **meilleure** approximation de \(A\) de rang \(k\) (théorème d'Eckart–Young). C'est la base de la **compression**, du **débruitage** et des **systèmes de recommandation**.
 :::
 
@@ -186,7 +186,7 @@ Objectif : réduire la dimension en gardant le maximum de **variance**. Recette 
 Équivalent à faire la SVD de \(X\) centrée. Les composantes principales sont orthogonales et classées par variance décroissante.
 :::
 
-::: info Lien Data / IA
+::: data Lien Data / IA
 **PCA :** visualiser des données en 2D, réduire le bruit, accélérer l'entraînement, lutter contre la malédiction de la dimension. **SVD :** compression d'images, LSA (sémantique latente en NLP), recommandation (Netflix Prize), pseudo-inverse pour les moindres carrés.
 :::
 

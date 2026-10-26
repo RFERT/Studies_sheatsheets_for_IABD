@@ -141,7 +141,8 @@
   function addManifestToMenu(menu) {
     ensureManifest(function () {
       if (!window.COURS || !Array.isArray(window.COURS.subjects)) return;
-      var anchor = menu.querySelector('a[href*="rust-cursus"]');
+      var anchor = menu.querySelector('a[href*="matieres/python/index"]');
+      if (!anchor) anchor = menu.querySelector('.xnav-lbl');
       if (!anchor) return;
       var frag = window.COURS.subjects
         .filter(function (s) { return s.modules && s.modules.length; })
@@ -159,7 +160,6 @@
     { lbl: "Matières" },
     { e: "∑", t: "Mathématiques", h: root + "matieres/mathematiques/index.html" },
     { e: "🐍", t: "Python & Data Science", h: root + "matieres/python/index.html" },
-    { e: "🦀", t: "Rust", h: root + "matieres/rust/rust-cursus.html" },
     { sep: 1 },
     { lbl: "Antisèches" },
     { e: "∑", t: "Aide-mémoire maths", h: root + "matieres/mathematiques/aide-memoire.html" },

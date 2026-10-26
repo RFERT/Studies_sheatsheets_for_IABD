@@ -28,7 +28,8 @@ matieres/
   cours.js               MANIFESTE des cours Markdown (source unique)
   _MODELE-de-cours.md    Modèle + syntaxe pour créer un cours
   mathematiques/         Cours de maths (modules, fiches, examen blanc, aide-mémoire)
-  rust/                  Cursus Rust + révision express + antisèche
+  rust/                  Cours Rust (Markdown, 21 modules) + révision express + antisèche
+                         (rust-cursus.html = ancienne version, archivée)
   python/                Python & Data Science (6 modules, fiches, aide-mémoire)
   git/                   Exemple de cours « industrialisé » (Markdown pur)
 ```
@@ -46,8 +47,8 @@ matieres/
 - **Flashcards** à répétition espacée (SM-2 simplifié), **quiz mélangeables**, **mode examen
   chronométré** (timer + score), **objectif hebdomadaire** et **calendrier d'activité**.
 - **PWA** installable et consultable **hors-ligne** (manifest + service worker).
-- **Cursus Rust** : navigation groupée par niveau + **liens profonds par ancre**
-  (`rust-cursus.html#m5` ouvre le Module 5 ; URLs partageables, back/forward navigateur).
+- **Cours Rust** (16 modules + checkpoints + examen final) : entièrement en **Markdown**, rendu par le
+  moteur de cours unifié (même UI que les autres matières). L'ancienne appli `rust-cursus.html` est archivée.
 - **Export PDF** des cours de maths (bouton 🖨️ ou impression du navigateur).
 - **Thème clair/sombre** et design **responsive** mobile.
 

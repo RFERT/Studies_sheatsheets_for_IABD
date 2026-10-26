@@ -11,7 +11,8 @@ utilisable sur PC et sur téléphone (Samsung S26 Ultra), hors-ligne, et publiab
 ## 2. État actuel (résumé)
 | Domaine | Contenu |
 |---|---|
-| Matières | **Mathématiques** (modules 0 à 9 + examen blanc + fiches `.md` + aide-mémoire), **Python & Data Science** (modules 0 à 5 + fiches + aide-mémoire), **Rust** (cursus 117 questions + révision express + antisèche) |
+| Matières | **Mathématiques** (modules 0 à 9 + examen blanc + fiches `.md` + aide-mémoire), **Python & Data Science** (modules 0 à 5 + fiches + aide-mémoire), **Rust** (16 modules + checkpoints + examen final, **en Markdown** via le moteur), **Machine Learning** (en Markdown) |
+| Moteur de cours | Enrichi : callouts `def/theorem/example/data/py/why/jobs`…, coloration de code, bouton copier, temps de lecture, culture stylée (noms + liens pills), sommaire auto. Qualité au niveau des cours codés main |
 | Portail | tableau de bord (progression, séries, objectif hebdo, calendrier d'activité), recherche globale, favoris, reprise du dernier module |
 | Outils | navbar commune, Pomodoro, couleur d'accent, flashcards (répétition espacée), quiz mélangeables, mode examen chronométré, export PDF (maths) |
 | Technique | PWA (manifest + service worker), thème clair/sombre, responsive mobile, guides « accès mobile » et « GitHub Pages » |

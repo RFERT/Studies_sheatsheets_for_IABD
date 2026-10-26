@@ -148,17 +148,24 @@
       var doneBtn = '<button class="done-btn' + (isDone ? " is-done" : "") + '" id="done-btn">' +
         (isDone ? "✓ Module terminé" : "Marquer ce module comme terminé") + "</button>";
 
+      // temps de lecture estimé
+      var words = parsed.html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+      var readMin = Math.max(1, Math.round(words / 180));
+      var readChip = '<div class="readtime">⏱️ ~' + readMin + " min de lecture · " +
+        parsed.headings.length + " section" + (parsed.headings.length > 1 ? "s" : "") + "</div>";
+
       host.className = "course-wrap";
       host.innerHTML =
         '<div class="breadcrumb"><a href="index.html">Accueil</a> › ' +
         '<a href="cours.html?c=' + encodeURIComponent(subject.code) + '">' + esc(subject.name) + "</a> › " + esc(title) + "</div>" +
         "<h1>" + esc(title) + "</h1>" +
         (meta.subtitle ? '<p class="lede">' + window.MD.inline(meta.subtitle) + "</p>" : "") +
-        domains + chips + objectifs + toc +
+        domains + chips + readChip + objectifs + toc +
         '<div class="content">' + parsed.html + "</div>" +
         '<div class="lesson-end">' + doneBtn + "</div>" + prevnext;
 
       setBrand(subject);
+      enhanceContent(host);
       wireQuizzes(host);
       wireDone(subject, module, host);
       typeset(host);
@@ -170,6 +177,97 @@
         "<p>Si tu ouvres le site par double-clic (<code>file://</code>), certains navigateurs bloquent la lecture des fichiers locaux. " +
         "Ouvre-le via <b>GitHub Pages</b>, ou lance un petit serveur local : <code>python -m http.server</code> puis va sur <code>http://localhost:8000</code>.</p>" +
         '<p><a class="btn" href="cours.html?c=' + encodeURIComponent(subject.code) + '">← Retour à la matière</a></p></div>';
+    });
+  }
+
+  /* ---------- Enrichissement du contenu rendu ---------- */
+  function enhanceContent(host) {
+    try { enhanceCulture(host); } catch (e) {}
+    try { addCopyButtons(host); } catch (e) {}
+    try { highlightCode(host); } catch (e) {}
+  }
+
+  // Culture : liste de personnes -> .names ; liste de liens seuls -> .clinks (pills)
+  function enhanceCulture(host) {
+    host.querySelectorAll(".culture ul").forEach(function (ul) {
+      var lis = Array.prototype.slice.call(ul.children).filter(function (n) { return n.tagName === "LI"; });
+      if (!lis.length) return;
+      var allLinks = lis.every(function (li) {
+        var a = li.querySelector("a");
+        return a && li.textContent.trim() === a.textContent.trim();
+      });
+      if (allLinks) {
+        var div = document.createElement("div");
+        div.className = "clinks";
+        lis.forEach(function (li) { div.appendChild(li.querySelector("a")); });
+        ul.parentNode.replaceChild(div, ul);
+        return;
+      }
+      var hasNames = lis.some(function (li) { return li.querySelector("strong, b"); });
+      if (hasNames) ul.classList.add("names");
+    });
+  }
+
+  // Bouton « Copier » sur chaque bloc de code
+  function addCopyButtons(host) {
+    host.querySelectorAll("pre.code").forEach(function (pre) {
+      var btn = document.createElement("button");
+      btn.className = "copy-btn"; btn.type = "button"; btn.textContent = "Copier";
+      btn.addEventListener("click", function () {
+        var code = pre.querySelector("code");
+        var txt = code ? code.textContent : pre.textContent;
+        var done = function () { btn.textContent = "Copié ✓"; btn.classList.add("ok");
+          setTimeout(function () { btn.textContent = "Copier"; btn.classList.remove("ok"); }, 1400); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(txt).then(done, function () {});
+        } else {
+          var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta);
+          ta.select(); try { document.execCommand("copy"); done(); } catch (e) {} ta.remove();
+        }
+      });
+      pre.appendChild(btn);
+    });
+  }
+
+  // Coloration syntaxique légère et robuste (une seule passe, ne touche que le texte du <code>)
+  var KEYWORDS = {
+    rust: "as async await break const continue crate dyn else enum extern false fn for if impl in let loop match mod move mut pub ref return self Self static struct super trait true type unsafe use where while",
+    python: "and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield True False None",
+    bash: "if then else elif fi for while do done case esac function in return export local echo cd",
+    sql: "select from where group by order having join left right inner outer on as insert update delete into values create table drop alter index distinct limit union and or not null",
+    js: "var let const function return if else for while do switch case break continue new this typeof instanceof class extends super import export default await async yield true false null undefined"
+  };
+  function escHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function highlightCode(host) {
+    host.querySelectorAll("pre.code[data-lang]").forEach(function (pre) {
+      var lang = (pre.getAttribute("data-lang") || "").toLowerCase();
+      var map = { js: "js", javascript: "js", ts: "js", typescript: "js", py: "python", python: "python",
+        rust: "rust", rs: "rust", bash: "bash", sh: "bash", shell: "bash", console: "bash", toml: null, sql: "sql" };
+      if (!(lang in map)) return;
+      var key = map[lang];
+      if (!key) return;
+      var code = pre.querySelector("code");
+      if (!code || code.querySelector("span")) return;
+      var comment = (key === "python" || key === "bash") ? "#[^\\n]*"
+        : (key === "sql" ? "--[^\\n]*" : "\\/\\/[^\\n]*");
+      var kw = KEYWORDS[key].split(" ").join("|");
+      var parts = [
+        '"(?:[^"\\\\]|\\\\.)*"', "'(?:[^'\\\\]|\\\\.)*'",   // 1 chaînes
+        comment,                                              // 2 commentaires
+        "\\b(?:" + kw + ")\\b",                              // 3 mots-clés
+        "\\b\\d[\\d_.]*\\b",                                 // 4 nombres
+        "[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()"                 // 5 appels de fonction
+      ];
+      var re = new RegExp("(" + parts[0] + "|" + parts[1] + ")|(" + parts[2] + ")|(" + parts[3] + ")|(" + parts[4] + ")|(" + parts[5] + ")", "g");
+      var src = escHtml(code.textContent);
+      code.innerHTML = src.replace(re, function (m, str, com, k, num, fn) {
+        if (str !== undefined) return '<span class="tok-str">' + m + "</span>";
+        if (com !== undefined) return '<span class="tok-com">' + m + "</span>";
+        if (k !== undefined) return '<span class="tok-kw">' + m + "</span>";
+        if (num !== undefined) return '<span class="tok-num">' + m + "</span>";
+        if (fn !== undefined) return '<span class="tok-fn">' + m + "</span>";
+        return m;
+      });
     });
   }
 
