@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Module 10 — Combinatoire avancée : dénombrer sans se tromper</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, svg: { fontCache: "global" } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">∑</span> Maths pour la Data &amp; l'IA</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Module 10</div>
+    <h1>Module 10 — Combinatoire avancée</h1>
+    <p class="subtitle">Le Module 7 posait les bases du dénombrement. Ici on va <strong>beaucoup plus loin</strong> : les quatre modèles de tirage, les permutations d'objets répétés, les étoiles &amp; barres, le crible de Poincaré, les dérangements, les nombres de Catalan et de Stirling. Compter proprement, c'est la compétence qui sous-tend les probabilités, la complexité et une bonne partie du feature engineering.</p>
+
+    <div class="domains">
+      <span class="domain data"><span class="dot"></span>DATA</span>
+      <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+      <span class="domain ia"><span class="dot"></span>IA</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Objectifs</span>
+      Choisir la bonne formule selon <em>ordre</em> et <em>répétition</em> ; maîtriser permutations, arrangements, combinaisons (avec ou sans répétition) ; appliquer le binôme, le multinôme et le triangle de Pascal ; dénombrer par <strong>inclusion-exclusion</strong> ; connaître dérangements, nombres de Catalan et de Stirling ; relier chaque outil à un usage Data/IA concret.
+    </div>
+
+    <div class="callout warn">
+      <span class="label">⚠️ Prérequis</span>
+      Module 0 (ensembles, fonctions, récurrence) et Module 7 (principes additif/multiplicatif, factorielle, Big-O). On réutilise aussi la notation \(\binom{n}{k}\) et le principe des tiroirs.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#modeles">Les 4 modèles de tirage (le tableau à retenir)</a></li>
+        <li><a href="#perm">Permutations &amp; anagrammes</a></li>
+        <li><a href="#arr">Arrangements &amp; combinaisons</a></li>
+        <li><a href="#binome">Binôme, Pascal &amp; identités</a></li>
+        <li><a href="#etoiles">Étoiles &amp; barres (répétition non ordonnée)</a></li>
+        <li><a href="#multi">Multinôme &amp; surjections</a></li>
+        <li><a href="#crible">Inclusion-exclusion &amp; dérangements</a></li>
+        <li><a href="#nombres">Catalan, Stirling, Bell</a></li>
+        <li><a href="#data">Domaines, usages &amp; métiers</a></li>
+        <li><a href="#exos">Exercices de synthèse</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section class="block" id="modeles">
+      <h2>1. Les 4 modèles de tirage</h2>
+      <p>Presque tout problème de dénombrement revient à tirer \(k\) éléments parmi \(n\). Deux questions tranchent le choix de formule :</p>
+      <ul>
+        <li><strong>L'ordre compte-t-il ?</strong> (une suite \( (A,B) \) diffère-t-elle de \( (B,A) \) ?)</li>
+        <li><strong>La répétition est-elle permise ?</strong> (peut-on reprendre le même élément ?)</li>
+      </ul>
+      <div class="callout def">
+        <span class="label">Le tableau maître</span>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Modèle</th><th>Ordre</th><th>Répétition</th><th>Formule</th><th>Nom</th></tr></thead>
+            <tbody>
+              <tr><td>Listes</td><td>oui</td><td>oui</td><td>\(n^k\)</td><td>\(k\)-uplets</td></tr>
+              <tr><td>Arrangements</td><td>oui</td><td>non</td><td>\(\dfrac{n!}{(n-k)!}\)</td><td>\(A_n^k\)</td></tr>
+              <tr><td>Combinaisons</td><td>non</td><td>non</td><td>\(\dbinom{n}{k}\)</td><td>\(C_n^k\)</td></tr>
+              <tr><td>Multi-ensembles</td><td>non</td><td>oui</td><td>\(\dbinom{n+k-1}{k}\)</td><td>étoiles &amp; barres</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Réflexe</span>
+        Avant toute formule, dis à voix haute : « ordre : oui/non, répétition : oui/non ». 90 % des erreurs de combinatoire viennent d'un mauvais classement dans ce tableau.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">On distribue 3 médailles distinctes (or, argent, bronze) à 8 athlètes, un athlète ne pouvant en gagner qu'une. Quel modèle ?</div>
+        <div class="options">
+          <div class="opt">Combinaisons \(\binom{8}{3}\)</div>
+          <div class="opt">Arrangements \(A_8^3 = 8\cdot7\cdot6\)</div>
+          <div class="opt">Listes \(8^3\)</div>
+          <div class="opt">Étoiles &amp; barres \(\binom{10}{3}\)</div>
+        </div>
+        <div class="feedback" data-explain="L'ordre compte (or ≠ argent) et pas de répétition (un athlète = une médaille) : arrangement. \(A_8^3 = 8\cdot7\cdot6 = 336\)."></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="perm">
+      <h2>2. Permutations &amp; anagrammes</h2>
+      <div class="callout def">
+        <span class="label">Permutation</span>
+        Une permutation de \(n\) objets <strong>distincts</strong> est un ordre total de ces objets. Il y en a \(n! = n\times(n-1)\times\dots\times 1\). C'est le cas « ordre oui, répétition non » avec \(k=n\) : \(A_n^n = n!\).
+      </div>
+      <div class="callout def">
+        <span class="label">Permutations avec objets répétés (anagrammes)</span>
+        Si parmi \(n\) objets certains sont identiques, répartis en groupes de tailles \(n_1,\dots,n_m\) (avec \(n_1+\dots+n_m=n\)), le nombre d'arrangements distincts est
+        \[ \binom{n}{n_1,n_2,\dots,n_m} = \frac{n!}{n_1!\,n_2!\cdots n_m!}. \]
+        On divise par les permutations <em>internes</em> à chaque groupe, qui ne produisent rien de nouveau.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple — MISSISSIPPI</span>
+        11 lettres : M(1), I(4), S(4), P(2). Anagrammes distincts :
+        \[ \frac{11!}{1!\,4!\,4!\,2!} = \frac{39\,916\,800}{1\cdot24\cdot24\cdot2} = 34\,650. \]
+      </div>
+      <div class="callout warn">
+        <span class="label">⚠️ Piège</span>
+        \(0! = 1\) (par convention, et c'est cohérent : il y a exactement une façon d'ordonner l'ensemble vide). Oublier cela fait exploser les formules avec \((n-k)!\) quand \(k=n\).
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Combien d'anagrammes distincts du mot <strong>ANANAS</strong> ?</div>
+        <div class="options">
+          <div class="opt">720</div>
+          <div class="opt">120</div>
+          <div class="opt">60</div>
+          <div class="opt">30</div>
+        </div>
+        <div class="feedback" data-explain="A(3), N(2), S(1), total 6 lettres : \(\frac{6!}{3!\,2!\,1!} = \frac{720}{6\cdot2} = 60\)."></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="arr">
+      <h2>3. Arrangements &amp; combinaisons</h2>
+      <div class="callout def">
+        <span class="label">Arrangement \(A_n^k\) (ordre, sans répétition)</span>
+        \[ A_n^k = \frac{n!}{(n-k)!} = n(n-1)\cdots(n-k+1). \]
+      </div>
+      <div class="callout def">
+        <span class="label">Combinaison \(\binom{n}{k}\) (sans ordre, sans répétition)</span>
+        \[ \binom{n}{k} = \frac{A_n^k}{k!} = \frac{n!}{k!\,(n-k)!}. \]
+        On divise l'arrangement par \(k!\) car les \(k!\) ordres d'un même sous-ensemble sont comptés une seule fois.
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Lien fondamental</span>
+        « Choisir puis ordonner » : \(A_n^k = \binom{n}{k}\times k!\). Beaucoup de problèmes se résolvent en séparant le <em>choix</em> (combinaison) de l'<em>ordonnancement</em> (permutation).
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1 — lecture de formule</strong></div>
+        <div class="qtext">Au poker, une « main » est un ensemble de 5 cartes (l'ordre de distribution n'a aucune importance) parmi 52. Combien de mains possibles ?</div>
+        <div class="options">
+          <div class="opt">\(\binom{52}{5} = 2\,598\,960\)</div>
+          <div class="opt">\(A_{52}^5 = 311\,875\,200\)</div>
+          <div class="opt">\(52^5\)</div>
+          <div class="opt">\(5! \times 52\)</div>
+        </div>
+        <div class="feedback" data-explain="L'ordre n'a pas d'importance et pas de répétition (une carte unique) : combinaison. \(\binom{52}{5}=2\,598\,960\). Choisir \(A_{52}^5\) reviendrait à distinguer l'ordre de distribution, ce qui surcompte d'un facteur \(5!\)."></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="binome">
+      <h2>4. Binôme de Newton, Pascal &amp; identités</h2>
+      <div class="callout def">
+        <span class="label">Binôme de Newton</span>
+        \[ (x+y)^n = \sum_{k=0}^{n} \binom{n}{k}\,x^k\,y^{\,n-k}. \]
+        Interprétation combinatoire : développer le produit de \(n\) facteurs \((x+y)\), c'est choisir dans combien de facteurs on prend \(x\) — d'où le \(\binom{n}{k}\).
+      </div>
+      <div class="callout def">
+        <span class="label">Relation de Pascal &amp; symétrie</span>
+        \[ \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}, \qquad \binom{n}{k} = \binom{n}{n-k}. \]
+        Pascal se lit « l'élément \(k\) est-il dans mon sous-ensemble ? » : soit oui (reste \(\binom{n-1}{k-1}\)), soit non (reste \(\binom{n-1}{k}\)).
+      </div>
+      <div class="callout info">
+        <span class="label">Identités utiles</span>
+        <ul>
+          <li>Somme d'une ligne : \(\displaystyle\sum_{k=0}^{n}\binom{n}{k} = 2^n\) (nombre total de sous-ensembles).</li>
+          <li>Somme alternée : \(\displaystyle\sum_{k=0}^{n}(-1)^k\binom{n}{k} = 0\) (pour \(n\ge 1\)).</li>
+          <li>Vandermonde : \(\displaystyle\sum_{k}\binom{m}{k}\binom{n}{p-k} = \binom{m+n}{p}\).</li>
+        </ul>
+      </div>
+      <div class="callout warn">
+        <span class="label">⚠️ Piège fréquent (⭐)</span>
+        \(\sum_{k}\binom{n}{k} = 2^n\) explique pourquoi la <strong>sélection de variables</strong> (feature selection) est combinatoirement explosive : tester tous les sous-ensembles de \(n\) features, c'est \(2^n\) modèles. Pour \(n=40\), c'est déjà \(\approx 10^{12}\) — infaisable, d'où les méthodes gloutonnes/régularisées.
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1 — prédiction</strong></div>
+        <div class="qtext">Quel est le coefficient de \(x^2\) dans le développement de \((1+x)^5\) ?</div>
+        <div class="options">
+          <div class="opt">5</div>
+          <div class="opt">25</div>
+          <div class="opt">32</div>
+          <div class="opt">10</div>
+        </div>
+        <div class="feedback" data-explain="Coefficient de \(x^2\) = \(\binom{5}{2} = \frac{5\cdot4}{2} = 10\). La somme de toute la ligne (1,5,10,10,5,1) vaut \(2^5 = 32\)."></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="etoiles">
+      <h2>5. Étoiles &amp; barres : répétition sans ordre</h2>
+      <div class="callout def">
+        <span class="label">Le dernier coin du tableau</span>
+        Le nombre de façons de choisir \(k\) éléments parmi \(n\) types <strong>avec répétition et sans ordre</strong> (un multi-ensemble) est
+        \[ \left(\!\!\binom{n}{k}\!\!\right) = \binom{n+k-1}{k} = \binom{n+k-1}{\,n-1\,}. \]
+      </div>
+      <div class="callout example">
+        <span class="label">Pourquoi « étoiles &amp; barres »</span>
+        Compter les solutions entières \(\ge 0\) de \(x_1+x_2+\dots+x_n = k\) revient à aligner \(k\) étoiles et \(n-1\) barres de séparation : on choisit la position des \(n-1\) barres parmi \(n-1+k\) places, soit \(\binom{n+k-1}{n-1}\).
+        \[ \underbrace{\star\star}_{x_1=2}\;\big|\;\underbrace{}_{x_2=0}\;\big|\;\underbrace{\star}_{x_3=1} \]
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Variante « parts strictement positives »</span>
+        Pour \(x_i \ge 1\) (compositions de \(k\) en \(n\) parts positives), on pose \(y_i = x_i-1\) et on retombe sur \(\binom{k-1}{n-1}\).
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">On répartit 10 bonbons <em>identiques</em> entre 4 enfants (un enfant peut n'en recevoir aucun). Combien de répartitions ?</div>
+        <div class="options">
+          <div class="opt">\(4^{10}\)</div>
+          <div class="opt">\(\binom{10}{4} = 210\)</div>
+          <div class="opt">\(\binom{13}{3} = 286\)</div>
+          <div class="opt">\(10!/4!\)</div>
+        </div>
+        <div class="feedback" data-explain="Objets identiques (sans ordre), répétition permise : étoiles &amp; barres. Solutions de \(x_1+\dots+x_4=10\), \(x_i\ge0\) : \(\binom{10+4-1}{4-1}=\binom{13}{3}=286\). \(4^{10}\) compterait des bonbons distincts et ordonnés."></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="multi">
+      <h2>6. Multinôme &amp; surjections</h2>
+      <div class="callout def">
+        <span class="label">Coefficient multinomial</span>
+        Généralisation du binôme à \(m\) termes :
+        \[ (x_1+\dots+x_m)^n = \sum_{n_1+\dots+n_m=n} \binom{n}{n_1,\dots,n_m}\,x_1^{n_1}\cdots x_m^{n_m}, \quad \binom{n}{n_1,\dots,n_m}=\frac{n!}{n_1!\cdots n_m!}. \]
+        C'est exactement le compteur d'anagrammes de la section 2 : répartir \(n\) positions en \(m\) catégories de tailles \(n_i\).
+      </div>
+      <div class="callout def">
+        <span class="label">Surjections (répartir sans boîte vide)</span>
+        Le nombre d'applications <strong>surjectives</strong> d'un ensemble à \(n\) éléments vers un ensemble à \(k\) éléments :
+        \[ \text{Surj}(n,k) = \sum_{j=0}^{k} (-1)^j \binom{k}{j}(k-j)^n = k!\,S(n,k), \]
+        où \(S(n,k)\) est le nombre de Stirling de 2ᵉ espèce (section 8). C'est une application directe du crible (section 7) : on retire les cas où au moins une image est manquante.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 6.1 — modélisation</strong></div>
+        <div class="qtext">On affecte 5 tâches distinctes à 3 serveurs distincts, <em>chaque serveur devant recevoir au moins une tâche</em>. Quelle quantité calcule-t-on ?</div>
+        <div class="options">
+          <div class="opt">\(3^5\) (toutes affectations)</div>
+          <div class="opt">le nombre de surjections de 5 vers 3</div>
+          <div class="opt">\(\binom{5}{3}\)</div>
+          <div class="opt">\(5!\)</div>
+        </div>
+        <div class="feedback" data-explain="Tâches et serveurs distincts, contrainte « aucun serveur vide » = surjection d'un 5-ensemble vers un 3-ensemble. \(\text{Surj}(5,3)=3^5-\binom{3}{1}2^5+\binom{3}{2}1^5 = 243-96+3 = 150\). \(3^5=243\) compterait aussi les cas avec serveur inactif."></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="block" id="crible">
+      <h2>7. Inclusion-exclusion &amp; dérangements</h2>
+      <div class="callout def">
+        <span class="label">Principe d'inclusion-exclusion (crible de Poincaré)</span>
+        \[ \Big|\bigcup_{i=1}^{n} A_i\Big| = \sum_i |A_i| - \sum_{i<j}|A_i\cap A_j| + \sum_{i<j<l}|A_i\cap A_j\cap A_l| - \dots + (-1)^{n-1}\Big|\bigcap_i A_i\Big|. \]
+        On ajoute les tailles, on retire les intersections doubles (comptées deux fois), on remet les triples, etc.
+      </div>
+      <div class="callout def">
+        <span class="label">Dérangements \(D_n\)</span>
+        Un dérangement est une permutation sans point fixe (personne ne retrouve sa place). Par inclusion-exclusion :
+        \[ D_n = n!\sum_{k=0}^{n}\frac{(-1)^k}{k!} \quad\Longrightarrow\quad \frac{D_n}{n!}\xrightarrow[n\to\infty]{}\frac{1}{e}\approx 0{,}3679. \]
+        Remarquable : la probabilité qu'une permutation aléatoire n'ait <em>aucun</em> point fixe tend vers \(1/e\), quasi indépendamment de \(n\).
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple — problème des chapeaux</span>
+        \(n\) invités déposent leur chapeau ; on les rend au hasard. Probabilité que personne ne récupère le sien : \(D_n/n! \approx 1/e\). Pour \(n=5\) : \(D_5 = 44\), soit \(44/120 \approx 36{,}7\,\%\).
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 7.1 — compréhension</strong></div>
+        <div class="qtext">Pourquoi divise-t-on par inclusion-exclusion plutôt que de compter directement les dérangements ?</div>
+        <div class="options">
+          <div class="opt">Parce qu'il est plus simple de retirer les permutations qui ont au moins un point fixe que de les éviter dès le départ</div>
+          <div class="opt">Parce que \(D_n = n! - 1\)</div>
+          <div class="opt">Parce que les dérangements n'existent pas pour \(n\) pair</div>
+          <div class="opt">Parce que l'ordre ne compte pas</div>
+        </div>
+        <div class="feedback" data-explain="Compter « au moins un point fixe » se fait naturellement avec les ensembles \(A_i\) = « \(i\) est fixe », puis le crible corrige les doubles comptages. On soustrait ensuite du total \(n!\). \(D_n\) n'est ni \(n!-1\) ni nul pour \(n\) pair (\(D_2=1, D_4=9\))."></div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="block" id="nombres">
+      <h2>8. Catalan, Stirling, Bell</h2>
+      <div class="callout def">
+        <span class="label">Nombres de Catalan</span>
+        \[ C_n = \frac{1}{n+1}\binom{2n}{n}. \]
+        Ils comptent une foule d'objets : parenthésages valides de \(n\) paires, arbres binaires à \(n\) nœuds internes, chemins de Dyck, triangulations d'un polygone. Suite : \(1,1,2,5,14,42,132,\dots\)
+      </div>
+      <div class="callout def">
+        <span class="label">Stirling de 2ᵉ espèce \(S(n,k)\)</span>
+        Nombre de façons de partitionner un ensemble de \(n\) éléments en exactement \(k\) blocs non vides (les blocs ne sont pas ordonnés). Récurrence :
+        \[ S(n,k) = k\,S(n-1,k) + S(n-1,k-1). \]
+        Lien avec les surjections : \(\text{Surj}(n,k) = k!\,S(n,k)\) (on ordonne les \(k\) blocs).
+      </div>
+      <div class="callout def">
+        <span class="label">Nombre de Bell \(B_n\)</span>
+        Nombre total de partitions d'un \(n\)-ensemble, toutes tailles de blocs confondues :
+        \[ B_n = \sum_{k=0}^{n} S(n,k). \]
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Ne pas confondre</span>
+        \(\binom{n}{k}\) partitionne en <em>choisir / ne pas choisir</em> (2 catégories étiquetées). \(S(n,k)\) partitionne en \(k\) blocs <em>anonymes</em>. Étiqueter les blocs = multiplier par \(k!\).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 8.1 — prédiction de sortie</strong></div>
+        <div class="qtext">Combien y a-t-il de parenthésages valides de 3 paires de parenthèses, par ex. <code>((()))</code>, <code>(()())</code>… ?</div>
+        <div class="options">
+          <div class="opt">6</div>
+          <div class="opt">5</div>
+          <div class="opt">8</div>
+          <div class="opt">3</div>
+        </div>
+        <div class="feedback" data-explain="C'est le nombre de Catalan \(C_3 = \frac{1}{4}\binom{6}{3} = \frac{20}{4} = 5\) : ((())), (()()), (())(), ()(()), ()()(). "></div>
+      </div>
+    </section>
+
+    <!-- DATA & MÉTIERS -->
+    <section class="block" id="data">
+      <h2>9. Domaines, usages &amp; métiers</h2>
+      <div class="legend">
+        <span class="domain data"><span class="dot"></span>DATA</span>
+        <span class="domain bigdata"><span class="dot"></span>BIG DATA</span>
+        <span class="domain ia"><span class="dot"></span>IA</span>
+      </div>
+      <div class="jobs">
+        <div class="jhead">💼 Usages concrets en Data / IA / Big Data</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Notion</th><th>Domaine</th><th>Usage</th><th>Métiers</th></tr></thead>
+            <tbody>
+              <tr><td>Combinaisons \(\binom{n}{k}\)</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Features d'interaction, \(n\)-grams, folds de validation croisée</td><td>Data Scientist, ML Engineer</td></tr>
+              <tr><td>Somme \(2^n\)</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Explosion de la feature selection exhaustive</td><td>Data Scientist</td></tr>
+              <tr><td>Étoiles &amp; barres</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Grilles d'hyperparamètres, répartitions, allocation</td><td>ML Engineer</td></tr>
+              <tr><td>Paradoxe des anniversaires</td><td><span class="domain bigdata"><span class="dot"></span>BIG DATA</span></td><td>Probabilité de collisions de hash (\(\approx\sqrt{N}\))</td><td>Data Engineer</td></tr>
+              <tr><td>Multinomial</td><td><span class="domain ia"><span class="dot"></span>IA</span></td><td>Loi multinomiale, Naive Bayes, softmax</td><td>Data Scientist</td></tr>
+              <tr><td>Catalan</td><td><span class="domain data"><span class="dot"></span>DATA</span></td><td>Arbres binaires, parseurs, structures récursives</td><td>Software/Data Engineer</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout" style="border-color:var(--primary)">
+        <span class="label" style="color:var(--primary)">📚 Pour approfondir</span>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Analyse_combinatoire" target="_blank">Analyse combinatoire</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Crible_de_Poincar%C3%A9" target="_blank">Inclusion-exclusion</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Nombre_de_Catalan" target="_blank">Nombres de Catalan</a>
+        <a class="pill-link" href="https://oeis.org/" target="_blank">OEIS (encyclopédie des suites)</a>
+      </div>
+    </section>
+
+    <!-- EXOS -->
+    <section class="block" id="exos">
+      <h2>10. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Choisir le bon modèle</h3>
+      <p>Un comité de 4 personnes est tiré parmi 12 candidats. (a) Combien de comités ? (b) Si on distingue de plus un président, un trésorier et deux membres simples, combien de configurations ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>(a) Ensemble non ordonné sans répétition : \(\binom{12}{4} = 495\).</p>
+        <p>(b) Choisir le comité \(\binom{12}{4}=495\), puis au sein des 4 désigner président et trésorier (ordonnés, les 2 autres interchangeables) : \(4\times3 = 12\). Total \(495\times12 = 5\,940\). Autre lecture directe : \(A_{12}^{2}\) pour les deux rôles \(\times \binom{10}{2}\) pour les membres \(= 132\times45 = 5\,940\). ✔️ cohérent.</p>
+      </details>
+
+      <h3>Exercice 2 — Anagrammes contraints (⭐)</h3>
+      <p>Combien d'anagrammes du mot <strong>STATISTICS</strong> (10 lettres) ? Puis combien commencent par la lettre T ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Lettres : S(3), T(3), A(1), I(2), C(1). Total \(\dfrac{10!}{3!\,3!\,1!\,2!\,1!} = \dfrac{3\,628\,800}{6\cdot6\cdot2} = 50\,400\).</p>
+        <p>Commençant par T : on fixe un T, il reste à ordonner S(3), T(2), A(1), I(2), C(1) sur 9 places : \(\dfrac{9!}{3!\,2!\,2!} = \dfrac{362\,880}{6\cdot2\cdot2} = 15\,120\).</p>
+      </details>
+
+      <h3>Exercice 3 — Étoiles &amp; barres (⭐)</h3>
+      <p>Combien de solutions entières de \(x_1+x_2+x_3+x_4 = 20\) avec tous les \(x_i \ge 2\) ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Pose \(y_i = x_i - 2 \ge 0\). Alors \(y_1+y_2+y_3+y_4 = 20-8 = 12\). Solutions : \(\binom{12+4-1}{4-1} = \binom{15}{3} = 455\).</p>
+      </details>
+
+      <h3>Exercice 4 — Inclusion-exclusion (⭐⭐)</h3>
+      <p>Combien d'entiers de 1 à 100 ne sont divisibles ni par 2, ni par 3, ni par 5 ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Divisibles par 2 : 50 ; par 3 : 33 ; par 5 : 20. Par 6 : 16 ; par 10 : 10 ; par 15 : 6 ; par 30 : 3.</p>
+        <p>Union = \(50+33+20-16-10-6+3 = 74\). Donc non divisibles = \(100-74 = \mathbf{26}\). (Ce sont essentiellement les nombres premiers &gt; 5, plus 1 et les carrés de premiers &gt; 5 comme 49, 77, 91…)</p>
+      </details>
+
+      <h3>Exercice 5 — Dérangements (⭐⭐)</h3>
+      <p>Quatre lettres sont glissées au hasard dans quatre enveloppes pré-adressées. Quelle est la probabilité qu'<em>aucune</em> lettre n'arrive à la bonne adresse ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>\(D_4 = 4!\left(1-1+\tfrac12-\tfrac16+\tfrac1{24}\right) = 24\times\tfrac{9}{24} = 9\). Probabilité \(= D_4/4! = 9/24 = 0{,}375\). Déjà très proche de \(1/e \approx 0{,}368\).</p>
+      </details>
+
+      <h3>Exercice 6 — Débogage combinatoire (⭐⭐)</h3>
+      <p>Un étudiant calcule le nombre de « mots de passe de 4 lettres distinctes parmi 26 » par \(\binom{26}{4} = 14\,950\). Où est l'erreur, et quelle est la bonne valeur ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Un mot de passe est <strong>ordonné</strong> : <code>ABCD</code> ≠ <code>DCBA</code>. Il faut un arrangement, pas une combinaison. Bonne valeur : \(A_{26}^4 = 26\cdot25\cdot24\cdot23 = 358\,800\). On retrouve \(\binom{26}{4}\times 4! = 14\,950\times24 = 358\,800\) : l'étudiant avait « oublié » d'ordonner.</p>
+      </details>
+    </section>
+
+    <!-- ================= CULTURE ================= -->
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">Un encart à l'écart du cours : d'où viennent ces idées, qui les a forgées, et pourquoi.</p>
+      <p>La combinatoire est l'une des plus vieilles branches des mathématiques : compter les arrangements fascinait déjà les penseurs indiens, chinois et arabes bien avant l'Europe moderne.</p>
+      <h4>Les grands noms</h4>
+      <ul class="names">
+        <li><b>Pingala</b> <span class="yr">(≈ IIIᵉ s. av. J.-C.)</span> — le savant indien décrit le « triangle de Pascal » (Meru Prastara) et les coefficients binomiaux pour la métrique poétique.</li>
+        <li><b>Blaise Pascal &amp; Pierre de Fermat</b> <span class="yr">(1654)</span> — leur correspondance sur les jeux de hasard fonde le calcul des probabilités… à partir de la combinatoire.</li>
+        <li><b>Isaac Newton</b> <span class="yr">(1665)</span> — généralise le binôme aux exposants fractionnaires et négatifs.</li>
+        <li><b>Pierre Raymond de Montmort</b> <span class="yr">(1708)</span> — pose le « problème des rencontres » (dérangements) dans son <i>Essai d'analyse sur les jeux de hasard</i>.</li>
+        <li><b>Leonhard Euler</b> <span class="yr">(XVIIIᵉ)</span> — partitions d'entiers, fonctions génératrices, et le fameux \(1/e\).</li>
+        <li><b>Eugène Catalan</b> <span class="yr">(1838)</span> — les nombres qui portent son nom, omniprésents dans les structures récursives.</li>
+      </ul>
+      <h4>Pourquoi ça te concerne</h4>
+      <p>Chaque fois que tu écris <code>itertools.combinations</code>, que tu dimensionnes une table de hachage ou que tu estimes le coût d'une recherche exhaustive d'hyperparamètres, tu fais de la combinatoire. Savoir qu'un espace est en \(2^n\) ou \(n!\) t'évite de lancer un calcul qui ne finira jamais.</p>
+      <div class="clinks">
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Triangle_de_Pascal" target="_blank">Triangle de Pascal</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Probl%C3%A8me_des_rencontres" target="_blank">Problème des rencontres</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Leonhard_Euler" target="_blank">Leonhard Euler</a>
+        <a class="pill-link" href="https://oeis.org/" target="_blank">OEIS</a>
+      </div>
+    </section>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="10">Marquer comme terminé</button>
+      <a class="btn" href="../fiches/fiche-10-combinatoire.md" download>⬇️ Télécharger la fiche (.md)</a>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="module-9-big-data.html"><div class="dir">← Précédent</div><div class="ttl">Module 9 · Maths du Big Data</div></a>
+      <a class="next" href="examen-blanc-final.html"><div class="dir">Suivant →</div><div class="ttl">🎓 Examen blanc final</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 10 — Combinatoire avancée · Cours interactif de maths pour la Data 💙</div>
+  <script src="../assets/app.js"></script>
+<script src="../../../assets/nav.js"></script>
+</body>
+</html>
