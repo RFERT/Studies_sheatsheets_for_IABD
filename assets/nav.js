@@ -166,11 +166,9 @@
     { e: "🐍", t: "Antisèche Python", h: root + "matieres/python/aide-memoire.html" },
     { e: "🦀", t: "Antisèche Rust", h: root + "matieres/rust/cheatsheet-rust.html" },
     { sep: 1 },
-    { e: "📱", t: "Accès mobile", h: root + "guide-mobile.html" },
-    { e: "🌐", t: "Publier (GitHub Pages)", h: root + "guide-github-pages.html" },
-    { sep: 1 },
     { e: "🗂️", t: "Flashcards", h: root + "flashcards.html" },
     { e: "🚀", t: "Améliorations", h: root + "ameliorations.html" },
+    { e: "⚙️", t: "À configurer", h: root + "parametrage.html" },
   ];
   var menuHTML = items.map(function (it) {
     if (it.sep) return '<div class="xnav-sep"></div>';

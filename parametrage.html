@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>À configurer — réglages & déploiements</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+  <style>
+    .rm { max-width: 980px; margin: 0 auto; padding: 20px 28px; }
+    .setup-progress { display:flex; align-items:center; gap:12px; margin:0 0 22px }
+    .setup-progress .pbar { flex:1; height:10px; border-radius:999px; background:var(--bg-elev); overflow:hidden; border:1px solid var(--border) }
+    .setup-progress .pfill { height:100%; width:0; background:var(--accent); transition:width .25s ease }
+    .setup-progress .ptxt { font-size:13px; color:var(--muted); white-space:nowrap }
+    .task { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:18px 22px; margin:0 0 16px; transition:border-color .15s ease, opacity .15s ease }
+    .task.done { opacity:.62; border-color:var(--accent) }
+    .task-head { display:flex; align-items:flex-start; gap:12px }
+    .task-head h3 { margin:0; font-size:17px; flex:1; display:flex; align-items:center; gap:8px; flex-wrap:wrap }
+    .task .chk { flex:0 0 auto; width:26px; height:26px; border-radius:8px; border:1.5px solid var(--border); background:var(--bg-elev); cursor:pointer; font-size:15px; line-height:1; display:inline-flex; align-items:center; justify-content:center; color:var(--accent) }
+    .task.done .chk { background:var(--accent); border-color:var(--accent); color:#0f1117 }
+    .badge { display:inline-block; font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px; vertical-align:middle }
+    .b-req { background:color-mix(in srgb,#ff6b81 20%, transparent); color:#ff9aa8; border:1px solid #ff6b81 }
+    .b-opt { background:color-mix(in srgb,#ffb454 20%, transparent); color:#ffcf8f; border:1px solid #ffb454 }
+    .b-later { background:color-mix(in srgb,#6c8cff 22%, transparent); color:#a9bcff; border:1px solid #6c8cff }
+    .task .why { color:var(--text-soft); margin:10px 0 4px; font-size:14.5px }
+    .task ol, .task ul { color:var(--text-soft); margin:8px 0; padding-left:20px; font-size:14.5px }
+    .task li { margin:6px 0 }
+    .task code, .task kbd { background:var(--bg-elev); border:1px solid var(--border); border-radius:6px; padding:1px 6px; font-size:.92em }
+    .task .deep { font-size:13px; color:var(--muted); margin-top:8px }
+    .task .opts { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin:10px 0 }
+    .opt { background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:12px 14px }
+    .opt h4 { margin:0 0 6px; font-size:14px }
+    .opt p { margin:0; font-size:13px; color:var(--muted) }
+    .reset { background:none; border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:13px }
+    @media (max-width:560px){ .rm{ padding:16px 16px } .task{ padding:16px } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">⚙️</span> <span>À configurer<small>réglages &amp; déploiements</small></span></div>
+    <div class="spacer"></div>
+    <a class="btn" href="ameliorations.html">🚀 Améliorations</a>
+    <a class="btn" href="index.html">← Portail</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero" style="padding-bottom:10px">
+    <span class="eyebrow">Côté toi</span>
+    <h1>Ce que je ne peux pas faire à ta place 🔑</h1>
+    <p>Je m'occupe du code, des tests et des commits. Mais certaines actions demandent <b>tes comptes, tes mots de passe ou une carte bancaire</b> : les voici, rassemblées et cochables. Dès que tu obtiens une URL ou une clé, <b>donne-la-moi</b> et je l'intègre au site.</p>
+  </div>
+
+  <div class="rm">
+    <div class="setup-progress">
+      <div class="pbar"><div class="pfill" id="setup-fill"></div></div>
+      <span class="ptxt" id="setup-txt">0 / 0 configuré</span>
+      <button class="reset" id="setup-reset" title="Décocher tout">↺ Réinitialiser</button>
+    </div>
+
+    <!-- A. GitHub Pages -->
+    <section class="task" data-task="pages">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h3>🌐 Publier le site en ligne (GitHub Pages) <span class="badge b-req">requis pour la mise en ligne</span></h3>
+      </div>
+      <p class="why"><b>Pourquoi&nbsp;:</b> rendre le portail accessible depuis une URL (sur ton téléphone, à partager), et activer le déploiement automatique à chaque commit.</p>
+      <ol>
+        <li>Sur GitHub, ouvre le dépôt → <b>Settings</b> → <b>Pages</b>.</li>
+        <li><b>Build and deployment → Source</b> : choisis <b>GitHub Actions</b>.</li>
+        <li>Si le commit automatique de l'index de recherche échoue : <b>Settings → Actions → General → Workflow permissions</b> → <b>Read and write permissions</b>.</li>
+      </ol>
+      <p class="deep">Résultat : chaque push sur <code>main</code> publie le site tout seul. Détails techniques : <code>ci/README.md</code>.</p>
+    </section>
+
+    <!-- B. Boîte à idées centralisée -->
+    <section class="task" data-task="ideas-api">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h3>💡 Activer la collecte centralisée d'idées <span class="badge b-opt">recommandé</span></h3>
+      </div>
+      <p class="why"><b>Pourquoi&nbsp;:</b> pour que tes ami·e·s (ou toi, depuis n'importe quel appareil) puissent proposer des idées qui s'affichent pour tout le monde — sans ça, les idées restent locales à chaque appareil.</p>
+      <p class="why">Choisis <b>un</b> hébergement gratuit&nbsp;:</p>
+      <div class="opts">
+        <div class="opt">
+          <h4>⚡ Cloudflare Worker</h4>
+          <p>Rapide, 100 000 req/jour. Nécessite Node.js. Suit <code>backend/README.md</code> (option A).</p>
+        </div>
+        <div class="opt">
+          <h4>📄 Google Apps Script</h4>
+          <p>Sans ligne de commande. Les idées tombent dans un Google Sheet. Suit <code>backend/README.md</code> (option B).</p>
+        </div>
+      </div>
+      <ol>
+        <li>Déploie le backend choisi (guide pas-à-pas dans <code>backend/README.md</code>).</li>
+        <li>Récupère l'<b>URL publique</b> de l'API.</li>
+        <li><b>Donne-la-moi</b> (je la colle dans <code>assets/ideas-config.js</code>) — ou colle-la toi-même dans <code>window.IDEAS_API</code>.</li>
+        <li>Facultatif : définis une <b>clé admin</b> pour pouvoir supprimer des idées côté serveur.</li>
+      </ol>
+      <p class="deep">⚠️ Ne partage jamais ta clé admin et ne la mets pas dans un dépôt public.</p>
+    </section>
+
+    <!-- C. Déploiement auto du Worker (plus tard) -->
+    <section class="task" data-task="worker-ci">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h3>🤖 Déploiement automatique du backend via CI <span class="badge b-later">plus tard / optionnel</span></h3>
+      </div>
+      <p class="why"><b>Pourquoi&nbsp;:</b> si tu choisis Cloudflare, on peut redéployer l'API automatiquement à chaque modification, au lieu de le faire à la main.</p>
+      <ol>
+        <li>Crée un <b>token API Cloudflare</b> (permission « Edit Workers »).</li>
+        <li>Ajoute-le en secret GitHub : <b>Settings → Secrets and variables → Actions</b> → <code>CLOUDFLARE_API_TOKEN</code>.</li>
+        <li>Préviens-moi : j'ajoute l'étape de déploiement au workflow <code>.github/workflows/ci.yml</code>.</li>
+      </ol>
+    </section>
+
+    <div class="callout" style="border-color:var(--accent); margin-top:24px">
+      <span class="label" style="color:var(--accent)">💬 Le partage des rôles</span>
+      <p>Toi : les actions qui demandent tes identifiants (créer un compte, déployer, coller une clé). Moi : tout le code, les tests, les commits et cette liste que je tiens à jour. Cette page se remplit automatiquement de nouvelles tâches quand une fonctionnalité en nécessite une.</p>
+    </div>
+  </div>
+
+  <div class="footer">À configurer · <a href="index.html">retour au portail</a> · <a href="ameliorations.html">feuille de route &amp; idées</a> · 💙</div>
+
+  <script>
+    (function(){
+      var TK="esgi-portal-theme";
+      function t(x){document.documentElement.setAttribute("data-theme",x);localStorage.setItem(TK,x);var b=document.getElementById("theme-toggle");if(b)b.textContent=x==="light"?"🌙 Sombre":"☀️ Clair";}
+      t(localStorage.getItem(TK)||"dark");
+      document.getElementById("theme-toggle").addEventListener("click",function(){t(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+    })();
+  </script>
+  <script>
+    (function(){
+      var KEY="esgi-setup-done";
+      var tasks=Array.prototype.slice.call(document.querySelectorAll(".task"));
+      function load(){ try{ var v=JSON.parse(localStorage.getItem(KEY)); return v&&typeof v==="object"?v:{}; }catch(e){ return {}; } }
+      function save(m){ try{ localStorage.setItem(KEY, JSON.stringify(m)); }catch(e){} }
+      function refresh(){
+        var m=load(), done=0;
+        tasks.forEach(function(s){
+          var on=!!m[s.getAttribute("data-task")];
+          s.classList.toggle("done",on);
+          var chk=s.querySelector(".chk"); chk.textContent=on?"✓":"";
+          chk.setAttribute("aria-pressed",on?"true":"false");
+          if(on) done++;
+        });
+        var pct=tasks.length?Math.round(done/tasks.length*100):0;
+        document.getElementById("setup-fill").style.width=pct+"%";
+        document.getElementById("setup-txt").textContent=done+" / "+tasks.length+" configuré"+(done>1?"s":"");
+      }
+      tasks.forEach(function(s){
+        s.querySelector(".chk").addEventListener("click",function(){
+          var m=load(), id=s.getAttribute("data-task");
+          m[id]=!m[id]; save(m); refresh();
+        });
+      });
+      document.getElementById("setup-reset").addEventListener("click",function(){
+        if(confirm("Décocher toutes les tâches ?")){ save({}); refresh(); }
+      });
+      refresh();
+    })();
+  </script>
+<script src="assets/nav.js"></script>
+</body>
+</html>

@@ -3,13 +3,12 @@
    Stratégie : cache-first avec mise en cache à la volée.
    Ne fonctionne qu'en https:// ou localhost (pas en file://).
    ========================================================= */
-const CACHE = "esgi-cours-v3";
+const CACHE = "esgi-cours-v8";
 const CORE = [
   "./",
   "./index.html",
   "./ameliorations.html",
-  "./guide-mobile.html",
-  "./guide-github-pages.html",
+  "./parametrage.html",
   "./flashcards.html",
   "./cours.html",
   "./manifest.webmanifest",
@@ -19,6 +18,7 @@ const CORE = [
   "./assets/course.js",
   "./assets/markdown.js",
   "./assets/nav.js",
+  "./assets/ideas-config.js",
   "./assets/search-index.js",
   "./assets/icon.svg",
   "./matieres/cours.js"
@@ -41,6 +41,22 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
+
+  // ideas-config.js : réseau d'abord (pour que l'URL de l'API soit toujours à jour),
+  // repli sur le cache hors-ligne.
+  if (req.url.indexOf("ideas-config.js") !== -1) {
+    e.respondWith(
+      fetch(req).then((res) => {
+        if (res && res.ok && res.type === "basic") {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, copy));
+        }
+        return res;
+      }).catch(() => caches.match(req))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(req).then((hit) => {
       if (hit) return hit;

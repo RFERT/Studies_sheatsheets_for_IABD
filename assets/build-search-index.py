@@ -148,12 +148,10 @@ add("math", "fiche", "Aide-mémoire maths (formulaire)", "matieres/mathematiques
     "formulaire antisèche formules Bayes gradient entropie matrice cosinus régression Big-O combinatoire règles")
 add("portal", "page", "Améliorations & feuille de route", "ameliorations.html",
     "roadmap idées compétences pro git docker ci cd mlops")
+add("portal", "page", "À configurer — réglages & déploiements", "parametrage.html",
+    "configurer paramétrage réglages déploiement backend github pages api cloudflare worker google apps script clé secret setup à faire côté utilisateur")
 add("portal", "page", "Flashcards — répétition espacée", "flashcards.html",
     "flashcards répétition espacée spaced repetition révision mémorisation SM-2 cartes quiz")
-add("portal", "page", "Ouvrir le site sur mon téléphone (guide mobile)", "guide-mobile.html",
-    "mobile téléphone smartphone samsung serveur local github pages hors-ligne installer")
-add("portal", "page", "Publier mon site avec GitHub Pages (guide)", "guide-github-pages.html",
-    "github pages git publier déployer en ligne hébergement gratuit url site web push commit vs code progression locale localstorage privée chaque utilisateur")
 
 # Dé-duplication (title+url)
 seen, uniq = set(), []

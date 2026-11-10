@@ -20,6 +20,47 @@
     .p3 { background: color-mix(in srgb, #27e0b0 22%, transparent); color:#6fe9cd; border:1px solid #27e0b0 }
     .tagrow { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px }
     .t { font-size:12px; padding:3px 10px; border-radius:999px; background:var(--bg-elev); border:1px solid var(--border); color:var(--text-soft) }
+    .idea-form { display:flex; flex-direction:column; gap:10px }
+    .idea-row { display:flex; gap:10px; flex-wrap:wrap }
+    .idea-form input[type=text], .idea-form select, .idea-form textarea {
+      background:var(--bg-elev); border:1px solid var(--border); color:var(--text);
+      border-radius:10px; padding:10px 12px; font:inherit; flex:1 1 180px; min-width:0 }
+    .idea-form textarea { resize:vertical; width:100%; line-height:1.5 }
+    .idea-form input:focus, .idea-form select:focus, .idea-form textarea:focus {
+      outline:none; border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent) }
+    .idea-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap }
+    .btn.primary { background:var(--accent); color:#0f1117; border-color:var(--accent); font-weight:700 }
+    .btn.primary:hover { filter:brightness(1.08) }
+    .idea-msg { font-size:13px; color:var(--accent); font-weight:600 }
+    .idea-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:22px 0 10px; flex-wrap:wrap }
+    .idea-head h4 { margin:0; font-size:15px }
+    .idea-tools { display:flex; gap:6px; flex-wrap:wrap }
+    .idea-tools .btn { font-size:12.5px; padding:6px 11px }
+    .idea-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px }
+    .idea-item { background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:12px 14px }
+    .idea-item .meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px; font-size:12px; color:var(--muted) }
+    .idea-item .cat { font-weight:700; padding:2px 8px; border-radius:999px; background:color-mix(in srgb, var(--accent) 18%, transparent); color:var(--accent); border:1px solid var(--accent) }
+    .idea-item .who { color:var(--text-soft); font-weight:600 }
+    .idea-item p { margin:0; color:var(--text); white-space:pre-wrap; word-break:break-word }
+    .idea-item .del { margin-left:auto; background:none; border:none; color:var(--muted); cursor:pointer; font-size:15px; padding:2px 6px; border-radius:6px }
+    .idea-item .del:hover { color:#ff9aa8; background:color-mix(in srgb,#ff6b81 15%, transparent) }
+    .idea-empty { color:var(--muted); font-style:italic; padding:8px 0; margin:0 }
+    .idea-headinfo { display:flex; flex-direction:column; gap:2px }
+    .idea-mode { font-size:12.5px; color:var(--muted) }
+    .idea-item .pending { color:#ffb454; font-size:13px }
+    .idea-hp { position:absolute; left:-9999px; width:1px; height:1px; opacity:0 }
+    .feat-filters { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin:0 0 20px }
+    .ff-seg { display:inline-flex; background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:3px; gap:2px }
+    .ff-s { border:none; background:none; color:var(--text-soft); font:inherit; font-size:13.5px; padding:6px 12px; border-radius:8px; cursor:pointer }
+    .ff-s.on { background:var(--accent); color:#0f1117; font-weight:700 }
+    .ff-prios { display:inline-flex; gap:6px; transition:opacity .15s ease }
+    .ff-prios.off { opacity:.35; pointer-events:none }
+    .ff-p { border:1px solid var(--border); background:var(--bg-elev); border-radius:999px; padding:3px 7px; cursor:pointer; opacity:.45; filter:grayscale(.55) }
+    .ff-p.on { opacity:1; filter:none }
+    .ff-p .prio { margin:0 }
+    .ff-count { color:var(--muted); font-size:13px; margin-left:auto }
+    .prio.done { background:color-mix(in srgb, var(--accent) 22%, transparent); color:var(--accent); border:1px solid var(--accent) }
+    .feat-empty { color:var(--muted); font-style:italic; padding:12px 2px; margin:0 }
     @media (max-width: 560px) {
       .rm { padding: 16px 16px; }
       .cols { grid-template-columns: 1fr; gap: 14px; }
@@ -32,7 +73,6 @@
   <header class="topbar">
     <div class="brand"><span class="logo">🚀</span> <span>Améliorations<small>feuille de route évolutive</small></span></div>
     <div class="spacer"></div>
-    <a class="btn" href="guide-mobile.html">📱 Mobile</a>
     <a class="btn" href="index.html">← Portail</a>
     <button class="btn" id="theme-toggle">☀️ Clair</button>
   </header>
@@ -44,86 +84,66 @@
   </div>
 
   <div class="rm">
-    <div class="panel" style="border-color:var(--accent); margin-bottom:22px">
-      <h3>✅ Déjà en place</h3>
-      <div class="tagrow">
-        <span class="t">📈 Tableau de bord de progression</span>
-        <span class="t">🗂️ Flashcards (répétition espacée)</span>
-        <span class="t">⏱️ Mode examen chronométré</span>
-        <span class="t">🔀 Quiz mélangés</span>
-        <span class="t">🎯 Objectif hebdomadaire</span>
-        <span class="t">📲 PWA (hors-ligne, installable)</span>
-        <span class="t">🔎 Recherche globale</span>
-        <span class="t">⌨️ Raccourcis clavier (/ , Ctrl K)</span>
-        <span class="t">🧭 Navbar commune (menu Cours)</span>
-        <span class="t">🍅 Minuteur Pomodoro</span>
-        <span class="t">📅 Calendrier d'activité</span>
-        <span class="t">🎨 Couleur d'accent</span>
-        <span class="t">♿ Accessibilité (skip-link)</span>
-        <span class="t">⚡ Antisèches / aide-mémoire</span>
-        <span class="t">📜 Encarts Culture &amp; histoire</span>
-        <span class="t">🖨️ Export PDF</span>
-        <span class="t">⬇️⬆️ Export / import de progression</span>
-        <span class="t">🔥 Streak de révision</span>
-        <span class="t">⭐ Favoris / marque-pages</span>
-        <span class="t">▶️ Reprendre où j'en étais</span>
-        <span class="t">📱 Guide d'accès mobile</span>
-        <span class="t">🌐 Guide GitHub Pages</span>
-        <span class="t">⏱️ Temps de lecture</span>
-        <span class="t">↑ Retour en haut</span>
-        <span class="t">🌗 Thème auto (système)</span>
-        <span class="t">🎓 Favicons</span>
-        <span class="t">🔀 Versionnage Git</span>
-        <span class="t">📲 Responsive S26 Ultra</span>
+    <section class="panel" id="boite-idees" style="border-color:var(--accent); margin-bottom:22px">
+      <h3>💡 Boîte à idées — proposez une fonctionnalité</h3>
+      <p style="color:var(--text-soft); margin:0 0 14px">Une idée en révisant ? Un·e ami·e veut suggérer une fonctionnalité, un cours ou une correction ? Écrivez-la ici, sans toucher au code. Si la <b>collecte centralisée</b> est activée, l'idée est <b>envoyée automatiquement</b> et visible par tout le monde ; sinon elle reste <b>sur cet appareil</b>. Les boutons Copier / Exporter restent dispo comme sauvegarde.</p>
+      <form id="idea-form" class="idea-form" autocomplete="off">
+        <div class="idea-row">
+          <input id="idea-author" type="text" maxlength="40" placeholder="Votre prénom (optionnel)" autocomplete="name" />
+          <select id="idea-cat" aria-label="Catégorie">
+            <option value="Fonctionnalité">🛠️ Fonctionnalité</option>
+            <option value="Matière / cours">📘 Matière / cours</option>
+            <option value="Correction / bug">🐞 Correction / bug</option>
+            <option value="Design / UI">🎨 Design / UI</option>
+            <option value="Autre">✨ Autre</option>
+          </select>
+        </div>
+        <textarea id="idea-text" rows="3" maxlength="500" placeholder="Décrivez votre idée… (ex. : un mode révision audio, un cours sur Docker, une visualisation animée…)" required></textarea>
+        <input id="idea-hp" class="idea-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="idea-actions">
+          <button type="submit" class="btn primary">➕ Enregistrer l'idée</button>
+          <span id="idea-msg" class="idea-msg" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+      <div class="idea-head">
+        <div class="idea-headinfo">
+          <h4 id="idea-count">Idées enregistrées</h4>
+          <span id="idea-mode" class="idea-mode"></span>
+        </div>
+        <div class="idea-tools">
+          <button type="button" class="btn" id="idea-copy" title="Copier toutes les idées dans le presse-papiers">📋 Copier</button>
+          <button type="button" class="btn" id="idea-export" title="Télécharger les idées en fichier JSON">⬇️ Exporter</button>
+          <button type="button" class="btn" id="idea-import" title="Importer un fichier d'idées (fusionne sans doublons)">⬆️ Importer</button>
+          <input type="file" id="idea-file" accept="application/json,.json" hidden />
+        </div>
       </div>
-    </div>
+      <ul id="idea-list" class="idea-list"></ul>
+    </section>
 
     <h2 style="margin-top:10px">🛠️ Fonctionnalités du site</h2>
-    <p class="sub" style="color:var(--muted)">Priorités : <span class="prio p1">haute</span> <span class="prio p2">moyenne</span> <span class="prio p3">bonus</span></p>
-    <div class="cols">
-      <div class="panel">
-        <h3>🎯 Suivi &amp; révision</h3>
-        <ul>
-          <li><b>Répétition espacée</b> (flashcards, algo SM-2, rappels J+1/J+3/J+7) <span class="prio p3">✅ fait</span></li>
-          <li><b>Mode examen chronométré</b> avec score et correction <span class="prio p3">✅ fait</span></li>
-          <li><b>Objectifs hebdomadaires</b> &amp; petits rappels (notifications navigateur) <span class="prio p3">✅ fait</span></li>
-          <li><b>Calendrier de révision</b> (heatmap d'activité façon GitHub) <span class="prio p3">✅ fait</span></li>
-          <li><b>Minuteur Pomodoro</b> intégré aux sessions de révision <span class="prio p3">✅ fait</span></li>
-          <li><b>Stats par notion</b> : repérer automatiquement les points faibles <span class="prio p3">bonus</span></li>
-        </ul>
+    <p class="sub" style="color:var(--muted)">Par défaut, seules les fonctionnalités <b>non encore implémentées</b> s'affichent. Utilise les filtres pour voir aussi celles <b>déjà en place</b>, ou cibler par priorité.</p>
+
+    <div class="feat-filters" role="group" aria-label="Filtres des fonctionnalités">
+      <div class="ff-seg" id="ff-status" role="tablist" aria-label="Statut">
+        <button type="button" class="ff-s on" data-status="todo" aria-pressed="true">💡 À faire</button>
+        <button type="button" class="ff-s" data-status="done" aria-pressed="false">✅ Faites</button>
+        <button type="button" class="ff-s" data-status="all" aria-pressed="false">Toutes</button>
       </div>
-      <div class="panel">
-        <h3>💻 Interactivité</h3>
-        <ul>
-          <li><b>Éditeur de code exécutable</b> (Rust Playground, Pyodide pour Python) <span class="prio p1">haute</span></li>
-          <li><b>Quiz générés aléatoirement</b> + banque de questions mélangées <span class="prio p3">✅ fait (mélange)</span></li>
-          <li><b>Visualisations interactives</b> (graphes, matrices, descente de gradient animée) <span class="prio p2">moyenne</span></li>
-          <li><b>Occlusion / cartes à trous</b> : masquer puis révéler les réponses <span class="prio p3">bonus</span></li>
-          <li><b>Glossaire interactif</b> : définition au survol des termes clés <span class="prio p3">bonus</span></li>
-          <li><b>Coloration syntaxique</b> avancée (Prism/Highlight.js) <span class="prio p3">bonus</span></li>
-        </ul>
+      <div class="ff-prios" id="ff-prios" aria-label="Filtrer par priorité">
+        <button type="button" class="ff-p on" data-prio="haute" aria-pressed="true"><span class="prio p1">haute</span></button>
+        <button type="button" class="ff-p on" data-prio="moyenne" aria-pressed="true"><span class="prio p2">moyenne</span></button>
+        <button type="button" class="ff-p on" data-prio="bonus" aria-pressed="true"><span class="prio p3">bonus</span></button>
       </div>
-      <div class="panel">
-        <h3>🏗️ Technique &amp; qualité</h3>
-        <ul>
-          <li><b>PWA</b> (consultation hors-ligne, installable sur le téléphone) <span class="prio p3">✅ fait</span></li>
-          <li><b>MathJax/KaTeX en local</b> (pas de dépendance réseau) <span class="prio p2">moyenne</span></li>
-          <li><b>Design system partagé</b> unifié entre toutes les matières <span class="prio p2">moyenne</span></li>
-          <li><b>Cours en Markdown « zéro code »</b> : écrire un cours = un fichier <code>.md</code> + une ligne de manifeste (moteur <code>cours.html</code>) <span class="prio p3">✅ fait</span></li>
-          <li><b>Déploiement GitHub Pages</b> automatisé (GitHub Actions) <span class="prio p3">bonus</span></li>
-          <li><b>Vérificateur de liens</b> (script anti-régression) <span class="prio p3">bonus</span></li>
-          <li><b>Accessibilité</b> (contrastes AA, navigation clavier complète) <span class="prio p3">✅ en partie (skip-link, focus visible)</span></li>
-          <li><b>Thème personnalisable</b> (choisir sa couleur d'accent) <span class="prio p3">✅ fait</span></li>
-        </ul>
-      </div>
+      <span class="ff-count" id="ff-count"></span>
     </div>
+
+    <div class="cols" id="feat-grid"><!-- rendu par le script plus bas --></div>
 
     <h2 style="margin-top:30px">📘 Matières à ajouter (programme IABD)</h2>
     <div class="cols">
       <div class="panel">
         <h3>🧠 Cœur IA / Data</h3>
         <ul>
-          <li><b>Python &amp; Data Science</b> (Pandas, NumPy, viz) <span class="prio p3">✅ fait · 6 modules</span></li>
           <li><b>Machine Learning</b> (scikit-learn, évaluation)</li>
           <li><b>Deep Learning</b> (PyTorch, CNN, Transformers)</li>
           <li><b>NLP &amp; LLM</b> (embeddings, RAG, fine-tuning)</li>
@@ -213,6 +233,314 @@
       function t(x){document.documentElement.setAttribute("data-theme",x);localStorage.setItem(TK,x);var b=document.getElementById("theme-toggle");if(b)b.textContent=x==="light"?"🌙 Sombre":"☀️ Clair";}
       t(localStorage.getItem(TK)||"dark");
       document.getElementById("theme-toggle").addEventListener("click",function(){t(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+    })();
+  </script>
+  <script src="assets/ideas-config.js"></script>
+  <script>
+    (function(){
+      var KEY="esgi-ideas", HKEY="esgi-ideas-hidden";
+      var API=(window.IDEAS_API||"").trim().replace(/\/+$/,"");
+      var ADMIN=(window.IDEAS_ADMIN_KEY||"").trim();
+      var form=document.getElementById("idea-form");
+      var listEl=document.getElementById("idea-list");
+      var countEl=document.getElementById("idea-count");
+      var msgEl=document.getElementById("idea-msg");
+      var modeEl=document.getElementById("idea-mode");
+
+      function load(){ try{ var v=JSON.parse(localStorage.getItem(KEY)); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+      function save(a){ try{ localStorage.setItem(KEY, JSON.stringify(a)); }catch(e){} }
+      function hidden(){ try{ var v=JSON.parse(localStorage.getItem(HKEY)); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+      function hide(id,cid){ var h=hidden(); if(id&&h.indexOf(id)<0)h.push(id); if(cid&&h.indexOf(cid)<0)h.push(cid); try{localStorage.setItem(HKEY,JSON.stringify(h));}catch(e){} }
+      function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+      function fmt(ts){ try{ return new Date(ts).toLocaleString("fr-FR",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); }catch(e){ return ""; } }
+      function flash(el,txt){ var o=el.textContent; el.textContent=txt; setTimeout(function(){ el.textContent=o; }, 1600); }
+      function key(it){ return it.cid || it.id; }
+      function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+      function setMode(txt){ if(modeEl) modeEl.textContent=txt; }
+
+      function visible(){
+        var h=hidden(), map={};
+        load().forEach(function(it){
+          if(!it||typeof it.text!=="string") return;
+          var k=key(it), p=map[k];
+          if(!p){ map[k]=it; } else if(p._pending && !it._pending){ map[k]=it; }
+        });
+        return Object.keys(map).map(function(k){return map[k];})
+          .filter(function(it){ return h.indexOf(it.id)<0 && h.indexOf(it.cid)<0; })
+          .sort(function(a,b){ return (a.ts||0)-(b.ts||0); });
+      }
+
+      function render(){
+        var a=visible();
+        countEl.textContent = a.length ? ("Idées enregistrées ("+a.length+")") : "Idées enregistrées";
+        if(!a.length){ listEl.innerHTML='<li class="idea-empty">Aucune idée pour le moment — lancez-vous ! 💙</li>'; return; }
+        listEl.innerHTML = a.slice().reverse().map(function(it){
+          var who = it.author ? ('<span class="who">'+esc(it.author)+'</span> ·') : '';
+          var pend = it._pending ? ' <span class="pending" title="En attente d\'envoi">⏳</span>' : '';
+          return '<li class="idea-item" data-id="'+esc(it.id||"")+'" data-cid="'+esc(it.cid||"")+'">'+
+            '<div class="meta"><span class="cat">'+esc(it.cat||"Idée")+'</span>'+who+'<span>'+fmt(it.ts)+'</span>'+pend+
+            '<button class="del" title="Supprimer" aria-label="Supprimer cette idée">🗑️</button></div>'+
+            '<p>'+esc(it.text)+'</p></li>';
+        }).join("");
+      }
+
+      function mergeSrv(local, srv){
+        srv=srv||{};
+        return { id:srv.id||local.id, cid:local.cid||srv.cid, text:srv.text||local.text,
+          author:(srv.author!=null?srv.author:local.author), cat:srv.cat||local.cat, ts:srv.ts||local.ts };
+      }
+
+      // text/plain -> requête "simple", pas de préflight CORS (compatible Worker ET Apps Script)
+      function post(idea){
+        return fetch(API, { method:"POST", headers:{ "Content-Type":"text/plain;charset=utf-8" },
+          body: JSON.stringify({ text:idea.text, author:idea.author, cat:idea.cat, cid:idea.cid, website:idea.website||"" }) })
+          .then(function(r){ return r.json(); })
+          .then(function(j){ if(!j||!j.ok) throw new Error((j&&j.error)||"Erreur serveur"); return j.idea||idea; });
+      }
+
+      function flush(){
+        if(!API) return Promise.resolve();
+        var pend=load().filter(function(it){ return it._pending; });
+        if(!pend.length) return Promise.resolve();
+        return Promise.all(pend.map(function(it){
+          return post(it).then(function(srv){
+            var arr=load();
+            for(var i=0;i<arr.length;i++){ if(key(arr[i])===key(it)){ arr[i]=mergeSrv(arr[i],srv); delete arr[i]._pending; } }
+            save(arr);
+          }, function(){ /* reste en file d'attente */ });
+        })).then(render);
+      }
+
+      function refresh(){
+        if(!API){ setMode("💾 Stockage local (cette page uniquement)"); return; }
+        setMode("🌐 Collecte centralisée — synchronisation…");
+        fetch(API, { method:"GET", headers:{ "Accept":"application/json" } })
+          .then(function(r){ return r.json(); })
+          .then(function(j){
+            var remote=(j&&j.ideas)||(Array.isArray(j)?j:[]);
+            var map={};
+            load().forEach(function(it){ map[key(it)]=it; });
+            remote.forEach(function(it){ if(it&&it.text){ it._pending=false; map[key(it)]=it; } });
+            save(Object.keys(map).map(function(k){return map[k];}));
+            setMode("🌐 Collecte centralisée active — "+remote.length+" idée(s) partagée(s)");
+            return flush();
+          })
+          .then(render)
+          .catch(function(){ setMode("⚠️ Serveur injoignable — mode local (réessai à la reconnexion)"); });
+      }
+
+      form.addEventListener("submit",function(e){
+        e.preventDefault();
+        var ta=document.getElementById("idea-text");
+        var text=ta.value.trim(); if(!text) return;
+        var idea={ id:uid(), cid:uid(), text:text, author:document.getElementById("idea-author").value.trim(),
+          cat:document.getElementById("idea-cat").value, ts:Date.now(),
+          website:document.getElementById("idea-hp").value, _pending:!!API };
+        var a=load();
+        a.push({ id:idea.id, cid:idea.cid, text:idea.text, author:idea.author, cat:idea.cat, ts:idea.ts, _pending:idea._pending });
+        save(a); render();
+        ta.value=""; document.getElementById("idea-hp").value="";
+        if(!API){ msgEl.textContent="Merci ! Idée enregistrée localement ✅"; setTimeout(function(){msgEl.textContent="";},3000); return; }
+        msgEl.textContent="Envoi…";
+        post(idea).then(function(srv){
+          var arr=load();
+          for(var i=0;i<arr.length;i++){ if(key(arr[i])===idea.cid){ arr[i]=mergeSrv(arr[i],srv); delete arr[i]._pending; } }
+          save(arr); render();
+          msgEl.textContent="Merci ! Idée envoyée à tout le monde ✅";
+          setTimeout(function(){msgEl.textContent="";},3000);
+        }, function(){
+          msgEl.textContent="Hors-ligne : en file d'attente, envoi automatique à la reconnexion ⏳";
+          setTimeout(function(){msgEl.textContent="";},4000);
+        });
+      });
+
+      listEl.addEventListener("click",function(e){
+        var btn=e.target.closest(".del"); if(!btn) return;
+        var li=e.target.closest(".idea-item"); if(!li) return;
+        if(!confirm("Supprimer cette idée ?")) return;
+        var id=li.getAttribute("data-id"), cid=li.getAttribute("data-cid");
+        hide(id,cid);
+        save(load().filter(function(it){ return it.id!==id && it.cid!==cid; }));
+        render();
+        if(API && ADMIN && id){
+          fetch(API+"?id="+encodeURIComponent(id), { method:"DELETE", headers:{ "X-Admin-Key":ADMIN } }).catch(function(){});
+        }
+      });
+
+      document.getElementById("idea-copy").addEventListener("click",function(){
+        var a=visible(); if(!a.length){ alert("Aucune idée à copier."); return; }
+        var txt=a.map(function(it){ return "• ["+(it.cat||"Idée")+"]"+(it.author?(" ("+it.author+")"):"")+" "+it.text; }).join("\n");
+        var btn=this;
+        if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ flash(btn,"✅ Copié"); }, function(){ alert("Copie impossible."); }); }
+        else { alert("Copie non supportée par ce navigateur."); }
+      });
+      document.getElementById("idea-export").addEventListener("click",function(){
+        var a=visible(); if(!a.length){ alert("Aucune idée à exporter."); return; }
+        var blob=new Blob([JSON.stringify(a,null,2)],{type:"application/json"});
+        var url=URL.createObjectURL(blob); var link=document.createElement("a");
+        link.href=url; link.download="idees-esgi-"+new Date().toISOString().slice(0,10)+".json";
+        document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+      });
+      document.getElementById("idea-import").addEventListener("click",function(){ document.getElementById("idea-file").click(); });
+      document.getElementById("idea-file").addEventListener("change",function(e){
+        var f=e.target.files&&e.target.files[0]; if(!f) return;
+        var r=new FileReader();
+        r.onload=function(){
+          try{
+            var imported=JSON.parse(r.result); if(!Array.isArray(imported)) throw 0;
+            var a=load(), seen={}; a.forEach(function(it){ seen[key(it)]=1; });
+            var added=0;
+            imported.forEach(function(it){
+              if(it&&typeof it.text==="string"&&it.text.trim()){
+                if(!it.id) it.id=uid(); if(!it.cid) it.cid=it.id;
+                if(!seen[key(it)]){ if(!it.ts) it.ts=Date.now(); it._pending=!!API; a.push(it); seen[key(it)]=1; added++; }
+              }
+            });
+            save(a); render(); flush();
+            alert(added+" idée(s) importée(s)"+(API?" — envoi au serveur en cours.":"."));
+          }catch(err){ alert("Fichier invalide : un export JSON d'idées est attendu."); }
+          e.target.value="";
+        };
+        r.readAsText(f);
+      });
+
+      window.addEventListener("online", flush);
+      render();
+      refresh();
+    })();
+  </script>
+  <script>
+    // === Feuille de route filtrable ========================================
+    // Modèle de données unique : chaque fonctionnalité a un groupe, un libellé,
+    // une priorité (haute|moyenne|bonus) et un statut done (true = implémentée).
+    // Pour « implémenter » une fonctionnalité : passer done:true -> elle sort
+    // de la vue par défaut (qui ne montre que les non-implémentées).
+    (function(){
+      var GROUPS = [
+        "🎯 Suivi & révision",
+        "💻 Interactivité & contenu",
+        "🔎 Recherche & navigation",
+        "🎨 Thème & accessibilité",
+        "🏗️ Technique & qualité",
+        "🧰 Confort & partage"
+      ];
+      // g = index du groupe ; t = libellé (HTML autorisé, contenu de confiance) ;
+      // p = priorité (ignorée si done) ; done = implémentée.
+      var FEATURES = [
+        // 🎯 Suivi & révision
+        { g:0, done:true,  t:"<b>Tableau de bord de progression</b>" },
+        { g:0, done:true,  t:"<b>Flashcards</b> — répétition espacée (algo SM‑2)" },
+        { g:0, done:true,  t:"<b>Mode examen chronométré</b> (score + correction)" },
+        { g:0, done:true,  t:"<b>Quiz mélangés</b>" },
+        { g:0, done:true,  t:"<b>Objectif hebdomadaire</b>" },
+        { g:0, done:true,  t:"<b>Minuteur Pomodoro</b>" },
+        { g:0, done:true,  t:"<b>Calendrier d'activité</b> (heatmap)" },
+        { g:0, done:true,  t:"<b>Streak de révision</b>" },
+        { g:0, done:true,  t:"<b>Favoris / marque‑pages</b>" },
+        { g:0, done:true,  t:"<b>Reprendre où j'en étais</b>" },
+        { g:0, done:true,  t:"<b>Export / import de progression</b>" },
+        { g:0, p:"moyenne", t:"<b>Stats par notion</b> : repérer automatiquement les points faibles" },
+        { g:0, p:"moyenne", t:"<b>Notes personnelles par module</b> (prise de notes inline, sauvegardée sur l'appareil)" },
+        { g:0, p:"moyenne", t:"<b>Calendrier d'examens &amp; comptes à rebours</b> (dates de partiels, J‑X)" },
+        { g:0, p:"bonus",   t:"<b>Bilan hebdomadaire automatique</b> : résumé de ce que tu as révisé" },
+        { g:0, p:"bonus",   t:"<b>Mode « révision du jour »</b> : sélection guidée des cartes et modules prioritaires" },
+        // 💻 Interactivité & contenu
+        { g:1, done:true,  t:"<b>Antisèches / aide‑mémoire</b>" },
+        { g:1, done:true,  t:"<b>Encarts Culture &amp; histoire</b>" },
+        { g:1, done:true,  t:"<b>Export PDF</b>" },
+        { g:1, done:true,  t:"<b>Temps de lecture</b>" },
+        { g:1, done:true,  t:"<b>Cours en Markdown « zéro code »</b> (moteur <code>cours.html</code>)" },
+        { g:1, done:true,  t:"<b>Coloration syntaxique</b> du code" },
+        { g:1, p:"haute",   t:"<b>Éditeur de code exécutable</b> (Rust Playground, Pyodide pour Python)" },
+        { g:1, p:"haute",   t:"<b>Assistant IA intégré</b> : poser une question sur un cours et obtenir une explication (via API)" },
+        { g:1, p:"moyenne", t:"<b>Quiz adaptatifs</b> : banque dynamique qui insiste sur tes points faibles" },
+        { g:1, p:"moyenne", t:"<b>Génération auto de quiz</b> depuis le Markdown du cours" },
+        { g:1, p:"moyenne", t:"<b>Visualisations interactives</b> (graphes, matrices, descente de gradient animée)" },
+        { g:1, p:"bonus",   t:"<b>Lecture audio des fiches</b> (text‑to‑speech, révision mains libres)" },
+        { g:1, p:"bonus",   t:"<b>Occlusion / cartes à trous</b> : masquer puis révéler les réponses" },
+        { g:1, p:"bonus",   t:"<b>Glossaire interactif</b> : définition au survol des termes clés" },
+        // 🔎 Recherche & navigation
+        { g:2, done:true,  t:"<b>Recherche globale</b>" },
+        { g:2, done:true,  t:"<b>Raccourcis clavier</b> (<kbd>/</kbd>, <kbd>Ctrl K</kbd>)" },
+        { g:2, done:true,  t:"<b>Navbar commune</b> (menu Cours)" },
+        { g:2, done:true,  t:"<b>Retour en haut</b>" },
+        { g:2, p:"moyenne", t:"<b>Filtres de recherche avancés</b> (par matière, difficulté, type de contenu)" },
+        // 🎨 Thème & accessibilité
+        { g:3, done:true,  t:"<b>Thème clair / sombre + auto</b> (système)" },
+        { g:3, done:true,  t:"<b>Couleur d'accent</b> personnalisable" },
+        { g:3, done:true,  t:"<b>Accessibilité de base</b> (skip‑link, focus visible)" },
+        { g:3, p:"moyenne", t:"<b>Accessibilité AA complète</b> (contrastes, navigation clavier exhaustive, lecteurs d'écran)" },
+        // 🏗️ Technique & qualité
+        { g:4, done:true,  t:"<b>PWA</b> (hors‑ligne, installable)" },
+        { g:4, done:true,  t:"<b>Responsive</b> (jusqu'au S26 Ultra)" },
+        { g:4, done:true,  t:"<b>Versionnage Git</b>" },
+        { g:4, done:true,  t:"<b>Favicons</b>" },
+        { g:4, p:"moyenne", t:"<b>MathJax/KaTeX en local</b> (pas de dépendance réseau)" },
+        { g:4, p:"moyenne", t:"<b>Design system partagé</b> unifié entre toutes les matières" },
+        { g:4, p:"moyenne", t:"<b>Pré‑cache des cours Markdown</b> pour une consultation 100 % hors‑ligne" },
+        { g:4, done:true,  t:"<b>Déploiement GitHub Pages</b> automatisé (GitHub Actions)" },
+        { g:4, p:"bonus",   t:"<b>Tests de rendu automatisés</b> (CI qui vérifie que chaque cours s'affiche)" },
+        { g:4, done:true,  t:"<b>Vérificateur de liens</b> (CI anti‑régression : liens, manifeste, JSON)" },
+        // 🧰 Confort & partage
+        { g:5, done:true,  t:"<b>Boîte à idées</b> (soumissions)" },
+        { g:5, done:true,  t:"<b>Collecte centralisée des idées</b> (API prête dans <code>backend/</code>)" },
+        { g:5, done:true,  t:"<b>Filtres de la feuille de route</b> (cette page)" },
+        { g:5, done:true,  t:"<b>Page « À configurer »</b> : check-list des réglages côté utilisateur" },
+        { g:5, p:"moyenne", t:"<b>Export Anki</b> des flashcards (.csv / .apkg) pour réviser sur mobile" },
+        { g:5, p:"bonus",   t:"<b>Sauvegarde cloud de la progression</b> (optionnelle, via le même backend que les idées)" },
+        { g:5, p:"bonus",   t:"<b>Partage d'un cours ou d'une fiche</b> par lien direct + QR code" },
+        { g:5, p:"bonus",   t:"<b>Déployer la collecte centralisée d'idées</b> (configurer l'API)" }
+      ];
+      var PCLASS = { haute:"p1", moyenne:"p2", bonus:"p3" };
+      var grid = document.getElementById("feat-grid");
+      var countEl = document.getElementById("ff-count");
+      var priosWrap = document.getElementById("ff-prios");
+      var state = { status:"todo", prios:{ haute:true, moyenne:true, bonus:true } };
+
+      function badge(f){
+        if(f.done) return '<span class="prio done">✅ fait</span>';
+        return '<span class="prio '+(PCLASS[f.p]||"p3")+'">'+(f.p||"bonus")+'</span>';
+      }
+      function pass(f){
+        if(state.status==="todo" && f.done) return false;
+        if(state.status==="done" && !f.done) return false;
+        if(!f.done && !state.prios[f.p||"bonus"]) return false; // priorité : seulement sur les non-faites
+        return true;
+      }
+      function render(){
+        var html="", shown=0;
+        for(var gi=0; gi<GROUPS.length; gi++){
+          var items = FEATURES.filter(function(f){ return f.g===gi && pass(f); });
+          if(!items.length) continue;
+          shown += items.length;
+          html += '<div class="panel"><h3>'+GROUPS[gi]+'</h3><ul>'+
+            items.map(function(f){ return '<li>'+f.t+' '+badge(f)+'</li>'; }).join("")+
+            '</ul></div>';
+        }
+        grid.innerHTML = html || '<p class="feat-empty">Aucune fonctionnalité ne correspond à ces filtres.</p>';
+        var total = FEATURES.length, done = FEATURES.filter(function(f){return f.done;}).length;
+        var label = state.status==="todo" ? "à faire" : (state.status==="done" ? "faites" : "au total");
+        countEl.textContent = shown+" affichée"+(shown>1?"s":"")+" · "+label+
+          "  (✅ "+done+" faites / 💡 "+(total-done)+" à faire)";
+        priosWrap.classList.toggle("off", state.status==="done");
+      }
+
+      document.getElementById("ff-status").addEventListener("click", function(e){
+        var b=e.target.closest(".ff-s"); if(!b) return;
+        state.status=b.getAttribute("data-status");
+        Array.prototype.forEach.call(this.querySelectorAll(".ff-s"), function(x){
+          var on=x===b; x.classList.toggle("on",on); x.setAttribute("aria-pressed",on?"true":"false");
+        });
+        render();
+      });
+      priosWrap.addEventListener("click", function(e){
+        var b=e.target.closest(".ff-p"); if(!b) return;
+        var p=b.getAttribute("data-prio");
+        state.prios[p]=!state.prios[p];
+        b.classList.toggle("on",state.prios[p]); b.setAttribute("aria-pressed",state.prios[p]?"true":"false");
+        render();
+      });
+      render();
     })();
   </script>
 <script src="assets/nav.js"></script>

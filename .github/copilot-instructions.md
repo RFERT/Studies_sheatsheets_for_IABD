@@ -14,7 +14,7 @@ Lis aussi `README.md` (structure, conventions) et `docs/CONTEXTE-PROJET.md` (ét
 
 ## Deux axes de travail (discussions séparées)
 1. **Site / infrastructure** : portail, navbar, recherche, progression, PWA, design system, thèmes, GitHub Pages.
-   Fichiers : `index.html`, `assets/`, `sw.js`, `manifest.webmanifest`, `flashcards.html`, `ameliorations.html`, guides.
+   Fichiers : `index.html`, `assets/`, `sw.js`, `manifest.webmanifest`, `flashcards.html`, `ameliorations.html`.
 2. **Contenu des cours** : modules, quiz, fiches, antisèches, encarts culture, flashcards (contenu).
    Fichiers : tout `matieres/**`. Ne modifie le moteur (`assets/`, `app.js`) que si c'est vraiment nécessaire
    et signale-le.
@@ -58,6 +58,11 @@ Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans co
 - Les moteurs `matieres/mathematiques/assets/app.js` et `matieres/python/assets/app.js` sont **dupliqués en
   grande partie** : toute évolution d'un quiz/outil commun doit être répercutée dans les deux (ou factorisée).
 - Raccourcis clavier existants : `/` et `Ctrl/⌘+K` (recherche). Ne pas les écraser.
+- **Feuille de route filtrable** (`ameliorations.html`) : la liste des fonctionnalités est pilotée par le
+  tableau JS `FEATURES` (groupe `g`, libellé `t`, priorité `p` = haute/moyenne/bonus, `done`). La vue par
+  défaut n'affiche que les **non implémentées** ; les filtres (statut À faire/Faites/Toutes + priorités)
+  permettent de voir les faites. ⇒ **Quand tu implémentes une fonctionnalité, passe son entrée à `done:true`**
+  (ne la laisse pas dans les idées). Ajoute toute nouvelle idée comme entrée sans `done`.
 
 ## Conventions de contenu
 - Encart **« Culture & histoire »** à l'écart du cours fonctionnel (voir README, classe `.culture`).
@@ -71,6 +76,10 @@ Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans co
   Python : `py ...` (définir `PYTHONIOENCODING=utf-8` pour les scripts qui affichent des accents).
 - Vérifier avant de conclure : liens internes qui résolvent, **0 erreur console**, pas de débordement mobile,
   rendu en thème clair **et** sombre.
+- **CI (GitHub Actions)** : `.github/workflows/ci.yml` valide chaque push/PR via `ci/validate_site.py`
+  (liens morts, manifeste `cours.js`, JSON) puis, sur `main`, régénère l'index de recherche, le committe
+  et **déploie sur GitHub Pages**. Lance `python ci/validate_site.py` en local avant de pousser.
+  Pré-requis dépôt (une fois) : Settings → Pages → Source = GitHub Actions. Voir `ci/README.md`.
 - **Commits** : en français, message court + puces, avec le trailer
   `Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>`. Branche `main`, remote `origin`
   (`RFERT/Studies_sheatsheets_for_IABD`). Demander avant de pousser.

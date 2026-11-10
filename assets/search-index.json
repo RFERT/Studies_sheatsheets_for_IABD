@@ -1912,26 +1912,17 @@
 "emoji": "🎓",
 "color": "#27e0b0",
 "type": "page",
+"t": "À configurer — réglages & déploiements",
+"u": "parametrage.html",
+"k": "configurer paramétrage réglages déploiement backend github pages api cloudflare worker google apps script clé secret setup à faire côté utilisateur"
+},
+{
+"s": "Portail",
+"emoji": "🎓",
+"color": "#27e0b0",
+"type": "page",
 "t": "Flashcards — répétition espacée",
 "u": "flashcards.html",
 "k": "flashcards répétition espacée spaced repetition révision mémorisation SM-2 cartes quiz"
-},
-{
-"s": "Portail",
-"emoji": "🎓",
-"color": "#27e0b0",
-"type": "page",
-"t": "Ouvrir le site sur mon téléphone (guide mobile)",
-"u": "guide-mobile.html",
-"k": "mobile téléphone smartphone samsung serveur local github pages hors-ligne installer"
-},
-{
-"s": "Portail",
-"emoji": "🎓",
-"color": "#27e0b0",
-"type": "page",
-"t": "Publier mon site avec GitHub Pages (guide)",
-"u": "guide-github-pages.html",
-"k": "github pages git publier déployer en ligne hébergement gratuit url site web push commit vs code progression locale localstorage privée chaque utilisateur"
 }
 ]
