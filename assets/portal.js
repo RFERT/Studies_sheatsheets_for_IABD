@@ -71,10 +71,12 @@ const SUBJECTS = [
     name: "Bases de données",
     emoji: "🧮",
     color: "#22c3a6",
-    status: "soon",
-    desc: "SQL avancé, modélisation, NoSQL (MongoDB, Redis), optimisation de requêtes, transactions.",
-    tags: ["SQL", "NoSQL", "Modélisation"],
-    meta: "À venir"
+    status: "ready",
+    featured: true,
+    href: "matieres/sql/index.html",
+    desc: "SQL de A à Z : SELECT, filtres & NULL, agrégation (GROUP BY/HAVING), jointures, sous-requêtes, fonctions de fenêtrage, DML, transactions & index. Parcours interactif avec quiz adaptatifs, checkpoints & examen final.",
+    tags: ["SQL", "Jointures", "Window functions"],
+    meta: "8 modules · 2 checkpoints · 66 quiz · examen final"
   },
   {
     code: "PRO",

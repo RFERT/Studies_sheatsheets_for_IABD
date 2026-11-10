@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cursus SQL — Du SELECT aux window functions</title>
+<style>
+  :root{
+    --bg:#0f1117; --bg2:#171a23; --bg3:#1e2230; --panel:#141822;
+    --txt:#e6e9ef; --muted:#9aa4b2; --line:#2a3040;
+    --acc:#0ea5e9; --acc2:#7dd3fc; --ok:#3ecf8e; --bad:#ff5d6c;
+    --warn:#ffcf5c; --blue:#5aa9ff; --purple:#b98cff;
+    --code:#11141d;
+    --radius:14px;
+    --mono:"JetBrains Mono","Fira Code",Consolas,Menlo,monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 600px at 80% -10%,#1a1410 0%,var(--bg) 55%);
+    color:var(--txt);font-family:var(--sans);line-height:1.6;font-size:16px;
+  }
+  a{color:var(--blue)}
+  .app{display:grid;grid-template-columns:290px 1fr;min-height:100vh}
+  /* Sidebar */
+  aside{
+    background:linear-gradient(180deg,var(--bg2),var(--bg));
+    border-right:1px solid var(--line);padding:20px 16px;position:sticky;top:0;height:100vh;overflow:auto
+  }
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logo{
+    width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--acc),#0369a1);
+    display:grid;place-items:center;font-weight:800;color:#fff;font-size:20px;box-shadow:0 6px 18px rgba(14,165,233,.4)
+  }
+  .brand h1{font-size:17px;margin:0;line-height:1.2}
+  .brand small{color:var(--muted);font-size:12px}
+  .levelbar{margin:14px 0 8px}
+  .levelbar .lvl{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:6px}
+  .bar{height:8px;background:var(--bg3);border-radius:99px;overflow:hidden}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s}
+  nav{margin-top:14px;display:flex;flex-direction:column;gap:4px}
+  .navitem{
+    display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:10px;cursor:pointer;
+    color:var(--muted);font-size:14px;border:1px solid transparent;user-select:none
+  }
+  .navitem:hover{background:var(--bg3);color:var(--txt)}
+  .navitem.active{background:var(--bg3);color:var(--txt);border-color:var(--line)}
+  .navitem.done{color:var(--txt)}
+  .navitem .ic{width:22px;height:22px;border-radius:6px;background:var(--bg3);display:grid;place-items:center;font-size:12px;flex:0 0 auto}
+  .navitem.done .ic{background:rgba(62,207,142,.15);color:var(--ok)}
+  .navitem.cp .ic{background:rgba(90,169,255,.15);color:var(--blue)}
+  .navitem.final .ic{background:rgba(185,140,255,.15);color:var(--purple)}
+  .side-actions{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+  .btn{
+    border:1px solid var(--line);background:var(--bg3);color:var(--txt);padding:9px 12px;border-radius:10px;
+    cursor:pointer;font-size:14px;font-family:inherit;transition:.15s
+  }
+  .btn:hover{border-color:var(--acc);color:#fff}
+  .btn.small{padding:6px 10px;font-size:13px}
+  .btn.primary{background:linear-gradient(135deg,var(--acc),#0284c7);border-color:transparent;color:#fff;font-weight:600}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  /* Main */
+  main{padding:34px 40px 90px;max-width:1000px;margin:0 auto;width:100%}
+  .kicker{color:var(--acc2);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  h2.title{font-size:30px;margin:6px 0 4px}
+  .sub{color:var(--muted);margin-bottom:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px}
+  .lesson h3{margin-top:26px;font-size:20px;color:#fff;border-left:3px solid var(--acc);padding-left:10px}
+  .lesson h4{margin-top:20px;font-size:16px;color:var(--acc2)}
+  .lesson p{margin:10px 0}
+  .lesson ul,.lesson ol{margin:8px 0 8px 4px;padding-left:22px}
+  .lesson li{margin:4px 0}
+  .lesson table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+  .lesson th,.lesson td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  .lesson th{background:var(--bg3)}
+  code{font-family:var(--mono);background:var(--bg3);padding:2px 6px;border-radius:6px;font-size:.9em;color:var(--acc2)}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto;margin:12px 0}
+  pre code{background:none;padding:0;color:#dfe4ee;font-size:13.5px;line-height:1.55;display:block}
+  .callout{border-radius:10px;padding:12px 16px;margin:14px 0;border:1px solid;font-size:14.5px}
+  .callout .h{font-weight:700;margin-bottom:2px;display:flex;gap:8px;align-items:center}
+  .callout.why{border-color:rgba(90,169,255,.4);background:rgba(90,169,255,.08)}
+  .callout.py{border-color:rgba(185,140,255,.4);background:rgba(185,140,255,.08)}
+  .callout.trap{border-color:rgba(255,93,108,.4);background:rgba(255,93,108,.08)}
+  .callout.err{border-color:rgba(255,207,92,.4);background:rgba(255,207,92,.07)}
+  .callout.data{border-color:rgba(62,207,142,.4);background:rgba(62,207,142,.08)}
+  .callout.hist{border-color:rgba(255,207,92,.35);background:rgba(255,207,92,.06)}
+  .tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-lit{color:#a5d6a3}.tok-num{color:#79c0ff}
+  .tok-cmt{color:#7d8590;font-style:italic}.tok-mac{color:#ffa657}.tok-ty{color:#7ee787}
+  /* Quiz */
+  .quizhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+  .pill{font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+  .pill.d1{color:var(--ok);border-color:rgba(62,207,142,.4)}
+  .pill.d2{color:var(--warn);border-color:rgba(255,207,92,.4)}
+  .pill.d3{color:var(--bad);border-color:rgba(255,93,108,.4)}
+  .qprompt{font-size:17px;margin:6px 0 14px;font-weight:500}
+  .choices{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+  .choice{
+    display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    cursor:pointer;transition:.12s;background:var(--bg2)
+  }
+  .choice:hover{border-color:var(--acc)}
+  .choice.sel{border-color:var(--acc);background:rgba(14,165,233,.12)}
+  .choice.correct{border-color:var(--ok);background:rgba(62,207,142,.12)}
+  .choice.wrong{border-color:var(--bad);background:rgba(255,93,108,.12)}
+  .choice .mk{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;display:grid;place-items:center;font-size:12px}
+  .choice.sel .mk{border-color:var(--acc)}
+  .choice.correct .mk{border-color:var(--ok);background:var(--ok);color:#04120b}
+  .choice.wrong .mk{border-color:var(--bad);background:var(--bad);color:#fff}
+  .choice.multi .mk{border-radius:6px}
+  textarea.answer{
+    width:100%;min-height:120px;background:var(--code);color:#dfe4ee;border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;font-family:var(--mono);font-size:13.5px;resize:vertical
+  }
+  input.answer{
+    width:100%;background:var(--code);color:#dfe4ee;border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;font-family:var(--mono);font-size:14px
+  }
+  .feedback{margin-top:16px;border-radius:12px;padding:16px 18px;border:1px solid var(--line);background:var(--bg2);display:none}
+  .feedback.show{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .verdict{font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .verdict.ok{color:var(--ok)}.verdict.bad{color:var(--bad)}.verdict.part{color:var(--warn)}
+  .selfassess{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+  .selfassess .lab{color:var(--muted);font-size:14px;margin-right:4px}
+  .qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px;flex-wrap:wrap}
+  .progressline{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--bg3);border:1px solid var(--line)}
+  .dot.ok{background:var(--ok);border-color:var(--ok)}
+  .dot.bad{background:var(--bad);border-color:var(--bad)}
+  .dot.part{background:var(--warn);border-color:var(--warn)}
+  .dot.cur{box-shadow:0 0 0 3px rgba(14,165,233,.4)}
+  .hintbox{margin-top:12px;font-size:14px;color:var(--warn);display:none}
+  .hintbox.show{display:block}
+  .summary .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}
+  .stat{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .stat .n{font-size:26px;font-weight:800}
+  .stat .l{color:var(--muted);font-size:13px}
+  .badge{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;font-size:13px}
+  .weak{background:rgba(255,93,108,.1);border:1px solid rgba(255,93,108,.4);border-radius:10px;padding:10px 14px;margin:8px 0}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--line);
+    padding:10px 18px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1}
+  .topbar-m{display:none}
+  @media(max-width:860px){
+    .app{grid-template-columns:1fr}
+    aside{position:fixed;z-index:40;left:-320px;width:300px;transition:.25s;box-shadow:0 0 40px rgba(0,0,0,.5)}
+    aside.open{left:0}
+    main{padding:20px 18px 80px}
+    .topbar-m{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="logo">🗄️</div>
+      <div><h1>Cursus SQL</h1><small>Du SELECT aux window functions</small></div>
+    </div>
+    <div class="levelbar">
+      <div class="lvl"><span id="lvlName">Niveau : Débutant</span><span id="lvlPct">0%</span></div>
+      <div class="bar"><i id="lvlBar"></i></div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-actions">
+      <a class="btn ghost small" href="../../index.html" style="text-decoration:none;text-align:center">← Tous mes cours</a>
+      <button class="btn ghost small" id="resetBtn">↺ Réinitialiser la progression</button>
+      <small style="color:var(--muted);font-size:11px">Progression sauvegardée dans ce navigateur.</small>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div class="topbar-m">
+      <button class="btn small" id="menuBtn">☰ Menu</button>
+      <strong>Cursus SQL</strong>
+    </div>
+    <div id="content"></div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   MOTEUR DE QUIZ + CONTENU DU COURS
+   ============================================================ */
+
+/* ---------- Coloration syntaxique pour SQL ---------- */
+function hl(src){
+  const kw=/\b(SELECT|FROM|WHERE|GROUP|BY|HAVING|ORDER|LIMIT|OFFSET|FETCH|DISTINCT|AS|AND|OR|NOT|NULL|IS|IN|LIKE|ILIKE|BETWEEN|JOIN|INNER|LEFT|RIGHT|FULL|OUTER|CROSS|NATURAL|ON|USING|UNION|INTERSECT|EXCEPT|ALL|ANY|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|VIEW|INDEX|ALTER|ADD|DROP|TRUNCATE|PRIMARY|KEY|FOREIGN|REFERENCES|DEFAULT|UNIQUE|CHECK|CONSTRAINT|AUTO_INCREMENT|CASE|WHEN|THEN|ELSE|END|WITH|RECURSIVE|OVER|PARTITION|BEGIN|COMMIT|ROLLBACK|SAVEPOINT|TRANSACTION|GRANT|REVOKE|ASC|DESC|EXISTS|CAST|COALESCE|NULLS|FIRST|LAST)\b/gi;
+  const fn=/\b(COUNT|SUM|AVG|MIN|MAX|ROUND|ABS|CEIL|FLOOR|ROW_NUMBER|RANK|DENSE_RANK|NTILE|LAG|LEAD|FIRST_VALUE|LAST_VALUE|UPPER|LOWER|TRIM|LENGTH|SUBSTRING|CONCAT|NOW|CURRENT_DATE|EXTRACT|AGE)\b/gi;
+  const ty=/\b(INT|INTEGER|BIGINT|SMALLINT|SERIAL|VARCHAR|CHAR|TEXT|BOOLEAN|BOOL|DATE|TIMESTAMP|TIMESTAMPTZ|TIME|INTERVAL|DECIMAL|NUMERIC|FLOAT|REAL|DOUBLE|UUID|JSON|JSONB)\b/gi;
+  // échappement HTML
+  let s=src.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  // On met de côté commentaires et chaines pour ne PAS les recolorer ensuite
+  const store=[];
+  const stash=(html)=>{ store.push(html); return '\uE000'+String.fromCharCode(0xE100+store.length-1)+'\uE001'; };
+  s=s.replace(/(--[^\n]*)/g,(m)=>stash('<span class=tok-cmt>'+m+'</span>'));           // commentaires --
+  s=s.replace(/(\/\*[\s\S]*?\*\/)/g,(m)=>stash('<span class=tok-cmt>'+m+'</span>'));    // commentaires /* */
+  s=s.replace(/('(?:[^'\\]|\\.)*')/g,(m)=>stash('<span class=tok-lit>'+m+'</span>'));   // chaines 'texte'
+  s=s.replace(/\b(\d[\d_]*(?:\.\d+)?)\b/g,'<span class=tok-num>$1</span>');             // nombres
+  s=s.replace(ty,'<span class=tok-ty>$1</span>');
+  s=s.replace(fn,'<span class=tok-mac>$1</span>');
+  s=s.replace(kw,'<span class=tok-kw>$1</span>');
+  // restauration des commentaires/chaines
+  s=s.replace(/\uE000([\uE100-\uE1FF])\uE001/g,(m,c)=>store[c.charCodeAt(0)-0xE100]);
+  return s;
+}
+function code(src){return '<pre><code>'+hl(src.replace(/^\n/,'').replace(/\s+$/,''))+'</code></pre>';}
+
+/* Callouts helpers */
+const def = (t)=>`<div class="callout why"><div class="h">📘 Définition / Syntaxe</div>${t}</div>`;
+const why = (t)=>`<div class="callout py"><div class="h">💡 Pourquoi / Intuition</div>${t}</div>`;
+const trap= (t)=>`<div class="callout trap"><div class="h">⚠️ Piège fréquent</div>${t}</div>`;
+const perf= (t)=>`<div class="callout err"><div class="h">⚡ Performance</div>${t}</div>`;
+const data= (t)=>`<div class="callout data"><div class="h">🤖 Lien Data / IA</div>${t}</div>`;
+const hist= (t)=>`<div class="callout hist"><div class="h">📜 Culture & histoire</div>${t}</div>`;
+
+/* ============================================================
+   DONNÉES DU COURS
+   Types de question :
+   - mcq   : choix unique (answer = index)
+   - multi : choix multiple (answer = [indices])
+   - tf    : vrai/faux (answer = true/false)
+   - text  : réponse libre courte, auto-évaluée (model + explain)
+   - predict: prédiction de sortie, auto-évaluée
+   - code  : écriture/refactoring de code, auto-évaluée
+   ============================================================ */
+const COURSE = [];
+</script>
+
+<!-- Contenu SQL -->
+<script>
+/* Schéma d'exemple utilisé dans tout le cursus :
+   clients(id, nom, ville, pays, date_inscription)
+   commandes(id, client_id, montant, statut, date_commande)
+   produits(id, nom, categorie, prix) */
+
+/* ================= MODULE 1 — Modèle relationnel & SELECT ================= */
+COURSE.push({
+  type:'module', navtitle:'1 · SELECT',
+  title:'Module 1 — Le modèle relationnel & la requête SELECT',
+  sub:'Comprendre les tables, puis extraire des données avec SELECT … FROM.',
+  lesson:
+    `<h3>Qu’est-ce qu’une base relationnelle ?</h3>
+    <p>Une base de données relationnelle organise l’information en <b>tables</b> (relations). Chaque table a des <b>colonnes</b> (attributs, typés) et des <b>lignes</b> (enregistrements). SQL (<i>Structured Query Language</i>) est le langage pour <b>interroger</b> et <b>manipuler</b> ces données.</p>`+
+    def(`Le <b>schéma</b> décrit la structure. Pour tout ce cursus, on utilise :
+    <ul>
+      <li><code>clients(id, nom, ville, pays, date_inscription)</code></li>
+      <li><code>commandes(id, client_id, montant, statut, date_commande)</code></li>
+      <li><code>produits(id, nom, categorie, prix)</code></li>
+    </ul>
+    <code>client_id</code> dans <code>commandes</code> est une <b>clé étrangère</b> qui référence <code>clients.id</code>.`)+
+    `<h3>La requête de base</h3>`+
+    code(`-- Sélectionner certaines colonnes de toutes les lignes
+SELECT nom, ville
+FROM clients;
+
+-- Toutes les colonnes
+SELECT *
+FROM clients;`)+
+    `<p>L’étoile <code>*</code> renvoie toutes les colonnes. <code>SELECT</code> choisit les colonnes (la « projection »), <code>FROM</code> indique la table.</p>`+
+    why(`SQL est <b>déclaratif</b> : tu décris <b>ce que</b> tu veux, pas <b>comment</b> l’obtenir. C’est le moteur (l’optimiseur de requêtes) qui décide de la stratégie d’exécution. C’est très différent d’un langage impératif comme Python où tu écris la boucle toi-même. Tu raisonnes en « ensembles de lignes », pas en itérations.`)+
+    `<h3>Calculs et littéraux dans le SELECT</h3>`+
+    code(`SELECT
+    nom,
+    prix,
+    prix * 1.20 AS prix_ttc      -- colonne calculée, renommée avec AS
+FROM produits;`)+
+    `<p><code>AS</code> donne un <b>alias</b> (un nom d’affichage) à une colonne ou une expression. On peut faire de l’arithmétique, de la concaténation, etc.</p>`+
+    perf(`<code>SELECT *</code> est pratique pour explorer, mais <b>à éviter en production</b> : il transfère des colonnes inutiles (réseau, mémoire) et casse si le schéma change. Nomme explicitement les colonnes dont tu as besoin.`)+
+    trap(`SQL <b>ignore la casse</b> des mots-clés (<code>select</code> = <code>SELECT</code>), mais par convention on écrit les mots-clés en MAJUSCULES. En revanche, selon le SGBD, les <b>noms de tables/colonnes</b> peuvent être sensibles à la casse (surtout entre guillemets doubles en PostgreSQL). Le <b>point-virgule</b> <code>;</code> termine une requête.`)+
+    data(`SQL est l’outil n°1 du data analyst et du data engineer : avant tout modèle d’IA, il faut <b>extraire, nettoyer et agréger</b> les données — souvent directement en SQL (ou en Spark SQL / BigQuery sur de gros volumes). Savoir écrire un bon <code>SELECT</code> est un prérequis quotidien en IABD.`)+
+    hist(`SQL découle du modèle relationnel inventé par <b>Edgar F. Codd</b> (IBM, 1970). Le langage, d’abord nommé SEQUEL, est devenu un standard ISO en 1987. Il reste, 50 ans plus tard, omniprésent. Voir <a href="https://fr.wikipedia.org/wiki/Structured_Query_Language" target="_blank" rel="noopener">SQL — Wikipédia</a>.`),
+  quiz:[
+    { kind:'mcq', difficulty:1, tags:['SELECT'],
+      prompt:`Quelle clause indique la table dans laquelle on lit les données ?`,
+      choices:[`<code>SELECT</code>`,`<code>FROM</code>`,`<code>WHERE</code>`,`<code>TABLE</code>`],
+      answer:1,
+      explain:`<code>FROM</code> désigne la (ou les) table(s) source. <code>SELECT</code> choisit les colonnes à renvoyer (la projection). <code>WHERE</code> (Module 2) filtre les lignes.`},
+    { kind:'mcq', difficulty:1, tags:['alias'],
+      prompt:`Que fait <code>AS</code> dans <code>SELECT prix * 1.2 AS prix_ttc</code> ?`,
+      choices:[`Convertit le type`,`Donne un alias (nom d’affichage) à la colonne calculée`,`Arrondit le résultat`,`Filtre les lignes`],
+      answer:1,
+      explain:`<code>AS</code> renomme une colonne ou une expression pour l’affichage. Sans lui, la colonne calculée aurait un nom généré peu lisible. L’alias est purement cosmétique (il n’altère pas la table).`},
+    { kind:'tf', difficulty:2, tags:['SELECT *','performance'],
+      prompt:`En production, il est recommandé d’utiliser <code>SELECT *</code> partout pour ne rien oublier.`,
+      answer:false,
+      explain:`Faux. <code>SELECT *</code> transfère des colonnes inutiles, pénalise les performances et rend le code fragile aux changements de schéma. On nomme explicitement les colonnes nécessaires.`},
+    { kind:'code', difficulty:2, tags:['SELECT'],
+      prompt:`Écris une requête qui renvoie le <code>nom</code> et le <code>pays</code> de tous les clients.`,
+      starter:`SELECT \nFROM clients;`,
+      hint:`Deux colonnes séparées par une virgule, puis FROM.`,
+      keywords:['select','nom','pays','from','clients'],
+      modelCode:true,
+      model:`SELECT nom, pays
+FROM clients;`,
+      explain:`On projette deux colonnes (<code>nom</code>, <code>pays</code>) depuis la table <code>clients</code>. L’ordre des colonnes dans le résultat suit l’ordre du SELECT.`},
+    { kind:'text', difficulty:2, tags:['déclaratif'],
+      prompt:`En quoi SQL est-il un langage « déclaratif » ? Oppose-le brièvement à une approche impérative (ex. une boucle Python).`,
+      hint:`Décrire le "quoi" vs le "comment".`,
+      keywords:['déclaratif','quoi','comment','optimiseur','ensemble','moteur'],
+      model:`En SQL on décrit <b>ce que</b> l’on veut obtenir (quelles lignes/colonnes), et le moteur (l’optimiseur) décide <b>comment</b> l’exécuter. En Python impératif, on écrit explicitement <b>comment</b> parcourir et filtrer les données (boucles, conditions).`,
+      explain:`Le caractère déclaratif permet au SGBD d’optimiser (choix d’index, ordre des jointures…) sans que tu le spécifies. Tu raisonnes en ensembles de lignes plutôt qu’en itérations pas-à-pas.`}
+  ]
+});
+
+/* ================= MODULE 2 — WHERE, opérateurs & NULL ================= */
+COURSE.push({
+  type:'module', navtitle:'2 · WHERE & NULL',
+  title:'Module 2 — Filtrer les lignes : WHERE, opérateurs & NULL',
+  sub:'Ne garder que les lignes qui comptent, et gérer l’absence de valeur.',
+  lesson:
+    `<h3>La clause WHERE</h3>
+    <p><code>WHERE</code> filtre les lignes selon une condition booléenne : seules celles qui la vérifient sont conservées.</p>`+
+    code(`SELECT nom, montant
+FROM commandes
+WHERE montant > 100;`)+
+    `<h3>Opérateurs courants</h3>
+    <table>
+      <tr><th>Opérateur</th><th>Sens</th><th>Exemple</th></tr>
+      <tr><td><code>= &lt;&gt; &lt; &gt; &lt;= &gt;=</code></td><td>comparaisons (<code>&lt;&gt;</code> = différent)</td><td><code>montant &gt;= 50</code></td></tr>
+      <tr><td><code>AND OR NOT</code></td><td>combinaisons logiques</td><td><code>pays = 'France' AND ville = 'Lyon'</code></td></tr>
+      <tr><td><code>BETWEEN a AND b</code></td><td>intervalle inclusif</td><td><code>montant BETWEEN 10 AND 50</code></td></tr>
+      <tr><td><code>IN (…)</code></td><td>appartenance à une liste</td><td><code>pays IN ('France','Belgique')</code></td></tr>
+      <tr><td><code>LIKE</code></td><td>motif texte (<code>%</code>=0+ car., <code>_</code>=1 car.)</td><td><code>nom LIKE 'A%'</code></td></tr>
+    </table>`+
+    code(`SELECT *
+FROM clients
+WHERE pays IN ('France', 'Belgique')
+  AND ville LIKE 'Par%';          -- commence par "Par"`)+
+    `<h3>La valeur NULL — l’inconnu</h3>`+
+    def(`<code>NULL</code> représente une valeur <b>absente ou inconnue</b> — ce n’est ni 0, ni une chaîne vide. Toute comparaison avec <code>NULL</code> renvoie « inconnu » (ni vrai, ni faux), donc la ligne est <b>exclue</b>.`)+
+    code(`-- FAUX : ne renvoie JAMAIS de lignes
+SELECT * FROM clients WHERE ville = NULL;
+
+-- CORRECT : on teste la nullité avec IS NULL / IS NOT NULL
+SELECT * FROM clients WHERE ville IS NULL;
+SELECT * FROM clients WHERE ville IS NOT NULL;`)+
+    trap(`Le piège n°1 des débutants : écrire <code>= NULL</code> au lieu de <code>IS NULL</code>. Comme <code>NULL</code> signifie « inconnu », <code>ville = NULL</code> vaut « inconnu » pour <b>toutes</b> les lignes → résultat vide. Il faut <b>toujours</b> <code>IS NULL</code> / <code>IS NOT NULL</code>.`)+
+    why(`Cette « logique à trois valeurs » (vrai / faux / inconnu) est déroutante mais logique : si on ne connaît pas la ville d’un client, on ne peut pas affirmer qu’elle est égale (ni différente) de quoi que ce soit. <code>NOT IN</code> avec des NULL réserve d’ailleurs des surprises — on y reviendra avec les sous-requêtes.`)+
+    perf(`<code>LIKE '%texte'</code> (motif commençant par <code>%</code>) empêche l’usage d’un index classique et force souvent un parcours complet de la table. Les motifs ancrés à gauche (<code>'texte%'</code>) sont bien plus efficaces.`)+
+    data(`Le filtrage <code>WHERE</code> est l’étape de <b>sélection</b> d’un dataset : restreindre une période, un segment, exclure les valeurs manquantes… La gestion des <code>NULL</code> est cruciale avant un modèle (les valeurs manquantes faussent les statistiques et plantent beaucoup d’algorithmes).`),
+  quiz:[
+    { kind:'predict', difficulty:2, tags:['WHERE','NULL'], expect:'aucune ligne',
+      prompt:`Combien de lignes renvoie cette requête, et pourquoi ?`,
+      code:`SELECT * FROM clients WHERE ville = NULL;`,
+      hint:`Comment compare-t-on à NULL ?`,
+      model:`Aucune ligne.`,
+      explain:`<code>= NULL</code> vaut toujours « inconnu », jamais « vrai » : la requête ne renvoie <b>aucune</b> ligne, même s’il existe des villes NULL. Il faut écrire <code>WHERE ville IS NULL</code>.`},
+    { kind:'mcq', difficulty:2, tags:['LIKE'],
+      prompt:`Quel motif correspond aux noms commençant par « Du » et de n’importe quelle longueur ?`,
+      choices:[`<code>LIKE 'Du_'</code>`,`<code>LIKE 'Du%'</code>`,`<code>LIKE '%Du'</code>`,`<code>LIKE 'Du'</code>`],
+      answer:1,
+      explain:`<code>%</code> remplace 0 ou plusieurs caractères : <code>'Du%'</code> = « commence par Du ». <code>_</code> remplace exactement 1 caractère. <code>'%Du'</code> = « se termine par Du ». <code>'Du'</code> = égal exactement à « Du ».`},
+    { kind:'mcq', difficulty:2, tags:['IN','BETWEEN'],
+      prompt:`Quelle condition est équivalente à <code>montant &gt;= 10 AND montant &lt;= 50</code> ?`,
+      choices:[`<code>montant IN (10, 50)</code>`,`<code>montant BETWEEN 10 AND 50</code>`,`<code>montant LIKE '10-50'</code>`,`<code>montant = 10 OR 50</code>`],
+      answer:1,
+      explain:`<code>BETWEEN a AND b</code> est un intervalle <b>inclusif</b> : équivaut à <code>&gt;= a AND &lt;= b</code>. <code>IN (10,50)</code> ne garderait que les valeurs exactement 10 ou 50.`},
+    { kind:'tf', difficulty:2, tags:['NULL'],
+      prompt:`En SQL, <code>NULL</code> est équivalent à la chaîne vide <code>''</code> et au nombre <code>0</code>.`,
+      answer:false,
+      explain:`Faux. <code>NULL</code> = valeur <b>inconnue/absente</b>, distincte de <code>0</code> et de <code>''</code> (qui sont des valeurs connues). D’où la nécessité de <code>IS NULL</code> pour la tester.`},
+    { kind:'code', difficulty:2, tags:['WHERE','AND'],
+      prompt:`Écris une requête renvoyant toutes les colonnes des commandes dont le <code>montant</code> dépasse 200 <b>et</b> dont le <code>statut</code> vaut <code>'payee'</code>.`,
+      starter:`SELECT *\nFROM commandes\nWHERE ;`,
+      hint:`Deux conditions reliées par AND ; la chaîne va entre apostrophes.`,
+      keywords:['where','montant','200','and','statut','payee'],
+      modelCode:true,
+      model:`SELECT *
+FROM commandes
+WHERE montant > 200
+  AND statut = 'payee';`,
+      explain:`Deux conditions combinées par <code>AND</code> : les deux doivent être vraies. La valeur texte <code>'payee'</code> est entre apostrophes simples (les guillemets doubles désignent, eux, des identifiants dans la norme SQL).`}
+  ]
+});
+/* ================= MODULE 3 — ORDER BY, DISTINCT, LIMIT ================= */
+COURSE.push({
+  type:'module', navtitle:'3 · Tri & DISTINCT',
+  title:'Module 3 — Trier, dédupliquer & limiter',
+  sub:'Mettre en forme le résultat : ORDER BY, DISTINCT, LIMIT.',
+  lesson:
+    `<h3>Trier avec ORDER BY</h3>`+
+    code(`SELECT nom, montant
+FROM commandes
+ORDER BY montant DESC;      -- décroissant ; ASC (défaut) = croissant`)+
+    `<p>On peut trier sur plusieurs colonnes (ordre de priorité de gauche à droite) :</p>`+
+    code(`SELECT nom, pays, ville
+FROM clients
+ORDER BY pays ASC, ville DESC;   -- d'abord par pays, puis ville dans chaque pays`)+
+    `<h3>Éliminer les doublons : DISTINCT</h3>`+
+    code(`SELECT DISTINCT pays
+FROM clients;                -- la liste des pays, sans répétition`)+
+    why(`<code>DISTINCT</code> s’applique à <b>l’ensemble des colonnes</b> sélectionnées, pas à une seule. <code>SELECT DISTINCT pays, ville</code> renvoie les <b>couples</b> (pays, ville) distincts — pas les pays distincts puis les villes distinctes séparément.`)+
+    `<h3>Limiter le nombre de lignes : LIMIT</h3>`+
+    code(`-- Les 5 plus grosses commandes
+SELECT nom, montant
+FROM commandes
+ORDER BY montant DESC
+LIMIT 5;`)+
+    trap(`<code>LIMIT</code> <b>sans</b> <code>ORDER BY</code> renvoie des lignes <b>non déterministes</b> : le SGBD peut te donner n’importe lesquelles (l’ordre physique n’est pas garanti). « Les 5 meilleures » n’a de sens qu’avec un tri explicite. Note : <code>LIMIT</code> est du PostgreSQL/MySQL/SQLite ; SQL Server utilise <code>TOP</code>, Oracle <code>FETCH FIRST</code>.`)+
+    `<h3>L’ordre d’exécution logique</h3>`+
+    def(`Même si on <b>écrit</b> <code>SELECT … FROM … WHERE … ORDER BY … LIMIT</code>, l’ordre d’<b>évaluation logique</b> est : <b>FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT</b>. C’est pourquoi un alias défini dans le SELECT n’est pas toujours utilisable dans le WHERE (évalué avant), mais l’est dans l’ORDER BY (évalué après).`)+
+    perf(`Trier (<code>ORDER BY</code>) de gros volumes coûte cher. Un <b>index</b> sur la colonne de tri peut éviter l’opération de tri. Combiné à <code>LIMIT</code>, le moteur peut souvent s’arrêter tôt (top-N) — très efficace si l’index est bien choisi.`)+
+    data(`<code>ORDER BY … LIMIT</code> est le patron du « top-N » : top produits, clients les plus actifs, dernières transactions. <code>DISTINCT</code> sert à inventorier des catégories (cardinalité d’une variable) avant un encodage (one-hot, par ex.).`),
+  quiz:[
+    { kind:'mcq', difficulty:1, tags:['ORDER BY'],
+      prompt:`Comment trier du plus grand au plus petit montant ?`,
+      choices:[`<code>ORDER BY montant ASC</code>`,`<code>ORDER BY montant DESC</code>`,`<code>SORT montant DESC</code>`,`<code>ORDER montant DOWN</code>`],
+      answer:1,
+      explain:`<code>DESC</code> = ordre décroissant (du plus grand au plus petit). <code>ASC</code> (ascendant) est le défaut. Le mot-clé est bien <code>ORDER BY</code>.`},
+    { kind:'mcq', difficulty:2, tags:['DISTINCT'],
+      prompt:`Que renvoie <code>SELECT DISTINCT pays, ville FROM clients</code> ?`,
+      choices:[
+        `Les pays distincts, puis les villes distinctes`,
+        `Les couples (pays, ville) distincts`,
+        `Uniquement les pays distincts`,
+        `Une erreur de syntaxe`],
+      answer:1,
+      explain:`<code>DISTINCT</code> porte sur <b>l’ensemble</b> des colonnes projetées : on obtient les combinaisons (pays, ville) uniques. Deux lignes identiques sur les deux colonnes sont fusionnées.`},
+    { kind:'tf', difficulty:2, tags:['LIMIT','ORDER BY'],
+      prompt:`<code>LIMIT 10</code> sans <code>ORDER BY</code> garantit toujours les mêmes 10 lignes.`,
+      answer:false,
+      explain:`Faux. Sans <code>ORDER BY</code>, l’ensemble des lignes renvoyées par <code>LIMIT</code> n’est pas déterministe. Pour « les 10 premières selon un critère », il faut un <code>ORDER BY</code> explicite.`},
+    { kind:'mcq', difficulty:3, tags:['ordre logique'],
+      prompt:`Pourquoi un alias créé dans le <code>SELECT</code> n’est-il souvent pas utilisable dans le <code>WHERE</code> ?`,
+      choices:[
+        `Parce que WHERE est interdit avec les alias`,
+        `Parce que le WHERE est évalué logiquement AVANT le SELECT`,
+        `Parce que les alias n’existent pas en SQL`,
+        `Parce qu’il faut des guillemets`],
+      answer:1,
+      explain:`L’ordre logique est FROM → WHERE → … → SELECT → ORDER BY. Le <code>WHERE</code> s’évalue avant que les alias du <code>SELECT</code> n’existent. En revanche, l’<code>ORDER BY</code>, postérieur au SELECT, peut les utiliser.`},
+    { kind:'code', difficulty:2, tags:['ORDER BY','LIMIT'],
+      prompt:`Écris une requête donnant les 3 clients les plus récemment inscrits (colonne <code>date_inscription</code>), avec leur <code>nom</code>.`,
+      starter:`SELECT nom, date_inscription\nFROM clients\n;`,
+      hint:`Trier par date décroissante puis limiter à 3.`,
+      keywords:['order by','date_inscription','desc','limit','3'],
+      modelCode:true,
+      model:`SELECT nom, date_inscription
+FROM clients
+ORDER BY date_inscription DESC
+LIMIT 3;`,
+      explain:`« Les plus récents » = date la plus grande ⇒ <code>DESC</code>, puis <code>LIMIT 3</code>. Le tri est indispensable pour que le top-3 ait un sens.`}
+  ]
+});
+
+/* ================= MODULE 4 — Agrégation & GROUP BY ================= */
+COURSE.push({
+  type:'module', navtitle:'4 · Agrégation ★',
+  title:'Module 4 — Fonctions d’agrégation, GROUP BY & HAVING ★',
+  sub:'Résumer des milliers de lignes en quelques chiffres : compter, sommer, moyenner par groupe.',
+  lesson:
+    `<h3>Fonctions d’agrégation</h3>
+    <p>Elles calculent <b>une</b> valeur à partir d’un ensemble de lignes : <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code>.</p>`+
+    code(`SELECT
+    COUNT(*)      AS nb_commandes,
+    SUM(montant)  AS total,
+    AVG(montant)  AS moyenne,
+    MAX(montant)  AS plus_grosse
+FROM commandes;`)+
+    trap(`Nuance capitale : <code>COUNT(*)</code> compte <b>toutes</b> les lignes ; <code>COUNT(colonne)</code> compte les lignes où la colonne n’est <b>pas NULL</b> ; <code>COUNT(DISTINCT colonne)</code> compte les valeurs distinctes non NULL. De même, <code>AVG</code> et <code>SUM</code> <b>ignorent les NULL</b> — ce qui change la moyenne !`)+
+    `<h3>GROUP BY : agréger par catégorie</h3>
+    <p><code>GROUP BY</code> partitionne les lignes en groupes ; l’agrégation est calculée <b>par groupe</b>.</p>`+
+    code(`-- Chiffre d'affaires par client
+SELECT client_id, SUM(montant) AS ca
+FROM commandes
+GROUP BY client_id;`)+
+    def(`Règle d’or : toute colonne du <code>SELECT</code> qui n’est <b>pas</b> dans une fonction d’agrégation <b>doit</b> figurer dans le <code>GROUP BY</code>. Sinon, la valeur serait ambiguë (laquelle du groupe ?).`)+
+    `<h3>HAVING : filtrer les groupes</h3>
+    <p><code>WHERE</code> filtre les <b>lignes</b> (avant agrégation) ; <code>HAVING</code> filtre les <b>groupes</b> (après agrégation).</p>`+
+    code(`-- Clients ayant dépensé plus de 1000 au total
+SELECT client_id, SUM(montant) AS ca
+FROM commandes
+WHERE statut = 'payee'      -- filtre les lignes AVANT de grouper
+GROUP BY client_id
+HAVING SUM(montant) > 1000; -- filtre les groupes APRÈS agrégation`)+
+    why(`La distinction <code>WHERE</code> vs <code>HAVING</code> découle de l’ordre logique (Module 3) : <code>WHERE</code> (avant <code>GROUP BY</code>) ne peut pas utiliser d’agrégat, alors que <code>HAVING</code> (après) le peut. On met dans <code>WHERE</code> tout ce qui peut l’être (plus efficace, réduit les données avant de grouper) et on réserve <code>HAVING</code> aux conditions sur les agrégats.`)+
+    perf(`Mettre une condition dans <code>WHERE</code> plutôt que <code>HAVING</code> quand c’est possible réduit le nombre de lignes <b>avant</b> l’agrégation : moins de travail, requête plus rapide. <code>HAVING</code> ne doit porter que sur des agrégats.`)+
+    data(`<code>GROUP BY</code> est l’équivalent SQL du <code>groupby().agg()</code> de pandas : calcul de KPI par segment, agrégation de features (moyenne de montant par client), tables de contingence. C’est le cœur de l’analyse exploratoire (EDA).`),
+  quiz:[
+    { kind:'predict', difficulty:2, tags:['COUNT','NULL'], expect:'3',
+      prompt:`La table a 5 lignes ; la colonne <code>ville</code> vaut NULL sur 2 d’entre elles. Que renvoie <code>SELECT COUNT(ville) FROM clients;</code> ?`,
+      hint:`COUNT(colonne) ignore les NULL.`,
+      model:`3`,
+      explain:`<code>COUNT(ville)</code> compte les valeurs <b>non NULL</b> : 5 − 2 = 3. Seul <code>COUNT(*)</code> aurait renvoyé 5 (toutes les lignes).`},
+    { kind:'mcq', difficulty:2, tags:['GROUP BY'],
+      prompt:`Dans <code>SELECT pays, COUNT(*) FROM clients GROUP BY …</code>, que doit contenir le GROUP BY ?`,
+      choices:[`<code>COUNT(*)</code>`,`<code>pays</code>`,`rien`,`<code>*</code>`],
+      answer:1,
+      explain:`Toute colonne non agrégée du SELECT (<code>pays</code>) doit être dans le <code>GROUP BY</code>. On obtient le nombre de clients par pays.`},
+    { kind:'mcq', difficulty:3, tags:['WHERE vs HAVING'],
+      prompt:`On veut : parmi les commandes <code>'payee'</code>, les clients dont le total dépasse 1000. Où placer chaque condition ?`,
+      choices:[
+        `<code>statut='payee'</code> dans HAVING, <code>SUM&gt;1000</code> dans WHERE`,
+        `<code>statut='payee'</code> dans WHERE, <code>SUM(montant)&gt;1000</code> dans HAVING`,
+        `Les deux dans WHERE`,
+        `Les deux dans HAVING`],
+      answer:1,
+      explain:`<code>statut='payee'</code> filtre des <b>lignes</b> → <code>WHERE</code> (avant agrégation). <code>SUM(montant)&gt;1000</code> porte sur un <b>agrégat</b> → <code>HAVING</code> (après le GROUP BY). C’est aussi le plus performant.`},
+    { kind:'tf', difficulty:2, tags:['AVG','NULL'],
+      prompt:`<code>AVG(montant)</code> inclut les lignes où <code>montant</code> est NULL en les comptant comme 0.`,
+      answer:false,
+      explain:`Faux. <code>AVG</code> (comme <code>SUM</code>) <b>ignore</b> les NULL : ils ne sont ni au numérateur ni au dénominateur. Traiter un NULL comme 0 changerait la moyenne — utilise <code>COALESCE(montant,0)</code> si c’est ce que tu veux.`},
+    { kind:'code', difficulty:3, tags:['GROUP BY','HAVING'],
+      prompt:`Écris une requête donnant, par <code>statut</code>, le nombre de commandes, en ne gardant que les statuts ayant plus de 10 commandes. Trie du plus fréquent au moins fréquent.`,
+      starter:`SELECT statut, COUNT(*) AS nb\nFROM commandes\n;`,
+      hint:`GROUP BY statut, HAVING COUNT(*) > 10, ORDER BY nb DESC.`,
+      keywords:['group by','statut','having','count','order by','desc'],
+      modelCode:true,
+      model:`SELECT statut, COUNT(*) AS nb
+FROM commandes
+GROUP BY statut
+HAVING COUNT(*) > 10
+ORDER BY nb DESC;`,
+      explain:`On groupe par <code>statut</code>, on compte, on filtre les groupes avec <code>HAVING COUNT(*) &gt; 10</code>, puis on trie par effectif décroissant. L’alias <code>nb</code> est utilisable dans l’<code>ORDER BY</code> (postérieur au SELECT).`}
+  ]
+});
+/* ================= CHECKPOINT 1 — Requêtes mono-table ================= */
+COURSE.push({
+  type:'checkpoint', navtitle:'⚑ Checkpoint : Les bases',
+  title:'Checkpoint — Requêtes sur une table',
+  sub:'Synthèse des modules 1 à 4 : SELECT, WHERE/NULL, tri/DISTINCT, agrégation.',
+  lesson:`<div class="callout why"><div class="h">🎯 Ce que tu dois maîtriser</div>
+    Projeter (SELECT, alias), filtrer (WHERE, opérateurs, <code>IS NULL</code>), mettre en forme (ORDER BY, DISTINCT, LIMIT), agréger (COUNT/SUM/AVG, GROUP BY) et filtrer les groupes (HAVING). Garde en tête l’ordre logique : FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT.</div>`,
+  exam:[
+    { kind:'mcq', difficulty:2, tags:['NULL'],
+      prompt:`Quelle requête liste les clients <b>sans</b> ville renseignée ?`,
+      choices:[`<code>WHERE ville = ''</code>`,`<code>WHERE ville = NULL</code>`,`<code>WHERE ville IS NULL</code>`,`<code>WHERE ville = 'NULL'</code>`],
+      answer:2,
+      explain:`<code>IS NULL</code> est la seule façon correcte de tester l’absence de valeur. <code>= NULL</code> renvoie toujours « inconnu » (résultat vide), et <code>''</code>/<code>'NULL'</code> sont des chaînes, pas l’absence.`},
+    { kind:'predict', difficulty:2, tags:['COUNT'], expect:'5',
+      prompt:`La table <code>commandes</code> a 5 lignes dont 2 avec <code>montant</code> NULL. Que renvoie <code>SELECT COUNT(*) FROM commandes;</code> ?`,
+      hint:`COUNT(*) vs COUNT(colonne).`,
+      model:`5`,
+      explain:`<code>COUNT(*)</code> compte toutes les lignes (NULL inclus) ⇒ 5. C’est <code>COUNT(montant)</code> qui aurait renvoyé 3.`},
+    { kind:'mcq', difficulty:2, tags:['ORDER BY','LIMIT'],
+      prompt:`Pour obtenir « les 10 produits les plus chers », il faut :`,
+      choices:[
+        `<code>LIMIT 10</code> seul`,
+        `<code>ORDER BY prix DESC LIMIT 10</code>`,
+        `<code>ORDER BY prix ASC LIMIT 10</code>`,
+        `<code>WHERE prix = MAX(prix)</code>`],
+      answer:1,
+      explain:`« Les plus chers » = tri décroissant sur <code>prix</code> puis <code>LIMIT 10</code>. Sans <code>ORDER BY</code>, le top-10 n’est pas déterministe.`},
+    { kind:'mcq', difficulty:3, tags:['GROUP BY','HAVING'],
+      prompt:`<code>SELECT categorie, AVG(prix) FROM produits GROUP BY categorie HAVING AVG(prix) &gt; 50</code> renvoie :`,
+      choices:[
+        `tous les produits de prix &gt; 50`,
+        `les catégories dont le prix moyen dépasse 50`,
+        `la moyenne globale des prix`,
+        `une erreur (AVG interdit dans HAVING)`],
+      answer:1,
+      explain:`On groupe par <code>categorie</code>, on calcule le prix moyen, puis <code>HAVING</code> ne conserve que les catégories dont la moyenne dépasse 50. <code>HAVING</code> peut (et doit) porter sur des agrégats.`},
+    { kind:'code', difficulty:3, tags:['synthèse'],
+      prompt:`Écris une requête donnant, pour chaque <code>pays</code>, le nombre de clients, en ne gardant que les pays ayant au moins 5 clients, triés par effectif décroissant.`,
+      starter:`SELECT pays, COUNT(*) AS nb\nFROM clients\n;`,
+      hint:`GROUP BY pays, HAVING COUNT(*) >= 5, ORDER BY nb DESC.`,
+      keywords:['group by','pays','having','count','>= 5','order by','desc'],
+      modelCode:true,
+      model:`SELECT pays, COUNT(*) AS nb
+FROM clients
+GROUP BY pays
+HAVING COUNT(*) >= 5
+ORDER BY nb DESC;`,
+      explain:`Combinaison type : agrégation par <code>pays</code>, filtrage des groupes avec <code>HAVING</code>, tri final sur l’effectif. L’alias <code>nb</code> fonctionne dans l’ORDER BY.`}
+  ]
+});
+
+/* ================= MODULE 5 — Jointures ================= */
+COURSE.push({
+  type:'module', navtitle:'5 · Jointures ★',
+  title:'Module 5 — Les jointures (JOIN) ★',
+  sub:'Combiner plusieurs tables : le cœur du modèle relationnel.',
+  lesson:
+    `<p>Les données sont réparties en tables reliées par des clés (normalisation). Les <b>jointures</b> les recombinent. On relie <code>commandes.client_id</code> à <code>clients.id</code>.</p>
+    <h3>INNER JOIN — l’intersection</h3>`+
+    code(`SELECT c.nom, co.montant
+FROM clients AS c
+INNER JOIN commandes AS co
+    ON co.client_id = c.id;`)+
+    def(`<code>INNER JOIN … ON condition</code> ne garde que les lignes où la condition de jonction est vérifiée <b>des deux côtés</b>. Un client sans commande n’apparaît pas ; une commande sans client valide non plus. Les <b>alias de table</b> (<code>c</code>, <code>co</code>) évitent les ambiguïtés et allègent l’écriture.`)+
+    `<h3>LEFT JOIN — tout la table de gauche</h3>`+
+    code(`-- Tous les clients, AVEC ou SANS commande
+SELECT c.nom, co.montant
+FROM clients AS c
+LEFT JOIN commandes AS co
+    ON co.client_id = c.id;`)+
+    why(`Le <code>LEFT JOIN</code> conserve <b>toutes</b> les lignes de gauche ; les colonnes de droite valent <code>NULL</code> quand il n’y a pas de correspondance. C’est l’outil pour répondre à « qui n’a <b>rien</b> ? » : on fait un <code>LEFT JOIN</code> puis on filtre <code>WHERE co.id IS NULL</code> (les clients sans commande).`)+
+    `<h3>Les types de jointures</h3>
+    <table>
+      <tr><th>Jointure</th><th>Lignes conservées</th></tr>
+      <tr><td><code>INNER JOIN</code></td><td>uniquement les correspondances des deux côtés</td></tr>
+      <tr><td><code>LEFT JOIN</code></td><td>toutes celles de gauche (+ correspondances)</td></tr>
+      <tr><td><code>RIGHT JOIN</code></td><td>toutes celles de droite (+ correspondances)</td></tr>
+      <tr><td><code>FULL OUTER JOIN</code></td><td>toutes des deux côtés (NULL où ça manque)</td></tr>
+      <tr><td><code>CROSS JOIN</code></td><td>produit cartésien (toutes les combinaisons)</td></tr>
+    </table>`+
+    `<h3>Self-join : une table avec elle-même</h3>`+
+    code(`-- Un employé et son manager (table employes(id, nom, manager_id))
+SELECT e.nom AS employe, m.nom AS manager
+FROM employes AS e
+LEFT JOIN employes AS m
+    ON e.manager_id = m.id;`)+
+    trap(`Oublier la condition <code>ON</code> (ou se tromper de colonnes) produit un <b>produit cartésien</b> accidentel : chaque ligne de gauche × chaque ligne de droite. Sur deux tables de 10 000 lignes, cela fait 100 millions de lignes ! Vérifie toujours ta clause <code>ON</code>. Autre piège : après un <code>LEFT JOIN</code>, mettre une condition sur la table de droite dans le <code>WHERE</code> peut « annuler » le LEFT (le transformer en INNER) — place-la plutôt dans le <code>ON</code>.`)+
+    perf(`Les jointures se font idéalement sur des colonnes <b>indexées</b> (typiquement les clés primaires/étrangères). Joindre sur des colonnes non indexées de grosses tables est coûteux. L’optimiseur choisit un algorithme (hash join, merge join, nested loop) selon les volumes et les index.`)+
+    data(`En data engineering, les jointures assemblent les features éparpillées (clients + commandes + produits) en une table d’analyse unique. C’est l’étape de <b>consolidation</b> avant l’entraînement d’un modèle. Les jointures mal maîtrisées sont la 1ʳᵉ source d’erreurs de comptage (doublons, lignes perdues).`),
+  quiz:[
+    { kind:'mcq', difficulty:2, tags:['INNER JOIN'],
+      prompt:`Un <code>INNER JOIN</code> entre <code>clients</code> et <code>commandes</code> renvoie :`,
+      choices:[
+        `tous les clients, même sans commande`,
+        `seulement les clients ayant au moins une commande correspondante`,
+        `toutes les commandes, même sans client`,
+        `le produit cartésien`],
+      answer:1,
+      explain:`<code>INNER JOIN</code> ne garde que les lignes avec correspondance des <b>deux</b> côtés : un client sans commande (ou une commande orpheline) disparaît.`},
+    { kind:'mcq', difficulty:3, tags:['LEFT JOIN','NULL'],
+      prompt:`Comment lister les clients qui n’ont <b>jamais</b> commandé ?`,
+      choices:[
+        `<code>INNER JOIN commandes … WHERE montant IS NULL</code>`,
+        `<code>LEFT JOIN commandes … WHERE commandes.id IS NULL</code>`,
+        `<code>RIGHT JOIN commandes …</code>`,
+        `<code>CROSS JOIN commandes</code>`],
+      answer:1,
+      explain:`On garde tous les clients avec <code>LEFT JOIN</code>, puis on isole ceux <b>sans</b> correspondance : les colonnes de <code>commandes</code> y sont NULL, d’où <code>WHERE commandes.id IS NULL</code>. C’est le patron « anti-join ».`},
+    { kind:'tf', difficulty:2, tags:['CROSS JOIN'],
+      prompt:`Oublier la condition <code>ON</code> d’une jointure peut produire un produit cartésien géant.`,
+      answer:true,
+      explain:`Vrai. Sans condition de jointure, chaque ligne de gauche est associée à chaque ligne de droite (CROSS JOIN implicite) : le nombre de lignes explose. Toujours vérifier le <code>ON</code>.`},
+    { kind:'predict', difficulty:3, tags:['CROSS JOIN'], expect:'12',
+      prompt:`Une table A a 3 lignes, une table B a 4 lignes. Combien de lignes renvoie <code>SELECT * FROM A CROSS JOIN B;</code> ?`,
+      hint:`Produit cartésien.`,
+      model:`12`,
+      explain:`Le <code>CROSS JOIN</code> est le produit cartésien : 3 × 4 = 12 combinaisons. (C’est la règle du produit de la combinatoire appliquée aux lignes.)`},
+    { kind:'code', difficulty:3, tags:['JOIN','GROUP BY'],
+      prompt:`Écris une requête donnant, pour chaque client (<code>nom</code>), son chiffre d’affaires total (somme des <code>montant</code>). Inclus aussi les clients sans commande (CA = NULL/0).`,
+      starter:`SELECT c.nom, SUM(co.montant) AS ca\nFROM clients AS c\n;`,
+      hint:`LEFT JOIN pour garder tous les clients, puis GROUP BY c.id, c.nom.`,
+      keywords:['left join','commandes','on','client_id','group by','sum'],
+      modelCode:true,
+      model:`SELECT c.nom, SUM(co.montant) AS ca
+FROM clients AS c
+LEFT JOIN commandes AS co
+    ON co.client_id = c.id
+GROUP BY c.id, c.nom
+ORDER BY ca DESC NULLS LAST;`,
+      explain:`<code>LEFT JOIN</code> garde tous les clients ; <code>SUM</code> agrège leurs commandes (NULL si aucune). On groupe par l’identité du client. <code>COALESCE(SUM(co.montant),0)</code> permettrait d’afficher 0 au lieu de NULL.`}
+  ]
+});
+/* ================= MODULE 6 — Sous-requêtes ================= */
+COURSE.push({
+  type:'module', navtitle:'6 · Sous-requêtes',
+  title:'Module 6 — Sous-requêtes & requêtes corrélées',
+  sub:'Une requête dans une requête : filtrer et calculer en deux temps.',
+  lesson:
+    `<h3>Sous-requête scalaire</h3>
+    <p>Une sous-requête qui renvoie <b>une seule valeur</b> peut s’utiliser comme une valeur.</p>`+
+    code(`-- Commandes au-dessus de la moyenne générale
+SELECT nom, montant
+FROM commandes
+WHERE montant > (SELECT AVG(montant) FROM commandes);`)+
+    `<h3>Sous-requête avec IN</h3>`+
+    code(`-- Clients ayant au moins une commande "payee"
+SELECT nom
+FROM clients
+WHERE id IN (
+    SELECT client_id FROM commandes WHERE statut = 'payee'
+);`)+
+    `<h3>EXISTS — test d’existence</h3>`+
+    code(`SELECT c.nom
+FROM clients AS c
+WHERE EXISTS (
+    SELECT 1 FROM commandes AS co
+    WHERE co.client_id = c.id          -- corrélée : dépend de c
+);`)+
+    def(`Une sous-requête <b>corrélée</b> référence une colonne de la requête externe (ici <code>c.id</code>) : elle est logiquement ré-évaluée pour chaque ligne externe. <code>EXISTS</code> renvoie vrai dès qu’au moins une ligne correspond, et s’arrête là.`)+
+    why(`<code>IN</code> vs <code>EXISTS</code> : souvent interchangeables, mais <code>EXISTS</code> gère mieux les gros volumes et <b>évite le piège des NULL</b> de <code>NOT IN</code>. En effet, <code>NOT IN (liste contenant un NULL)</code> ne renvoie <b>jamais</b> vrai (logique à trois valeurs) — un bug classique. <code>NOT EXISTS</code> n’a pas ce problème.`)+
+    trap(`Le piège redoutable : <code>WHERE x NOT IN (SELECT y FROM t)</code> où <code>y</code> peut être <code>NULL</code>. Dès qu’un seul <code>NULL</code> est présent dans la liste, le <code>NOT IN</code> renvoie un résultat <b>vide</b>, de façon silencieuse. Préfère <code>NOT EXISTS</code> ou ajoute <code>WHERE y IS NOT NULL</code>.`)+
+    `<h3>Sous-requête dans le FROM (table dérivée)</h3>`+
+    code(`-- Moyenne des chiffres d'affaires par client
+SELECT AVG(ca) AS ca_moyen
+FROM (
+    SELECT client_id, SUM(montant) AS ca
+    FROM commandes
+    GROUP BY client_id
+) AS totaux;`)+
+    perf(`Une sous-requête corrélée peut être coûteuse si elle est ré-évaluée pour des millions de lignes. Les optimiseurs modernes la réécrivent souvent en jointure, mais pas toujours : pour de l’agrégation par groupe, une <b>jointure</b> ou une <b>fonction de fenêtrage</b> (Module 7) est fréquemment plus efficace et plus lisible.`)+
+    data(`Les sous-requêtes structurent les analyses en étapes : calculer un agrégat, puis filtrer/comparer dessus. Les <b>CTE</b> (<code>WITH nom AS (…)</code>) sont une forme plus lisible de sous-requête, très utilisées pour des pipelines d’analyse en plusieurs étapes.`),
+  quiz:[
+    { kind:'mcq', difficulty:2, tags:['sous-requête scalaire'],
+      prompt:`Que renvoie <code>WHERE montant &gt; (SELECT AVG(montant) FROM commandes)</code> ?`,
+      choices:[
+        `les commandes dont le montant dépasse la moyenne générale`,
+        `la moyenne des montants`,
+        `une erreur (sous-requête interdite)`,
+        `toutes les commandes`],
+      answer:0,
+      explain:`La sous-requête scalaire calcule la moyenne (une seule valeur), utilisée comme seuil de comparaison. On obtient les commandes au-dessus de la moyenne.`},
+    { kind:'mcq', difficulty:3, tags:['NOT IN','NULL'],
+      prompt:`Pourquoi <code>WHERE id NOT IN (SELECT client_id FROM commandes)</code> peut-il renvoyer 0 ligne de façon inattendue ?`,
+      choices:[
+        `car NOT IN est interdit`,
+        `si <code>client_id</code> contient un NULL, <code>NOT IN</code> ne renvoie jamais vrai`,
+        `car il manque un GROUP BY`,
+        `car IN ne marche qu’avec des nombres`],
+      answer:1,
+      explain:`Avec un seul <code>NULL</code> dans la liste, <code>NOT IN</code> devient « inconnu » pour toutes les lignes (logique à trois valeurs) ⇒ résultat vide. Utilise <code>NOT EXISTS</code> ou exclus les NULL.`},
+    { kind:'tf', difficulty:2, tags:['EXISTS','corrélée'],
+      prompt:`Une sous-requête corrélée fait référence à une colonne de la requête externe.`,
+      answer:true,
+      explain:`Vrai. Elle dépend de la ligne externe courante (ex. <code>co.client_id = c.id</code>) et est logiquement évaluée pour chacune. <code>EXISTS</code> s’arrête dès la première correspondance trouvée.`},
+    { kind:'code', difficulty:3, tags:['sous-requête','IN'],
+      prompt:`Écris une requête renvoyant le <code>nom</code> des clients ayant passé au moins une commande de montant supérieur à 500 (utilise une sous-requête avec IN).`,
+      starter:`SELECT nom\nFROM clients\nWHERE id IN (\n    \n);`,
+      hint:`Sous-requête : SELECT client_id FROM commandes WHERE montant > 500.`,
+      keywords:['in','select','client_id','commandes','montant','500'],
+      modelCode:true,
+      model:`SELECT nom
+FROM clients
+WHERE id IN (
+    SELECT client_id
+    FROM commandes
+    WHERE montant > 500
+);`,
+      explain:`La sous-requête renvoie la liste des <code>client_id</code> ayant une grosse commande ; la requête externe garde les clients dont l’<code>id</code> est dans cette liste. <code>EXISTS</code> corrélé serait une alternative équivalente et robuste aux NULL.`},
+    { kind:'text', difficulty:3, tags:['IN vs EXISTS'],
+      prompt:`Dans quel cas précis préfères-tu <code>NOT EXISTS</code> à <code>NOT IN</code> ? Explique le risque.`,
+      hint:`Pense aux valeurs NULL dans la sous-requête.`,
+      keywords:['null','not in','not exists','vide','inconnu','trois valeurs'],
+      model:`Dès que la sous-requête peut renvoyer des <code>NULL</code> : <code>NOT IN</code> renvoie alors un résultat <b>vide</b> (la comparaison devient « inconnu »). <code>NOT EXISTS</code> n’a pas ce défaut et exprime proprement « il n’existe aucune ligne correspondante ».`,
+      explain:`C’est le piège classique de la logique à trois valeurs. <code>NOT EXISTS</code> est plus sûr et souvent plus performant sur de gros volumes. Réflexe : pour un « anti-join », préfère <code>NOT EXISTS</code>.`}
+  ]
+});
+
+/* ================= MODULE 7 — Fonctions de fenêtrage ================= */
+COURSE.push({
+  type:'module', navtitle:'7 · Window functions ★',
+  title:'Module 7 — Fonctions de fenêtrage (window functions) ★',
+  sub:'Agréger sans regrouper : classements, cumuls et comparaisons ligne à ligne.',
+  lesson:
+    `<p>Les <b>fonctions de fenêtrage</b> calculent une valeur agrégée <b>tout en conservant chaque ligne</b> (contrairement à <code>GROUP BY</code> qui réduit les lignes). C’est l’outil intermédiaire/avancé le plus utile en analyse.</p>
+    <h3>La clause OVER</h3>`+
+    code(`SELECT
+    nom,
+    montant,
+    AVG(montant) OVER () AS moyenne_globale,     -- même valeur sur chaque ligne
+    montant - AVG(montant) OVER () AS ecart
+FROM commandes;`)+
+    def(`<code>fonction() OVER (PARTITION BY … ORDER BY …)</code> définit une « fenêtre » de lignes pour le calcul. <code>PARTITION BY</code> découpe en groupes (comme GROUP BY mais sans fusionner les lignes) ; <code>ORDER BY</code> ordonne à l’intérieur de la fenêtre (utile pour les cumuls et classements).`)+
+    `<h3>Classements : ROW_NUMBER, RANK, DENSE_RANK</h3>`+
+    code(`-- Classer les commandes par montant décroissant, par client
+SELECT
+    client_id,
+    montant,
+    ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY montant DESC) AS rang
+FROM commandes;`)+
+    `<table>
+      <tr><th>Fonction</th><th>Comportement en cas d’égalité</th></tr>
+      <tr><td><code>ROW_NUMBER()</code></td><td>numéro unique (1,2,3,4) — départage arbitrairement</td></tr>
+      <tr><td><code>RANK()</code></td><td>même rang, puis saute (1,1,3)</td></tr>
+      <tr><td><code>DENSE_RANK()</code></td><td>même rang, sans saut (1,1,2)</td></tr>
+    </table>`+
+    why(`Le patron « <b>top-N par groupe</b> » (ex. les 3 plus grosses commandes <b>de chaque</b> client) est très pénible avec <code>GROUP BY</code> seul, mais trivial avec <code>ROW_NUMBER() OVER (PARTITION BY … ORDER BY …)</code> : on numérote dans chaque partition, puis on filtre <code>rang &lt;= 3</code> (dans une sous-requête/CTE, car on ne peut pas filtrer une window function dans le WHERE directement).`)+
+    `<h3>Cumuls et comparaisons temporelles</h3>`+
+    code(`-- Total cumulé des montants dans le temps
+SELECT
+    date_commande,
+    montant,
+    SUM(montant) OVER (ORDER BY date_commande) AS cumul,
+    LAG(montant) OVER (ORDER BY date_commande) AS montant_precedent
+FROM commandes;`)+
+    trap(`On ne peut <b>pas</b> utiliser une fonction de fenêtrage dans le <code>WHERE</code> ou le <code>HAVING</code> (elles sont évaluées <b>après</b>, au niveau du SELECT). Pour filtrer sur un rang/cumul, encapsule la requête dans une sous-requête ou une <b>CTE</b>, puis filtre à l’extérieur. Autre confusion fréquente : <code>GROUP BY</code> réduit les lignes, <code>OVER()</code> les conserve.`)+
+    perf(`Les window functions sont généralement plus efficaces et lisibles que des sous-requêtes corrélées équivalentes (qui recalculent pour chaque ligne). Un index sur les colonnes de <code>PARTITION BY</code>/<code>ORDER BY</code> aide le moteur à éviter des tris coûteux.`)+
+    data(`Omniprésentes en analyse : classements (top produits par région), <b>moyennes mobiles</b> et cumuls (séries temporelles), calcul de deltas entre lignes (<code>LAG</code>/<code>LEAD</code> pour des taux de croissance), déduplication (garder la ligne la plus récente par clé via <code>ROW_NUMBER</code>). Un must pour le feature engineering temporel.`),
+  quiz:[
+    { kind:'mcq', difficulty:2, tags:['OVER','GROUP BY'],
+      prompt:`Quelle est la différence clé entre <code>AVG(x) OVER ()</code> et <code>AVG(x)</code> avec <code>GROUP BY</code> ?`,
+      choices:[
+        `aucune`,
+        `<code>OVER()</code> conserve chaque ligne, <code>GROUP BY</code> fusionne les lignes en une par groupe`,
+        `<code>OVER()</code> est plus lent et donne un autre résultat`,
+        `<code>GROUP BY</code> ne marche pas avec AVG`],
+      answer:1,
+      explain:`La window function calcule l’agrégat <b>sans réduire</b> le nombre de lignes : chaque ligne reçoit la valeur. <code>GROUP BY</code> renvoie une seule ligne par groupe.`},
+    { kind:'mcq', difficulty:3, tags:['RANK','DENSE_RANK'],
+      prompt:`Montants triés : 100, 100, 90. Avec <code>RANK()</code>, quels rangs obtient-on ?`,
+      choices:[`1, 2, 3`,`1, 1, 2`,`1, 1, 3`,`1, 1, 1`],
+      answer:2,
+      explain:`<code>RANK()</code> donne le même rang aux ex æquo puis <b>saute</b> : 1, 1, 3. <code>DENSE_RANK()</code> donnerait 1, 1, 2 (sans saut) ; <code>ROW_NUMBER()</code> donnerait 1, 2, 3.`},
+    { kind:'tf', difficulty:3, tags:['WHERE','window'],
+      prompt:`On peut filtrer directement <code>WHERE ROW_NUMBER() OVER (…) &lt;= 3</code>.`,
+      answer:false,
+      explain:`Faux. Les window functions sont évaluées au niveau du <code>SELECT</code>, après le <code>WHERE</code>. Il faut les calculer dans une sous-requête/CTE puis filtrer le rang à l’extérieur.`},
+    { kind:'mcq', difficulty:2, tags:['LAG'],
+      prompt:`À quoi sert <code>LAG(montant) OVER (ORDER BY date_commande)</code> ?`,
+      choices:[
+        `à cumuler les montants`,
+        `à récupérer le montant de la ligne précédente (selon l’ordre)`,
+        `à compter les lignes`,
+        `à trier les montants`],
+      answer:1,
+      explain:`<code>LAG</code> renvoie la valeur de la ligne <b>précédente</b> dans la fenêtre ordonnée — idéal pour calculer une variation (delta, taux de croissance) d’une période à l’autre. <code>LEAD</code> fait l’inverse (ligne suivante).`},
+    { kind:'code', difficulty:3, tags:['top-N par groupe','ROW_NUMBER'],
+      prompt:`Écris une requête donnant, pour chaque <code>client_id</code>, sa <b>plus grosse</b> commande (montant max) via <code>ROW_NUMBER()</code> et une sous-requête.`,
+      starter:`SELECT client_id, montant\nFROM (\n    \n) AS t\nWHERE rang = 1;`,
+      hint:`Numérote par PARTITION BY client_id ORDER BY montant DESC, puis garde rang = 1.`,
+      keywords:['row_number','partition by','client_id','order by','montant','desc','rang'],
+      modelCode:true,
+      model:`SELECT client_id, montant
+FROM (
+    SELECT
+        client_id,
+        montant,
+        ROW_NUMBER() OVER (
+            PARTITION BY client_id
+            ORDER BY montant DESC
+        ) AS rang
+    FROM commandes
+) AS t
+WHERE rang = 1;`,
+      explain:`On numérote les commandes de chaque client par montant décroissant (<code>PARTITION BY client_id</code>), puis on garde le rang 1 (le max). Le filtrage du rang se fait à l’extérieur, car on ne peut pas filtrer une window function dans le WHERE interne.`}
+  ]
+});
+/* ================= MODULE 8 — Modifier les données, transactions, index ================= */
+COURSE.push({
+  type:'module', navtitle:'8 · DML, transactions, index',
+  title:'Module 8 — Modifier les données, transactions & index',
+  sub:'Écrire dans la base en toute sûreté, et comprendre pourquoi les requêtes sont rapides (ou non).',
+  lesson:
+    `<h3>INSERT, UPDATE, DELETE (DML)</h3>`+
+    code(`-- Ajouter une ligne
+INSERT INTO clients (nom, ville, pays)
+VALUES ('Dupont', 'Lyon', 'France');
+
+-- Modifier des lignes existantes
+UPDATE commandes
+SET statut = 'expediee'
+WHERE id = 42;
+
+-- Supprimer des lignes
+DELETE FROM commandes
+WHERE statut = 'annulee';`)+
+    trap(`Le piège le plus dangereux : <code>UPDATE</code> ou <code>DELETE</code> <b>sans</b> <code>WHERE</code> ⇒ <b>toutes</b> les lignes sont modifiées/supprimées ! Réflexe : écris d’abord un <code>SELECT</code> avec le même <code>WHERE</code> pour vérifier les lignes ciblées, puis transforme-le en UPDATE/DELETE.`)+
+    `<h3>Transactions : tout ou rien (ACID)</h3>`+
+    code(`BEGIN;
+    UPDATE comptes SET solde = solde - 100 WHERE id = 1;
+    UPDATE comptes SET solde = solde + 100 WHERE id = 2;
+COMMIT;    -- valide les deux ; ROLLBACK annulerait tout`)+
+    def(`Une <b>transaction</b> regroupe plusieurs opérations en une unité <b>atomique</b> : soit tout réussit (<code>COMMIT</code>), soit tout est annulé (<code>ROLLBACK</code>). Les propriétés <b>ACID</b> (Atomicité, Cohérence, Isolation, Durabilité) garantissent l’intégrité même en cas de panne ou d’accès concurrents.`)+
+    why(`Sans transaction, un virement pourrait débiter un compte puis échouer avant de créditer l’autre : 100 € disparaissent. L’atomicité empêche cet état incohérent. L’<b>isolation</b> gère les accès simultanés de plusieurs utilisateurs sans qu’ils se corrompent mutuellement.`)+
+    `<h3>Index : la clé de la performance</h3>`+
+    def(`Un <b>index</b> est une structure de données auxiliaire (souvent un arbre B-tree) qui accélère la <b>recherche</b> et le <b>tri</b> sur une ou plusieurs colonnes — comme l’index d’un livre évite de lire toutes les pages. Sans index, le moteur fait un <b>parcours complet</b> (full scan).`)+
+    code(`CREATE INDEX idx_commandes_client ON commandes (client_id);`)+
+    perf(`Les index <b>accélèrent les lectures</b> (WHERE, JOIN, ORDER BY) mais <b>ralentissent les écritures</b> (chaque INSERT/UPDATE doit mettre à jour les index) et consomment de l’espace. On indexe donc les colonnes souvent filtrées/jointes (clés étrangères typiquement), pas tout. <code>EXPLAIN</code> (ou <code>EXPLAIN ANALYZE</code>) montre si un index est utilisé ou si un full scan a lieu.`)+
+    trap(`Un index n’est <b>pas</b> utilisé si la colonne est « enveloppée » dans une fonction : <code>WHERE YEAR(date_commande) = 2024</code> empêche l’index sur <code>date_commande</code>. Réécris en <code>WHERE date_commande &gt;= '2024-01-01' AND date_commande &lt; '2025-01-01'</code> pour que l’index serve.`)+
+    data(`Comprendre les index, c’est pouvoir faire tenir une requête analytique en secondes plutôt qu’en minutes sur de gros volumes — crucial quand on alimente un pipeline ML. Les transactions garantissent la cohérence des données d’entraînement et des logs. En Big Data (entrepôts colonnes), les principes diffèrent, mais l’idée « éviter de tout lire » reste centrale.`)+
+    hist(`Les propriétés <b>ACID</b> ont été formalisées par <b>Jim Gray</b> (fin des années 1970, prix Turing 1998), fondateur de la théorie des transactions. Voir <a href="https://fr.wikipedia.org/wiki/ACID_(informatique)" target="_blank" rel="noopener">ACID — Wikipédia</a>.`),
+  quiz:[
+    { kind:'tf', difficulty:1, tags:['UPDATE','WHERE'],
+      prompt:`<code>UPDATE commandes SET statut = 'paye';</code> (sans WHERE) ne modifie qu’une seule ligne.`,
+      answer:false,
+      explain:`Faux — et c’est dangereux : sans <code>WHERE</code>, <b>toutes</b> les lignes de la table sont mises à jour. Toujours cibler avec un <code>WHERE</code> (et vérifier via un SELECT préalable).`},
+    { kind:'mcq', difficulty:2, tags:['transactions','ACID'],
+      prompt:`Que fait <code>ROLLBACK</code> dans une transaction ?`,
+      choices:[
+        `valide définitivement les changements`,
+        `annule toutes les opérations depuis le BEGIN`,
+        `crée un index`,
+        `supprime la table`],
+      answer:1,
+      explain:`<code>ROLLBACK</code> annule l’ensemble des opérations de la transaction en cours (retour à l’état du <code>BEGIN</code>). <code>COMMIT</code>, lui, valide le tout. C’est l’atomicité « tout ou rien ».`},
+    { kind:'mcq', difficulty:2, tags:['index','performance'],
+      prompt:`Quel est le principal compromis d’un index ?`,
+      choices:[
+        `il accélère tout, sans inconvénient`,
+        `il accélère les lectures mais ralentit les écritures et prend de l’espace`,
+        `il ralentit les lectures`,
+        `il ne sert qu’aux DELETE`],
+      answer:1,
+      explain:`Un index accélère recherches/tris/jointures, mais chaque écriture doit le maintenir à jour (coût) et il occupe de l’espace disque. D’où l’indexation ciblée des colonnes réellement filtrées/jointes.`},
+    { kind:'mcq', difficulty:3, tags:['index','SARGability'],
+      prompt:`Pourquoi <code>WHERE YEAR(date_commande) = 2024</code> peut-il empêcher l’usage d’un index sur <code>date_commande</code> ?`,
+      choices:[
+        `car YEAR n’existe pas`,
+        `car appliquer une fonction à la colonne empêche le moteur d’utiliser l’index`,
+        `car 2024 est trop grand`,
+        `car il faut un GROUP BY`],
+      answer:1,
+      explain:`L’index porte sur <code>date_commande</code>, pas sur <code>YEAR(date_commande)</code>. Envelopper la colonne dans une fonction rend la condition « non-SARGable » ⇒ full scan. Réécris en intervalle de dates pour exploiter l’index.`},
+    { kind:'code', difficulty:2, tags:['UPDATE'],
+      prompt:`Écris une requête qui passe le <code>statut</code> à <code>'remboursee'</code> pour la commande d’<code>id</code> 17 uniquement.`,
+      starter:`UPDATE commandes\nSET \nWHERE ;`,
+      hint:`SET statut = 'remboursee', WHERE id = 17.`,
+      keywords:['update','set','statut','remboursee','where','id','17'],
+      modelCode:true,
+      model:`UPDATE commandes
+SET statut = 'remboursee'
+WHERE id = 17;`,
+      explain:`<code>SET</code> définit la nouvelle valeur, <code>WHERE id = 17</code> cible précisément une ligne. Sans ce WHERE, toute la table passerait à « remboursee ».`}
+  ]
+});
+
+/* ================= CHECKPOINT 2 — Multi-tables & avancé ================= */
+COURSE.push({
+  type:'checkpoint', navtitle:'⚑ Checkpoint : Jointures & +',
+  title:'Checkpoint — Jointures, sous-requêtes, fenêtrage & DML',
+  sub:'Synthèse des modules 5 à 8.',
+  lesson:`<div class="callout why"><div class="h">🎯 Ce que tu dois maîtriser</div>
+    Choisir la bonne jointure (INNER vs LEFT, anti-join), écrire des sous-requêtes (IN/EXISTS, et le piège <code>NOT IN</code> + NULL), utiliser les fonctions de fenêtrage (classements, cumuls, top-N par groupe), et modifier les données en sécurité (WHERE obligatoire, transactions, rôle des index).</div>`,
+  exam:[
+    { kind:'mcq', difficulty:2, tags:['LEFT JOIN'],
+      prompt:`Quelle jointure garde <b>tous</b> les clients, même ceux sans commande ?`,
+      choices:[`<code>INNER JOIN</code>`,`<code>LEFT JOIN</code> (clients à gauche)`,`<code>CROSS JOIN</code>`,`aucune`],
+      answer:1,
+      explain:`<code>LEFT JOIN</code> conserve toutes les lignes de la table de gauche (<code>clients</code>) ; les colonnes de <code>commandes</code> sont NULL s’il n’y a pas de commande.`},
+    { kind:'predict', difficulty:2, tags:['CROSS JOIN'], expect:'20',
+      prompt:`<code>produits</code> a 5 lignes, <code>mois</code> a 4 lignes. Combien de lignes renvoie <code>produits CROSS JOIN mois</code> ?`,
+      hint:`Produit cartésien.`,
+      model:`20`,
+      explain:`5 × 4 = 20. Un CROSS JOIN produit toutes les combinaisons — utile par ex. pour générer un calendrier produit × mois à remplir.`},
+    { kind:'mcq', difficulty:3, tags:['NOT EXISTS'],
+      prompt:`Pour lister les produits <b>jamais</b> commandés de façon robuste aux NULL, on préfère :`,
+      choices:[`<code>NOT IN</code>`,`<code>NOT EXISTS</code>`,`<code>CROSS JOIN</code>`,`<code>HAVING</code>`],
+      answer:1,
+      explain:`<code>NOT EXISTS</code> évite le piège de <code>NOT IN</code> avec des NULL (qui renverrait un résultat vide). Il exprime clairement « il n’existe aucune commande pour ce produit ».`},
+    { kind:'mcq', difficulty:3, tags:['window','top-N'],
+      prompt:`Quel outil est le plus adapté pour « les 3 commandes les plus chères <b>de chaque</b> client » ?`,
+      choices:[
+        `<code>GROUP BY client_id</code> seul`,
+        `<code>ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY montant DESC)</code> puis filtrer rang ≤ 3`,
+        `<code>DISTINCT</code>`,
+        `<code>CROSS JOIN</code>`],
+      answer:1,
+      explain:`Le top-N par groupe est le cas d’école des window functions : on numérote dans chaque partition (client), puis on garde les rangs ≤ 3 dans une sous-requête/CTE.`},
+    { kind:'tf', difficulty:2, tags:['transactions'],
+      prompt:`Dans une transaction, si une opération échoue, <code>ROLLBACK</code> permet de revenir à l’état initial (atomicité).`,
+      answer:true,
+      explain:`Vrai. C’est l’atomicité (le A de ACID) : la transaction est « tout ou rien ». <code>ROLLBACK</code> annule toutes les modifications depuis le <code>BEGIN</code>.`},
+    { kind:'code', difficulty:3, tags:['JOIN','GROUP BY','ORDER BY'],
+      prompt:`Écris une requête donnant le nom des 5 clients ayant le plus gros chiffre d’affaires (somme des montants de leurs commandes « payee »). Jointure + agrégation + tri + limite.`,
+      starter:`SELECT c.nom, SUM(co.montant) AS ca\nFROM clients AS c\n`,
+      hint:`JOIN commandes, WHERE statut='payee', GROUP BY c.id,c.nom, ORDER BY ca DESC, LIMIT 5.`,
+      keywords:['join','commandes','where','payee','group by','sum','order by','desc','limit','5'],
+      modelCode:true,
+      model:`SELECT c.nom, SUM(co.montant) AS ca
+FROM clients AS c
+JOIN commandes AS co ON co.client_id = c.id
+WHERE co.statut = 'payee'
+GROUP BY c.id, c.nom
+ORDER BY ca DESC
+LIMIT 5;`,
+      explain:`On joint clients et commandes, on filtre les lignes « payee » (<code>WHERE</code>, avant agrégation), on somme par client, puis on classe par CA décroissant et on garde le top-5. Enchaînement complet des compétences du cursus.`}
+  ]
+});
+
+/* ================= EXAMEN FINAL — SQL ================= */
+COURSE.push({
+  type:'final', navtitle:'★ Examen final',
+  title:'Examen final — SQL complet',
+  sub:'15 questions couvrant tout le parcours. À la fin : évaluation, niveau estimé et feuille de route.',
+  lesson:`<div class="callout py"><div class="h">📋 Consignes</div>
+    L’examen balaie l’ensemble : projection/filtrage, NULL, tri, agrégation, jointures, sous-requêtes, fonctions de fenêtrage, DML, transactions et index. Ton <b>niveau estimé</b> et une <b>feuille de route</b> s’affichent en bas de page.</div>`,
+  exam:[
+    { kind:'mcq', difficulty:1, tags:['SELECT'],
+      prompt:`Quelle clause filtre les <b>lignes</b> avant toute agrégation ?`,
+      choices:[`<code>HAVING</code>`,`<code>WHERE</code>`,`<code>GROUP BY</code>`,`<code>ORDER BY</code>`],
+      answer:1,
+      explain:`<code>WHERE</code> filtre les lignes avant <code>GROUP BY</code>. <code>HAVING</code> filtre les groupes après agrégation.`},
+    { kind:'mcq', difficulty:2, tags:['NULL'],
+      prompt:`Quelle est la bonne façon de tester une valeur absente ?`,
+      choices:[`<code>= NULL</code>`,`<code>IS NULL</code>`,`<code>== NULL</code>`,`<code>LIKE NULL</code>`],
+      answer:1,
+      explain:`<code>IS NULL</code> (ou <code>IS NOT NULL</code>). Toute comparaison <code>= NULL</code> vaut « inconnu » et n’est jamais vraie.`},
+    { kind:'predict', difficulty:2, tags:['COUNT'], expect:'4',
+      prompt:`Colonne <code>email</code> : 6 lignes dont 2 NULL. Que renvoie <code>COUNT(email)</code> ?`,
+      hint:`COUNT(colonne) ignore les NULL.`,
+      model:`4`,
+      explain:`<code>COUNT(email)</code> = valeurs non NULL = 6 − 2 = 4. <code>COUNT(*)</code> aurait donné 6.`},
+    { kind:'mcq', difficulty:2, tags:['GROUP BY'],
+      prompt:`<code>SELECT categorie, COUNT(*) FROM produits GROUP BY categorie</code> renvoie :`,
+      choices:[
+        `le nombre total de produits`,
+        `le nombre de produits par catégorie`,
+        `les catégories distinctes seulement`,
+        `une erreur`],
+      answer:1,
+      explain:`Agrégation par groupe : une ligne par <code>categorie</code> avec son effectif. C’est la table de comptage par catégorie.`},
+    { kind:'mcq', difficulty:2, tags:['JOIN'],
+      prompt:`Un <code>INNER JOIN</code> sur une condition jamais vérifiée renvoie :`,
+      choices:[`toutes les lignes`,`aucune ligne`,`le produit cartésien`,`une erreur`],
+      answer:1,
+      explain:`<code>INNER JOIN</code> ne garde que les correspondances ; si aucune ne matche, le résultat est vide.`},
+    { kind:'predict', difficulty:2, tags:['CROSS JOIN'], expect:'15',
+      prompt:`Table A : 3 lignes, table B : 5 lignes. Combien de lignes pour <code>A CROSS JOIN B</code> ?`,
+      hint:`Produit.`,
+      model:`15`,
+      explain:`3 × 5 = 15 combinaisons (produit cartésien).`},
+    { kind:'tf', difficulty:3, tags:['NOT IN','NULL'],
+      prompt:`<code>x NOT IN (SELECT y …)</code> est totalement sûr même si <code>y</code> contient des NULL.`,
+      answer:false,
+      explain:`Faux. Un NULL dans la liste rend <code>NOT IN</code> « inconnu » pour toutes les lignes ⇒ résultat vide. Préfère <code>NOT EXISTS</code>.`},
+    { kind:'mcq', difficulty:3, tags:['window'],
+      prompt:`<code>ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY date_commande DESC)</code> sert typiquement à :`,
+      choices:[
+        `compter les clients`,
+        `garder la commande la plus récente par client (rang = 1)`,
+        `sommer les montants`,
+        `trier globalement`],
+      answer:1,
+      explain:`En numérotant par client selon la date décroissante, le rang 1 est la ligne la plus récente de chaque client — patron de déduplication / « dernier enregistrement par clé ».`},
+    { kind:'mcq', difficulty:2, tags:['WHERE vs HAVING'],
+      prompt:`Une condition portant sur <code>SUM(montant)</code> doit aller dans :`,
+      choices:[`<code>WHERE</code>`,`<code>HAVING</code>`,`<code>ORDER BY</code>`,`<code>FROM</code>`],
+      answer:1,
+      explain:`Les conditions sur des agrégats vont dans <code>HAVING</code> (après le GROUP BY). <code>WHERE</code> ne peut pas référencer d’agrégat.`},
+    { kind:'tf', difficulty:2, tags:['DML'],
+      prompt:`<code>DELETE FROM commandes;</code> sans WHERE supprime toutes les lignes de la table.`,
+      answer:true,
+      explain:`Vrai. Sans <code>WHERE</code>, toutes les lignes sont supprimées. Prudence : toujours cibler, et travailler en transaction pour pouvoir <code>ROLLBACK</code>.`},
+    { kind:'mcq', difficulty:3, tags:['index'],
+      prompt:`Sur quelle colonne un index est-il le plus utile en priorité ?`,
+      choices:[
+        `une colonne jamais utilisée en filtre`,
+        `une clé étrangère souvent utilisée dans les JOIN et WHERE`,
+        `une colonne booléenne à 2 valeurs peu discriminante`,
+        `toutes les colonnes systématiquement`],
+      answer:1,
+      explain:`Les colonnes souvent filtrées/jointes (typiquement les clés étrangères) bénéficient le plus d’un index. Indexer tout pénalise les écritures et gaspille l’espace ; une colonne peu sélective apporte peu.`},
+    { kind:'code', difficulty:2, tags:['WHERE','ORDER BY'],
+      prompt:`Écris une requête : les commandes de statut <code>'payee'</code>, affichant <code>id</code> et <code>montant</code>, triées par montant décroissant.`,
+      starter:`SELECT id, montant\nFROM commandes\n`,
+      hint:`WHERE statut = 'payee' puis ORDER BY montant DESC.`,
+      keywords:['where','statut','payee','order by','montant','desc'],
+      modelCode:true,
+      model:`SELECT id, montant
+FROM commandes
+WHERE statut = 'payee'
+ORDER BY montant DESC;`,
+      explain:`Filtrage par <code>WHERE</code> sur le statut, puis tri décroissant sur le montant.`},
+    { kind:'code', difficulty:3, tags:['JOIN','agrégation'],
+      prompt:`Écris une requête donnant, par <code>categorie</code> de produit, le montant total vendu. On suppose une table <code>ventes(produit_id, quantite)</code> et <code>produits(id, categorie, prix)</code>. (total = somme de quantite × prix.)`,
+      starter:`SELECT p.categorie, SUM(v.quantite * p.prix) AS total\nFROM ventes AS v\n`,
+      hint:`JOIN produits ON v.produit_id = p.id, GROUP BY p.categorie, ORDER BY total DESC.`,
+      keywords:['join','produits','on','produit_id','group by','categorie','sum','quantite','prix'],
+      modelCode:true,
+      model:`SELECT p.categorie, SUM(v.quantite * p.prix) AS total
+FROM ventes AS v
+JOIN produits AS p ON p.id = v.produit_id
+GROUP BY p.categorie
+ORDER BY total DESC;`,
+      explain:`On joint ventes et produits pour accéder au prix et à la catégorie, on calcule le chiffre d’affaires ligne par ligne (<code>quantite * prix</code>), puis on agrège par catégorie et on classe. C’est une requête analytique typique.`},
+    { kind:'text', difficulty:3, tags:['synthèse','Data/IA'],
+      prompt:`Pourquoi SQL est-il incontournable dans un pipeline de data science / IA ? Cite deux étapes concrètes où il intervient.`,
+      hint:`Extraction, nettoyage, agrégation, feature engineering.`,
+      keywords:['extraction','nettoyage','agrégation','features','jointure','group by','préparation'],
+      model:`SQL sert à <b>extraire</b> et <b>préparer</b> les données avant toute modélisation : sélection/filtrage d’un périmètre, nettoyage (gestion des NULL, déduplication), <b>agrégation</b> de features (ex. CA par client via GROUP BY) et <b>jointures</b> pour consolider plusieurs sources en une table d’analyse.`,
+      explain:`La majeure partie du temps d’un projet ML est consacrée à la préparation des données, souvent en SQL (ou Spark SQL/BigQuery à grande échelle). Maîtriser SELECT/JOIN/GROUP BY/fenêtrage, c’est pouvoir construire soi-même son dataset d’entraînement.`},
+    { kind:'tf', difficulty:2, tags:['ordre logique'],
+      prompt:`L’ordre d’évaluation logique est : FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT.`,
+      answer:true,
+      explain:`Vrai. Cet ordre explique pourquoi le WHERE ne voit pas les alias du SELECT, pourquoi HAVING peut filtrer des agrégats, et pourquoi l’ORDER BY peut utiliser les alias.`}
+  ]
+});
+</script>
+
+<script>
+/* ============================================================
+   MOTEUR : rendu, navigation, scoring, adaptativité
+   ============================================================ */
+const LS_KEY = "sql_cursus_v1";
+let state = load();
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || fresh(); }
+  catch(e){ return fresh(); }
+}
+function fresh(){ return { current:0, results:{}, current_q:{} }; }
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+/* --- Statistiques globales --- */
+function allQuestions(){
+  let arr=[];
+  COURSE.forEach((s,si)=>{ (s.quiz||s.exam||[]).forEach((q,qi)=>arr.push({si,qi,q})); });
+  return arr;
+}
+function globalScore(){
+  let correct=0,total=0;
+  Object.values(state.results).forEach(sec=>{
+    Object.values(sec).forEach(r=>{ total++; if(r==='ok')correct++; else if(r==='part')correct+=0.5; });
+  });
+  const totalQ = allQuestions().length;
+  return {correct, answered:total, totalQ, pct: totalQ? Math.round(correct/totalQ*100):0};
+}
+function levelInfo(){
+  const g=globalScore();
+  const p=g.pct;
+  let name='Débutant';
+  if(p>=85) name='Intermédiaire confirmé';
+  else if(p>=60) name='Intermédiaire';
+  else if(p>=35) name='Débutant avancé';
+  else if(p>=12) name='Débutant';
+  else name='Grand débutant';
+  return {name, pct:p};
+}
+
+/* --- Sidebar --- */
+function renderNav(){
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  COURSE.forEach((s,i)=>{
+    const div=document.createElement('div');
+    let cls='navitem';
+    if(i===state.current) cls+=' active';
+    if(s.type==='checkpoint') cls+=' cp';
+    if(s.type==='final') cls+=' final';
+    const done=sectionDone(i);
+    if(done) cls+=' done';
+    div.className=cls;
+    const icon = s.type==='checkpoint' ? '⚑' : s.type==='final' ? '★' : (done?'✓':(i+1));
+    div.innerHTML=`<span class="ic">${icon}</span><span>${s.navtitle||s.title}</span>`;
+    div.onclick=()=>{ state.current=i; save(); render(); if(window.innerWidth<=860) document.getElementById('sidebar').classList.remove('open'); };
+    nav.appendChild(div);
+  });
+  const li=levelInfo();
+  document.getElementById('lvlName').textContent='Niveau : '+li.name;
+  document.getElementById('lvlPct').textContent=li.pct+'%';
+  document.getElementById('lvlBar').style.width=li.pct+'%';
+}
+function sectionDone(i){
+  const s=COURSE[i]; const qs=(s.quiz||s.exam||[]);
+  if(!qs.length) return false;
+  const r=state.results[i]||{};
+  return Object.keys(r).length>=qs.length;
+}
+
+/* --- Rendu principal --- */
+function render(){
+  renderNav();
+  const s=COURSE[state.current];
+  const c=document.getElementById('content');
+  window.scrollTo(0,0);
+  if(s.type==='final'){ renderFinal(s); return; }
+  let html='';
+  html+=`<div class="kicker">${s.kicker||(s.type==='checkpoint'?'Checkpoint':'Module '+(sectionNumber(state.current)))}</div>`;
+  html+=`<h2 class="title">${s.title}</h2>`;
+  if(s.sub) html+=`<div class="sub">${s.sub}</div>`;
+  if(s.lesson){ html+=`<div class="card lesson">${s.lesson}</div>`; }
+  c.innerHTML=html;
+  const qs=(s.quiz||s.exam||[]);
+  if(qs.length){
+    const holder=document.createElement('div'); holder.id='quizHolder'; c.appendChild(holder);
+    startQuiz(state.current);
+  }
+  // navigation module suivant
+  const navFoot=document.createElement('div');
+  navFoot.style.cssText='display:flex;justify-content:space-between;margin-top:24px';
+  navFoot.innerHTML=`
+    <button class="btn" ${state.current===0?'disabled':''} id="prevSec">← Précédent</button>
+    <button class="btn primary" ${state.current===COURSE.length-1?'disabled':''} id="nextSec">Section suivante →</button>`;
+  c.appendChild(navFoot);
+  const pv=document.getElementById('prevSec'), nx=document.getElementById('nextSec');
+  if(pv) pv.onclick=()=>{state.current--;save();render();};
+  if(nx) nx.onclick=()=>{state.current++;save();render();};
+}
+function sectionNumber(idx){
+  let n=0; for(let i=0;i<=idx;i++){ if(COURSE[i].type==='module') n++; } return n;
+}
+
+/* --- Moteur de quiz : une question à la fois --- */
+function startQuiz(si){
+  const s=COURSE[si];
+  const qs=(s.quiz||s.exam||[]);
+  if(!state.current_q) state.current_q={};
+  // reprendre là où on s'est arrêté
+  let idx = state.current_q[si] ?? 0;
+  const answered = state.results[si]||{};
+  // aller à la première non répondue si en cours
+  if(idx>=qs.length) idx=qs.length-1;
+  renderQuestion(si, idx);
+}
+
+function renderQuestion(si, idx){
+  state.current_q[si]=idx; save();
+  const s=COURSE[si]; const qs=(s.quiz||s.exam||[]);
+  const q=qs[idx];
+  const holder=document.getElementById('quizHolder');
+  const results=state.results[si]||{};
+  const isExam = s.type==='checkpoint'||s.type==='final';
+
+  // barre de progression du quiz
+  let dots='';
+  qs.forEach((_,i)=>{
+    let d='dot';
+    if(results[i]==='ok')d+=' ok'; else if(results[i]==='bad')d+=' bad'; else if(results[i]==='part')d+=' part';
+    if(i===idx)d+=' cur';
+    dots+=`<span class="${d}" title="Q${i+1}"></span>`;
+  });
+
+  const dlabel={1:'Facile',2:'Moyen',3:'Difficile'}[q.difficulty||1];
+  let html=`<div class="card">
+    <div class="quizhead">
+      <div class="kicker">${isExam?'Examen':'Quiz'} — Question ${idx+1}/${qs.length}</div>
+      <span class="pill d${q.difficulty||1}">${dlabel}</span>
+    </div>
+    <div class="qprompt">${q.prompt}</div>`;
+  if(q.code) html+=code(q.code);
+
+  // corps selon type
+  if(q.kind==='mcq'||q.kind==='multi'){
+    html+=`<div class="choices" id="choices">`;
+    q.choices.forEach((ch,i)=>{
+      html+=`<div class="choice ${q.kind==='multi'?'multi':''}" data-i="${i}">
+        <span class="mk">${q.kind==='multi'?'':''}</span><div>${ch}</div></div>`;
+    });
+    html+=`</div>`;
+  } else if(q.kind==='tf'){
+    html+=`<div class="choices" id="choices">
+      <div class="choice" data-i="1"><span class="mk"></span><div>Vrai</div></div>
+      <div class="choice" data-i="0"><span class="mk"></span><div>Faux</div></div></div>`;
+  } else if(q.kind==='predict'){
+    html+=`<input class="answer" id="freeAns" placeholder="Écris la sortie attendue (ou 'erreur de compilation')..." autocomplete="off"/>`;
+  } else if(q.kind==='text'){
+    html+=`<textarea class="answer" id="freeAns" placeholder="Écris ta réponse ici..."></textarea>`;
+  } else if(q.kind==='code'){
+    html+=`<textarea class="answer" id="freeAns" placeholder="Écris ton code Rust ici...">${q.starter||''}</textarea>`;
+  }
+
+  html+=`<div class="hintbox" id="hintbox">💡 Indice : ${q.hint||'Relis la partie du cours correspondante.'}</div>`;
+  html+=`<div class="qfoot">
+      <div class="progressline">${dots}</div>
+      <div style="display:flex;gap:8px">
+        ${q.hint?`<button class="btn small ghost" id="hintBtn">Indice</button>`:''}
+        <button class="btn primary" id="checkBtn">Vérifier ma réponse</button>
+      </div>
+    </div>`;
+
+  // feedback
+  html+=`<div class="feedback" id="feedback"></div>`;
+  html+=`</div>`;
+  holder.innerHTML=html;
+
+  // interactions
+  let selected = q.kind==='multi'? new Set() : null;
+  const choiceEls=holder.querySelectorAll('.choice');
+  choiceEls.forEach(el=>{
+    el.onclick=()=>{
+      if(el.classList.contains('locked'))return;
+      if(q.kind==='multi'){
+        const i=+el.dataset.i;
+        if(selected.has(i)){selected.delete(i);el.classList.remove('sel');}
+        else{selected.add(i);el.classList.add('sel');}
+      }else{
+        choiceEls.forEach(e=>e.classList.remove('sel'));
+        el.classList.add('sel'); selected=+el.dataset.i;
+      }
+    };
+  });
+  const hintBtn=document.getElementById('hintBtn');
+  if(hintBtn) hintBtn.onclick=()=>document.getElementById('hintbox').classList.add('show');
+  document.getElementById('checkBtn').onclick=()=>checkAnswer(si,idx,q,selected,choiceEls);
+
+  // si déjà répondu, montrer l'état
+  if(results[idx]){ /* on laisse rejouable, ne bloque pas */ }
+}
+
+function checkAnswer(si,idx,q,selected,choiceEls){
+  const fb=document.getElementById('feedback');
+  let verdict='ok'; // ok | bad | part
+  let auto=true;
+
+  if(q.kind==='mcq'||q.kind==='tf'){
+    const ans = q.kind==='tf' ? (q.answer?1:0) : q.answer;
+    if(selected===null){ toast('Choisis une réponse.'); return; }
+    choiceEls.forEach(el=>{
+      const i=+el.dataset.i; el.classList.add('locked');
+      if(i===ans) el.classList.add('correct');
+      if(i===selected && i!==ans) el.classList.add('wrong');
+    });
+    verdict = selected===ans ? 'ok':'bad';
+  } else if(q.kind==='multi'){
+    if(!selected||selected.size===0){ toast('Sélectionne au moins une réponse.'); return; }
+    const ans=new Set(q.answer);
+    choiceEls.forEach(el=>{
+      const i=+el.dataset.i; el.classList.add('locked');
+      if(ans.has(i)) el.classList.add('correct');
+      if(selected.has(i)&&!ans.has(i)) el.classList.add('wrong');
+    });
+    const sel=[...selected].sort().join(','), good=[...ans].sort().join(',');
+    verdict = sel===good ? 'ok' : ( [...selected].every(x=>ans.has(x)) ? 'part':'bad');
+  } else {
+    // réponses libres : auto-évaluation par mots-clés + auto-évaluation utilisateur
+    auto=false;
+    const val=(document.getElementById('freeAns').value||'').trim();
+    if(!val){ toast('Écris ta réponse avant de vérifier.'); return; }
+    verdict = gradeFree(val,q);
+  }
+
+  // rendu feedback
+  const vlabel={ok:'✅ Correct',bad:'❌ Incorrect',part:'🟡 Partiellement correct'}[verdict];
+  let fbHtml=`<div class="verdict ${verdict}">${vlabel}</div>`;
+  if(!auto && q.model){ fbHtml+=`<div style="margin:8px 0"><strong>Réponse / solution attendue :</strong></div>`+ (q.modelCode?code(q.model):`<div>${q.model}</div>`); }
+  fbHtml+=`<div style="margin-top:10px"><strong>Explication détaillée :</strong><br>${q.explain}</div>`;
+
+  if(!auto){
+    fbHtml+=`<div class="selfassess">
+      <span class="lab">Auto-évaluation honnête — as-tu réussi ?</span>
+      <button class="btn small" data-v="ok">✅ Oui</button>
+      <button class="btn small" data-v="part">🟡 En partie</button>
+      <button class="btn small" data-v="bad">❌ Non</button>
+    </div>`;
+  }
+  fbHtml+=`<div class="qfoot" style="margin-top:16px">
+      <span style="color:var(--muted);font-size:13px" id="adaptNote"></span>
+      <button class="btn primary" id="nextQ">Question suivante →</button>
+    </div>`;
+  fb.innerHTML=fbHtml; fb.classList.add('show');
+  document.getElementById('checkBtn').disabled=true;
+
+  const s=COURSE[si]; const qs=(s.quiz||s.exam||[]);
+  const finishThis=(v)=>{
+    recordResult(si,idx,v);
+    adaptNote(si,idx,v);
+    const nextBtn=document.getElementById('nextQ');
+    nextBtn.onclick=()=>{
+      if(idx+1<qs.length){ renderQuestion(si,idx+1); }
+      else { showSectionSummary(si); }
+    };
+  };
+
+  if(auto){ finishThis(verdict); }
+  else{
+    // attendre l'auto-évaluation
+    fb.querySelectorAll('.selfassess .btn').forEach(b=>{
+      b.onclick=()=>{
+        fb.querySelectorAll('.selfassess .btn').forEach(x=>x.style.opacity=.4);
+        b.style.opacity=1;
+        finishThis(b.dataset.v);
+      };
+    });
+    // par défaut, on enregistre l'estimation par mots-clés tant que l'utilisateur n'a pas cliqué
+    finishThis(verdict);
+  }
+}
+
+function gradeFree(val,q){
+  const low=val.toLowerCase();
+  if(q.kind==='predict' && q.expect){
+    const norm=s=>s.toLowerCase().replace(/\s+/g,' ').trim();
+    if(norm(val)===norm(q.expect)) return 'ok';
+    // tolérance : contient l'essentiel
+    if(q.expect && norm(val).includes(norm(q.expect).slice(0,Math.max(3,q.expect.length-2)))) return 'part';
+    if(!q.keywords || !q.keywords.length) return 'bad';
+  }
+  if(q.keywords && q.keywords.length){
+    const hits=q.keywords.filter(k=>low.includes(k.toLowerCase())).length;
+    const ratio=hits/q.keywords.length;
+    if(ratio>=0.7) return 'ok';
+    if(ratio>=0.35) return 'part';
+    return 'bad';
+  }
+  return 'part';
+}
+
+function recordResult(si,idx,v){
+  if(!state.results[si]) state.results[si]={};
+  state.results[si][idx]=v; save(); renderNav();
+}
+
+/* Difficulté adaptative : message + suggestion */
+function adaptNote(si,idx,v){
+  const note=document.getElementById('adaptNote'); if(!note)return;
+  // regarde les 3 dernières réponses de la section
+  const r=state.results[si]||{};
+  const recent=[];
+  for(let i=Math.max(0,idx-2);i<=idx;i++){ if(r[i]) recent.push(r[i]); }
+  const bad=recent.filter(x=>x==='bad').length;
+  const ok=recent.filter(x=>x==='ok').length;
+  if(bad>=2){ note.innerHTML='🔻 <b>On ralentit.</b> Relis la section ci-dessus avant de continuer — ce concept est important.'; }
+  else if(ok>=3){ note.innerHTML='🔺 <b>Excellent enchaînement !</b> Tu peux viser les questions difficiles suivantes sans crainte.'; }
+  else if(v==='ok'){ note.innerHTML='👍 Bien joué.'; }
+  else if(v==='part'){ note.innerHTML='🟡 Presque — relis l’explication.'; }
+  else { note.innerHTML='Reprends le point correspondant dans le cours.'; }
+}
+
+/* Résumé de fin de section (module ou checkpoint) */
+function showSectionSummary(si){
+  const s=COURSE[si]; const qs=(s.quiz||s.exam||[]);
+  const r=state.results[si]||{};
+  let ok=0,part=0,bad=0;
+  qs.forEach((_,i)=>{ if(r[i]==='ok')ok++; else if(r[i]==='part')part++; else if(r[i]==='bad')bad++; });
+  const score=ok+part*0.5, pct=Math.round(score/qs.length*100);
+  const holder=document.getElementById('quizHolder');
+
+  // lacunes = questions manquées, regroupées par tag
+  const weakTags={};
+  qs.forEach((qq,i)=>{ if(r[i]==='bad'||r[i]==='part'){ (qq.tags||['divers']).forEach(t=>weakTags[t]=(weakTags[t]||0)+1); } });
+  const weakList=Object.entries(weakTags).sort((a,b)=>b[1]-a[1]);
+
+  let msg;
+  if(pct>=85) msg="Maîtrise solide 🎯 — tu peux avancer sereinement.";
+  else if(pct>=60) msg="Bon niveau 👍 — quelques points à consolider.";
+  else msg="À retravailler ⚠️ — révise la section avant de poursuivre.";
+
+  let html=`<div class="card summary">
+    <div class="kicker">${s.type==='checkpoint'?'Bilan du checkpoint':'Bilan du module'}</div>
+    <h2 class="title" style="font-size:24px">${msg}</h2>
+    <div class="statgrid">
+      <div class="stat"><div class="n" style="color:var(--ok)">${ok}</div><div class="l">Réussies</div></div>
+      <div class="stat"><div class="n" style="color:var(--warn)">${part}</div><div class="l">Partielles</div></div>
+      <div class="stat"><div class="n" style="color:var(--bad)">${bad}</div><div class="l">Manquées</div></div>
+      <div class="stat"><div class="n">${pct}%</div><div class="l">Score section</div></div>
+    </div>`;
+  if(weakList.length){
+    html+=`<h4 style="color:var(--acc2)">🎯 Révisions ciblées recommandées :</h4>`;
+    weakList.forEach(([t,n])=>{ html+=`<div class="weak"><b>${t}</b> — ${n} question(s) à revoir. Relis la partie correspondante puis rejoue le quiz.</div>`; });
+  } else {
+    html+=`<div class="weak" style="background:rgba(62,207,142,.1);border-color:rgba(62,207,142,.4)">Aucune lacune détectée sur cette section. 🌟</div>`;
+  }
+  html+=`<div class="qfoot" style="margin-top:18px">
+      <button class="btn" id="retryQuiz">↻ Rejouer le quiz</button>
+      <button class="btn primary" id="goNext">${si<COURSE.length-1?'Section suivante →':'Terminé'}</button>
+    </div></div>`;
+  holder.innerHTML=html;
+  document.getElementById('retryQuiz').onclick=()=>{ state.current_q[si]=0; save(); renderQuestion(si,0); };
+  const gn=document.getElementById('goNext');
+  gn.onclick=()=>{ if(si<COURSE.length-1){state.current=si+1;state.current_q[si]=0;save();render();} };
+}
+
+/* --- Examen final : bilan global détaillé --- */
+function renderFinal(s){
+  const c=document.getElementById('content');
+  const g=globalScore();
+  const li=levelInfo();
+  let html=`<div class="kicker">Examen final & évaluation</div>
+    <h2 class="title">${s.title}</h2>
+    <div class="sub">${s.sub||''}</div>`;
+  if(s.lesson) html+=`<div class="card lesson">${s.lesson}</div>`;
+  c.innerHTML=html;
+  const holder=document.createElement('div'); holder.id='quizHolder'; c.appendChild(holder);
+  startQuiz(state.current);
+
+  // bouton pour afficher l'évaluation globale
+  const evalCard=document.createElement('div');
+  evalCard.className='card summary';
+  evalCard.innerHTML=`<div class="kicker">Évaluation globale du parcours</div>
+    <h3 style="margin:6px 0">Ton niveau estimé : <span class="badge" style="background:linear-gradient(135deg,var(--acc),#b03400);color:#fff">${li.name}</span></h3>
+    <div class="statgrid">
+      <div class="stat"><div class="n">${g.pct}%</div><div class="l">Score global</div></div>
+      <div class="stat"><div class="n">${Math.round(g.correct)}</div><div class="l">Points obtenus</div></div>
+      <div class="stat"><div class="n">${g.answered}</div><div class="l">Questions traitées</div></div>
+      <div class="stat"><div class="n">${g.totalQ}</div><div class="l">Total questions</div></div>
+    </div>
+    <div id="roadmap"></div>`;
+  c.appendChild(evalCard);
+  renderRoadmap(li);
+
+  const navFoot=document.createElement('div');
+  navFoot.style.cssText='display:flex;justify-content:space-between;margin-top:24px';
+  navFoot.innerHTML=`<button class="btn" id="prevSec">← Précédent</button><span></span>`;
+  c.appendChild(navFoot);
+  document.getElementById('prevSec').onclick=()=>{state.current--;save();render();};
+}
+function renderRoadmap(li){
+  const el=document.getElementById('roadmap'); if(!el)return;
+  // lacunes globales par tag
+  const tagFail={};
+  COURSE.forEach((s,si)=>{ const qs=(s.quiz||s.exam||[]); const r=state.results[si]||{};
+    qs.forEach((q,i)=>{ if(r[i]==='bad'||r[i]==='part'){ (q.tags||[]).forEach(t=>tagFail[t]=(tagFail[t]||0)+1);} }); });
+  const weak=Object.entries(tagFail).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  let h=`<h4 style="color:var(--acc2)">🩺 Diagnostic de tes lacunes</h4>`;
+  if(weak.length){ h+='<ul>'; weak.forEach(([t,n])=>h+=`<li><b>${t}</b> — ${n} erreur(s). À retravailler en priorité.</li>`); h+='</ul>'; }
+  else h+='<p>Aucune lacune majeure détectée — excellent ! 🌟</p>';
+  h+=`<h4 style="color:var(--acc2)">🗺️ Feuille de route vers le niveau avancé</h4>
+  <ol>
+    <li><b>Fonctions de fenêtrage avancées</b> : <code>FRAME</code> (ROWS/RANGE BETWEEN), <code>LAG/LEAD</code>, moyennes mobiles, cumuls, top-N par groupe.</li>
+    <li><b>CTE & requêtes récursives</b> : <code>WITH RECURSIVE</code> pour hiérarchies (organigrammes, graphes, nomenclatures).</li>
+    <li><b>Optimisation & index</b> : lire un <code>EXPLAIN ANALYZE</code>, index B-tree/partiels/composites, sélectivité, éviter les <i>full scans</i>.</li>
+    <li><b>Modélisation</b> : normalisation (1NF→3NF), clés, contraintes, schémas en étoile/flocon (data warehouse).</li>
+    <li><b>Transactions & concurrence</b> : niveaux d’isolation (ACID), verrous, <code>MVCC</code>, deadlocks.</li>
+    <li><b>SQL analytique / Big Data</b> : <code>GROUPING SETS</code>, <code>ROLLUP/CUBE</code>, pivots ; dialectes distribués (BigQuery, Spark SQL, DuckDB).</li>
+    <li><b>NoSQL & au-delà</b> : quand quitter le relationnel (MongoDB, Redis), JSONB en Postgres, bases colonnes.</li>
+    <li>Pratique : <i>SQLBolt</i>, <i>pgexercises</i>, <i>Advanced SQL (Mode Analytics)</i>, et un vrai projet d’analyse sur un dataset.</li>
+  </ol>`;
+  el.innerHTML=h;
+}
+
+/* --- Contrôles UI --- */
+document.getElementById('resetBtn').onclick=()=>{
+  if(confirm('Réinitialiser toute ta progression ?')){ state=fresh(); save(); render(); toast('Progression réinitialisée.'); }
+};
+document.getElementById('menuBtn').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
+
+/* --- Démarrage : on attend que le contenu soit chargé --- */
+function boot(){ if(COURSE.length===0){ setTimeout(boot,30); return; } if(state.current>=COURSE.length) state.current=0; render(); }
+boot();
+</script>
+</body>
+</html>
