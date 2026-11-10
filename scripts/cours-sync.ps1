@@ -24,7 +24,7 @@ if ($branch -ne 'Cours') {
   return
 }
 
-if (git status --porcelain) {
+if (git status --porcelain --untracked-files=no) {
   Write-Warning "Des modifications ne sont pas encore commit. Commit-les avant de synchroniser."
   git status --short
   return

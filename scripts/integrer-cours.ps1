@@ -34,7 +34,7 @@ if ($current -ne 'main') {
   return
 }
 
-if (git status --porcelain) {
+if (git status --porcelain --untracked-files=no) {
   Write-Warning "Des modifications ne sont pas commit sur main. Commit-les d'abord."
   git status --short
   return
