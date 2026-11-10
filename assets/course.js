@@ -76,6 +76,10 @@
     var nDone = (subject.modules || []).filter(function (m) { return done[m.id]; }).length;
     var total = (subject.modules || []).length;
     host.className = "course-wrap index";
+    var aideBtn = subject.aide
+      ? '<div class="meta-row"><a class="btn" style="border-color:var(--sc);color:var(--sc)" href="aide.html?c=' +
+        encodeURIComponent(subject.code) + '">⚡ Antisèche (fiche de révision)</a></div>'
+      : "";
     host.innerHTML =
       '<div class="breadcrumb"><a href="index.html">Accueil</a> › ' + esc(subject.name) + "</div>" +
       "<h1>" + subject.emoji + " " + esc(subject.name) + "</h1>" +
@@ -83,7 +87,7 @@
       '<div class="meta-row"><span class="chip">' + total + " module" + (total > 1 ? "s" : "") + "</span>" +
       '<span class="chip">' + nDone + " terminé" + (nDone > 1 ? "s" : "") + "</span>" +
       (subject.tags ? subject.tags.map(function (t) { return '<span class="chip">' + esc(t) + "</span>"; }).join("") : "") +
-      "</div>" +
+      "</div>" + aideBtn +
       '<div class="mod-grid">' + cards + "</div>";
     setBrand(subject);
   }

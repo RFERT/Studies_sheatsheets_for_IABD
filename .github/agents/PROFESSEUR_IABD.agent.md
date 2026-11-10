@@ -81,6 +81,16 @@ Le livrable principal est donc le **SITE ENRICHI** (fichiers `.md` + manifeste),
    (`{ id, title, desc, badge, file }`). La page est alors servie par `cours.html?c=CODE&m=ID`.
 5. **Rien d'autre** : portail, navbar et recherche se mettent a jour tout seuls.
 
+### Antiseches (aide-memoire) — meme systeme
+Pour creer une **fiche de revision dense et imprimable**, sans coder de page :
+1. Ecris **un seul** fichier `matieres/<matiere>/md/aide.md`
+   (modele : `matieres/_MODELE-aide-memoire.md` ; exemple reel : `matieres/git/md/aide.md`).
+   Chaque titre `##` devient une **carte** qui coule en colonnes : garde-les **courtes et autonomes**.
+2. Ajoute au sujet dans `matieres/cours.js` : `aide: "matieres/<matiere>/md/aide.md",`.
+3. Rien d'autre : l'antiseche est servie par `aide.html?c=CODE`, reliee automatiquement
+   (carte du portail, menu « Antiseches », recherche, bouton sur la page du cours),
+   avec boutons Imprimer/PDF, Copier et Telecharger `.md`.
+
 Ne touche au **moteur** (`assets/course.js`, `assets/markdown.js`, `cours.html`, `assets/portal.js`,
 `assets/nav.js`) que si c'est vraiment indispensable — c'est le perimetre « site », a signaler explicitement.
 Si tu ajoutes un fichier au moteur, pense a `sw.js` (`CORE` + bump `CACHE`).

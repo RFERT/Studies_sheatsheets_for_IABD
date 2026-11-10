@@ -573,6 +573,26 @@ function codedPageFor(c) {
   return hit ? hit.href : null;
 }
 
+/* Lien « Antisèche » auto si le sujet déclare un fichier `aide:` (Markdown). */
+function aideExtra(c) {
+  return c && c.aide ? { label: "⚡ Antisèche", href: "aide.html?c=" + encodeURIComponent(c.code) } : null;
+}
+function withAide(extra, c) {
+  const list = Array.isArray(extra) ? extra.slice() : [];
+  const a = aideExtra(c);
+  if (a && !list.some((e) => /antis[eè]che/i.test(e.label || ""))) list.push(a);
+  return list.length ? list : undefined;
+}
+function pushAideSearch(c) {
+  if (!c.aide || !Array.isArray(window.SEARCH_INDEX)) return;
+  window.SEARCH_INDEX.push({
+    s: c.name, emoji: c.emoji || "📘", color: c.color || "#6c8cff",
+    type: "antisèche", t: "Antisèche " + c.name,
+    u: "aide.html?c=" + encodeURIComponent(c.code),
+    k: "aide-mémoire révision " + (c.desc || "") + " " + (c.tags || []).join(" ")
+  });
+}
+
 /* Carte pointant vers une page codée (seulement si elle n'est pas déjà sur le portail). */
 function addCodedCard(c, href) {
   const url = typeof href === "string" ? href : null;
@@ -581,9 +601,10 @@ function addCodedCard(c, href) {
   if (already || !url) return;
   SUBJECTS.push({
     code: c.code, name: c.name, emoji: c.emoji || "📘", color: c.color || "#6c8cff",
-    status: "ready", featured: !!c.featured, href: url, extra: c.extra || undefined,
+    status: "ready", featured: !!c.featured, href: url, extra: withAide(c.extra, c),
     desc: c.desc || "", tags: c.tags || [], meta: "Cours complet", fromManifest: true
   });
+  pushAideSearch(c);
   if (Array.isArray(window.SEARCH_INDEX)) {
     window.SEARCH_INDEX.push({
       s: c.name, emoji: c.emoji || "📘", color: c.color || "#6c8cff",
@@ -617,7 +638,7 @@ function mergeManifestCourses() {
       status: mods.length ? "ready" : "soon",
       featured: !!c.featured,
       href: mods.length ? base : undefined,
-      extra: c.extra || undefined,
+      extra: withAide(c.extra, c),
       desc: c.desc || "",
       tags: c.tags || [],
       meta: mods.length ? (mods.length + " module" + (mods.length > 1 ? "s" : "")) : "À venir",
@@ -641,6 +662,7 @@ function mergeManifestCourses() {
         });
       });
     }
+    pushAideSearch(c);
   });
   // regroupe les matières « prêtes » en tête (tri stable)
   const rank = (s) => (s.status === "ready" ? 0 : s.status === "wip" ? 1 : 2);

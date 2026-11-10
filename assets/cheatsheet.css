@@ -1,0 +1,93 @@
+/* =========================================================
+   cheatsheet.css — Mise en page des aides-mémoires (antisèches)
+   Se superpose à course.css : callouts, quiz, code gardent le
+   même design. Ici on ajoute la grille dense en colonnes,
+   la barre d'actions et les styles d'impression (PDF).
+   ========================================================= */
+
+.cheat-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 22px max(16px, env(safe-area-inset-left)) 90px;
+}
+
+.cheat-head { margin-bottom: 14px; }
+.cheat-head h1 { font-size: clamp(24px, 5.2vw, 36px); line-height: 1.1; margin: 4px 0 6px; }
+.cheat-head .lede { margin: 0 0 12px; }
+
+/* Barre d'actions (imprimer / copier / télécharger / cours) */
+.cheat-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+.cheat-actions .btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 13px; border-radius: 10px; font-size: 13.5px; font-weight: 600;
+  background: var(--bg-elev); color: var(--text);
+  border: 1px solid var(--border); cursor: pointer; text-decoration: none;
+}
+.cheat-actions .btn:hover { border-color: var(--sc, var(--primary)); color: var(--sc, var(--primary)); }
+.cheat-actions .btn.primary {
+  background: color-mix(in srgb, var(--sc, var(--primary)) 16%, transparent);
+  border-color: var(--sc, var(--primary)); color: var(--sc, var(--primary));
+}
+.cheat-actions .btn.ok { border-color: #22c38a; color: #22c38a; }
+
+/* Grille dense : les sections ## deviennent des cartes qui coulent en colonnes */
+.cheat-grid {
+  columns: 330px;
+  column-gap: 16px;
+}
+.cheat-card {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 2px 15px 12px;
+  margin: 0 0 16px;
+  border-top: 3px solid var(--sc, var(--primary));
+}
+.cheat-card > h2 {
+  font-size: 16.5px;
+  margin: 12px 0 8px;
+  padding: 0;
+  border: 0;
+  color: var(--sc, var(--primary));
+}
+/* densification du contenu dans les cartes */
+.cheat-card .content, .cheat-card.lead .content { font-size: 14.5px; line-height: 1.6; }
+.cheat-card h3 { font-size: 14.5px; margin: 10px 0 5px; }
+.cheat-card p { margin: 6px 0; }
+.cheat-card ul, .cheat-card ol { margin: 6px 0; padding-left: 20px; }
+.cheat-card li { margin: 3px 0; }
+.cheat-card pre.code { margin: 8px 0; font-size: 12.8px; }
+.cheat-card table { font-size: 13px; }
+.cheat-card .callout { margin: 8px 0; padding: 9px 12px; }
+
+/* Carte d'introduction (contenu avant le 1er ##) : pleine largeur */
+.cheat-card.lead { column-span: all; border-top-color: transparent; background: transparent; border: 0; padding: 0; margin-bottom: 6px; }
+
+.cheat-foot { margin-top: 20px; color: var(--muted); font-size: 13px; text-align: center; }
+.cheat-foot a { color: var(--sc, var(--primary)); text-decoration: none; }
+
+@media (max-width: 560px) {
+  .cheat-grid { columns: 1; }
+  .cheat-card { padding: 2px 13px 10px; }
+}
+
+/* ---------- Impression / export PDF ---------- */
+@media print {
+  .course-topbar, .read-progress, .to-top, .xnav, .skip-link,
+  .cheat-actions, .cheat-foot, .breadcrumb { display: none !important; }
+  :root, html[data-theme] { --bg: #fff; }
+  body { background: #fff !important; color: #000 !important; }
+  .cheat-wrap { max-width: none; padding: 0; }
+  .cheat-grid { columns: 3; column-gap: 10px; }
+  .cheat-card {
+    background: #fff; border: 1px solid #bbb; border-top-width: 2px;
+    border-radius: 8px; margin-bottom: 10px; padding: 2px 10px 8px;
+  }
+  .cheat-card > h2 { color: #000; }
+  .cheat-card pre.code { background: #f3f3f3 !important; color: #000 !important; border: 1px solid #ddd; }
+  .cheat-card .copy-btn { display: none !important; }
+  a { color: #000 !important; text-decoration: none; }
+}

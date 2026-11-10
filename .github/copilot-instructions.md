@@ -46,6 +46,12 @@ Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans co
   utilisée partout (`codedPageFor` dans portal.js, filtre équivalent dans nav.js, redirection dans course.js).
   Champ optionnel `page:` dans un sujet de `cours.js` pour pointer explicitement vers une page codée.
 - Modèle : `matieres/_MODELE-de-cours.md` ; guide : `docs/CREER-UN-COURS.md`. Exemple : matière `GIT`.
+- **Antisèches (aide-mémoire)** : même système « zéro build ». Un sujet peut déclarer `aide: "matieres/<x>/md/aide.md"`
+  (un seul `.md`). Le moteur `aide.html` + `assets/cheatsheet.js` (+ `cheatsheet.css`) rend une **fiche dense en
+  colonnes, imprimable (PDF)** avec boutons Imprimer / Copier / Télécharger `.md`. Chaque `##` devient une carte.
+  Intégration AUTO : `portal.js` ajoute un lien « ⚡ Antisèche » sur la carte + recherche ; `nav.js` l'ajoute à la
+  section « Antisèches » ; `course.js` met un bouton sur la page de la matière. URL : `aide.html?c=CODE`.
+  Modèle : `matieres/_MODELE-aide-memoire.md` ; exemple réel : `matieres/git/md/aide.md`.
 - ⚠️ Le rendu lit les `.md` via `fetch()` : OK sur GitHub Pages / `localhost` ; en `file://` certains navigateurs
   bloquent (le moteur affiche alors un message d'aide). Préférer tester via `python -m http.server`.
 - Si tu ajoutes un fichier au moteur, pense à `sw.js` (`CORE` + bump `CACHE`).
