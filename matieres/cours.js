@@ -17,6 +17,10 @@
      page    : (facultatif) chemin d'une page codée sur-mesure. Si présent,
                le portail/menu/recherche pointent vers CETTE page et le cours
                n'est PAS construit depuis le Markdown.
+     aide    : (facultatif) chemin d'UN fichier Markdown d'aide-mémoire (antisèche).
+               S'il est présent, une antisèche dense/imprimable est générée
+               automatiquement à aide.html?c=CODE (lien ajouté au portail, au menu
+               « Antisèches » et à la recherche). Rien d'autre à coder.
      modules : liste ordonnée { id, title, desc?, badge?, file }
        - id    : identifiant du module dans l'URL (?m=id), unique dans la matière
        - file  : chemin du .md (relatif à la racine du site)
@@ -87,6 +91,7 @@ window.COURS = {
       color: "#f05133",
       desc: "Versionner son code comme un pro : dépôts, commits, branches, fusion, remote, GitHub. La compétence socle de tout le travail en équipe.",
       tags: ["commit", "branch", "merge", "GitHub"],
+      aide: "matieres/git/md/aide.md",
       modules: [
         {
           id: "bases",

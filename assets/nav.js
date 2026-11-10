@@ -178,6 +178,27 @@
     });
   }
 
+  function addManifestCheatsheets(menu) {
+    ensureManifest(function () {
+      if (!window.COURS || !Array.isArray(window.COURS.subjects)) return;
+      var labels = Array.prototype.slice.call(menu.querySelectorAll(".xnav-lbl"));
+      var anchor = labels.filter(function (l) { return l.textContent.trim() === "Antisèches"; })[0];
+      if (!anchor) return;
+      // Chemins d'antisèches codées déjà présentes dans le menu (pour ne pas doubler).
+      var coded = {};
+      Array.prototype.slice.call(menu.querySelectorAll("a")).forEach(function (a) {
+        if (/aide-memoire\.html|cheatsheet-/.test(a.getAttribute("href") || "")) coded[a.getAttribute("href")] = 1;
+      });
+      var frag = window.COURS.subjects
+        .filter(function (s) { return s.aide && !s.page; })
+        .map(function (s) {
+          var href = root + "aide.html?c=" + encodeURIComponent(s.code);
+          return '<a href="' + href + '"><span>' + (s.emoji || "⚡") + "</span> Antisèche " + s.name + "</a>";
+        }).join("");
+      if (frag) anchor.insertAdjacentHTML("afterend", frag);
+    });
+  }
+
   var items = [
     { e: "🏠", t: "Accueil", h: root + "index.html" },
     { sep: 1 },
@@ -250,6 +271,7 @@
       });
     });
     addManifestToMenu(menu);
+    addManifestCheatsheets(menu);
   }
 
   /* ---------- Minuteur Pomodoro flottant ---------- */

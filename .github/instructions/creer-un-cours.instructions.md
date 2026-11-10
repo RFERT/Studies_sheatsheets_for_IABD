@@ -42,6 +42,24 @@ portail / la navbar / la recherche se remplissent automatiquement depuis le mani
 > Pour forcer un lien vers une page codée depuis le manifeste, ajoute
 > `page: "matieres/<x>/index.html"` au sujet (et omets `modules`).
 
+## Créer une antisèche (aide-mémoire) — même principe
+
+Une **antisèche** est une fiche de révision dense et imprimable, générée
+automatiquement depuis **un seul fichier Markdown**, sans coder de page.
+
+1. **Écris** `matieres/<matiere>/md/aide.md` (modèle : [`matieres/_MODELE-aide-memoire.md`](../../matieres/_MODELE-aide-memoire.md)).
+2. **Déclare-la** dans [`matieres/cours.js`](../../matieres/cours.js) en ajoutant au sujet :
+   ```js
+   aide: "matieres/<matiere>/md/aide.md",
+   ```
+3. **Rien d'autre.** L'antisèche est servie par `aide.html?c=CODE`, reliée
+   automatiquement (carte du portail, menu « Antisèches », recherche, bouton sur
+   la page du cours), avec boutons **Imprimer/PDF**, **Copier**, **Télécharger .md**.
+
+> 📐 **Mise en page** : chaque titre `##` devient une **carte** qui coule en colonnes.
+> Garde les cartes **courtes et autonomes** (une notion = une carte). Même syntaxe que
+> les cours (`:::`, quiz, `exo`, `culture`, LaTeX, code). Exemple réel : `matieres/git/md/aide.md`.
+
 ## Structure d'un fichier `.md`
 
 ```markdown

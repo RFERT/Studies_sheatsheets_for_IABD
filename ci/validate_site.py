@@ -77,6 +77,11 @@ if cours.exists():
         checked["md_files"] += 1
         if not (ROOT / rel).exists():
             errors.append(f"Manifeste cours.js : module introuvable « {rel} »")
+    # Antisèches : chaque `aide` (fichier Markdown) doit exister
+    for rel in re.findall(r"""\baide\s*:\s*["']([^"']+)["']""", text):
+        checked["md_files"] += 1
+        if not (ROOT / rel).exists():
+            errors.append(f"Manifeste cours.js : antisèche introuvable « {rel} »")
 else:
     errors.append("Manifeste introuvable : matieres/cours.js")
 
