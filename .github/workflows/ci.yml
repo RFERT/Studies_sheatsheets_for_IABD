@@ -1,0 +1,75 @@
+name: CI
+
+# Validation à chaque push / PR, puis déploiement GitHub Pages sur `main`.
+# Fidèle au « zéro build » : aucune compilation, on régénère juste l'index de
+# recherche et on publie les fichiers statiques tels quels.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # régénérer + committer l'index de recherche
+  pages: write      # publier sur GitHub Pages
+  id-token: write   # authentification du déploiement Pages
+
+concurrency:
+  group: "ci-${{ github.ref }}"
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validation du site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Vérifier liens, manifeste et JSON
+        run: python ci/validate_site.py
+
+  deploy:
+    name: Déploiement GitHub Pages
+    needs: validate
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Régénérer l'index de recherche
+        run: python assets/build-search-index.py
+
+      - name: Committer l'index si modifié
+        run: |
+          if [ -n "$(git status --porcelain assets/search-index.js assets/search-index.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add assets/search-index.js assets/search-index.json
+            git commit -m "chore: régénère l'index de recherche [skip ci]"
+            git push
+            echo "Index mis à jour et committé."
+          else
+            echo "Index déjà à jour."
+          fi
+
+      - name: Configurer Pages
+        uses: actions/configure-pages@v5
+
+      - name: Préparer l'artefact (fichiers statiques)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Déployer
+        id: deployment
+        uses: actions/deploy-pages@v4
