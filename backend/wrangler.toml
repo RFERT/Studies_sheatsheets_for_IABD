@@ -1,0 +1,17 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "idees-esgi"
+main = "ideas-worker.js"
+compatibility_date = "2024-11-01"
+
+# --- Stockage Workers KV ---------------------------------------------------
+# 1) Crée le namespace :   npx wrangler kv namespace create IDEAS_KV
+# 2) Colle l'`id` renvoyé ci-dessous (remplace la valeur d'exemple).
+[[kv_namespaces]]
+binding = "IDEAS_KV"
+id = "REMPLACE_PAR_TON_ID_KV"
+
+# --- Clé admin (suppression côté serveur) ----------------------------------
+# Recommandé (secret chiffré) :   npx wrangler secret put ADMIN_KEY
+# Ou, plus simple mais en clair, décommente :
+# [vars]
+# ADMIN_KEY = "change-moi-en-quelque-chose-de-long"
