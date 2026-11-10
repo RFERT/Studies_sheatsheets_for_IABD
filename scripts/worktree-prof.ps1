@@ -17,7 +17,7 @@
 #>
 [CmdletBinding()]
 param(
-  [string]$Path   = (Join-Path (Split-Path (Resolve-Path "$PSScriptRoot\..").Path) 'Studies_sheatsheets_for_IABD-cours'),
+  [string]$Path   = '',
   [string]$Branch = 'Cours'
 )
 
@@ -25,6 +25,10 @@ $ErrorActionPreference = 'Stop'
 
 $repo = (Resolve-Path "$PSScriptRoot\..").Path
 Set-Location $repo
+
+if (-not $Path) {
+  $Path = Join-Path (Split-Path $repo -Parent) 'Studies_sheatsheets_for_IABD-cours'
+}
 
 git rev-parse --is-inside-work-tree *> $null
 if ($LASTEXITCODE -ne 0) { throw "Ce dossier n'est pas un depot Git : $repo" }
