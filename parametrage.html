@@ -57,6 +57,22 @@
       <button class="reset" id="setup-reset" title="Décocher tout">↺ Réinitialiser</button>
     </div>
 
+    <!-- A0. Worktree : session du prof -->
+    <section class="task" data-task="worktree">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h3>🌳 Ouvrir la session du prof sur le bon dossier <span class="badge b-req">collaboration à 2 sessions</span></h3>
+      </div>
+      <p class="why"><b>Pourquoi&nbsp;:</b> deux sessions avancent en parallèle sur le même dépôt sans se gêner. La session <b>SITE</b> (architecture, moteur, design) reste sur le dossier principal (branche <code>main</code>) ; la session <b>Professeur IABD</b> (rédaction des cours) travaille dans un <b>worktree</b> séparé (branche <code>Cours</code>).</p>
+      <ol>
+        <li>Le worktree est déjà créé : dossier <code>Studies_sheatsheets_for_IABD-cours</code> (à côté du dépôt). Pour le recréer : <code>powershell -File scripts\worktree-prof.ps1</code>.</li>
+        <li>Dans la <b>session Professeur IABD</b>, règle l'espace de travail sur ce dossier&nbsp;:<br><code>C:\Users\rolan\Documents\ESGI\Troisième année\Studies_sheatsheets_for_IABD-cours</code></li>
+        <li>Côté prof, avant de rédiger : <code>powershell -File scripts\cours-sync.ps1</code> (récupère mes évolutions du site).</li>
+        <li>Côté site (moi), pour rapatrier ses cours dans <code>main</code> : <code>powershell -File scripts\integrer-cours.ps1</code>.</li>
+      </ol>
+      <p class="deep">Tout est détaillé dans <code>scripts/README.md</code>. Les worktrees sont locaux à ta machine (non versionnés).</p>
+    </section>
+
     <!-- A. GitHub Pages -->
     <section class="task" data-task="pages">
       <div class="task-head">

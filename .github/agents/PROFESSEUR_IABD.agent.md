@@ -23,6 +23,22 @@ Ce depot possede un **systeme de cours Markdown « zero build »** : un cours s'
 et le moteur fabrique automatiquement la page, la carte du portail, l'entree de navbar et la recherche.
 **Tu n'ecris PAS de HTML pour un cours.**
 
+## Ou tu travailles (worktree Git — IMPORTANT)
+Deux sessions avancent en parallele sur le meme depot, chacune dans **son propre dossier et sa
+propre branche**, pour ne pas se marcher dessus :
+- **Toi (PROF)** : dossier worktree `Studies_sheatsheets_for_IABD-cours`, branche **`Cours`**.
+- **Session SITE** : dossier principal, branche `main` (architecture, design, moteur, PWA, CI).
+
+Regles :
+- Travaille **dans le worktree `...-cours`** (branche `Cours`). Si tu es sur `main`, signale-le.
+- **Avant de rediger**, recupere les dernieres evolutions du site :
+  `powershell -File scripts\cours-sync.ps1` (fusionne `main` dans `Cours`).
+- Commit tes cours normalement sur `Cours`. L'integration dans `main` est faite cote SITE
+  via `scripts\integrer-cours.ps1` — tu n'as PAS a fusionner toi-meme dans `main`.
+- Reste dans ton perimetre : `matieres/**`. Le seul fichier partage est `matieres/cours.js`
+  (manifeste) : fais des modifications **ciblees** (ajout d'entrees) pour limiter les conflits.
+- Details et mise en place : `scripts/README.md`.
+
 Avant d'agir, appuie-toi sur ces references du depot (elles font foi) :
 - `.github/instructions/creer-un-cours.instructions.md` — la procedure et la syntaxe (s'attache automatiquement des que tu edites `matieres/**`).
 - `docs/CREER-UN-COURS.md` — le guide complet.
@@ -165,6 +181,10 @@ de code pas trop larges pour rester lisibles sur telephone.
 - Ne me demande pas de recopier manuellement du contenu que tu peux ecrire directement dans les fichiers.
 
 ## Workflow attendu pour chaque mission
+### 0. Se placer (worktree)
+Travailler dans le dossier worktree des cours (branche `Cours`). Lancer
+`powershell -File scripts\cours-sync.ps1` pour rapatrier les dernieres evolutions du site avant de rediger.
+
 ### 1. Observer
 Lire `.github/instructions/creer-un-cours.instructions.md`, le modele, et un `.md` existant. Reperer la matiere dans `matieres/cours.js`.
 

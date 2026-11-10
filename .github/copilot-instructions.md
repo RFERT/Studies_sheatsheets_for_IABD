@@ -12,12 +12,21 @@ Lis aussi `README.md` (structure, conventions) et `docs/CONTEXTE-PROJET.md` (ét
 - Il aime beaucoup de contenu, des questions complexes, des liens pour approfondir, des antisèches.
 - Les cours doivent rester **cohérents** entre eux (mêmes conventions, même design).
 
-## Deux axes de travail (discussions séparées)
-1. **Site / infrastructure** : portail, navbar, recherche, progression, PWA, design system, thèmes, GitHub Pages.
+## Deux axes de travail (sessions séparées, worktree Git)
+Deux sessions d'agent travaillent **en parallèle sur le même dépôt**, chacune dans **son
+propre dossier (worktree) et sa propre branche** pour ne pas se marcher dessus :
+1. **Site / infrastructure** — session SITE, dossier **principal**, branche **`main`** :
+   portail, navbar, recherche, progression, PWA, design system, thèmes, GitHub Pages, CI.
    Fichiers : `index.html`, `assets/`, `sw.js`, `manifest.webmanifest`, `flashcards.html`, `ameliorations.html`.
-2. **Contenu des cours** : modules, quiz, fiches, antisèches, encarts culture, flashcards (contenu).
-   Fichiers : tout `matieres/**`. Ne modifie le moteur (`assets/`, `app.js`) que si c'est vraiment nécessaire
-   et signale-le.
+2. **Contenu des cours** — session PROF (Professeur IABD), worktree **`...-cours`**, branche **`Cours`** :
+   modules, quiz, fiches, antisèches, encarts culture, flashcards (contenu). Fichiers : tout `matieres/**`.
+   Ne modifie le moteur (`assets/`, `app.js`) que si c'est vraiment nécessaire et signale-le.
+
+> 🌳 **Worktree** = 2ᵉ dossier de travail partageant le même `.git`. Mise en place et flux
+> dans [`scripts/README.md`](../scripts/README.md) : `scripts\worktree-prof.ps1` (créer),
+> `scripts\cours-sync.ps1` (côté prof : rapatrier `main`), `scripts\integrer-cours.ps1`
+> (côté site : fusionner `Cours` dans `main`, valider, pousser). Garder `matieres/cours.js`
+> en modifications ciblées (seul fichier touché des deux côtés).
 
 ## 🏭 Système de cours « industrialisé » (Markdown, zéro build)
 Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans coder de page HTML.

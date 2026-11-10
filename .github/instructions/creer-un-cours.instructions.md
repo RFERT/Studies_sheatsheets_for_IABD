@@ -6,6 +6,11 @@ applyTo: "matieres/**"
 
 # Créer un cours sur ce portail (système Markdown « zéro build »)
 
+> 🌳 **Où travailler** : les cours s'écrivent dans le worktree **`...-cours`** (branche **`Cours`**),
+> pas dans le dossier principal (réservé à la session SITE sur `main`). Avant de rédiger :
+> `powershell -File scripts\cours-sync.ps1` (récupère les évolutions du site). L'intégration dans
+> `main` est faite côté site (`scripts\integrer-cours.ps1`). Voir `scripts/README.md`.
+
 Les cours de ce dépôt s'écrivent en **Markdown pur** : on **n'écrit pas de HTML**.
 Le moteur (`cours.html` + `assets/course.js` + `assets/markdown.js`) rend la page, et le
 portail / la navbar / la recherche se remplissent automatiquement depuis le manifeste.
