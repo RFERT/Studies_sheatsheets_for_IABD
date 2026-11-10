@@ -16,17 +16,22 @@
   .xnav-btn{cursor:pointer;border:1px solid var(--xline);background:var(--xcard);color:var(--xtext);
     padding:8px 13px;border-radius:9px;font-size:14px;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:.15s}
   .xnav-btn:hover{border-color:var(--xacc)}
-  .xnav-menu{position:absolute;top:calc(100% + 8px);left:0;z-index:200;min-width:230px;
+  .xnav-menu{position:absolute;top:calc(100% + 8px);left:0;z-index:200;min-width:232px;max-width:calc(100vw - 24px);
     background:var(--xcard);border:1px solid var(--xline);border-radius:12px;box-shadow:0 16px 44px rgba(0,0,0,.4);
-    padding:7px;display:none;flex-direction:column;gap:2px}
+    padding:6px;display:none;flex-direction:column;gap:1px;
+    max-height:calc(100vh - 74px);max-height:calc(100dvh - 74px);overflow-y:auto;overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--xline) transparent}
+  .xnav-menu::-webkit-scrollbar{width:8px}
+  .xnav-menu::-webkit-scrollbar-thumb{background:var(--xline);border-radius:8px}
+  .xnav-menu::-webkit-scrollbar-track{background:transparent}
   .xnav-menu.open{display:flex}
-  .xnav-menu a{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;color:var(--xtext);
-    text-decoration:none;font-size:14px}
+  .xnav-menu a{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;color:var(--xtext);
+    text-decoration:none;font-size:14px;line-height:1.2}
   .xnav-menu a:hover{background:var(--xelev)}
-  .xnav-sep{height:1px;background:var(--xline);margin:6px 2px}
-  .xnav-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--xmuted);padding:4px 11px 2px;font-weight:700}
-  .xnav-acc{display:flex;gap:7px;padding:6px 11px 8px;flex-wrap:wrap}
-  .xnav-sw{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.12s}
+  .xnav-sep{height:1px;background:var(--xline);margin:5px 2px}
+  .xnav-lbl{position:sticky;top:-6px;background:var(--xcard);font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--xmuted);padding:5px 11px 3px;font-weight:700}
+  .xnav-acc{display:flex;gap:6px;padding:3px 11px 6px;flex-wrap:wrap}
+  .xnav-sw{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.12s}
   .xnav-sw:hover{transform:scale(1.15)}
   .xnav-sw.on{border-color:var(--xtext)}
   /* Pomodoro flottant */
@@ -167,6 +172,7 @@
     { e: "🐍", t: "Antisèche Python", h: root + "matieres/python/aide-memoire.html" },
     { e: "🦀", t: "Antisèche Rust", h: root + "matieres/rust/cheatsheet-rust.html" },
     { sep: 1 },
+    { lbl: "Outils" },
     { e: "🗂️", t: "Flashcards", h: root + "flashcards.html" },
     { e: "🚀", t: "Améliorations", h: root + "ameliorations.html" },
     { e: "⚙️", t: "À configurer", h: root + "parametrage.html" },
@@ -197,10 +203,20 @@
 
     var btn = xnav.querySelector("#xnavBtn");
     var menu = xnav.querySelector("#xnavMenu");
+    function sizeMenu() {
+      menu.style.maxHeight = "none";
+      var top = menu.getBoundingClientRect().top;
+      var avail = window.innerHeight - top - 12;
+      menu.style.maxHeight = Math.max(160, avail) + "px";
+    }
     btn.addEventListener("click", function (e) {
       e.stopPropagation();
       var open = menu.classList.toggle("open");
       btn.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) sizeMenu();
+    });
+    window.addEventListener("resize", function () {
+      if (menu.classList.contains("open")) sizeMenu();
     });
     document.addEventListener("click", function (e) {
       if (!xnav.contains(e.target)) menu.classList.remove("open");
