@@ -14,10 +14,18 @@
      color   : couleur d'accent (hex)
      desc    : description (carte du portail)
      tags    : mots-clés (facultatif)
+     page    : (facultatif) chemin d'une page codée sur-mesure. Si présent,
+               le portail/menu/recherche pointent vers CETTE page et le cours
+               n'est PAS construit depuis le Markdown.
      modules : liste ordonnée { id, title, desc?, badge?, file }
        - id    : identifiant du module dans l'URL (?m=id), unique dans la matière
        - file  : chemin du .md (relatif à la racine du site)
        - badge : étiquette (ex. "Module 1"), sinon numérotation auto
+
+   ⚙️ PRIORITÉ AU COURS CODÉ (automatique) : si une matière codée sur-mesure
+   existe déjà (même `code` ou même dossier matieres/<x>/ qu'une matière
+   déclarée dans assets/portal.js), le cours n'est PAS reconstruit depuis le
+   Markdown — la version codée est utilisée partout. Pas besoin d'y penser.
    ========================================================= */
 window.COURS = {
   subjects: [

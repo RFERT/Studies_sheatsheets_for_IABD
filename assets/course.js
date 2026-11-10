@@ -361,6 +361,8 @@
         '<p><a class="btn" href="index.html">← Retour à l\'accueil</a></p></div>';
       return;
     }
+    // Un cours codé sur-mesure a la priorité : on redirige sans construire le Markdown.
+    if (subject.page) { location.replace(subject.page); return; }
     if (!mid) { renderIndex(subject, host); return; }
     var module = (subject.modules || []).find(function (m) { return m.id === mid; });
     if (!module) {

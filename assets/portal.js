@@ -37,22 +37,6 @@ const SUBJECTS = [
     progress: { key: "pds-done-modules", type: "doneMap", total: 6, unit: "modules" }
   },
   {
-    code: "RUST",
-    name: "Rust",
-    emoji: "🦀",
-    color: "#f74c00",
-    status: "ready",
-    featured: true,
-    href: "matieres/rust/rust-cursus.html",
-    extra: [
-      { label: "🔥 Révision express", href: "matieres/rust/revision-express.html" },
-      { label: "⚡ Antisèche", href: "matieres/rust/cheatsheet-rust.html" }
-    ],
-    desc: "Du débutant total à l'intermédiaire solide : Cargo, ownership, borrowing, lifetimes, traits, iterators, gestion d'erreurs, concurrence. Parcours interactif avec quiz adaptatifs, checkpoints & examen final.",
-    tags: ["Ownership", "Borrowing", "Lifetimes", "Traits"],
-    meta: "16 modules · 4 checkpoints · examen final"
-  },
-  {
     code: "ML",
     name: "Machine Learning",
     emoji: "🤖",
@@ -575,17 +559,18 @@ function manifestFolder(c) {
 /* Renvoie l'URL d'une page codée sur-mesure existante pour cette matière,
    sinon null. Priorité au cours codé : on ne (re)construit pas depuis le Markdown.
    Détection : champ `page` explicite, OU même code, OU même dossier qu'une
-   matière codée déclarée dans SUBJECTS. */
+   matière codée COMPLÈTE (avec `href`) déclarée dans SUBJECTS.
+   (Un simple placeholder « à venir » sans `href` ne compte pas.) */
 function codedPageFor(c) {
   if (c.page) return c.page;
   const folder = manifestFolder(c);
   const hit = SUBJECTS.find((s) =>
-    !s.fromManifest && (
+    !s.fromManifest && s.href && (
       (s.code || "").toLowerCase() === (c.code || "").toLowerCase() ||
-      (s.href && folder && s.href.replace(/\/index\.html$/, "") === folder)
+      (folder && s.href.replace(/\/index\.html$/, "") === folder)
     )
   );
-  return hit ? (hit.href || true) : null;
+  return hit ? hit.href : null;
 }
 
 /* Carte pointant vers une page codée (seulement si elle n'est pas déjà sur le portail). */
@@ -614,6 +599,14 @@ function mergeManifestCourses() {
     // Un cours codé sur-mesure existe déjà ? On l'utilise et on saute le Markdown.
     const coded = codedPageFor(c);
     if (coded) { addCodedCard(c, coded); return; }
+    // Sinon, un éventuel placeholder « à venir » (même code, sans page) est
+    // remplacé par le vrai cours Markdown.
+    for (let i = SUBJECTS.length - 1; i >= 0; i--) {
+      const s = SUBJECTS[i];
+      if (!s.fromManifest && !s.href && (s.code || "").toLowerCase() === c.code.toLowerCase()) {
+        SUBJECTS.splice(i, 1);
+      }
+    }
     const mods = Array.isArray(c.modules) ? c.modules : [];
     const base = "cours.html?c=" + encodeURIComponent(c.code);
     SUBJECTS.push({

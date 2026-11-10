@@ -30,6 +30,13 @@ portail / la navbar / la recherche se remplissent automatiquement depuis le mani
    ```
 3. **Rien d'autre.** La page est servie par `cours.html?c=SQL&m=intro`.
 
+> ⚙️ **Priorité au cours codé (automatique).** Si une matière existe déjà en
+> **version codée sur-mesure** (page HTML déclarée dans `assets/portal.js`, même
+> `code` ou même dossier `matieres/<x>/`), le système **n'utilise PAS** le Markdown
+> et garde la version codée partout. Tu n'as donc pas à te soucier des doublons.
+> Pour forcer un lien vers une page codée depuis le manifeste, ajoute
+> `page: "matieres/<x>/index.html"` au sujet (et omets `modules`).
+
 ## Structure d'un fichier `.md`
 
 ```markdown

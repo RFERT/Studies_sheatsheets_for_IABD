@@ -32,6 +32,10 @@ Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans co
   `nav.js` (`addManifestToMenu`) ajoute le cours au menu sur toutes les pages. URL : `cours.html?c=CODE[&m=ID]`.
 - Progression stockée sous `cours-<code>-done` (doneMap des modules).
 - Pour ajouter un cours : créer `matieres/<x>/md/*.md` + ajouter l'entrée dans `matieres/cours.js`. Rien d'autre.
+- **Priorité au cours codé (auto)** : si une matière codée sur-mesure existe (même `code` ou même dossier
+  `matieres/<x>/` qu'une entrée de `SUBJECTS` dans `portal.js`), le Markdown est ignoré et la page codée est
+  utilisée partout (`codedPageFor` dans portal.js, filtre équivalent dans nav.js, redirection dans course.js).
+  Champ optionnel `page:` dans un sujet de `cours.js` pour pointer explicitement vers une page codée.
 - Modèle : `matieres/_MODELE-de-cours.md` ; guide : `docs/CREER-UN-COURS.md`. Exemple : matière `GIT`.
 - ⚠️ Le rendu lit les `.md` via `fetch()` : OK sur GitHub Pages / `localhost` ; en `file://` certains navigateurs
   bloquent (le moteur affiche alors un message d'aide). Préférer tester via `python -m http.server`.
