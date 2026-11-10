@@ -156,7 +156,14 @@
       var words = parsed.html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
       var readMin = Math.max(1, Math.round(words / 180));
       var readChip = '<div class="readtime">⏱️ ~' + readMin + " min de lecture · " +
-        parsed.headings.length + " section" + (parsed.headings.length > 1 ? "s" : "") + "</div>";
+        parsed.headings.length + " section" + (parsed.headings.length > 1 ? "s" : "") +
+        '<button class="tts-btn" id="tts-btn" type="button" title="Lecture audio">🔊 Écouter</button></div>';
+
+      var notesBlock =
+        '<details class="notes" id="notes-block"><summary>📝 Mes notes sur ce module</summary>' +
+        '<textarea id="notes-area" placeholder="Écris ici tes notes perso (sauvegardées sur cet appareil)…"></textarea>' +
+        '<div class="notes-foot"><span id="notes-status">Sauvegarde auto</span>' +
+        '<button class="notes-copy" id="notes-copy" type="button">Copier</button></div></details>';
 
       host.className = "course-wrap";
       host.innerHTML =
@@ -166,12 +173,15 @@
         (meta.subtitle ? '<p class="lede">' + window.MD.inline(meta.subtitle) + "</p>" : "") +
         domains + chips + readChip + objectifs + toc +
         '<div class="content">' + parsed.html + "</div>" +
+        notesBlock +
         '<div class="lesson-end">' + doneBtn + "</div>" + prevnext;
 
       setBrand(subject);
       enhanceContent(host);
       wireQuizzes(host);
       wireDone(subject, module, host);
+      wireNotes(subject, module, host);
+      wireTTS(host);
       typeset(host);
       recordLast(subject, module, title);
     }).catch(function (err) {
@@ -309,6 +319,55 @@
       btn.classList.toggle("is-done", now);
       btn.textContent = now ? "✓ Module terminé" : "Marquer ce module comme terminé";
     });
+  }
+
+  /* ---------- Notes personnelles par module ---------- */
+  function notesKey(subject, module) { return "cours-notes-" + subject.code.toLowerCase() + "-" + module.id; }
+  function wireNotes(subject, module, host) {
+    var ta = host.querySelector("#notes-area");
+    if (!ta) return;
+    var key = notesKey(subject, module);
+    var status = host.querySelector("#notes-status");
+    var box = host.querySelector("#notes-block");
+    try { ta.value = localStorage.getItem(key) || ""; } catch (e) {}
+    if (ta.value && box) box.open = true;
+    var t = null;
+    ta.addEventListener("input", function () {
+      if (status) status.textContent = "…";
+      clearTimeout(t);
+      t = setTimeout(function () {
+        try { localStorage.setItem(key, ta.value); } catch (e) {}
+        if (status) { status.textContent = "Enregistré ✓"; setTimeout(function () { status.textContent = "Sauvegarde auto"; }, 1200); }
+      }, 400);
+    });
+    var cp = host.querySelector("#notes-copy");
+    if (cp) cp.addEventListener("click", function () {
+      var done = function () { cp.textContent = "Copié ✓"; setTimeout(function () { cp.textContent = "Copier"; }, 1200); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(done, function () {});
+      else { ta.select(); try { document.execCommand("copy"); done(); } catch (e) {} }
+    });
+  }
+
+  /* ---------- Lecture audio (synthèse vocale) ---------- */
+  function wireTTS(host) {
+    var btn = host.querySelector("#tts-btn");
+    if (!btn) return;
+    if (!("speechSynthesis" in window)) { btn.style.display = "none"; return; }
+    var speaking = false;
+    function stop() { window.speechSynthesis.cancel(); speaking = false; btn.classList.remove("on"); btn.textContent = "🔊 Écouter"; }
+    btn.addEventListener("click", function () {
+      if (speaking) { stop(); return; }
+      var content = host.querySelector(".content");
+      var text = content ? content.textContent.replace(/\s+/g, " ").trim() : "";
+      if (!text) return;
+      var u = new SpeechSynthesisUtterance(text.slice(0, 32000));
+      u.lang = "fr-FR"; u.rate = 1.0;
+      u.onend = stop; u.onerror = stop;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+      speaking = true; btn.classList.add("on"); btn.textContent = "⏹ Arrêter";
+    });
+    window.addEventListener("beforeunload", function () { try { window.speechSynthesis.cancel(); } catch (e) {} });
   }
 
   function recordLast(subject, module, title) {

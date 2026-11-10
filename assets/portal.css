@@ -284,6 +284,12 @@ a:hover { text-decoration: underline; }
 .sr-go { color: var(--muted); font-size: 13px; }
 .sr-foot, .sr-empty { padding: 10px 14px; color: var(--muted); font-size: 12.5px; text-align: center; }
 .sr-empty { padding: 20px 14px; }
+.sr-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg-card); z-index: 1; }
+.sr-chip { font: inherit; font-size: 12px; cursor: pointer; background: var(--bg-soft); color: var(--text-soft);
+  border: 1px solid var(--border); border-radius: 999px; padding: 4px 11px; transition: .12s; }
+.sr-chip:hover { border-color: var(--primary); color: var(--text); }
+.sr-chip.on { background: var(--primary); color: #07121f; border-color: transparent; font-weight: 700; }
 
 /* ================= RESPONSIVE (mobile-first tuning) ================= */
 /* Tablettes */
@@ -344,6 +350,31 @@ a:hover { text-decoration: underline; }
   .stat { flex: 1 1 100%; }
   .hero h1 { font-size: 28px; }
 }
+
+/* ================= EXAMENS (comptes à rebours J-X) ================= */
+.exams-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.exam-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.exam-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px;
+  background: var(--bg-soft); border: 1px solid var(--border); }
+.exam-cd { flex: 0 0 auto; min-width: 58px; text-align: center; font-weight: 800; font-size: 14px;
+  padding: 6px 8px; border-radius: 9px; background: color-mix(in srgb, var(--primary) 16%, transparent); color: var(--primary); }
+.exam-row.soon .exam-cd { background: color-mix(in srgb, #ff8a3d 22%, transparent); color: #ff8a3d; }
+.exam-row.today .exam-cd { background: color-mix(in srgb, #ff3b3b 24%, transparent); color: #ff5a5a; }
+.exam-row.past { opacity: .55; }
+.exam-row.past .exam-cd { background: var(--bg-elev); color: var(--muted); }
+.exam-main { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.exam-main b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exam-date { font-size: 12.5px; color: var(--muted); }
+.exam-del { flex: 0 0 auto; background: transparent; border: 0; color: var(--muted); cursor: pointer;
+  font-size: 15px; padding: 4px 8px; border-radius: 8px; }
+.exam-del:hover { color: #ff5a5a; background: color-mix(in srgb, #ff3b3b 14%, transparent); }
+.exam-empty { color: var(--muted); font-size: 14px; margin: 2px 0 12px; }
+.exam-form { display: flex; flex-wrap: wrap; gap: 8px; }
+.exam-form input { flex: 1 1 150px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--text);
+  border-radius: 10px; padding: 9px 12px; font-size: 14px; font-family: inherit; }
+.exam-form input:focus { outline: none; border-color: var(--primary); }
+.exam-form .btn.primary { flex: 0 0 auto; background: var(--primary); color: #07121f; border-color: transparent; font-weight: 700; }
+@media (max-width: 480px) { .exam-form .btn.primary { flex: 1 1 100%; } }
 
 /* ================= IMPRESSION / EXPORT PDF ================= */
 @media print {

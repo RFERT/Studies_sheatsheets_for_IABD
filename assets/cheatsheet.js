@@ -122,6 +122,7 @@
       var actions =
         '<div class="cheat-actions">' +
         '<button class="btn primary" id="act-print">🖨️ Imprimer / PDF</button>' +
+        '<button class="btn" id="act-tts">🔊 Écouter</button>' +
         '<button class="btn" id="act-copy">📋 Copier</button>' +
         '<button class="btn" id="act-dl">⬇️ Télécharger .md</button>' +
         '<a class="btn" href="cours.html?c=' + encodeURIComponent(subject.code) + '">📚 Cours complet</a>' +
@@ -159,6 +160,25 @@
   function wireActions(subject, src, host) {
     var p = host.querySelector("#act-print");
     if (p) p.addEventListener("click", function () { window.print(); });
+    var tts = host.querySelector("#act-tts");
+    if (tts) {
+      if (!("speechSynthesis" in window)) { tts.style.display = "none"; }
+      else {
+        var speaking = false;
+        var stop = function () { window.speechSynthesis.cancel(); speaking = false; tts.classList.remove("ok"); tts.textContent = "🔊 Écouter"; };
+        tts.addEventListener("click", function () {
+          if (speaking) { stop(); return; }
+          var grid = host.querySelector(".cheat-grid");
+          var text = grid ? grid.textContent.replace(/\s+/g, " ").trim() : "";
+          if (!text) return;
+          var u = new SpeechSynthesisUtterance(text.slice(0, 32000));
+          u.lang = "fr-FR"; u.onend = stop; u.onerror = stop;
+          window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+          speaking = true; tts.classList.add("ok"); tts.textContent = "⏹ Arrêter";
+        });
+        window.addEventListener("beforeunload", function () { try { window.speechSynthesis.cancel(); } catch (e) {} });
+      }
+    }
     var c = host.querySelector("#act-copy");
     if (c) c.addEventListener("click", function () {
       var done = function () { c.textContent = "Copié ✓"; c.classList.add("ok"); setTimeout(function () { c.textContent = "📋 Copier"; c.classList.remove("ok"); }, 1500); };

@@ -244,10 +244,19 @@
     var btn = xnav.querySelector("#xnavBtn");
     var menu = xnav.querySelector("#xnavMenu");
     function sizeMenu() {
+      // Reset avant mesure
       menu.style.maxHeight = "none";
-      var top = menu.getBoundingClientRect().top;
-      var avail = window.innerHeight - top - 12;
+      menu.style.left = "0px";
+      var margin = 12;
+      var r = menu.getBoundingClientRect();
+      // Hauteur disponible (défilement interne si besoin)
+      var avail = window.innerHeight - r.top - margin;
       menu.style.maxHeight = Math.max(160, avail) + "px";
+      // Clamp horizontal : empêcher le débordement à droite puis à gauche
+      var overR = r.right - (window.innerWidth - margin);
+      if (overR > 0) menu.style.left = (-overR) + "px";
+      var r2 = menu.getBoundingClientRect();
+      if (r2.left < margin) menu.style.left = (parseFloat(menu.style.left) + (margin - r2.left)) + "px";
     }
     btn.addEventListener("click", function (e) {
       e.stopPropagation();

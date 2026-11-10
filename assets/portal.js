@@ -376,8 +376,8 @@ function initSearch() {
     e, nt: normalize(e.t), ns: normalize(e.s), nk: normalize(e.k), ntype: normalize(e.type)
   }));
   const typeLabel = { module: "Module", section: "Section", fiche: "Fiche", cours: "Cours",
-    "matière": "Matière", page: "Page", culture: "Culture & histoire" };
-  let active = -1, current = [];
+    "matière": "Matière", page: "Page", culture: "Culture & histoire", "antisèche": "Antisèche" };
+  let active = -1, current = [], allResults = [], typeFilter = "";
 
   function score(it, tokens) {
     let sc = 0;
@@ -405,23 +405,71 @@ function initSearch() {
   }
 
   function render(q) {
-    current = search(q);
+    allResults = search(q);
     active = -1;
     if (!q.trim()) { panel.hidden = true; panel.innerHTML = ""; return; }
-    if (!current.length) {
+    if (!allResults.length) {
       panel.hidden = false;
       panel.innerHTML = `<div class="sr-empty">Aucun résultat pour « ${q} »</div>`;
       return;
     }
+    // Comptage par type pour les filtres
+    const counts = {};
+    allResults.forEach((e) => { counts[e.type] = (counts[e.type] || 0) + 1; });
+    if (typeFilter && !counts[typeFilter]) typeFilter = ""; // filtre devenu vide
+    current = typeFilter ? allResults.filter((e) => e.type === typeFilter) : allResults;
+
+    const chips = ['<button class="sr-chip' + (typeFilter ? "" : " on") + '" data-type="">Tout (' + allResults.length + ")</button>"]
+      .concat(Object.keys(counts).sort((a, b) => counts[b] - counts[a]).map((t) =>
+        '<button class="sr-chip' + (typeFilter === t ? " on" : "") + '" data-type="' + t + '">' +
+        (typeLabel[t] || t) + " (" + counts[t] + ")</button>"
+      )).join("");
+
     panel.hidden = false;
-    panel.innerHTML = current.map((e, i) => `
+    panel.innerHTML = `<div class="sr-filters">${chips}</div>` +
+      current.map((e, i) => `
       <a class="sr-item" href="${e.u}" data-i="${i}">
         <span class="sr-emoji" style="background:color-mix(in srgb, ${e.color} 22%, transparent)">${e.emoji}</span>
         <span class="sr-txt"><span class="sr-t">${e.t}</span>
           <span class="sr-meta">${e.s} · ${typeLabel[e.type] || e.type}</span></span>
         <span class="sr-go">↵</span>
       </a>`).join("") +
-      `<div class="sr-foot">${current.length} résultat${current.length > 1 ? "s" : ""} · ↑↓ pour naviguer · Échap pour fermer</div>`;
+      `<div class="sr-foot">${current.length} résultat${current.length > 1 ? "s" : ""}${typeFilter ? " · filtre : " + (typeLabel[typeFilter] || typeFilter) : ""} · ↑↓ naviguer · Échap fermer</div>`;
+
+    panel.querySelectorAll(".sr-chip").forEach((ch) => ch.addEventListener("click", (ev) => {
+      ev.preventDefault(); ev.stopPropagation();
+      typeFilter = ch.getAttribute("data-type") || "";
+      renderFiltered();
+      input.focus();
+    }));
+  }
+
+  // Re-render en ne changeant que le filtre (sans relancer la recherche)
+  function renderFiltered() {
+    active = -1;
+    current = typeFilter ? allResults.filter((e) => e.type === typeFilter) : allResults;
+    const counts = {};
+    allResults.forEach((e) => { counts[e.type] = (counts[e.type] || 0) + 1; });
+    const chips = ['<button class="sr-chip' + (typeFilter ? "" : " on") + '" data-type="">Tout (' + allResults.length + ")</button>"]
+      .concat(Object.keys(counts).sort((a, b) => counts[b] - counts[a]).map((t) =>
+        '<button class="sr-chip' + (typeFilter === t ? " on" : "") + '" data-type="' + t + '">' +
+        (typeLabel[t] || t) + " (" + counts[t] + ")</button>"
+      )).join("");
+    panel.innerHTML = `<div class="sr-filters">${chips}</div>` +
+      current.map((e, i) => `
+      <a class="sr-item" href="${e.u}" data-i="${i}">
+        <span class="sr-emoji" style="background:color-mix(in srgb, ${e.color} 22%, transparent)">${e.emoji}</span>
+        <span class="sr-txt"><span class="sr-t">${e.t}</span>
+          <span class="sr-meta">${e.s} · ${typeLabel[e.type] || e.type}</span></span>
+        <span class="sr-go">↵</span>
+      </a>`).join("") +
+      `<div class="sr-foot">${current.length} résultat${current.length > 1 ? "s" : ""}${typeFilter ? " · filtre : " + (typeLabel[typeFilter] || typeFilter) : ""} · ↑↓ naviguer · Échap fermer</div>`;
+    panel.querySelectorAll(".sr-chip").forEach((ch) => ch.addEventListener("click", (ev) => {
+      ev.preventDefault(); ev.stopPropagation();
+      typeFilter = ch.getAttribute("data-type") || "";
+      renderFiltered();
+      input.focus();
+    }));
   }
 
   function setActive(n) {
@@ -669,12 +717,72 @@ function mergeManifestCourses() {
   SUBJECTS.sort((a, b) => rank(a) - rank(b));
 }
 
+/* ---------- Examens & comptes à rebours (J-X) ---------- */
+const EXAMS_KEY = "esgi-exams";
+function escapeHtml(s) {
+  return (s || "").toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function getExams() {
+  try { const v = JSON.parse(localStorage.getItem(EXAMS_KEY)); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function setExams(list) { try { localStorage.setItem(EXAMS_KEY, JSON.stringify(list)); } catch (e) {} }
+function daysUntil(dateStr) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const d = new Date(dateStr + "T00:00:00");
+  return Math.round((d - today) / 86400000);
+}
+function renderExams() {
+  const host = document.getElementById("exams");
+  if (!host) return;
+  const list = getExams().slice().sort((a, b) => a.date.localeCompare(b.date));
+  const fmt = (s) => { try { return new Date(s + "T00:00:00").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", year: "numeric" }); } catch (e) { return s; } };
+  const rows = list.map((ex) => {
+    const n = daysUntil(ex.date);
+    let badge, cls;
+    if (n < 0) { badge = "passé"; cls = "past"; }
+    else if (n === 0) { badge = "aujourd'hui"; cls = "today"; }
+    else if (n === 1) { badge = "J‑1"; cls = "soon"; }
+    else { badge = "J‑" + n; cls = n <= 7 ? "soon" : "far"; }
+    return `<div class="exam-row ${cls}">
+      <span class="exam-cd">${badge}</span>
+      <span class="exam-main"><b>${escapeHtml(ex.name)}</b><span class="exam-date">${fmt(ex.date)}</span></span>
+      <button class="exam-del" data-id="${ex.id}" title="Supprimer" aria-label="Supprimer">✕</button>
+    </div>`;
+  }).join("");
+  const today = new Date().toISOString().slice(0, 10);
+  host.innerHTML = `
+    <div class="exams-box">
+      ${list.length ? `<div class="exam-list">${rows}</div>` : `<p class="exam-empty">Aucun examen pour l'instant. Ajoute ta première date de partiel 👇</p>`}
+      <form class="exam-form" id="exam-form">
+        <input type="text" id="exam-name" placeholder="Intitulé (ex. Partiel Rust)" maxlength="80" required />
+        <input type="date" id="exam-date" min="${today}" required />
+        <button type="submit" class="btn primary">+ Ajouter</button>
+      </form>
+    </div>`;
+  const form = document.getElementById("exam-form");
+  if (form) form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = (document.getElementById("exam-name").value || "").trim();
+    const date = document.getElementById("exam-date").value;
+    if (!name || !date) return;
+    const l = getExams();
+    l.push({ id: "e" + Date.now().toString(36), name, date });
+    setExams(l);
+    renderExams();
+  });
+  host.querySelectorAll(".exam-del").forEach((b) => b.addEventListener("click", () => {
+    setExams(getExams().filter((x) => x.id !== b.getAttribute("data-id")));
+    renderExams();
+  }));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   mergeManifestCourses();
   setFavicon("🎓");
   initTheme();
   updateStreak();
   renderDashboard();
+  renderExams();
   renderSubjects();
   initSearch();
 });
