@@ -65,7 +65,8 @@
     <div class="fc-decks" id="fc-decks"></div>
     <div class="fc-stats" id="fc-stats"></div>
     <div id="fc-stage"></div>
-    <div style="text-align:center">
+    <div style="text-align:center; display:flex; gap:10px; justify-content:center; flex-wrap:wrap">
+      <button class="btn" id="fc-export">⬇️ Export Anki (.csv)</button>
       <button class="btn fc-reset" id="fc-reset">↺ Réinitialiser la planification</button>
     </div>
   </div>
@@ -203,6 +204,25 @@
     });
     document.getElementById("fc-reset").addEventListener("click",function(){
       if(confirm("Réinitialiser la planification de toutes les flashcards ?")){ state={}; save(state); start(); }
+    });
+
+    /* Export Anki : CSV (Front;Back;Tags) importable dans Anki */
+    function htmlToText(h){
+      var d=document.createElement("div"); d.innerHTML=h;
+      return (d.textContent||"").replace(/\s+/g," ").trim();
+    }
+    function csvCell(s){ return '"'+String(s).replace(/"/g,'""')+'"'; }
+    document.getElementById("fc-export").addEventListener("click",function(){
+      var rows=CARDS.map(function(c){
+        var tags=("IABD "+(DECKS[c[0]]?DECKS[c[0]].name.replace(/[^\wÀ-ÿ]/g," ").trim():c[0])).replace(/\s+/g,"_");
+        return [csvCell(htmlToText(c[2])), csvCell(htmlToText(c[3])), csvCell(tags)].join(";");
+      });
+      var header="#separator:;\n#html:false\n#columns:Front;Back;Tags\n";
+      var blob=new Blob([header+rows.join("\n")+"\n"],{type:"text/csv;charset=utf-8"});
+      var a=document.createElement("a");
+      a.href=URL.createObjectURL(blob); a.download="flashcards-iabd-anki.csv";
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },0);
     });
 
     start();
