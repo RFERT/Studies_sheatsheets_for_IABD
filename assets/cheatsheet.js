@@ -123,6 +123,7 @@
         '<div class="cheat-actions">' +
         '<button class="btn primary" id="act-print">🖨️ Imprimer / PDF</button>' +
         '<button class="btn" id="act-tts">🔊 Écouter</button>' +
+        '<button class="btn" id="act-share">🔗 Partager</button>' +
         '<button class="btn" id="act-copy">📋 Copier</button>' +
         '<button class="btn" id="act-dl">⬇️ Télécharger .md</button>' +
         '<a class="btn" href="cours.html?c=' + encodeURIComponent(subject.code) + '">📚 Cours complet</a>' +
@@ -185,6 +186,11 @@
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(src).then(done, function () {});
       else { var ta = document.createElement("textarea"); ta.value = src; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); done(); } catch (e) {} ta.remove(); }
     });
+    var sh = host.querySelector("#act-share");
+    if (sh) {
+      if (!window.ESGIShare) sh.style.display = "none";
+      else sh.addEventListener("click", function () { window.ESGIShare.open(location.href, "Antisèche " + subject.name); });
+    }
     var d = host.querySelector("#act-dl");
     if (d) d.addEventListener("click", function () {
       var blob = new Blob([src], { type: "text/markdown;charset=utf-8" });
