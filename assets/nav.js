@@ -143,17 +143,36 @@
     s.onload = cb; s.onerror = cb;
     document.head.appendChild(s);
   }
+  function manifestFolder(s) {
+    var mods = (s && s.modules) || [];
+    for (var i = 0; i < mods.length; i++) {
+      var f = mods[i] && mods[i].file;
+      if (typeof f === "string") { var m = f.match(/^\.?\/?(.*?)\/md\//); if (m) return m[1]; }
+    }
+    return null;
+  }
+  function codedFolderSet() {
+    var set = {};
+    items.forEach(function (it) {
+      if (it.h) { var m = it.h.match(/(matieres\/[^\/]+)\/index\.html(?:[?#].*)?$/); if (m) set[m[1]] = it.h; }
+    });
+    return set;
+  }
   function addManifestToMenu(menu) {
     ensureManifest(function () {
       if (!window.COURS || !Array.isArray(window.COURS.subjects)) return;
       var anchor = menu.querySelector('a[href*="matieres/python/index"]');
       if (!anchor) anchor = menu.querySelector('.xnav-lbl');
       if (!anchor) return;
+      var coded = codedFolderSet();
       var frag = window.COURS.subjects
-        .filter(function (s) { return s.modules && s.modules.length; })
+        .filter(function (s) { return (s.modules && s.modules.length) || s.page; })
         .map(function (s) {
-          return '<a href="' + root + "cours.html?c=" + encodeURIComponent(s.code) +
-            '"><span>' + (s.emoji || "📘") + "</span> " + s.name + "</a>";
+          var folder = manifestFolder(s);
+          // Une matière codée sur-mesure existe déjà dans le menu : on ne double pas.
+          if (folder && coded[folder]) return "";
+          var href = s.page ? (root + s.page) : (root + "cours.html?c=" + encodeURIComponent(s.code));
+          return '<a href="' + href + '"><span>' + (s.emoji || "📘") + "</span> " + s.name + "</a>";
         }).join("");
       if (frag) anchor.insertAdjacentHTML("afterend", frag);
     });
@@ -166,6 +185,7 @@
     { e: "∑", t: "Mathématiques", h: root + "matieres/mathematiques/index.html" },
     { e: "🐍", t: "Python & Data Science", h: root + "matieres/python/index.html" },
     { e: "🧮", t: "Bases de données (SQL)", h: root + "matieres/sql/index.html" },
+    { e: "🦀", t: "Rust", h: root + "matieres/rust/rust-cursus.html" },
     { sep: 1 },
     { lbl: "Antisèches" },
     { e: "∑", t: "Aide-mémoire maths", h: root + "matieres/mathematiques/aide-memoire.html" },

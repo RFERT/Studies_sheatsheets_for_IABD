@@ -37,6 +37,22 @@ const SUBJECTS = [
     progress: { key: "pds-done-modules", type: "doneMap", total: 6, unit: "modules" }
   },
   {
+    code: "RUST",
+    name: "Rust",
+    emoji: "🦀",
+    color: "#f74c00",
+    status: "ready",
+    featured: true,
+    href: "matieres/rust/rust-cursus.html",
+    extra: [
+      { label: "🔥 Révision express", href: "matieres/rust/revision-express.html" },
+      { label: "⚡ Antisèche", href: "matieres/rust/cheatsheet-rust.html" }
+    ],
+    desc: "Du débutant total à l'intermédiaire solide : Cargo, ownership, borrowing, lifetimes, traits, iterators, gestion d'erreurs, concurrence. Parcours interactif avec quiz adaptatifs, checkpoints & examen final.",
+    tags: ["Ownership", "Borrowing", "Lifetimes", "Traits"],
+    meta: "16 modules · 4 checkpoints · examen final"
+  },
+  {
     code: "ML",
     name: "Machine Learning",
     emoji: "🤖",
@@ -541,11 +557,63 @@ function renderSubjects() {
 /* ---------- Cours Markdown (manifeste matieres/cours.js) ---------- */
 /* Fusionne les matières déclarées dans window.COURS : cartes du portail
    + entrées de recherche, sans rien coder à la main. */
+
+/* Dossier d'une matière du manifeste, déduit du chemin de ses modules
+   ("matieres/<x>/md/*.md" -> "matieres/<x>"). */
+function manifestFolder(c) {
+  const mods = (c && c.modules) || [];
+  for (let i = 0; i < mods.length; i++) {
+    const f = mods[i] && mods[i].file;
+    if (typeof f === "string") {
+      const m = f.match(/^\.?\/?(.*?)\/md\//);
+      if (m) return m[1];
+    }
+  }
+  return null;
+}
+
+/* Renvoie l'URL d'une page codée sur-mesure existante pour cette matière,
+   sinon null. Priorité au cours codé : on ne (re)construit pas depuis le Markdown.
+   Détection : champ `page` explicite, OU même code, OU même dossier qu'une
+   matière codée déclarée dans SUBJECTS. */
+function codedPageFor(c) {
+  if (c.page) return c.page;
+  const folder = manifestFolder(c);
+  const hit = SUBJECTS.find((s) =>
+    !s.fromManifest && (
+      (s.code || "").toLowerCase() === (c.code || "").toLowerCase() ||
+      (s.href && folder && s.href.replace(/\/index\.html$/, "") === folder)
+    )
+  );
+  return hit ? (hit.href || true) : null;
+}
+
+/* Carte pointant vers une page codée (seulement si elle n'est pas déjà sur le portail). */
+function addCodedCard(c, href) {
+  const url = typeof href === "string" ? href : null;
+  const already = SUBJECTS.some((s) => !s.fromManifest &&
+    ((s.code || "").toLowerCase() === (c.code || "").toLowerCase() || (url && s.href === url)));
+  if (already || !url) return;
+  SUBJECTS.push({
+    code: c.code, name: c.name, emoji: c.emoji || "📘", color: c.color || "#6c8cff",
+    status: "ready", featured: !!c.featured, href: url, extra: c.extra || undefined,
+    desc: c.desc || "", tags: c.tags || [], meta: "Cours complet", fromManifest: true
+  });
+  if (Array.isArray(window.SEARCH_INDEX)) {
+    window.SEARCH_INDEX.push({
+      s: c.name, emoji: c.emoji || "📘", color: c.color || "#6c8cff",
+      type: "matière", t: c.name, u: url, k: (c.desc || "") + " " + (c.tags || []).join(" ")
+    });
+  }
+}
+
 function mergeManifestCourses() {
   if (!window.COURS || !Array.isArray(window.COURS.subjects)) return;
   window.COURS.subjects.forEach((c) => {
     if (!c || !c.code) return;
-    if (SUBJECTS.some((s) => (s.code || "").toLowerCase() === c.code.toLowerCase())) return;
+    // Un cours codé sur-mesure existe déjà ? On l'utilise et on saute le Markdown.
+    const coded = codedPageFor(c);
+    if (coded) { addCodedCard(c, coded); return; }
     const mods = Array.isArray(c.modules) ? c.modules : [];
     const base = "cours.html?c=" + encodeURIComponent(c.code);
     SUBJECTS.push({
