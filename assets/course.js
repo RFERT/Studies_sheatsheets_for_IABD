@@ -77,9 +77,10 @@
     var total = (subject.modules || []).length;
     host.className = "course-wrap index";
     var aideBtn = subject.aide
-      ? '<div class="meta-row"><a class="btn" style="border-color:var(--sc);color:var(--sc)" href="aide.html?c=' +
-        encodeURIComponent(subject.code) + '">⚡ Antisèche (fiche de révision)</a></div>'
+      ? '<a class="btn" style="border-color:var(--sc);color:var(--sc)" href="aide.html?c=' +
+        encodeURIComponent(subject.code) + '">⚡ Antisèche (fiche de révision)</a>'
       : "";
+    var shareBtn = '<button class="btn" id="share-btn" type="button" title="Partager (lien + QR)">🔗 Partager</button>';
     host.innerHTML =
       '<div class="breadcrumb"><a href="index.html">Accueil</a> › ' + esc(subject.name) + "</div>" +
       "<h1>" + subject.emoji + " " + esc(subject.name) + "</h1>" +
@@ -87,9 +88,13 @@
       '<div class="meta-row"><span class="chip">' + total + " module" + (total > 1 ? "s" : "") + "</span>" +
       '<span class="chip">' + nDone + " terminé" + (nDone > 1 ? "s" : "") + "</span>" +
       (subject.tags ? subject.tags.map(function (t) { return '<span class="chip">' + esc(t) + "</span>"; }).join("") : "") +
-      "</div>" + aideBtn +
+      "</div>" +
+      '<div class="meta-row">' + aideBtn + shareBtn + "</div>" +
       '<div class="mod-grid">' + cards + "</div>";
     setBrand(subject);
+    var sb = host.querySelector("#share-btn");
+    if (sb && window.ESGIShare) sb.addEventListener("click", function () { window.ESGIShare.open(location.href, subject.name + " — Cours"); });
+    else if (sb) sb.style.display = "none";
   }
 
   /* ---------- Rendu : un module ---------- */
@@ -157,7 +162,8 @@
       var readMin = Math.max(1, Math.round(words / 180));
       var readChip = '<div class="readtime">⏱️ ~' + readMin + " min de lecture · " +
         parsed.headings.length + " section" + (parsed.headings.length > 1 ? "s" : "") +
-        '<button class="tts-btn" id="tts-btn" type="button" title="Lecture audio">🔊 Écouter</button></div>';
+        '<button class="tts-btn" id="tts-btn" type="button" title="Lecture audio">🔊 Écouter</button>' +
+        '<button class="tts-btn" id="share-btn" type="button" title="Partager (lien + QR)">🔗 Partager</button></div>';
 
       var notesBlock =
         '<details class="notes" id="notes-block"><summary>📝 Mes notes sur ce module</summary>' +
@@ -182,6 +188,7 @@
       wireDone(subject, module, host);
       wireNotes(subject, module, host);
       wireTTS(host);
+      wireShare(host, title);
       typeset(host);
       recordLast(subject, module, title);
     }).catch(function (err) {
@@ -368,6 +375,14 @@
       speaking = true; btn.classList.add("on"); btn.textContent = "⏹ Arrêter";
     });
     window.addEventListener("beforeunload", function () { try { window.speechSynthesis.cancel(); } catch (e) {} });
+  }
+
+  /* ---------- Partage (lien + QR) ---------- */
+  function wireShare(host, title) {
+    var btn = host.querySelector("#share-btn");
+    if (!btn) return;
+    if (!window.ESGIShare) { btn.style.display = "none"; return; }
+    btn.addEventListener("click", function () { window.ESGIShare.open(location.href, title); });
   }
 
   function recordLast(subject, module, title) {
