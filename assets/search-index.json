@@ -229,6 +229,114 @@
 "emoji": "∑",
 "color": "#6c8cff",
 "type": "module",
+"t": "Module 10 — Combinatoire avancée",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html",
+"k": "Le Module 7 posait les bases du dénombrement. Ici on va beaucoup plus loin : les quatre modèles de tirage, les permutations d'objets répétés, les étoiles & barres, le crible de Poincaré, les dérangements, les nombres de Catalan et de Stirling. Compter proprement, c'est la compétence qui sous-tend les probabilités, la complexité et une bonne partie du feature engineering."
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Les 4 modèles de tirage",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#modeles",
+"k": "Module 10 — Combinatoire avancée L'ordre compte-t-il ? La répétition est-elle permise ? Modèle Ordre Répétition Formule Nom Quiz 1.1"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Permutations & anagrammes",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#perm",
+"k": "Module 10 — Combinatoire avancée distincts Quiz 2.1 ANANAS"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Arrangements & combinaisons",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#arr",
+"k": "Module 10 — Combinatoire avancée Quiz 3.1 — lecture de formule"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Binôme de Newton, Pascal & identités",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#binome",
+"k": "Module 10 — Combinatoire avancée sélection de variables Quiz 4.1 — prédiction"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Étoiles & barres : répétition sans ordre",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#etoiles",
+"k": "Module 10 — Combinatoire avancée avec répétition et sans ordre Quiz 5.1"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Multinôme & surjections",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#multi",
+"k": "Module 10 — Combinatoire avancée surjectives Quiz 6.1 — modélisation"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Inclusion-exclusion & dérangements",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#crible",
+"k": "Module 10 — Combinatoire avancée Quiz 7.1 — compréhension"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Catalan, Stirling, Bell",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#nombres",
+"k": "Module 10 — Combinatoire avancée Quiz 8.1 — prédiction de sortie ((())) (()())"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Domaines, usages & métiers",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#data",
+"k": "Module 10 — Combinatoire avancée Notion Domaine Usage Métiers"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "section",
+"t": "Exercices de synthèse",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#exos",
+"k": "Module 10 — Combinatoire avancée STATISTICS ordonné ABCD DCBA"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "culture",
+"t": "Culture & histoire — Module 10 — Combinatoire avancée",
+"u": "matieres/mathematiques/modules/module-10-combinatoire.html#culture",
+"k": "Module 10 — Combinatoire avancée histoire Pingala Blaise Pascal & Pierre de Fermat Isaac Newton Pierre Raymond de Montmort Leonhard Euler Eugène Catalan"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "module",
 "t": "Module 2 — Algèbre linéaire",
 "u": "matieres/mathematiques/modules/module-2-algebre-lineaire.html",
 "k": "Le cœur mathématique du Machine Learning. Tes données sont des vecteurs, tes modèles sont des matrices, et apprendre revient souvent à faire de l'algèbre linéaire à grande échelle. Objectif : PCA et SVD démystifiées."
@@ -1635,6 +1743,15 @@
 "type": "fiche",
 "t": "Fiche de révision — Module 1 : Relations binaires",
 "u": "matieres/mathematiques/fiches/fiche-1-relations-binaires.md",
+"k": "fiche révision téléchargeable"
+},
+{
+"s": "Mathématiques",
+"emoji": "∑",
+"color": "#6c8cff",
+"type": "fiche",
+"t": "Fiche de révision — Module 10 : Combinatoire avancée",
+"u": "matieres/mathematiques/fiches/fiche-10-combinatoire.md",
 "k": "fiche révision téléchargeable"
 },
 {
