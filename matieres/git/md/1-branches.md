@@ -139,8 +139,9 @@ git branch -d feature/ajout-stats   # supprime la branche locale devenue inutile
 :::
 
 ::: tip Pour aller plus loin
-La publication de **ce** portail sur le web utilise exactement ces commandes :
-voir le guide [Publier avec GitHub Pages](../../guide-github-pages.html).
+Pour publier **ce** portail (ou n'importe quel site) gratuitement sur le web avec
+ces commandes, GitHub propose l'hébergement **GitHub Pages** :
+voir la [documentation officielle](https://docs.github.com/fr/pages/getting-started-with-github-pages).
 :::
 
 ::: culture Culture & histoire
