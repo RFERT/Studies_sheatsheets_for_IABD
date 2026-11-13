@@ -410,6 +410,15 @@ ul.keys li::before { content: "✦"; position: absolute; left: 6px; color: var(-
   .dash { gap:16px; }
 }
 
+/* ---------- Sélecteur de portail (IABD ↔ Pharmacie) ---------- */
+.portal-switch { display:inline-flex; gap:2px; background:var(--bg-elev); border:1px solid var(--border);
+  border-radius:999px; padding:3px; }
+.portal-switch .ps-opt { font-size:13px; font-weight:600; padding:6px 13px; border-radius:999px;
+  color:var(--text-soft); text-decoration:none; white-space:nowrap; transition:.12s ease; }
+.portal-switch .ps-opt:hover { color:var(--text); text-decoration:none; }
+.portal-switch .ps-opt.on { background:var(--primary); color:#fff; }
+@media (max-width:560px){ .portal-switch .ps-opt { padding:6px 10px; font-size:12px; } }
+
 /* Jobs / context table card */
 .jobs {
   border: 1px solid var(--border); border-radius: 12px;
