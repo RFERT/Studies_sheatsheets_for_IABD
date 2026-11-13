@@ -55,6 +55,10 @@ Backlog :
 ## 4. Pièges connus
 - **Thème clair** : couleurs d'accent trop claires = texte illisible ; toujours tester les 2 thèmes.
 - **Cache PWA** : après modification d'un fichier mis en cache, incrémenter `CACHE` dans `sw.js`.
+- **iPhone / iOS Safari** : les réglages iOS (zoom au focus des champs <16 px, `text-size-adjust`, encoche en paysage,
+  `overflow-x:clip` pour garder `position:sticky`) sont injectés par `assets/nav.js`. iOS exige une icône **PNG**
+  (`assets/apple-touch-icon.png`) et la barre d'état est opaque (`apple-mobile-web-app-status-bar-style=black`).
+  Les pages sans `nav.js` (ex. `matieres/sql/index.html`) portent leurs propres correctifs. Grille mobile : `minmax(0,1fr)`.
 - **Service worker** actif seulement en `https://` ou `localhost`, jamais en `file://`.
 - **Index de recherche** : régénérer (`py assets/build-search-index.py`) après toute modification de cours.
 - **Duplication** des moteurs de quiz maths/python : répercuter les changements des deux côtés.

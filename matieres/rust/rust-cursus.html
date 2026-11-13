@@ -163,13 +163,14 @@
     padding:10px 18px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none;z-index:50}
   .toast.show{opacity:1}
   .topbar-m{display:none}
+  @supports (height:100dvh){ .app{min-height:100dvh} aside{height:100dvh} }
   @media(max-width:860px){
       html,body{overflow-x:hidden}
-      .app{grid-template-columns:1fr}
+      .app{grid-template-columns:minmax(0,1fr)}
       aside{position:fixed;z-index:40;left:-320px;width:min(300px,85vw);transition:.25s;box-shadow:0 0 40px rgba(0,0,0,.5);padding-left:max(16px,env(safe-area-inset-left))}
       aside.open{left:0}
       main{padding:18px 16px 80px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
-      .topbar-m{display:flex;gap:12px;align-items:center;margin-bottom:14px;position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(8px);padding:6px 0}
+      .topbar-m{display:flex;gap:12px;align-items:center;margin-bottom:14px;position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 85%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:6px 0}
     }
     @media(max-width:520px){
       .card{padding:16px 15px}

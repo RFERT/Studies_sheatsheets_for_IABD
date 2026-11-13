@@ -144,8 +144,12 @@
     padding:10px 18px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none;z-index:50}
   .toast.show{opacity:1}
   .topbar-m{display:none}
-  @media(max-width:860px){
-    .app{grid-template-columns:1fr}
+  /* iOS Safari : pas de zoom au focus (police ≥ 16 px) et 100vh = barre d'URL comprise */
+  @supports (-webkit-touch-callout:none){
+    textarea.answer,input.answer{font-size:16px}
+  }
+  @supports (height:100dvh){ .app{min-height:100dvh} aside{height:100dvh} }
+    .app{grid-template-columns:minmax(0,1fr)}
     aside{position:fixed;z-index:40;left:-320px;width:300px;transition:.25s;box-shadow:0 0 40px rgba(0,0,0,.5)}
     aside.open{left:0}
     main{padding:20px 18px 80px}

@@ -60,6 +60,21 @@
   .xskip:focus{left:0}
   :focus-visible{outline:2px solid var(--xacc);outline-offset:2px}
   @media (max-width:560px){ .xnav-btn span.lbl{display:none} .pomo-fab{width:42px;height:42px;font-size:18px} }
+  /* ---------- Réglages iPhone / iOS Safari (sans effet ailleurs) ---------- */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  a,button,summary,label,select,input,textarea{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  /* iOS zoome la page au focus d'un champ dont la police est < 16 px */
+  @supports (-webkit-touch-callout:none){
+    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=button]):not([type=submit]),
+    select,textarea{font-size:16px !important}
+    body{background-attachment:scroll !important}
+  }
+  /* Paysage : l'encoche / les coins arrondis ne doivent pas rogner le contenu */
+  @media (orientation:landscape){
+    body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  }
+  /* « overflow-x:hidden » sur html ET body casse position:sticky : clip n'ouvre pas de conteneur de défilement */
+  @media (max-width:560px){ body{overflow-x:clip} }
   `;
   // Variables thème-agnostiques (fixées selon data-theme)
   var vars = `
@@ -77,11 +92,25 @@
       m.rel = "manifest"; m.href = root + "manifest.webmanifest";
       document.head.appendChild(m);
     }
+    // iOS n'accepte pas le SVG pour l'icône d'écran d'accueil : PNG 180×180 obligatoire
     if (!document.querySelector('link[rel="apple-touch-icon"]')) {
       var at = document.createElement("link");
-      at.rel = "apple-touch-icon"; at.href = root + "assets/icon.svg";
+      at.rel = "apple-touch-icon"; at.href = root + "assets/apple-touch-icon.png";
+      at.setAttribute("sizes", "180x180");
       document.head.appendChild(at);
     }
+    // Mode « application » iOS (Ajouter à l'écran d'accueil) : barre d'état opaque
+    // (le contenu ne passe pas sous l'heure/batterie) + titre propre sous l'icône.
+    [["apple-mobile-web-app-capable", "yes"],
+     ["mobile-web-app-capable", "yes"],
+     ["apple-mobile-web-app-status-bar-style", "black"],
+     ["apple-mobile-web-app-title", "Cours ESGI"],
+     ["format-detection", "telephone=no"]].forEach(function (p) {
+      if (document.querySelector('meta[name="' + p[0] + '"]')) return;
+      var mt = document.createElement("meta");
+      mt.name = p[0]; mt.content = p[1];
+      document.head.appendChild(mt);
+    });
     var canSW = ("serviceWorker" in navigator) &&
       (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1");
     if (canSW) {
