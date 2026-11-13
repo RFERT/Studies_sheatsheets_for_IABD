@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>Toxicologie — DEUST Préparateur en pharmacie</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Année 2 · Toxicologie</div>
+    <h1>Module 8 — Toxicologie</h1>
+    <p class="subtitle">Tout médicament peut devenir un poison. La toxicologie étudie les effets nocifs des substances et les conduites à tenir. Pour le préparateur, c'est repérer un risque de surdosage et connaître les premiers réflexes.</p>
+
+    <div class="domains"><span class="domain hosp"><span class="dot"></span>HOSPITALIER</span><span class="domain offi"><span class="dot"></span>OFFICINE</span></div>
+
+    <div class="callout warn">
+      <span class="label">⚠️ Urgence</span>
+      Face à une intoxication : appeler le <strong>15 (SAMU)</strong> ou le <strong>centre antipoison</strong>. Ne jamais faire vomir ni faire boire sans avis médical. Ce module est pédagogique.
+    </div>
+
+    <div class="callout" style="border-color:var(--primary)">
+      <span class="label" style="color:var(--primary)">🎯 Objectifs</span>
+      Comprendre la relation dose-effet ; connaître les intoxications fréquentes et leurs antidotes ; savoir la conduite à tenir et le rôle des centres antipoison.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#dose">Dose, effet &amp; toxique</a></li>
+        <li><a href="#medic">Intoxications médicamenteuses</a></li>
+        <li><a href="#domestique">Intoxications domestiques</a></li>
+        <li><a href="#cat">Conduite à tenir &amp; antidotes</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="dose">
+      <h2>1. Dose, effet &amp; toxique</h2>
+      <div class="callout def">
+        <span class="label">« C'est la dose qui fait le poison »</span>
+        Principe de Paracelse : toute substance est toxique à partir d'une certaine dose. On décrit la toxicité par la <strong>DL50</strong> (dose létale pour 50 % des sujets) : plus elle est basse, plus la substance est toxique.
+      </div>
+      <div class="callout info">
+        <span class="label">Aiguë vs chronique</span>
+        <strong>Aiguë</strong> : exposition unique, forte (surdosage). <strong>Chronique</strong> : expositions répétées, faibles, avec accumulation (ex. métaux lourds, certains médicaments à index étroit).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Une substance A a une DL50 plus basse qu'une substance B. Que peut-on dire ?</div>
+        <div class="options">
+          <div class="opt">A est moins toxique que B</div>
+          <div class="opt">A est plus toxique que B</div>
+          <div class="opt">Elles ont la même toxicité</div>
+          <div class="opt">La DL50 ne renseigne pas sur la toxicité</div>
+        </div>
+        <div class="feedback" data-explain="Une DL50 basse signifie qu'une petite dose suffit à être létale : A est plus toxique que B."></div>
+      </div>
+    </section>
+
+    <section class="block" id="medic">
+      <h2>2. Intoxications médicamenteuses</h2>
+      <div class="callout def">
+        <span class="label">Le paracétamol : danger sous-estimé</span>
+        En surdosage, le paracétamol est <strong>hépatotoxique</strong> (destruction du foie), parfois mortel, souvent sans symptôme au début. Antidote : la <strong>N-acétylcystéine</strong>, d'autant plus efficace qu'elle est administrée tôt. C'est pourquoi les doses maximales sont strictes.
+      </div>
+      <div class="callout info">
+        <span class="label">Autres classes fréquentes</span>
+        <ul>
+          <li><strong>Benzodiazépines</strong> (somnolence, dépression respiratoire) → antidote <strong>flumazénil</strong>.</li>
+          <li><strong>Opioïdes</strong> (myosis, dépression respiratoire) → antidote <strong>naloxone</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Quel est l'antidote du surdosage en paracétamol ?</div>
+        <div class="options">
+          <div class="opt">La naloxone</div>
+          <div class="opt">Le flumazénil</div>
+          <div class="opt">La N-acétylcystéine</div>
+          <div class="opt">L'atropine</div>
+        </div>
+        <div class="feedback" data-explain="La N-acétylcystéine protège et régénère le foie. La naloxone est l'antidote des opioïdes, le flumazénil celui des benzodiazépines."></div>
+      </div>
+    </section>
+
+    <section class="block" id="domestique">
+      <h2>3. Intoxications domestiques</h2>
+      <div class="callout def">
+        <span class="label">Monoxyde de carbone (CO)</span>
+        Gaz <strong>inodore et invisible</strong>, issu d'une mauvaise combustion (chaudière, brasero). Il prend la place de l'O₂ sur l'hémoglobine. Signes : maux de tête, nausées, vertiges touchant <strong>plusieurs personnes</strong> d'un même lieu. Antidote : <strong>oxygène</strong> (aérer, évacuer, appeler les secours).
+      </div>
+      <div class="callout warn">
+        <span class="label">⚠️ Produits ménagers &amp; caustiques</span>
+        En cas d'ingestion de produit caustique (eau de Javel, déboucheur) : <strong>ne pas faire vomir</strong> (double lésion), <strong>ne pas faire boire</strong> massivement, appeler le centre antipoison. Garder l'emballage pour identifier le produit.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Face à l'ingestion d'un produit caustique, que ne faut-il surtout PAS faire ?</div>
+        <div class="options">
+          <div class="opt">Faire vomir la personne</div>
+          <div class="opt">Appeler le centre antipoison</div>
+          <div class="opt">Garder l'emballage</div>
+          <div class="opt">Évaluer les symptômes</div>
+        </div>
+        <div class="feedback" data-explain="Faire vomir un caustique ré-expose l'œsophage et la bouche au produit (seconde brûlure) et risque une inhalation. On ne fait pas vomir et on contacte le centre antipoison."></div>
+      </div>
+    </section>
+
+    <section class="block" id="cat">
+      <h2>4. Conduite à tenir &amp; antidotes</h2>
+      <div class="callout def">
+        <span class="label">Réflexes</span>
+        Évaluer (conscience, respiration), <strong>identifier</strong> le produit et la quantité, noter l'heure, appeler le <strong>15</strong> ou le <strong>centre antipoison</strong>, suivre leurs consignes. Ne pas administrer n'importe quoi « au cas où ».
+      </div>
+      <div class="jobs">
+        <div class="jhead">🧪 Quelques antidotes à connaître</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Toxique</th><th>Antidote</th></tr></thead>
+            <tbody>
+              <tr><td>Paracétamol</td><td>N-acétylcystéine</td></tr>
+              <tr><td>Opioïdes (morphine…)</td><td>Naloxone</td></tr>
+              <tr><td>Benzodiazépines</td><td>Flumazénil</td></tr>
+              <tr><td>Monoxyde de carbone</td><td>Oxygène</td></tr>
+              <tr><td>AVK (surdosage)</td><td>Vitamine K</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Quelle information est la plus utile à transmettre au centre antipoison ?</div>
+        <div class="options">
+          <div class="opt">La couleur des murs</div>
+          <div class="opt">La marque du téléphone</div>
+          <div class="opt">Rien, ils savent déjà</div>
+          <div class="opt">Le produit, la quantité et l'heure d'exposition</div>
+        </div>
+        <div class="feedback" data-explain="Identifier le produit, estimer la quantité ingérée et l'heure permet d'évaluer la gravité et d'adapter la conduite (antidote, surveillance, hospitalisation)."></div>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>5. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Indice épidémiologique</h3>
+      <p>Toute une famille présente maux de tête et nausées un matin d'hiver, qui disparaissent dehors. À quoi penses-tu ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Intoxication au <strong>monoxyde de carbone</strong> : plusieurs personnes atteintes au même endroit, amélioration à l'air libre. Conduite : aérer, évacuer, appeler les secours (18/112), oxygène.</p>
+      </details>
+
+      <h3>Exercice 2 — Surdosage (⭐)</h3>
+      <p>Un adulte a pris 15 g de paracétamol en une fois « parce qu'il avait très mal ». Il se sent bien. Est-ce rassurant ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Non. 15 g dépassent largement la dose maximale : risque d'<strong>hépatotoxicité grave</strong>, souvent <strong>sans symptôme initial</strong>. Urgence : centre antipoison/15, dosage et éventuellement <strong>N-acétylcystéine</strong> précoce.</p>
+      </details>
+
+      <h3>Exercice 3 — Antidote (⭐)</h3>
+      <p>Associe : morphine, benzodiazépine, CO → à leur antidote.</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Morphine (opioïde) → <strong>naloxone</strong> ; benzodiazépine → <strong>flumazénil</strong> ; monoxyde de carbone → <strong>oxygène</strong>.</p>
+      </details>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">Du poison à la science.</p>
+      <ul class="names">
+        <li><b>Paracelse</b> <span class="yr">(XVIᵉ s.)</span> — « Rien n'est poison, tout est poison : seule la dose fait le poison. »</li>
+        <li><b>Mathieu Orfila</b> <span class="yr">(1813)</span> — fondateur de la toxicologie moderne et médico-légale.</li>
+        <li><b>Centres antipoison</b> — réseau national d'information toxicologique (24h/24).</li>
+      </ul>
+      <div class="clinks">
+        <a class="pill-link" href="https://www.centres-antipoison.net/" target="_blank">Centres antipoison</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Toxicologie" target="_blank">Toxicologie</a>
+      </div>
+    </section>
+
+    <div class="callout note">
+      <span class="label">📌 À retenir</span>
+      <ul>
+        <li>« La dose fait le poison » ; DL50 basse = très toxique.</li>
+        <li>Paracétamol = hépatotoxique → N-acétylcystéine ; opioïdes → naloxone ; benzo → flumazénil ; CO → oxygène.</li>
+        <li>Caustique : ne pas faire vomir ni boire ; garder l'emballage.</li>
+        <li>Réflexe : identifier produit + quantité + heure, appeler 15 / centre antipoison.</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="toxicologie">Marquer comme terminé</button>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="pathologie.html"><div class="dir">← Précédent</div><div class="ttl">Module 7 · Pathologie</div></a>
+      <a class="next" href="diagnostic.html"><div class="dir">Suivant →</div><div class="ttl">Module 9 · Diagnostic</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 8 — Toxicologie · DEUST Préparateur en pharmacie 💚</div>
+  <script src="../assets/app.js"></script>
+  <script src="../../../assets/nav.js"></script>
+</body>
+</html>

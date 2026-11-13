@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>Pharmacologie &amp; pharmacocinétique — DEUST Préparateur en pharmacie</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Année 2 · Pharmacologie</div>
+    <h1>Module 6 — Pharmacologie &amp; pharmacocinétique</h1>
+    <p class="subtitle">Deux questions complémentaires : <strong>ce que l'organisme fait au médicament</strong> (pharmacocinétique, ADME) et <strong>ce que le médicament fait à l'organisme</strong> (pharmacodynamie). C'est le socle du conseil et de la sécurité au comptoir.</p>
+
+    <div class="domains"><span class="domain offi"><span class="dot"></span>OFFICINE</span><span class="domain hosp"><span class="dot"></span>HOSPITALIER</span><span class="domain sci"><span class="dot"></span>SCIENCES</span></div>
+
+    <div class="callout" style="border-color:var(--primary)">
+      <span class="label" style="color:var(--primary)">🎯 Objectifs</span>
+      Décrire l'ADME et la demi-vie ; comprendre récepteurs, agonistes/antagonistes et index thérapeutique ; connaître les grandes classes ; repérer les interactions (inducteurs/inhibiteurs enzymatiques).
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#adme">Pharmacocinétique : ADME</a></li>
+        <li><a href="#demi">Demi-vie &amp; posologie</a></li>
+        <li><a href="#pd">Pharmacodynamie : mécanismes</a></li>
+        <li><a href="#classes">Grandes classes</a></li>
+        <li><a href="#interactions">Interactions médicamenteuses</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="adme">
+      <h2>1. Pharmacocinétique : ADME</h2>
+      <div class="callout def">
+        <span class="label">Les 4 étapes</span>
+        <ul>
+          <li><strong>A — Absorption</strong> : passage du PA vers le sang. Mesurée par la <strong>biodisponibilité (F)</strong> ; la voie orale subit l'effet de premier passage hépatique.</li>
+          <li><strong>D — Distribution</strong> : diffusion dans les tissus ; une partie se lie aux <strong>protéines plasmatiques</strong> (albumine) ; seule la fraction <em>libre</em> est active.</li>
+          <li><strong>M — Métabolisme</strong> : transformation surtout par le <strong>foie</strong> (enzymes <strong>cytochromes P450</strong>) en métabolites souvent inactifs (parfois actifs : pro-drogue).</li>
+          <li><strong>E — Élimination</strong> : excrétion, principalement par le <strong>rein</strong> (urine) et la bile.</li>
+        </ul>
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Pro-drogue</span>
+        Certains médicaments sont inactifs tant qu'ils ne sont pas métabolisés : la <strong>codéine</strong> est transformée en morphine par le foie. Les variations génétiques de ces enzymes expliquent des réponses différentes d'un patient à l'autre.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Dans ADME, le « M » correspond à une étape qui a lieu surtout dans…</div>
+        <div class="options">
+          <div class="opt">le rein</div>
+          <div class="opt">l'estomac</div>
+          <div class="opt">le foie</div>
+          <div class="opt">les poumons</div>
+        </div>
+        <div class="feedback" data-explain="Le métabolisme (M) se fait majoritairement dans le foie, via les cytochromes P450, qui transforment le PA en métabolites généralement éliminables."></div>
+      </div>
+    </section>
+
+    <section class="block" id="demi">
+      <h2>2. Demi-vie &amp; posologie</h2>
+      <div class="callout def">
+        <span class="label">Demi-vie (t½)</span>
+        Temps nécessaire pour que la concentration plasmatique soit divisée par deux. Elle détermine le <strong>rythme des prises</strong> : une t½ courte impose plusieurs prises par jour ; une t½ longue permet une prise unique.
+      </div>
+      <div class="callout info">
+        <span class="label">Repères</span>
+        Il faut environ <strong>4 à 5 demi-vies</strong> pour éliminer la quasi-totalité d'un médicament (ou pour atteindre l'état d'équilibre en prises répétées). D'où le délai avant qu'un traitement « s'installe » ou se « lave ».
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1 — calcul</strong></div>
+        <div class="qtext">Un médicament a une demi-vie de 6 h. Après 24 h sans nouvelle prise, quelle fraction reste approximativement ?</div>
+        <div class="options">
+          <div class="opt">1/2</div>
+          <div class="opt">1/16</div>
+          <div class="opt">1/4</div>
+          <div class="opt">rien du tout</div>
+        </div>
+        <div class="feedback" data-explain="24 h = 4 demi-vies. À chaque demi-vie on divise par 2 : 1 → 1/2 → 1/4 → 1/8 → 1/16. Il reste environ 1/16 de la dose."></div>
+      </div>
+    </section>
+
+    <section class="block" id="pd">
+      <h2>3. Pharmacodynamie : mécanismes d'action</h2>
+      <div class="callout def">
+        <span class="label">Cibles &amp; types d'action</span>
+        La plupart des médicaments agissent sur une <strong>cible</strong> : récepteur, enzyme, canal ionique, transporteur.
+        <ul>
+          <li><strong>Agoniste</strong> : se fixe et <em>active</em> le récepteur (mime l'effet naturel).</li>
+          <li><strong>Antagoniste</strong> : se fixe et <em>bloque</em> le récepteur (ex. bêtabloquant).</li>
+          <li><strong>Inhibiteur enzymatique</strong> : bloque une enzyme (ex. IEC, statines).</li>
+        </ul>
+      </div>
+      <div class="callout def">
+        <span class="label">Index thérapeutique</span>
+        Rapport entre dose toxique et dose efficace. Un <strong>index étroit</strong> = marge de sécurité faible, surveillance rapprochée : <strong>AVK</strong> (anticoagulants), <strong>digoxine</strong>, <strong>lithium</strong>.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Un bêtabloquant qui empêche l'adrénaline d'agir sur son récepteur est un…</div>
+        <div class="options">
+          <div class="opt">antagoniste</div>
+          <div class="opt">agoniste</div>
+          <div class="opt">pro-drogue</div>
+          <div class="opt">excipient</div>
+        </div>
+        <div class="feedback" data-explain="Il bloque le récepteur bêta sans l'activer : c'est un antagoniste. Résultat : ralentissement du cœur et baisse de la pression artérielle."></div>
+      </div>
+    </section>
+
+    <section class="block" id="classes">
+      <h2>4. Grandes classes de médicaments</h2>
+      <div class="jobs">
+        <div class="jhead">💊 Repères (aperçu)</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Classe</th><th>Exemples</th><th>Usage</th></tr></thead>
+            <tbody>
+              <tr><td>Antalgiques palier 1</td><td>Paracétamol, AINS</td><td>Douleur légère à modérée</td></tr>
+              <tr><td>Antalgiques palier 2</td><td>Codéine, tramadol</td><td>Douleur modérée (opioïdes faibles)</td></tr>
+              <tr><td>Antalgiques palier 3</td><td>Morphine</td><td>Douleur intense (opioïdes forts)</td></tr>
+              <tr><td>Antibiotiques</td><td>Amoxicilline</td><td>Infections bactériennes</td></tr>
+              <tr><td>Antihypertenseurs</td><td>IEC, diurétiques, bêtabloquants</td><td>HTA</td></tr>
+              <tr><td>Antidiabétiques</td><td>Metformine, insuline</td><td>Diabète</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Paliers OMS de la douleur</span>
+        On monte de palier selon l'intensité : 1 (non-opioïdes) → 2 (opioïdes faibles) → 3 (opioïdes forts). Logique à connaître pour le conseil et la sécurité.
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">La morphine appartient à quel palier antalgique de l'OMS ?</div>
+        <div class="options">
+          <div class="opt">Palier 1</div>
+          <div class="opt">Aucun</div>
+          <div class="opt">Palier 2</div>
+          <div class="opt">Palier 3</div>
+        </div>
+        <div class="feedback" data-explain="La morphine est un opioïde fort : palier 3, pour les douleurs intenses. Le paracétamol est palier 1, la codéine palier 2."></div>
+      </div>
+    </section>
+
+    <section class="block" id="interactions">
+      <h2>5. Interactions médicamenteuses</h2>
+      <div class="callout def">
+        <span class="label">Deux grands types</span>
+        <ul>
+          <li><strong>Pharmacocinétiques</strong> : un médicament modifie l'ADME d'un autre. <strong>Inducteur enzymatique</strong> (ex. millepertuis, rifampicine) accélère le métabolisme → <em>baisse</em> l'effet ; <strong>inhibiteur</strong> (ex. jus de pamplemousse sur le CYP3A4) → <em>augmente</em> la concentration → risque toxique.</li>
+          <li><strong>Pharmacodynamiques</strong> : effets qui s'additionnent (synergie) ou s'opposent (antagonisme), ex. deux dépresseurs du système nerveux.</li>
+        </ul>
+      </div>
+      <div class="callout warn">
+        <span class="label">⚠️ Exemples à connaître</span>
+        <strong>AVK</strong> + nombreux médicaments/aliments (vitamine K) → risque hémorragique ou d'inefficacité, surveillance par <strong>INR</strong>. <strong>Millepertuis</strong> (plante) diminue l'efficacité de la pilule, des AVK, d'antirétroviraux. Toujours interroger sur l'automédication et la phytothérapie.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Un inhibiteur enzymatique (ex. jus de pamplemousse) sur un médicament métabolisé par le foie va…</div>
+        <div class="options">
+          <div class="opt">diminuer sa concentration et son effet</div>
+          <div class="opt">augmenter sa concentration et le risque de surdosage</div>
+          <div class="opt">n'avoir aucun effet</div>
+          <div class="opt">le transformer en excipient</div>
+        </div>
+        <div class="feedback" data-explain="En bloquant l'enzyme (CYP3A4), le pamplemousse ralentit le métabolisme : le médicament s'accumule, sa concentration monte, le risque de toxicité augmente. L'inducteur fait l'inverse."></div>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>6. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Raisonnement cinétique</h3>
+      <p>Pourquoi un médicament à t½ très courte doit-il être pris plusieurs fois par jour ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Il est éliminé vite : sa concentration efficace ne dure pas. Pour la maintenir, il faut <strong>renouveler les prises</strong> fréquemment (ou utiliser une forme à libération prolongée).</p>
+      </details>
+
+      <h3>Exercice 2 — Interaction (⭐)</h3>
+      <p>Une patiente sous pilule commence une cure de millepertuis contre la déprime. Quel risque ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Le millepertuis est un <strong>inducteur enzymatique</strong> : il accélère le métabolisme des œstroprogestatifs, <strong>diminuant l'efficacité contraceptive</strong> (risque de grossesse). Il faut en informer la patiente et orienter vers le pharmacien/médecin.</p>
+      </details>
+
+      <h3>Exercice 3 — Sécurité (⭐)</h3>
+      <p>Pourquoi surveille-t-on l'INR chez un patient sous AVK ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Les AVK ont un <strong>index thérapeutique étroit</strong> : trop peu = risque de thrombose, trop = risque hémorragique. L'INR mesure l'effet anticoagulant pour ajuster la dose dans la zone cible.</p>
+      </details>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">La pharmacologie, science jeune et décisive.</p>
+      <ul class="names">
+        <li><b>Paul Ehrlich</b> <span class="yr">(≈1900)</span> — concept de récepteur et de « balle magique » ciblant la maladie.</li>
+        <li><b>Alexander Fleming</b> <span class="yr">(1928)</span> — découvre la pénicilline, premier antibiotique.</li>
+        <li><b>Pharmacovigilance</b> <span class="yr">(après 1960)</span> — née du drame du thalidomide, elle surveille les effets indésirables.</li>
+      </ul>
+      <div class="clinks">
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Pharmacocin%C3%A9tique" target="_blank">Pharmacocinétique</a>
+        <a class="pill-link" href="https://ansm.sante.fr/" target="_blank">Pharmacovigilance (ANSM)</a>
+      </div>
+    </section>
+
+    <div class="callout note">
+      <span class="label">📌 À retenir</span>
+      <ul>
+        <li>ADME : Absorption, Distribution, Métabolisme (foie/CYP450), Élimination (rein).</li>
+        <li>t½ = division par 2 ; ~4–5 t½ pour éliminer/équilibrer.</li>
+        <li>Agoniste active, antagoniste bloque ; index étroit (AVK, digoxine, lithium) = surveillance.</li>
+        <li>Inducteur ↓ effet ; inhibiteur ↑ concentration (risque toxique).</li>
+        <li>Paliers OMS : 1 non-opioïdes, 2 opioïdes faibles, 3 opioïdes forts.</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="pharmacologie">Marquer comme terminé</button>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="legislation.html"><div class="dir">← Précédent</div><div class="ttl">Module 5 · Législation</div></a>
+      <a class="next" href="pathologie.html"><div class="dir">Suivant →</div><div class="ttl">Module 7 · Pathologie</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 6 — Pharmacologie · DEUST Préparateur en pharmacie 💚</div>
+  <script src="../assets/app.js"></script>
+  <script src="../../../assets/nav.js"></script>
+</body>
+</html>

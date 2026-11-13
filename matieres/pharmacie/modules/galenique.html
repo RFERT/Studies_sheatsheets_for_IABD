@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>Galénique — DEUST Préparateur en pharmacie</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Année 1 · Galénique</div>
+    <h1>Module 4 — Galénique &amp; formes pharmaceutiques</h1>
+    <p class="subtitle">La galénique transforme un <strong>principe actif</strong> en un <strong>médicament</strong> utilisable : la bonne dose, au bon endroit, au bon moment. C'est le cœur technique du métier de préparateur, du comprimé à la préparation magistrale.</p>
+
+    <div class="domains"><span class="domain offi"><span class="dot"></span>OFFICINE</span><span class="domain hosp"><span class="dot"></span>HOSPITALIER</span></div>
+
+    <div class="callout" style="border-color:var(--primary)">
+      <span class="label" style="color:var(--primary)">🎯 Objectifs</span>
+      Connaître les voies d'administration et les formes pharmaceutiques ; comprendre le rôle des excipients (et les excipients à effet notoire) ; distinguer préparation magistrale et officinale ; réaliser des calculs de doses.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#pa">Principe actif, excipient, forme</a></li>
+        <li><a href="#voies">Voies d'administration</a></li>
+        <li><a href="#formes">Les formes pharmaceutiques</a></li>
+        <li><a href="#excipients">Excipients &amp; effet notoire</a></li>
+        <li><a href="#prep">Préparations à l'officine &amp; calculs</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="pa">
+      <h2>1. Principe actif, excipient, forme</h2>
+      <div class="callout def">
+        <span class="label">Trois notions clés</span>
+        <ul>
+          <li><strong>Principe actif (PA)</strong> : la molécule qui soigne (ex. paracétamol).</li>
+          <li><strong>Excipient</strong> : substance sans activité thérapeutique qui met en forme, conserve, colore, facilite la prise.</li>
+          <li><strong>Forme galénique (pharmaceutique)</strong> : la présentation finale (comprimé, sirop, pommade…).</li>
+        </ul>
+      </div>
+      <div class="callout info">
+        <span class="label">Pourquoi la forme compte</span>
+        Une même molécule peut exister en comprimé, sirop, suppositoire ou injectable. La forme choisie dépend du patient (enfant, personne âgée), de l'urgence, du site d'action et de la stabilité du PA.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Dans un comprimé, le lactose utilisé comme diluant est…</div>
+        <div class="options">
+          <div class="opt">le principe actif</div>
+          <div class="opt">un excipient</div>
+          <div class="opt">une forme galénique</div>
+          <div class="opt">un conservateur antibiotique</div>
+        </div>
+        <div class="feedback" data-explain="Le lactose est un excipient (diluant) : il donne du volume au comprimé sans effet thérapeutique. C'est aussi un excipient à effet notoire (intolérance au lactose)."></div>
+      </div>
+    </section>
+
+    <section class="block" id="voies">
+      <h2>2. Voies d'administration</h2>
+      <div class="jobs">
+        <div class="jhead">🚪 Principales voies</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Voie</th><th>Exemple de forme</th><th>Particularité</th></tr></thead>
+            <tbody>
+              <tr><td>Orale (per os)</td><td>Comprimé, gélule, sirop</td><td>Simple, mais <strong>effet de premier passage hépatique</strong></td></tr>
+              <tr><td>Parentérale IV</td><td>Soluté injectable</td><td>Action rapide, 100 % biodisponible, stérile</td></tr>
+              <tr><td>Parentérale IM / SC</td><td>Injection, insuline SC</td><td>Résorption progressive</td></tr>
+              <tr><td>Cutanée / transdermique</td><td>Pommade, patch</td><td>Local ou systémique (patch)</td></tr>
+              <tr><td>Rectale</td><td>Suppositoire</td><td>Utile si vomissements, enfant</td></tr>
+              <tr><td>Inhalée</td><td>Aérosol, spray</td><td>Cible les bronches (asthme)</td></tr>
+              <tr><td>Oculaire / nasale</td><td>Collyre, spray</td><td>Action locale, stérilité (collyre)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Effet de premier passage</span>
+        Après absorption intestinale, le sang passe d'abord par le <strong>foie</strong>, qui peut métaboliser (détruire) une partie du PA avant qu'il n'agisse. La voie IV, sublinguale ou transdermique <em>évite</em> ce premier passage.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Quelle voie offre la biodisponibilité la plus rapide et la plus complète ?</div>
+        <div class="options">
+          <div class="opt">Orale</div>
+          <div class="opt">Rectale</div>
+          <div class="opt">Intraveineuse (IV)</div>
+          <div class="opt">Cutanée</div>
+        </div>
+        <div class="feedback" data-explain="La voie IV délivre le PA directement dans le sang : biodisponibilité de 100 %, action immédiate, pas d'effet de premier passage. En contrepartie elle exige stérilité et surveillance."></div>
+      </div>
+    </section>
+
+    <section class="block" id="formes">
+      <h2>3. Les formes pharmaceutiques</h2>
+      <div class="callout def">
+        <span class="label">Formes sèches</span>
+        Comprimés (nu, <strong>pelliculé</strong>, enrobé, <strong>effervescent</strong>, <strong>orodispersible</strong>, à <strong>libération prolongée/LP</strong>), gélules, poudres, granulés, sachets.
+      </div>
+      <div class="callout def">
+        <span class="label">Formes liquides</span>
+        Solutions, sirops, <strong>suspensions</strong> (à agiter avant emploi), <strong>émulsions</strong>, solutés injectables, collyres.
+      </div>
+      <div class="callout def">
+        <span class="label">Formes pâteuses &amp; divers</span>
+        Pommades, <strong>crèmes</strong> (émulsion), gels, <strong>suppositoires</strong> (voie rectale), ovules (voie vaginale), patchs.
+      </div>
+      <div class="callout warn">
+        <span class="label">⚠️ Ne jamais écraser une forme LP</span>
+        Écraser un comprimé à <strong>libération prolongée</strong> (ou retard) libère toute la dose d'un coup → risque de <strong>surdosage grave</strong>. Idem pour certains comprimés gastro-résistants. Toujours vérifier avant de conseiller d'écraser.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Un patient âgé a du mal à avaler. Son comprimé est « LP ». Que conseilles-tu ?</div>
+        <div class="options">
+          <div class="opt">Ne pas l'écraser et demander au pharmacien une forme adaptée</div>
+          <div class="opt">L'écraser systématiquement dans un yaourt</div>
+          <div class="opt">Le couper en quatre</div>
+          <div class="opt">Doubler la dose</div>
+        </div>
+        <div class="feedback" data-explain="Écraser une forme LP libère toute la dose d'un coup (surdosage). Il faut orienter vers le pharmacien pour une alternative (forme orodispersible, solution, autre galénique)."></div>
+      </div>
+    </section>
+
+    <section class="block" id="excipients">
+      <h2>4. Excipients &amp; effet notoire</h2>
+      <div class="callout def">
+        <span class="label">Rôles des excipients</span>
+        Diluant (volume), liant (cohésion), délitant (désagrégation), lubrifiant, enrobage, <strong>conservateur</strong>, colorant, édulcorant, correcteur de goût.
+      </div>
+      <div class="callout info">
+        <span class="label">Excipients à effet notoire (EEN)</span>
+        Certains excipients peuvent provoquer des réactions chez des patients sensibles et doivent être signalés : <strong>lactose</strong> (intolérance), <strong>gluten (amidon de blé)</strong>, <strong>aspartam</strong> (phénylcétonurie), <strong>saccharose</strong> (diabète), <strong>huile d'arachide</strong> (allergie), <strong>alcool</strong>, certains colorants.
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Pourquoi signale-t-on la présence d'aspartam dans certains médicaments ?</div>
+        <div class="options">
+          <div class="opt">Parce qu'il est toxique pour tous</div>
+          <div class="opt">Parce qu'il contient du lactose</div>
+          <div class="opt">Parce qu'il périme vite</div>
+          <div class="opt">Parce qu'il est contre-indiqué en cas de phénylcétonurie</div>
+        </div>
+        <div class="feedback" data-explain="L'aspartam est une source de phénylalanine : dangereux pour les personnes atteintes de phénylcétonurie. C'est un excipient à effet notoire, mentionné sur la notice."></div>
+      </div>
+    </section>
+
+    <section class="block" id="prep">
+      <h2>5. Préparations à l'officine &amp; calculs</h2>
+      <div class="callout def">
+        <span class="label">Magistrale vs officinale</span>
+        <ul>
+          <li><strong>Préparation magistrale</strong> : réalisée <em>sur ordonnance</em>, pour un patient donné.</li>
+          <li><strong>Préparation officinale</strong> : inscrite au formulaire/pharmacopée, préparée à l'avance en petite série.</li>
+        </ul>
+        Les deux suivent les <strong>Bonnes Pratiques de Préparation (BPP)</strong> et sont réalisées sous le contrôle du pharmacien.
+      </div>
+      <div class="callout example">
+        <span class="label">Calcul — règle de trois</span>
+        Une pommade à 2 % (m/m) contient 2 g de PA pour 100 g. Pour 50 g de pommade : (2 × 50)/100 = <strong>1 g</strong> de PA.
+      </div>
+      <div class="callout example">
+        <span class="label">Calcul — dose pédiatrique</span>
+        Posologie 15 mg/kg pour un enfant de 20 kg : 15 × 20 = <strong>300 mg</strong> par prise.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Une solution à 5 % (m/V) contient combien de principe actif pour 200 mL ?</div>
+        <div class="options">
+          <div class="opt">5 g</div>
+          <div class="opt">10 g</div>
+          <div class="opt">1 g</div>
+          <div class="opt">25 g</div>
+        </div>
+        <div class="feedback" data-explain="5 % (m/V) = 5 g pour 100 mL, donc 10 g pour 200 mL : (5 × 200)/100 = 10 g."></div>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>6. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Choix de voie</h3>
+      <p>Un enfant qui vomit ne peut rien avaler mais doit recevoir un antipyrétique. Quelle forme/voie proposer ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>La voie <strong>rectale</strong> (suppositoire) contourne le problème des vomissements. Alternative selon disponibilité : forme injectable en milieu de soins.</p>
+      </details>
+
+      <h3>Exercice 2 — Calcul de préparation (⭐)</h3>
+      <p>Prépare 80 g d'une crème à 0,5 % (m/m) d'hydrocortisone. Quelle masse d'hydrocortisone et quelle masse d'excipient ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>PA = (0,5 × 80)/100 = <strong>0,4 g</strong> d'hydrocortisone. Excipient = 80 − 0,4 = <strong>79,6 g</strong>.</p>
+      </details>
+
+      <h3>Exercice 3 — Sécurité (⭐)</h3>
+      <p>Un patient veut dissoudre son comprimé gastro-résistant dans de l'eau citronnée (acide). Quel risque ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>L'enrobage <strong>gastro-résistant</strong> protège le PA de l'acidité de l'estomac (ou protège l'estomac du PA). Le détruire expose le PA à l'acide (inactivation) ou agresse la muqueuse. Il ne faut ni l'écraser ni le dissoudre : orienter vers le pharmacien.</p>
+      </details>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">Le mot « galénique » vient d'un médecin de l'Antiquité.</p>
+      <ul class="names">
+        <li><b>Claude Galien</b> <span class="yr">(IIᵉ s.)</span> — médecin grec de Rome, codifie la préparation des remèdes : la « pharmacie galénique » porte son nom.</li>
+        <li><b>Bonnes Pratiques de Préparation</b> <span class="yr">(2007)</span> — cadre réglementaire actuel des préparations en pharmacie.</li>
+      </ul>
+      <div class="clinks">
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Forme_gal%C3%A9nique" target="_blank">Forme galénique</a>
+        <a class="pill-link" href="https://ansm.sante.fr/" target="_blank">ANSM</a>
+      </div>
+    </section>
+
+    <div class="callout note">
+      <span class="label">📌 À retenir</span>
+      <ul>
+        <li>PA = soigne ; excipient = met en forme ; forme = présentation finale.</li>
+        <li>IV = 100 % biodisponible, immédiat ; voie orale = effet de premier passage hépatique.</li>
+        <li>Ne jamais écraser une forme LP ou gastro-résistante.</li>
+        <li>EEN : lactose, gluten, aspartam, saccharose… à signaler.</li>
+        <li>Magistrale = sur ordonnance ; officinale = formulaire ; les deux sous BPP.</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="galenique">Marquer comme terminé</button>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="physiologie.html"><div class="dir">← Précédent</div><div class="ttl">Module 3 · Physiologie</div></a>
+      <a class="next" href="legislation.html"><div class="dir">Suivant →</div><div class="ttl">Module 5 · Législation</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 4 — Galénique · DEUST Préparateur en pharmacie 💚</div>
+  <script src="../assets/app.js"></script>
+  <script src="../../../assets/nav.js"></script>
+</body>
+</html>
