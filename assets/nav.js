@@ -13,6 +13,11 @@
   /* ---------- Styles injectés une seule fois ---------- */
   var css = `
   .xnav{position:relative;display:flex;align-items:center}
+  .brand-home{display:inline-flex;align-items:center;text-decoration:none;color:inherit;border-radius:10px;transition:.15s}
+  .brand-home:hover{opacity:.9}
+  .brand-home:hover .logo{transform:scale(1.08)}
+  .brand-home .logo{transition:transform .15s}
+  .brand-home:focus-visible{outline:2px solid var(--xacc);outline-offset:3px}
   .xnav-btn{cursor:pointer;border:1px solid var(--xline);background:var(--xcard);color:var(--xtext);
     padding:8px 13px;border-radius:9px;font-size:14px;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:.15s}
   .xnav-btn:hover{border-color:var(--xacc)}
@@ -231,6 +236,20 @@
     }).join("") + "</div>";
 
   var mount = document.querySelector(".topbar, header.top, .top, .topbar-m");
+
+  // Logo cliquable : retour à l'accueil du site depuis n'importe quelle page
+  // (fonctionne aussi pour les mises en page « sidebar » où le logo est hors topbar).
+  var brand = document.querySelector(".brand");
+  if (brand && brand.tagName !== "A" && !brand.closest("a")) {
+    var home = document.createElement("a");
+    home.className = "brand-home";
+    home.href = root + "index.html";
+    home.title = "Retour à l'accueil";
+    home.setAttribute("aria-label", "Retour à l'accueil");
+    brand.parentNode.insertBefore(home, brand);
+    home.appendChild(brand);
+  }
+
   if (mount) {
     var xnav = document.createElement("div");
     xnav.className = "xnav";
