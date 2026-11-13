@@ -41,6 +41,12 @@ powershell -File scripts\integrer-cours.ps1
 ```
 (ajouter `-NoPush` pour ne pas pousser tout de suite).
 
+> 🤖 **Intégration auto (préférence de l'utilisateur)** : pendant une session de travail,
+> la session SITE **intègre automatiquement** le travail du prof dès qu'un nouveau commit
+> est repéré sur `Cours` (vérifier `git log --oneline main..Cours` ; s'il y a du nouveau,
+> lancer `scripts\integrer-cours.ps1`). Pense à **bumper `CACHE` dans `sw.js`** si le merge
+> a modifié des fichiers CORE (`portal.js`, `nav.js`, etc.) sans que le prof l'ait fait.
+
 ## Règles pour ne pas se gêner
 - Le **PROF ne touche pas** au périmètre site (`assets/`, `sw.js`, `index.html`, pages HTML…)
   sauf nécessité réelle, qu'il signale.
