@@ -213,8 +213,7 @@
 .tts-btn:hover { border-color: var(--sc, var(--primary)); color: var(--sc, var(--primary)); }
 .tts-btn.on { background: color-mix(in srgb, var(--sc, var(--primary)) 18%, transparent); border-color: var(--sc, var(--primary)); color: var(--sc, var(--primary)); }
 
-/* Notes personnelles par module */
-.notes { margin: 28px 0 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); overflow: hidden; }
+/* Notes personnelles par module */.notes { margin: 28px 0 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); overflow: hidden; }
 .notes > summary { cursor: pointer; padding: 12px 15px; font-weight: 700; font-size: 14.5px; list-style: none; user-select: none; }
 .notes > summary::-webkit-details-marker { display: none; }
 .notes > summary::before { content: "▸ "; color: var(--muted); }
@@ -228,6 +227,34 @@
 .notes-foot { display: flex; align-items: center; justify-content: space-between; padding: 8px 15px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--border); }
 .notes-copy { font: inherit; font-size: 12.5px; cursor: pointer; background: var(--bg-elev); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 4px 11px; }
 .notes-copy:hover { border-color: var(--sc, var(--primary)); color: var(--sc, var(--primary)); }
+
+/* Cartes à trous (occlusion) : ==texte== */
+.cloze {
+  cursor: pointer; border-radius: 5px; padding: 0 5px; user-select: none; transition: .15s;
+  background: var(--sc, var(--primary)); color: transparent;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sc, var(--primary)) 60%, #000);
+}
+.cloze::selection, .cloze *::selection { background: transparent; }
+.cloze:hover { filter: brightness(1.08); }
+.cloze:focus-visible { outline: 2px solid var(--text); outline-offset: 1px; }
+.cloze.revealed {
+  cursor: default; color: inherit; user-select: text;
+  background: color-mix(in srgb, var(--sc, var(--primary)) 16%, transparent);
+  box-shadow: none;
+}
+
+/* Glossaire interactif : [[terme|définition]] */
+.gloss { position: relative; border-bottom: 1px dashed var(--sc, var(--primary)); cursor: help; }
+.gloss-pop {
+  position: absolute; left: 0; bottom: 130%; z-index: 30; min-width: 170px; max-width: 280px;
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; padding: 8px 11px;
+  font-size: 13px; line-height: 1.5; color: var(--text); font-weight: 400;
+  box-shadow: 0 12px 32px rgba(0,0,0,.45); opacity: 0; visibility: hidden; transform: translateY(4px);
+  transition: .14s; pointer-events: none; white-space: normal;
+}
+.gloss:hover .gloss-pop, .gloss:focus .gloss-pop, .gloss:focus-within .gloss-pop {
+  opacity: 1; visibility: visible; transform: none;
+}
 
 /* bouton copier (sur les blocs de code) */
 .content pre.code { padding-top: 32px; }

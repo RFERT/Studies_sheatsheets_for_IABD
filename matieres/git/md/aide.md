@@ -6,7 +6,7 @@ tags: commit, branch, merge, remote, rebase
 niveau: Révision express
 ---
 
-Mémo condensé pour réviser vite ou dépanner. Chaque bloc = une carte. Besoin du détail&nbsp;? → [cours complet](cours.html?c=GIT).
+Mémo condensé pour réviser vite ou dépanner. Chaque bloc = une carte. Un terme à revoir ? Survole-le : [[HEAD|pointeur vers le dernier commit de la branche courante]]. Besoin du détail ? → [cours complet](cours.html?c=GIT).
 
 ## Configuration initiale
 
@@ -41,6 +41,7 @@ git log --oneline -10      # historique court
 
 ::: info
 Les 3 zones : **working dir** (tes fichiers) → **staging** (`add`) → **dépôt** (`commit`).
+La commande pour préparer un fichier est ==git add==, et celle qui enregistre un instantané est ==git commit==.
 :::
 
 ## Branches
@@ -61,7 +62,7 @@ git merge feature          # fusionner feature dans main
 ```
 
 ::: warn
-**Conflit&nbsp;?** Édite les zones `<<<<<<<` / `=======` / `>>>>>>>`, garde le bon,
+**Conflit ?** Édite les zones `<<<<<<<` / `=======` / `>>>>>>>`, garde le bon,
 puis `git add` le fichier et `git commit`.
 :::
 
@@ -117,7 +118,7 @@ git stash drop             # jeter
 5. relire, corriger, **merger**, supprimer la branche
 
 ::: tip
-Commits **petits et fréquents**, messages à l'impératif («&nbsp;Ajoute…&nbsp;», «&nbsp;Corrige…&nbsp;»).
+Commits **petits et fréquents**, messages à l'impératif (« Ajoute… », « Corrige… »).
 :::
 
 ## .gitignore (essentiel)
@@ -134,7 +135,7 @@ data/*.csv
 ```
 
 ::: info
-Déjà suivi par erreur&nbsp;? `git rm --cached fichier` puis commit.
+Déjà suivi par erreur ? `git rm --cached fichier` puis commit.
 :::
 
 ## Dépannage express

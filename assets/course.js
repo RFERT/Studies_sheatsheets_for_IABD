@@ -206,6 +206,17 @@
     try { enhanceCulture(host); } catch (e) {}
     try { addCopyButtons(host); } catch (e) {}
     try { highlightCode(host); } catch (e) {}
+    try { wireCloze(host); } catch (e) {}
+  }
+
+  // Cartes à trous : cliquer/entrée pour révéler
+  function wireCloze(host) {
+    host.querySelectorAll(".cloze").forEach(function (c) {
+      c.addEventListener("click", function () { c.classList.toggle("revealed"); });
+      c.addEventListener("keydown", function (e) {
+        if (e.key === " " || e.key === "Enter") { e.preventDefault(); c.classList.toggle("revealed"); }
+      });
+    });
   }
 
   // Culture : liste de personnes -> .names ; liste de liens seuls -> .clinks (pills)

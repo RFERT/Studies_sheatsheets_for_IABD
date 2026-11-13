@@ -55,6 +55,11 @@
     text = text.replace(/\\\(([\s\S]+?)\\\)/g, function (_, m) { return keep("\\(" + m + "\\)"); });
     // 2. code inline `...`
     text = text.replace(/`([^`]+?)`/g, function (_, m) { return keep("<code>" + esc(m) + "</code>"); });
+    // 2b. glossaire [[terme|définition]] -> terme avec bulle d'aide au survol/focus
+    text = text.replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, function (_, term, def) {
+      return keep('<span class="gloss" tabindex="0" data-def="' + escAttr(def.trim()) + '">' +
+        esc(term.trim()) + '<span class="gloss-pop">' + esc(def.trim()) + "</span></span>");
+    });
     // 3. images ![alt](src)
     text = text.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, function (_, alt, src, title) {
       return keep('<img src="' + escAttr(src) + '" alt="' + escAttr(alt) + '"' +
@@ -76,6 +81,10 @@
     text = text.replace(/(^|[^*])\*([^*\s][^*]*?)\*/g, "$1<em>$2</em>");
     text = text.replace(/(^|[^_\w])_([^_\s][^_]*?)_(?![\w])/g, "$1<em>$2</em>");
     text = text.replace(/~~([^~]+?)~~/g, "<del>$1</del>");
+
+    // cartes à trous ==texte masqué== (cliquer pour révéler)
+    text = text.replace(/==([^=\n]+?)==/g,
+      '<span class="cloze" tabindex="0" role="button" aria-label="Cliquer pour révéler">$1</span>');
 
     // restaure les segments protégés
     text = text.replace(new RegExp(NULc + "(\\d+)" + NULm, "g"), function (_, i) { return store[+i]; });

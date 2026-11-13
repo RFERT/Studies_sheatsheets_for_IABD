@@ -102,6 +102,10 @@ Texte **gras**, *italique*, `code`, [lien](https://…), listes, tableaux.
 - `::: culture` → encart « Culture & histoire » (histoire, grands noms, liens externes),
   **à l'écart** du cours fonctionnel. À inclure quand c'est cohérent.
 - Maths : LaTeX `\( inline \)` et `\[ bloc \]` (MathJax).
+- **Carte à trous** (révision active) : `==texte masqué==` → s'affiche caché, se révèle au clic.
+  Ex. `La commande est ==git commit==.`
+- **Glossaire** (définition au survol) : `[[terme|définition courte]]` → le terme reçoit une bulle d'aide.
+  Ex. `[[HEAD|dernier commit de la branche courante]]`. (Ces deux syntaxes marchent aussi dans les antisèches.)
 
 ## Conventions de qualité (cohérence avec les cours existants)
 

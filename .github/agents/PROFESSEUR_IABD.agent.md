@@ -75,6 +75,7 @@ Le livrable principal est donc le **SITE ENRICHI** (fichiers `.md` + manifeste),
    - `::: exo Titre` ... `?? Voir la solution` ... → exercice a solution repliable.
    - `::: culture Titre` → encart « Culture & histoire » (histoire, grands noms, liens externes).
    - Maths LaTeX : `\( inline \)` et `\[ bloc \]` (MathJax).
+   - **Carte à trous** : `==texte masqué==` (se révèle au clic). **Glossaire** : `[[terme|définition]]` (bulle au survol).
    - Code : blocs ` ```python ... ``` ` (langage adapte).
 4. **Manifeste** : ajoute/complete l'entree dans `matieres/cours.js` (`window.COURS.subjects`) :
    `code` unique, `name`, `emoji`, `color`, `desc`, `tags`, et la liste ordonnee des `modules`

@@ -21,6 +21,9 @@ Un `##` crée une **section** (et une entrée de sommaire automatique). `###` et
 On écrit du texte normal avec **gras**, *italique*, `code en ligne`, ~~barré~~ et des
 [liens](https://exemple.com). Les liens externes s'ouvrent dans un nouvel onglet automatiquement.
 
+Deux aides à la révision : une **carte à trous** ==se révèle au clic== (écris `==texte==`),
+et un terme de **glossaire** affiche sa définition au survol : [[overfitting|le modèle colle trop au jeu d'entraînement et généralise mal]] (écris `[[terme|définition]]`).
+
 - Liste à puces
 - Deuxième élément
   - Sous-élément (indenter de 2 espaces)

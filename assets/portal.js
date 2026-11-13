@@ -789,11 +789,73 @@ function renderExams() {
   }));
 }
 
+/* ---------- Mode « révision du jour » ---------- */
+function doneMapFor(code) {
+  try { return JSON.parse(localStorage.getItem("cours-" + code.toLowerCase() + "-done")) || {}; } catch (e) { return {}; }
+}
+function nextUnfinishedModule(subject) {
+  if (!window.COURS || !Array.isArray(window.COURS.subjects)) return null;
+  const c = window.COURS.subjects.find((x) => (x.code || "").toLowerCase() === (subject.code || "").toLowerCase());
+  if (!c || !Array.isArray(c.modules)) return null;
+  const done = doneMapFor(c.code);
+  return c.modules.find((m) => !done[m.id]) || null;
+}
+function flashcardsDue() {
+  let st; try { st = JSON.parse(localStorage.getItem("esgi-flashcards")) || {}; } catch (e) { st = {}; }
+  const today = Math.floor(Date.now() / 86400000);
+  let n = 0;
+  Object.keys(st).forEach((k) => { if ((st[k] && st[k].due || 0) <= today) n++; });
+  return n;
+}
+function renderDailyReview() {
+  const host = document.getElementById("daily");
+  const sec = document.getElementById("daily-section");
+  if (!host) return;
+  const items = [];
+
+  // 1. Prochain partiel à venir
+  const nextExam = getExams().slice().sort((a, b) => a.date.localeCompare(b.date)).find((e) => daysUntil(e.date) >= 0);
+  if (nextExam) {
+    const n = daysUntil(nextExam.date);
+    items.push(`<div class="daily-item${n <= 3 ? " urgent" : ""}"><span class="di-ic">⏰</span>
+      <span class="di-txt"><b>${escapeHtml(nextExam.name)}</b><span>${n === 0 ? "c'est aujourd'hui !" : "dans " + n + " jour" + (n > 1 ? "s" : "")}</span></span></div>`);
+  }
+
+  // 2. Reprendre le dernier module consulté
+  try {
+    const last = JSON.parse(localStorage.getItem("cmd-last-module"));
+    if (last && last.url && last.title)
+      items.push(`<a class="daily-item" href="${last.url}"><span class="di-ic">▶️</span>
+        <span class="di-txt"><b>Reprendre</b><span>${escapeHtml(last.title)}</span></span><span class="di-go">→</span></a>`);
+  } catch (e) {}
+
+  // 3. Prochains modules non terminés (2 matières les moins avancées)
+  SUBJECTS.filter((s) => s.progress).map((s) => ({ s, pr: readProgress(s) }))
+    .filter((x) => x.pr.done < x.pr.total)
+    .sort((a, b) => a.pr.pct - b.pr.pct).slice(0, 2)
+    .forEach(({ s, pr }) => {
+      const nm = nextUnfinishedModule(s);
+      const url = nm ? ("cours.html?c=" + encodeURIComponent(s.code) + "&m=" + encodeURIComponent(nm.id)) : s.href;
+      const label = nm ? nm.title : "Continuer";
+      items.push(`<a class="daily-item" href="${url}"><span class="di-ic">${s.emoji}</span>
+        <span class="di-txt"><b>${escapeHtml(s.name)}</b><span>${escapeHtml(label)} · ${pr.done}/${pr.total} ${pr.unit}</span></span><span class="di-go">→</span></a>`);
+    });
+
+  // 4. Flashcards du jour
+  const due = flashcardsDue();
+  items.push(`<a class="daily-item" href="flashcards.html"><span class="di-ic">🗂️</span>
+    <span class="di-txt"><b>Flashcards</b><span>${due > 0 ? (due + " carte" + (due > 1 ? "s" : "") + " planifiée" + (due > 1 ? "s" : "") + " à revoir") : "Révise tes cartes du jour"}</span></span><span class="di-go">→</span></a>`);
+
+  if (sec) sec.hidden = false;
+  host.innerHTML = `<div class="daily-box">${items.join("")}</div>`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   mergeManifestCourses();
   setFavicon("🎓");
   initTheme();
   updateStreak();
+  renderDailyReview();
   renderDashboard();
   renderExams();
   renderSubjects();
