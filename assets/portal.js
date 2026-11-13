@@ -79,19 +79,6 @@ const SUBJECTS = [
     meta: "8 modules · 2 checkpoints · 66 quiz · examen final"
   },
   {
-    code: "PHARMA",
-    name: "Préparateur en pharmacie",
-    emoji: "💊",
-    color: "#2fb37a",
-    status: "ready",
-    featured: true,
-    href: "matieres/pharmacie/index.html",
-    desc: "DEUST Préparateur / Technicien en pharmacie, réparti sur 2 ans : chimie, anatomie, physiologie, galénique, législation, pharmacologie, pathologie, toxicologie, diagnostic. Cours interactifs avec quiz et exercices corrigés.",
-    tags: ["Galénique", "Pharmacologie", "Législation"],
-    meta: "2 années · 9 modules · 40+ quiz",
-    progress: { key: "pharma-done-modules", type: "doneMap", total: 9, unit: "modules" }
-  },
-  {
     code: "PRO",
     name: "Compétences pro",
     emoji: "💼",
