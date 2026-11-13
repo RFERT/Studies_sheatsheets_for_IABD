@@ -7,6 +7,9 @@ Vérifie, pour empêcher les régressions :
   2. Liens de pages .html cités dans assets/nav.js et assets/portal.js.
   3. Manifeste matieres/cours.js : chaque module `file` existe.
   4. Fichiers JSON bien formés (manifest.webmanifest, assets/search-index.json).
+  5. Portail Pharmacie (matieres/pharmacie/) : une antisèche md/aide-<id>.md et une page par module
+     de assets/data.js, pages citées dans nav.js/portal.js, manifest JSON, chaque fichier présent dans
+     CORE de son sw.js (et inversement), et aucune dépendance au portail IABD (autonomie).
 
 Sort en code 1 si au moins une erreur est trouvée.
 Usage :  python ci/validate_site.py
@@ -97,12 +100,101 @@ for rel in ("manifest.webmanifest", "assets/search-index.json"):
     except Exception as e:
         errors.append(f"JSON invalide ({rel}) : {e}")
 
+# 5) Portail Pharmacie (matieres/pharmacie/) : autonome, avec son propre service worker.
+#    Les liens des pages .html (étape 1) sont déjà couverts ; on vérifie ici le reste.
+PH = ROOT / "matieres" / "pharmacie"
+PH_REL = PH.relative_to(ROOT).as_posix()
+ph_checked = {"aide": 0, "pages_js": 0, "precache": 0, "autonomie": 0}
+
+
+def ph_text(f):
+    return f.read_text(encoding="utf-8", errors="replace")
+
+
+if PH.is_dir():
+    # 5a) Une antisèche md/aide-<id>.md par module déclaré dans assets/data.js
+    data_js = PH / "assets" / "data.js"
+    ph_ids = re.findall(r"""\bid\s*:\s*["']([a-z0-9_\-]+)["']""", ph_text(data_js)) if data_js.exists() else []
+    if not ph_ids:
+        errors.append(f"Pharmacie : aucun module trouvé dans {PH_REL}/assets/data.js")
+    for mid in ph_ids:
+        ph_checked["aide"] += 1
+        if not (PH / "md" / f"aide-{mid}.md").exists():
+            errors.append(f"Pharmacie : antisèche manquante {PH_REL}/md/aide-{mid}.md")
+        if not (PH / "modules" / f"{mid}.html").exists():
+            errors.append(f"Pharmacie : page de module manquante {PH_REL}/modules/{mid}.html")
+
+    # 5b) Pages .html citées comme littéraux dans nav.js / portal.js (relatives à la racine du portail)
+    for jsname in ("assets/nav.js", "assets/portal.js"):
+        jsf = PH / jsname
+        if not jsf.exists():
+            errors.append(f"Pharmacie : script manquant {PH_REL}/{jsname}")
+            continue
+        for rel in sorted(set(LIT.findall(ph_text(jsf)))):
+            ph_checked["pages_js"] += 1
+            if not (PH / rel).exists():
+                errors.append(f"Lien JS : {PH_REL}/{jsname} -> page absente « {rel} »")
+
+    # 5c) JSON bien formé
+    wm = PH / "manifest.webmanifest"
+    if wm.exists():
+        try:
+            json.loads(wm.read_text(encoding="utf-8"))
+            checked["json"] += 1
+        except Exception as e:
+            errors.append(f"JSON invalide ({PH_REL}/manifest.webmanifest) : {e}")
+    else:
+        errors.append(f"Fichier JSON manquant : {PH_REL}/manifest.webmanifest")
+
+    # 5d) Chaque fichier du portail doit figurer dans CORE de sw.js (sinon absent hors-ligne),
+    #     et chaque entrée de CORE doit exister. md/ : seules les entrées listées sont vérifiées.
+    sw = PH / "sw.js"
+    if not sw.exists():
+        errors.append(f"Pharmacie : service worker manquant {PH_REL}/sw.js")
+    else:
+        sw_text = ph_text(sw)
+        core = set(re.findall(r"""["'](\./[^"']*)["'](?!\s*\+)""", sw_text))
+        mods = re.search(r"""\bMODULES\s*=\s*\[([^\]]*)\]""", sw_text)
+        mod_ids = re.findall(r"""["']([^"']+)["']""", mods.group(1)) if mods else []
+        # Motif « "./dossier/" + m + ".ext" » appliqué à chaque entrée de MODULES
+        for pre, suf in re.findall(r"""["'](\./[^"']*)["']\s*\+\s*\w+\s*\+\s*["']([^"']*)["']""", sw_text):
+            for val in mod_ids:
+                core.add(pre + val + suf)
+        core_norm = {c[2:] if c != "./" else "index.html" for c in core}
+        core_norm = {c if c else "index.html" for c in core_norm}
+        for c in sorted(core_norm):
+            ph_checked["precache"] += 1
+            if not (PH / c).exists():
+                errors.append(f"Pharmacie : sw.js CORE référence un fichier absent « {c} »")
+        exempt = {"sw.js", "README.md"}
+        for f in sorted(PH.rglob("*")):
+            if not f.is_file():
+                continue
+            rel = f.relative_to(PH).as_posix()
+            if rel in exempt or rel.startswith("md/") or any(p.startswith(".") for p in f.relative_to(PH).parts):
+                continue
+            if rel not in core_norm:
+                errors.append(f"Pharmacie : « {rel} » absent de CORE dans {PH_REL}/sw.js (introuvable hors-ligne)")
+
+    # 5e) Autonomie : aucun renvoi vers le portail IABD (fichiers de code et pages)
+    # Le sélecteur de portail peut renvoyer vers l'accueil IABD (simple lien, pas une dépendance)
+    AUTONOMY = re.compile(r"""\.\./\.\./(?!index\.html)|matieres/cours\.js|["'](?:esgi|cmd|pds|rust)[-_][\w\-]+["']""")
+    for f in sorted(PH.rglob("*")):
+        if f.is_file() and f.suffix in (".html", ".js", ".css", ".webmanifest"):
+            for m in AUTONOMY.finditer(ph_text(f)):
+                ph_checked["autonomie"] += 1
+                errors.append(f"Pharmacie : {f.relative_to(ROOT).as_posix()} dépend du portail IABD (« {m.group(0)} »)")
+else:
+    errors.append(f"Dossier introuvable : {PH_REL}")
+
 # Rapport
 print("Validation du site :")
 print(f"  - liens HTML verifies    : {checked['html_links']}")
 print(f"  - liens JS verifies      : {checked['js_links']}")
 print(f"  - modules de cours (.md) : {checked['md_files']}")
 print(f"  - fichiers JSON          : {checked['json']}")
+print(f"  - pharmacie : {ph_checked['aide']} modules/antiseches, {ph_checked['pages_js']} pages JS, "
+      f"{ph_checked['precache']} entrees sw.js CORE")
 
 if errors:
     print(f"\n[ECHEC] {len(errors)} probleme(s) detecte(s) :")

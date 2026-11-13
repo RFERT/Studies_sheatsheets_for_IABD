@@ -32,6 +32,8 @@ matieres/
                          (rust-cursus.html = ancienne version, archivée)
   python/                Python & Data Science (6 modules, fiches, aide-mémoire)
   git/                   Exemple de cours « industrialisé » (Markdown pur)
+  pharmacie/             Portail Pharmacie (DEUST Préparateur) : 100 % autonome, PWA et stockage `pharma-*`
+                         propres — voir matieres/pharmacie/README.md
 ```
 
 ## ✨ Fonctionnalités
@@ -51,6 +53,9 @@ matieres/
   moteur de cours unifié (même UI que les autres matières). L'ancienne appli `rust-cursus.html` est archivée.
 - **Export PDF** des cours de maths (bouton 🖨️ ou impression du navigateur).
 - **Thème clair/sombre** et design **responsive** mobile.
+- **Portail Pharmacie** ([`matieres/pharmacie/`](matieres/pharmacie/README.md)) : second portail **autonome**
+  (DEUST Préparateur en pharmacie) avec les mêmes fonctionnalités (flashcards, examen blanc, antisèches,
+  glossaire, suivi, PWA…), son propre `sw.js`/manifeste et ses clés `pharma-*`. Ouvrir `matieres/pharmacie/index.html`.
 
 ## ➕ Ajouter une matière
 

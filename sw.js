@@ -3,7 +3,7 @@
    Stratégie : cache-first avec mise en cache à la volée.
    Ne fonctionne qu'en https:// ou localhost (pas en file://).
    ========================================================= */
-const CACHE = "esgi-cours-v22";
+const CACHE = "esgi-cours-v23";
 const CORE = [
   "./",
   "./index.html",
@@ -66,7 +66,7 @@ function precacheCourses() {
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((k) => k.indexOf("esgi-cours-") === 0 && k !== CACHE).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });

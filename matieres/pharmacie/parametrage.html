@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>À configurer — Préparateur en pharmacie DEUST</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    .pg { max-width: 860px; margin: 0 auto; padding: 8px 20px 40px; }
+    .pg-hero { text-align: center; padding: 28px 20px 10px; }
+    .pg-hero h1 { font-size: clamp(24px, 6vw, 38px); margin: 6px 0 10px; background: linear-gradient(120deg, var(--text), var(--primary) 60%, var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .pg-hero p { color: var(--text-soft); max-width: 640px; margin: 0 auto; font-size: 16.5px; }
+    .eyebrow { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+    .setup-progress { display: flex; align-items: center; gap: 12px; margin: 14px 0 22px; flex-wrap: wrap; }
+    .setup-progress .pbar { flex: 1 1 140px; height: 10px; border-radius: 999px; background: var(--bg-elev); overflow: hidden; border: 1px solid var(--border); }
+    .setup-progress .pfill { height: 100%; width: 0; background: var(--primary); transition: width .25s ease; }
+    .setup-progress .ptxt { font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .task { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin: 0 0 16px; transition: border-color .15s ease; min-width: 0; }
+    .task.done { border-color: var(--primary); }
+    .task-head { display: flex; align-items: flex-start; gap: 12px; }
+    .task-head h2 { margin: 0; font-size: 18px; flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border: 0; padding: 0; }
+    .task .chk { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg-elev); cursor: pointer; font-size: 18px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; color: var(--primary); padding: 0; }
+    .task.done .chk { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: 1px solid; }
+    .b-req { color: var(--danger); border-color: var(--danger); background: color-mix(in srgb, var(--danger) 14%, transparent); }
+    .b-opt { color: var(--accent-2); border-color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 14%, transparent); }
+    .b-info { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    .task p, .task li { font-size: 15px; }
+    .task .why { margin: 10px 0 6px; }
+    .task ol, .task ul { margin: 8px 0; padding-left: 22px; }
+    .task li { margin: 6px 0; }
+    .task kbd, .task code { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; font-size: .92em; }
+    .task .deep { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+    .ctrl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+    .ctrl .btn, .reset { min-height: 44px; padding: 8px 14px; }
+    .ctrl input, .ctrl select { min-height: 44px; font: inherit; font-size: 16px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-elev); color: var(--text); min-width: 0; }
+    .ctrl input[type=text] { flex: 1 1 180px; }
+    .ctrl select, .ctrl input[type=date], .ctrl input[type=time] { flex: 1 1 130px; }
+    .chip { cursor: pointer; border: 1px solid var(--border); background: var(--bg-elev); color: var(--text); min-height: 44px; padding: 8px 16px; border-radius: 10px; font: inherit; font-size: 14px; }
+    .chip.on { background: var(--primary); color: #fff; border-color: transparent; font-weight: 700; }
+    .sw { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; padding: 0; }
+    .sw.on { border-color: var(--text); }
+    .reset { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; }
+    .btn.danger { border-color: var(--danger); color: var(--danger); }
+    .rows { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+    .row { display: flex; align-items: center; gap: 10px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; min-width: 0; }
+    .row .main { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 14.5px; }
+    .row .main small { display: block; color: var(--muted); }
+    .row .cd { flex: 0 0 auto; font-weight: 800; font-size: 13px; padding: 3px 9px; border-radius: 999px; background: var(--bg-card); border: 1px solid var(--border); color: var(--accent); }
+    .row .cd.soon { color: var(--accent-2); border-color: var(--accent-2); }
+    .row .cd.past { color: var(--muted); }
+    .row .del { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-card); color: var(--muted); cursor: pointer; font-size: 15px; }
+    .row .del:hover { border-color: var(--danger); color: var(--danger); }
+    .status { font-size: 14px; padding: 10px 12px; border-radius: 10px; background: var(--bg-elev); border: 1px solid var(--border); color: var(--text-soft); margin: 10px 0; overflow-wrap: anywhere; }
+    .status b { color: var(--text); }
+    .msg { font-size: 13.5px; min-height: 1.2em; color: var(--success); }
+    .msg.err { color: var(--danger); }
+    [data-theme="light"] .msg { color: #0d7a50; }
+    .empty { color: var(--muted); font-size: 14px; margin: 8px 0; }
+    .pg-foot { text-align: center; color: var(--muted); font-size: 14px; padding: 20px 16px 36px; border-top: 1px solid var(--border); }
+    @media (max-width: 560px) { .pg { padding: 4px 14px 30px; } .task { padding: 16px; } .task-head h2 { font-size: 17px; } }
+    @media print { .task .chk, .ctrl, .reset { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <a class="btn" href="index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <main class="pg">
+    <div class="pg-hero">
+      <span class="eyebrow">Réglages</span>
+      <h1>À configurer ⚙️</h1>
+      <p>Les réglages à faire <b>une fois</b> sur ton appareil pour profiter du portail à fond : installation, apparence, objectifs, dates d'examens, sauvegarde. Tout reste <b>sur ton appareil</b>, rien n'est envoyé à un serveur.</p>
+    </div>
+
+    <div class="setup-progress">
+      <div class="pbar"><div class="pfill" id="setup-fill"></div></div>
+      <span class="ptxt" id="setup-txt">0 / 0 configuré</span>
+      <button class="reset" id="setup-reset" title="Décocher tout">↺ Réinitialiser</button>
+    </div>
+
+    <section class="task" data-task="install">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h2>📲 Installer l'application <span class="badge b-req">recommandé</span></h2>
+      </div>
+      <p class="why"><b>Pourquoi&nbsp;:</b> une icône sur l'écran d'accueil, un affichage plein écran et l'accès <b>hors-ligne</b> (métro, amphi sans réseau).</p>
+      <ul>
+        <li><b>Android (Chrome)</b> : menu ⋮ → « Installer l'application » (ou « Ajouter à l'écran d'accueil »).</li>
+        <li><b>iPhone / iPad (Safari)</b> : bouton Partager <kbd>⬆︎</kbd> → « Sur l'écran d'accueil ». Safari obligatoire (pas Chrome).</li>
+        <li><b>Ordinateur (Chrome / Edge)</b> : icône « Installer » dans la barre d'adresse.</li>
+      </ul>
+      <div class="ctrl"><button class="btn primary" id="install-btn" hidden>📲 Installer maintenant</button></div>
+      <div class="status" id="install-status">Vérification…</div>
+      <p class="deep">L'installation exige une adresse <code>https://</code> (ou <code>localhost</code>), pas un fichier ouvert en <code>file://</code>.</p>
+    </section>
+
+    <section class="task" data-task="appearance">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h2>🎨 Thème &amp; couleur d'accent <span class="badge b-opt">confort</span></h2>
+      </div>
+      <p class="why">« Auto » suit le réglage clair/sombre de ton téléphone. Raccourci : touche <kbd>t</kbd> pour basculer sur ordinateur.</p>
+      <div class="ctrl" id="theme-modes" role="group" aria-label="Thème">
+        <button class="chip" data-mode="auto">🌓 Auto</button>
+        <button class="chip" data-mode="light">☀️ Clair</button>
+        <button class="chip" data-mode="dark">🌙 Sombre</button>
+      </div>
+      <div class="ctrl" id="accent-row" role="group" aria-label="Couleur d'accent"></div>
+    </section>
+
+    <section class="task" data-task="goal">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h2>🎯 Objectif hebdomadaire <span class="badge b-opt">motivation</span></h2>
+      </div>
+      <p class="why">Combien de jours par semaine veux-tu réviser&nbsp;? L'accueil affiche ta progression vers cet objectif.</p>
+      <div class="ctrl">
+        <label for="goal-select">Jours de révision par semaine</label>
+        <select id="goal-select"></select>
+      </div>
+      <div class="status" id="goal-status"></div>
+    </section>
+
+    <section class="task" data-task="exams">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h2>📅 Dates d'examens <span class="badge b-opt">compte à rebours J‑X</span></h2>
+      </div>
+      <p class="why">Ajoute tes partiels : l'accueil affiche le compte à rebours.</p>
+      <div class="rows" id="exam-list"></div>
+      <form class="ctrl" id="exam-form">
+        <input type="text" id="exam-name" placeholder="Intitulé (ex. Partiel Galénique)" maxlength="80" required aria-label="Intitulé de l'examen" />
+        <input type="date" id="exam-date" required aria-label="Date de l'examen" />
+        <button type="submit" class="btn primary">+ Ajouter</button>
+      </form>
+    </section>
+
+    <section class="task" data-task="timetable">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h2>🗓️ Emploi du temps <span class="badge b-opt">révision ciblée</span></h2>
+      </div>
+      <p class="why">Indique tes cours de la semaine : le portail te propose de réviser les modules de ta <b>prochaine journée de cours</b>.</p>
+      <div class="rows" id="tt-list"></div>
+      <form class="ctrl" id="tt-form">
+        <select id="tt-day" aria-label="Jour de la semaine"></select>
+        <select id="tt-mod" aria-label="Module"></select>
+        <input type="time" id="tt-time" aria-label="Heure (facultatif)" />
+        <button type="submit" class="btn primary">+ Ajouter</button>
+      </form>
+    </section>
+
+    <section class="task" data-task="backup">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h2>💾 Sauvegarder ma progression <span class="badge b-req">important</span></h2>
+      </div>
+      <p class="why"><b>Pourquoi&nbsp;:</b> ta progression (modules terminés, flashcards, notes, favoris, séries…) est stockée dans le navigateur. Si tu vides les données du site ou changes de téléphone, tout disparaît : exporte-la de temps en temps et importe-la sur le nouvel appareil.</p>
+      <div class="ctrl">
+        <button class="btn primary" id="export-btn">⬇ Exporter (.json)</button>
+        <button class="btn" id="import-btn">⬆ Importer…</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden />
+      </div>
+      <div class="msg" id="backup-msg" role="status"></div>
+      <p class="deep">Seules les données du portail Pharmacie (clés <code>pharma-…</code>) sont exportées et importées.</p>
+    </section>
+
+    <section class="task" data-task="offline">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h2>📴 Vérifier le mode hors-ligne <span class="badge b-info">vérification</span></h2>
+      </div>
+      <p class="why">Ouvre le portail une fois <b>avec du réseau</b> : les pages sont alors mises en cache pour une lecture hors-ligne. Vérifie ici l'état.</p>
+      <div class="status" id="sw-status">Vérification…</div>
+      <div class="ctrl">
+        <button class="btn" id="sw-refresh">🔄 Vérifier / mettre à jour</button>
+        <button class="btn" id="sw-reset">🧹 Réparer le cache</button>
+      </div>
+      <div class="msg" id="sw-msg" role="status"></div>
+    </section>
+
+    <section class="task" data-task="reset">
+      <div class="task-head">
+        <button class="chk" aria-label="Marquer comme configuré">✓</button>
+        <h2>🗑️ Effacer mes données <span class="badge b-info">zone sensible</span></h2>
+      </div>
+      <p class="why">Supprime toute la progression du portail Pharmacie sur cet appareil (modules terminés, flashcards, notes, favoris, réglages…). <b>Irréversible</b> : pense à exporter avant.</p>
+      <div class="ctrl"><button class="btn danger" id="wipe-btn">🗑️ Tout effacer</button></div>
+    </section>
+  </main>
+
+  <div class="pg-foot">À configurer · <a href="index.html">retour au portail</a> · <a href="ameliorations.html">feuille de route</a> · 💚</div>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/nav.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      var P = window.PHARMA || {};
+      var K = P.K || {};
+      var KEY = {
+        theme: K.theme || "pharma-theme", accent: K.accent || "pharma-accent", goal: K.goal || "pharma-weekly-goal",
+        exams: K.exams || "pharma-exams", tt: K.timetable || "pharma-timetable", setup: K.setup || "pharma-setup-done"
+      };
+      var PREFIX = "pharma-";
+      var $ = function (id) { return document.getElementById(id); };
+      function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+      function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+      function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+      function readJSON(k, def) { try { var v = JSON.parse(get(k)); return v === null || v === undefined ? def : v; } catch (e) { return def; } }
+      function writeJSON(k, v) { set(k, JSON.stringify(v)); }
+      function dstr(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+      function pharmaKeys() {
+        var out = [];
+        try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf(PREFIX) === 0) out.push(k); } } catch (e) {}
+        return out;
+      }
+
+      /* ----- Check-list ----- */
+      var tasks = Array.prototype.slice.call(document.querySelectorAll(".task"));
+      function loadSetup() { var v = readJSON(KEY.setup, {}); return v && typeof v === "object" && !Array.isArray(v) ? v : {}; }
+      function refreshSetup() {
+        var m = loadSetup(), done = 0;
+        tasks.forEach(function (s) {
+          var on = !!m[s.getAttribute("data-task")];
+          s.classList.toggle("done", on);
+          var chk = s.querySelector(".chk");
+          chk.textContent = on ? "✓" : "";
+          chk.setAttribute("aria-pressed", on ? "true" : "false");
+          if (on) done++;
+        });
+        $("setup-fill").style.width = (tasks.length ? Math.round(done / tasks.length * 100) : 0) + "%";
+        $("setup-txt").textContent = done + " / " + tasks.length + " configuré" + (done > 1 ? "s" : "");
+      }
+      tasks.forEach(function (s) {
+        s.querySelector(".chk").addEventListener("click", function () {
+          var m = loadSetup(), id = s.getAttribute("data-task");
+          m[id] = !m[id];
+          writeJSON(KEY.setup, m);
+          refreshSetup();
+        });
+      });
+      $("setup-reset").addEventListener("click", function () {
+        if (confirm("Décocher toutes les tâches ?")) { writeJSON(KEY.setup, {}); refreshSetup(); }
+      });
+
+      /* ----- Installation ----- */
+      var deferred = null;
+      var standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+      var ua = navigator.userAgent || "";
+      var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      function installStatus() {
+        var el = $("install-status");
+        if (standalone) el.innerHTML = "✅ <b>Application installée</b> : tu es en mode plein écran.";
+        else if (location.protocol === "file:") el.innerHTML = "ℹ️ Ouvert en <code>file://</code> : l'installation et le hors-ligne exigent une adresse <b>https</b> ou <b>localhost</b>.";
+        else if (isIOS) el.innerHTML = "📱 Sur iPhone : <b>Partager</b> → <b>Sur l'écran d'accueil</b> (dans Safari).";
+        else if (deferred) el.innerHTML = "👍 Ton navigateur propose l'installation : bouton ci-dessus.";
+        else el.innerHTML = "ℹ️ Utilise le menu de ton navigateur (« Installer l'application »). Si l'option n'apparaît pas, l'appli est peut-être déjà installée.";
+      }
+      window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault(); deferred = e;
+        $("install-btn").hidden = false; installStatus();
+      });
+      window.addEventListener("appinstalled", function () { standalone = true; $("install-btn").hidden = true; installStatus(); });
+      $("install-btn").addEventListener("click", function () {
+        if (!deferred) return;
+        deferred.prompt();
+        if (deferred.userChoice) deferred.userChoice.then(function () { deferred = null; $("install-btn").hidden = true; installStatus(); });
+      });
+      installStatus();
+
+      /* ----- Thème & accent ----- */
+      var ACCENTS = [["", "Défaut"], ["#6c8cff", "Bleu"], ["#27e0b0", "Émeraude"], ["#ff8a3d", "Orange"], ["#b98cff", "Violet"], ["#ff6b9d", "Rose"], ["#38bdf8", "Cyan"]];
+      function curMode() { var v = get(KEY.theme); return v === "light" || v === "dark" ? v : "auto"; }
+      function curAccent() { return get(KEY.accent) || ""; }
+      function paintAppearance() {
+        var m = curMode(), a = curAccent();
+        Array.prototype.forEach.call(document.querySelectorAll("#theme-modes .chip"), function (c) { c.classList.toggle("on", c.getAttribute("data-mode") === m); });
+        Array.prototype.forEach.call(document.querySelectorAll("#accent-row .sw"), function (c) { c.classList.toggle("on", (c.getAttribute("data-acc") || "") === a); });
+      }
+      $("accent-row").innerHTML = ACCENTS.map(function (a) {
+        var bg = a[0] || "linear-gradient(135deg,#2fb37a,#38b6c4)";
+        return '<button type="button" class="sw" data-acc="' + a[0] + '" title="' + a[1] + '" aria-label="Accent ' + a[1] + '" style="background:' + bg + '"></button>';
+      }).join("");
+      $("theme-modes").addEventListener("click", function (e) {
+        var c = e.target.closest ? e.target.closest(".chip") : null;
+        if (!c) return;
+        var mode = c.getAttribute("data-mode");
+        if (P.nav && P.nav.applyTheme) P.nav.applyTheme(mode);
+        else { set(KEY.theme, mode); if (mode !== "auto") document.documentElement.setAttribute("data-theme", mode); }
+        paintAppearance();
+      });
+      $("accent-row").addEventListener("click", function (e) {
+        var c = e.target.closest ? e.target.closest(".sw") : null;
+        if (!c) return;
+        var v = c.getAttribute("data-acc") || "";
+        if (P.nav && P.nav.applyAccent) P.nav.applyAccent(v); else set(KEY.accent, v);
+        paintAppearance();
+      });
+      document.addEventListener("pharma:theme", paintAppearance);
+      paintAppearance();
+
+      /* ----- Objectif hebdomadaire ----- */
+      var goalSel = $("goal-select");
+      goalSel.innerHTML = [1, 2, 3, 4, 5, 6, 7].map(function (n) { return '<option value="' + n + '">' + n + " jour" + (n > 1 ? "s" : "") + " / semaine</option>"; }).join("");
+      function getGoal() { var g = parseInt(get(KEY.goal), 10); return g >= 1 && g <= 7 ? g : 4; }
+      function activeThisWeek() {
+        var days = readJSON(K.days || "pharma-active-days", {});
+        var today = new Date(); today.setHours(0, 0, 0, 0);
+        var monday = new Date(today); monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+        var n = 0;
+        for (var i = 0; i < 7; i++) { var d = new Date(monday); d.setDate(monday.getDate() + i); if (days && days[dstr(d)]) n++; }
+        return n;
+      }
+      function paintGoal() {
+        goalSel.value = String(getGoal());
+        $("goal-status").innerHTML = "Cette semaine : <b>" + activeThisWeek() + " / " + getGoal() + "</b> jours de révision.";
+      }
+      goalSel.addEventListener("change", function () { set(KEY.goal, goalSel.value); paintGoal(); });
+      paintGoal();
+
+      /* ----- Examens ----- */
+      function daysUntil(s) { var t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((new Date(s + "T00:00:00") - t) / 86400000); }
+      function fmtDate(s) { try { return new Date(s + "T00:00:00").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", year: "numeric" }); } catch (e) { return s; } }
+      function getExams() { var v = readJSON(KEY.exams, []); return Array.isArray(v) ? v : []; }
+      function renderExams() {
+        var list = getExams().filter(function (x) { return x && x.date; }).sort(function (a, b) { return a.date.localeCompare(b.date); });
+        $("exam-list").innerHTML = list.length ? list.map(function (ex) {
+          var n = daysUntil(ex.date), badge = n < 0 ? "passé" : n === 0 ? "aujourd'hui" : "J‑" + n;
+          var cls = n < 0 ? "past" : n <= 7 ? "soon" : "";
+          return '<div class="row"><span class="cd ' + cls + '">' + badge + '</span><span class="main"><b>' + esc(ex.name) + "</b><small>" + esc(fmtDate(ex.date)) +
+            '</small></span><button class="del" data-id="' + esc(ex.id) + '" aria-label="Supprimer" title="Supprimer">✕</button></div>';
+        }).join("") : '<p class="empty">Aucun examen pour l\'instant.</p>';
+      }
+      $("exam-date").min = dstr(new Date());
+      $("exam-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = $("exam-name").value.trim(), date = $("exam-date").value;
+        if (!name || !date) return;
+        var l = getExams();
+        l.push({ id: "e" + Date.now().toString(36), name: name, date: date });
+        writeJSON(KEY.exams, l);
+        $("exam-name").value = ""; $("exam-date").value = "";
+        renderExams();
+      });
+      $("exam-list").addEventListener("click", function (e) {
+        var b = e.target.closest ? e.target.closest(".del") : null;
+        if (!b) return;
+        writeJSON(KEY.exams, getExams().filter(function (x) { return x.id !== b.getAttribute("data-id"); }));
+        renderExams();
+      });
+      renderExams();
+
+      /* ----- Emploi du temps ----- */
+      var DOW = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+      var mods = Array.isArray(P.modules) ? P.modules : [];
+      $("tt-day").innerHTML = [1, 2, 3, 4, 5, 6, 0].map(function (d) { return '<option value="' + d + '">' + DOW[d] + "</option>"; }).join("");
+      $("tt-mod").innerHTML = mods.map(function (m) { return '<option value="' + esc(m.id) + '">' + esc(m.emoji + " " + m.title) + "</option>"; }).join("");
+      function getTT() { var v = readJSON(KEY.tt, []); return Array.isArray(v) ? v : []; }
+      function renderTT() {
+        var list = getTT().filter(function (x) { return x && DOW[x.day]; }).sort(function (a, b) {
+          return ((a.day === 0 ? 7 : a.day) - (b.day === 0 ? 7 : b.day)) || (a.time || "").localeCompare(b.time || "");
+        });
+        $("tt-list").innerHTML = list.length ? list.map(function (e) {
+          return '<div class="row"><span class="cd">' + DOW[e.day].slice(0, 3) + '.</span><span class="main"><b>' + esc(e.label) + "</b>" +
+            (e.time ? "<small>" + esc(e.time) + "</small>" : "") + '</span><button class="del" data-id="' + esc(e.id) + '" aria-label="Supprimer" title="Supprimer">✕</button></div>';
+        }).join("") : '<p class="empty">Aucun cours enregistré pour l\'instant.</p>';
+      }
+      $("tt-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var m = P.byId ? P.byId($("tt-mod").value) : null;
+        if (!m) return;
+        var l = getTT();
+        l.push({ id: "t" + Date.now().toString(36), day: +$("tt-day").value, label: m.title, code: m.id, time: $("tt-time").value || "" });
+        writeJSON(KEY.tt, l);
+        renderTT();
+      });
+      $("tt-list").addEventListener("click", function (e) {
+        var b = e.target.closest ? e.target.closest(".del") : null;
+        if (!b) return;
+        writeJSON(KEY.tt, getTT().filter(function (x) { return x.id !== b.getAttribute("data-id"); }));
+        renderTT();
+      });
+      renderTT();
+
+      /* ----- Export / import ----- */
+      function say(el, txt, err) { el.textContent = txt; el.classList.toggle("err", !!err); }
+      $("export-btn").addEventListener("click", function () {
+        var store = {};
+        pharmaKeys().forEach(function (k) { store[k] = get(k); });
+        var data = { _app: "pharma-portal", _v: 1, _date: new Date().toISOString(), store: store };
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "progression-pharmacie-" + dstr(new Date()) + ".json";
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+        say($("backup-msg"), "✅ " + Object.keys(store).length + " entrées exportées.");
+      });
+      $("import-btn").addEventListener("click", function () { $("import-file").click(); });
+      $("import-file").addEventListener("change", function () {
+        var f = this.files && this.files[0];
+        var input = this;
+        if (!f) return;
+        var r = new FileReader();
+        r.onload = function () {
+          var data = null;
+          try { data = JSON.parse(r.result); } catch (e) {}
+          if (!data || data._app !== "pharma-portal" || !data.store || typeof data.store !== "object") {
+            say($("backup-msg"), "Fichier invalide : choisis un export « progression-pharmacie-….json » de ce site.", true);
+            input.value = "";
+            return;
+          }
+          if (!confirm("Importer cette progression ? Elle remplacera les données actuelles du portail Pharmacie sur cet appareil.")) { input.value = ""; return; }
+          var n = 0;
+          Object.keys(data.store).forEach(function (k) {
+            if (k.indexOf(PREFIX) === 0 && typeof data.store[k] === "string") { set(k, data.store[k]); n++; }
+          });
+          say($("backup-msg"), "✅ " + n + " entrées importées. Rechargement…");
+          setTimeout(function () { location.reload(); }, 700);
+        };
+        r.readAsText(f);
+      });
+
+      /* ----- Hors-ligne / service worker ----- */
+      function swStatus() {
+        var el = $("sw-status");
+        if (!("serviceWorker" in navigator)) { el.innerHTML = "⚠️ Ce navigateur ne gère pas le mode hors-ligne."; return; }
+        if (!(location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+          el.innerHTML = "ℹ️ Mode hors-ligne indisponible en <code>" + esc(location.protocol) + "//</code> : ouvre le site en <b>https</b> (GitHub Pages) ou sur <b>localhost</b>."; return;
+        }
+        var base = P.root || new URL("./", location.href).href;
+        navigator.serviceWorker.getRegistration(base).then(function (reg) {
+          if (!reg || !(reg.active || reg.waiting || reg.installing)) { el.innerHTML = "⏳ Service worker pas encore actif : recharge la page une fois."; return; }
+          var line = "✅ <b>Hors-ligne actif</b>";
+          if (!window.caches) { el.innerHTML = line; return; }
+          return caches.keys().then(function (keys) {
+            keys = keys.filter(function (k) { return k.indexOf("pharma-") === 0; });
+            return Promise.all(keys.map(function (k) { return caches.open(k).then(function (c) { return c.keys(); }).then(function (r) { return k + " : " + r.length + " fichiers"; }); }));
+          }).then(function (infos) { el.innerHTML = line + (infos.length ? " — " + esc(infos.join(", ")) : " — cache en cours de remplissage"); });
+        }).catch(function () { el.innerHTML = "⚠️ Impossible de lire l'état du service worker."; });
+      }
+      $("sw-refresh").addEventListener("click", function () {
+        var base = P.root || new URL("./", location.href).href;
+        if (!("serviceWorker" in navigator)) return;
+        navigator.serviceWorker.getRegistration(base).then(function (reg) { return reg ? reg.update() : null; })
+          .then(function () { say($("sw-msg"), "✅ Vérification terminée."); swStatus(); })
+          .catch(function () { say($("sw-msg"), "Impossible de vérifier les mises à jour (hors-ligne ?).", true); });
+      });
+      $("sw-reset").addEventListener("click", function () {
+        if (!confirm("Supprimer le cache hors-ligne et le réinstaller ? (ta progression n'est pas touchée)")) return;
+        var base = P.root || new URL("./", location.href).href;
+        var p = window.caches ? caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return k.indexOf("pharma-") === 0; }).map(function (k) { return caches.delete(k); })); }) : Promise.resolve();
+        p.then(function () { return "serviceWorker" in navigator ? navigator.serviceWorker.getRegistration(base) : null; })
+          .then(function (reg) { return reg ? reg.unregister() : null; })
+          .then(function () { say($("sw-msg"), "✅ Cache supprimé. Rechargement…"); setTimeout(function () { location.reload(); }, 700); })
+          .catch(function () { say($("sw-msg"), "Échec de la réparation.", true); });
+      });
+      swStatus();
+
+      /* ----- Effacer ----- */
+      $("wipe-btn").addEventListener("click", function () {
+        if (!confirm("Effacer TOUTE la progression du portail Pharmacie sur cet appareil ? C'est irréversible.")) return;
+        if (!confirm("Dernière confirmation : tout effacer (modules terminés, flashcards, notes, favoris, réglages) ?")) return;
+        pharmaKeys().forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+        location.reload();
+      });
+
+      refreshSetup();
+    })();
+  </script>
+</body>
+</html>

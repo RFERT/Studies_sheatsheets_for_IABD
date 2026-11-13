@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>Flashcards — Répétition espacée · Préparateur en pharmacie</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/flash.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero" style="padding-bottom:4px">
+    <span class="eyebrow">Mémorisation durable</span>
+    <h1>Flashcards 🗂️</h1>
+    <p>La <strong>répétition espacée</strong> : chaque carte revient au bon moment, juste avant que tu l'oublies. Réponds honnêtement, l'algorithme (SM‑2) planifie la suite. Ta progression est privée (stockée sur cet appareil).</p>
+  </div>
+
+  <div class="callout warn fc-warn no-print">
+    <span class="label">⚠️ Support de révision</span>
+    Ces cartes sont un outil pédagogique : elles ne remplacent pas les référentiels officiels (ANSM, Légifrance, Vidal) ni l'enseignement encadré.
+  </div>
+
+  <div class="fc-wrap">
+    <div class="fc-modes no-print" role="group" aria-label="Mode de révision">
+      <button class="fc-mode on" id="fc-mode-rev" type="button" aria-pressed="true">🔁 Révision (SM‑2)</button>
+      <button class="fc-mode" id="fc-mode-study" type="button" aria-pressed="false">📖 Étude libre</button>
+    </div>
+    <div class="fc-decks" id="fc-decks" role="group" aria-label="Paquets"></div>
+    <div class="fc-stats" id="fc-stats"></div>
+    <div id="fc-stage" aria-live="polite"></div>
+
+    <div class="fc-actions no-print">
+      <button class="btn" id="fc-shuffle" type="button">🔀 Mélanger</button>
+      <button class="btn" id="fc-export" type="button">⬇️ Export Anki (.csv)</button>
+      <button class="btn danger" id="fc-reset" type="button">↺ Réinitialiser la planification</button>
+    </div>
+
+    <details class="fc-custom no-print" id="fc-custom">
+      <summary>✏️ Mes cartes perso</summary>
+      <div class="fc-custom-body">
+        <form class="fc-form" id="fc-form" autocomplete="off">
+          <label>Paquet
+            <select id="fc-new-deck"></select>
+          </label>
+          <label>Question
+            <textarea id="fc-new-q" maxlength="400" placeholder="Ex. Antidote du paracétamol ?"></textarea>
+          </label>
+          <label>Réponse
+            <textarea id="fc-new-a" maxlength="600" placeholder="Ex. N-acétylcystéine"></textarea>
+          </label>
+          <button class="btn primary" type="submit">➕ Ajouter la carte</button>
+          <div class="fc-msg" id="fc-msg" role="status"></div>
+        </form>
+        <ul class="fc-mine" id="fc-mine"></ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="footer">Flashcards · répétition espacée (SM‑2 simplifié) · bonne révision 💚</div>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/nav.js"></script>
+  <script src="assets/cards-data.js"></script>
+  <script>
+  (function () {
+    var P = window.PHARMA, K = P.K;
+    var CUSTOM_KEY = "pharma-flashcards-custom";
+    var DAY = 86400000;
+    var CARDS = [];
+    var DECKS = {};
+    P.modules.forEach(function (m) {
+      DECKS[m.id] = { name: m.emoji + " " + m.title.split(" ")[0], title: m.title };
+    });
+
+    function today() { return Math.floor(Date.now() / DAY); }
+    function loadState() { var s = P.read(K.cards, {}); return (s && typeof s === "object" && !Array.isArray(s)) ? s : {}; }
+    function saveState() { P.write(K.cards, state); }
+    function loadCards() {
+      CARDS = (window.PHARMA_CARDS || []).concat(P.customCards ? P.customCards() : []).filter(function (c) { return DECKS[c.deck]; });
+    }
+    function textHtml(c, s) { return c.custom ? P.esc(s).replace(/\n/g, "<br>") : s; }
+
+    var state = loadState();
+    function isNew(c) { return !state[c.id]; }
+    function cardState(c) { return state[c.id] || { ease: 2.3, int: 0, due: 0 }; }
+    function isDue(c) { return !isNew(c) && cardState(c).due <= today(); }
+
+    /* SM-2 simplifié (mêmes règles que le portail de révision) : renvoie le nouvel état sans l'enregistrer */
+    function next(c, rating) {
+      var o = cardState(c), t = today();
+      var s = { ease: o.ease, int: o.int, due: o.due };
+      if (rating === "again") { s.ease = Math.max(1.5, s.ease - 0.2); s.int = 0; s.due = t; }
+      else if (rating === "hard") { s.ease = Math.max(1.5, s.ease - 0.15); s.int = Math.max(1, Math.round(s.int * 1.2) || 1); s.due = t + s.int; }
+      else if (rating === "good") { s.int = s.int < 1 ? 1 : Math.round(s.int * s.ease); s.due = t + s.int; }
+      else { s.ease = s.ease + 0.15; s.int = s.int < 1 ? 2 : Math.round(s.int * s.ease * 1.3); s.due = t + s.int; }
+      return s;
+    }
+    function label(s) {
+      var d = s.due - today();
+      if (d <= 0) return "bientôt";
+      if (d < 30) return d + " j";
+      return Math.round(d / 30) + " mois";
+    }
+
+    var deck = "all", mode = "rev", queue = [], cur = null, flipped = false, total = 0;
+    var list = [], idx = 0;
+
+    function inDeck(c) { return deck === "all" || c.deck === deck; }
+    function shuffle(a) {
+      for (var k = a.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = a[k]; a[k] = a[j]; a[j] = t; }
+      return a;
+    }
+    function countDeck(d) {
+      var due = 0, nw = 0;
+      CARDS.forEach(function (c) { if (d !== "all" && c.deck !== d) return; if (isNew(c)) nw++; else if (isDue(c)) due++; });
+      return { due: due, nw: nw, all: due + nw };
+    }
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    function renderDecks() {
+      var h = '<button type="button" class="fc-deck' + (deck === "all" ? " on" : "") + '" data-d="all">Toutes <span class="n">' + countDeck("all").all + '</span></button>';
+      Object.keys(DECKS).forEach(function (k) {
+        h += '<button type="button" class="fc-deck' + (deck === k ? " on" : "") + '" data-d="' + k + '" title="' + P.esc(DECKS[k].title) + '">' + P.esc(DECKS[k].name) + ' <span class="n">' + countDeck(k).all + '</span></button>';
+      });
+      var host = $("fc-decks");
+      host.innerHTML = h;
+      Array.prototype.forEach.call(host.querySelectorAll(".fc-deck"), function (b) {
+        b.addEventListener("click", function () { deck = b.getAttribute("data-d"); start(); });
+      });
+    }
+    function renderStats() {
+      var n = countDeck(deck), mastered = 0, tot = 0;
+      CARDS.forEach(function (c) { if (!inDeck(c)) return; tot++; if (!isNew(c) && cardState(c).int >= 4) mastered++; });
+      $("fc-stats").innerHTML =
+        '<div class="fc-stat"><div class="v">' + n.due + '</div><div class="l">à revoir</div></div>' +
+        '<div class="fc-stat"><div class="v">' + n.nw + '</div><div class="l">nouvelles</div></div>' +
+        '<div class="fc-stat"><div class="v">' + mastered + '</div><div class="l">maîtrisées</div></div>' +
+        '<div class="fc-stat"><div class="v">' + tot + '</div><div class="l">cartes</div></div>';
+    }
+    function deckLabel() { return deck === "all" ? "tous les paquets" : DECKS[deck].name; }
+
+    function render() {
+      renderDecks(); renderStats();
+      var stage = $("fc-stage");
+      if (cur === null) {
+        var empty = mode === "study" ? "Aucune carte dans « " + deckLabel() + " »." : "Aucune carte à réviser pour « " + deckLabel() + " ». Reviens demain, change de paquet ou passe en étude libre.";
+        stage.innerHTML = '<div class="fc-done"><h2>' + (mode === "study" ? "📭 Paquet vide" : "🎉 Tout est à jour !") + '</h2><p>' + P.esc(empty) + '</p></div>';
+        return;
+      }
+      var c = cur, remaining = mode === "study" ? list.length - idx : queue.length + 1;
+      var pos = mode === "study" ? idx + 1 : Math.min(total, Math.max(1, total - remaining + 1));
+      var pct = total ? Math.round(((mode === "study" ? idx : total - remaining) / total) * 100) : 0;
+      var prog = '<div class="fc-prog"><span>Carte ' + pos + ' / ' + total + '</span><span class="bar"><i style="width:' + Math.max(0, Math.min(100, pct)) + '%"></i></span></div>';
+      var tag = '<span class="fc-tag">' + P.esc(DECKS[c.deck].name) + (c.custom ? " · perso" : "") + (mode === "rev" && isNew(c) ? " · nouvelle" : "") + '</span>';
+      if (!flipped) {
+        stage.innerHTML = prog + '<button type="button" class="fc-card" id="fc-card" aria-label="Retourner la carte">' + tag +
+          '<div class="fc-side">Question</div><div class="fc-q">' + textHtml(c, c.q) + '</div></button>' +
+          '<div class="fc-hint">Touche la carte' + '<span class="fc-kbd"> ou appuie sur <b>Espace</b></span> pour révéler</div>';
+        $("fc-card").addEventListener("click", flip);
+      } else {
+        var back = '<div class="fc-card back">' + tag + '<div class="fc-side">Réponse</div><div class="fc-a">' + textHtml(c, c.a) + '</div></div>';
+        if (mode === "rev") {
+          stage.innerHTML = prog + back +
+            '<div class="fc-rate">' +
+            '<button type="button" class="again" data-r="again">😵 À revoir<small>' + label(next(c, "again")) + '</small></button>' +
+            '<button type="button" class="hard" data-r="hard">😓 Difficile<small>' + label(next(c, "hard")) + '</small></button>' +
+            '<button type="button" class="good" data-r="good">🙂 Bien<small>' + label(next(c, "good")) + '</small></button>' +
+            '<button type="button" class="easy" data-r="easy">😎 Facile<small>' + label(next(c, "easy")) + '</small></button>' +
+            '</div><div class="fc-hint fc-kbd">Raccourcis : <b>1</b> À revoir · <b>2</b> Difficile · <b>3</b> Bien · <b>4</b> Facile</div>';
+          Array.prototype.forEach.call(stage.querySelectorAll(".fc-rate button"), function (b) {
+            b.addEventListener("click", function () { rate(b.getAttribute("data-r")); });
+          });
+        } else {
+          stage.innerHTML = prog + back + studyNav();
+          bindStudyNav();
+        }
+      }
+      if (!flipped && mode === "study") { stage.insertAdjacentHTML("beforeend", studyNav()); bindStudyNav(); }
+    }
+    function studyNav() {
+      return '<div class="fc-nav"><button type="button" class="btn" data-s="prev">← Précédente</button><button type="button" class="btn" data-s="next">Suivante →</button></div>';
+    }
+    function bindStudyNav() {
+      Array.prototype.forEach.call($("fc-stage").querySelectorAll(".fc-nav .btn"), function (b) {
+        b.addEventListener("click", function () { step(b.getAttribute("data-s") === "next" ? 1 : -1); });
+      });
+    }
+
+    function flip() { if (cur === null || flipped) return; flipped = true; render(); }
+    function rate(r) {
+      if (cur === null || !flipped) return;
+      state[cur.id] = next(cur, r); saveState();
+      if (r === "again") queue.push(cur);
+      advance();
+    }
+    function advance() { flipped = false; cur = queue.length ? queue.shift() : null; render(); }
+    function step(d) {
+      if (!list.length) return;
+      idx = (idx + d + list.length) % list.length;
+      cur = list[idx]; flipped = false; render();
+    }
+
+    function start() {
+      flipped = false;
+      if (mode === "study") {
+        list = shuffle(CARDS.filter(inDeck)); idx = 0; total = list.length; cur = list.length ? list[0] : null;
+      } else {
+        var due = shuffle(CARDS.filter(function (c) { return inDeck(c) && isDue(c); }));
+        var nw = shuffle(CARDS.filter(function (c) { return inDeck(c) && isNew(c); }));
+        queue = due.concat(nw); total = queue.length; cur = queue.length ? queue.shift() : null;
+      }
+      render();
+    }
+
+    function setMode(m) {
+      mode = m;
+      $("fc-mode-rev").classList.toggle("on", m === "rev");
+      $("fc-mode-study").classList.toggle("on", m === "study");
+      $("fc-mode-rev").setAttribute("aria-pressed", m === "rev");
+      $("fc-mode-study").setAttribute("aria-pressed", m === "study");
+      start();
+    }
+    $("fc-mode-rev").addEventListener("click", function () { setMode("rev"); });
+    $("fc-mode-study").addEventListener("click", function () { setMode("study"); });
+    $("fc-shuffle").addEventListener("click", start);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      var t = e.target, tn = t && t.tagName;
+      if (tn === "INPUT" || tn === "TEXTAREA" || tn === "SELECT" || (t && t.isContentEditable)) return;
+      if (cur === null) return;
+      if (!flipped && (e.key === " " || e.key === "Enter")) { e.preventDefault(); flip(); return; }
+      if (mode === "rev" && flipped) {
+        var map = { "1": "again", "2": "hard", "3": "good", "4": "easy" };
+        if (map[e.key]) { e.preventDefault(); rate(map[e.key]); }
+      } else if (mode === "study") {
+        if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+        else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+        else if (flipped && (e.key === " " || e.key === "Enter") && tn !== "BUTTON") { e.preventDefault(); step(1); }
+      }
+    });
+
+    $("fc-reset").addEventListener("click", function () {
+      if (confirm("Réinitialiser la planification de toutes les flashcards ?")) { state = {}; saveState(); start(); }
+    });
+
+    /* Export Anki : CSV (Front;Back;Tags) importable dans Anki */
+    function csvCell(s) { return '"' + String(s).replace(/"/g, '""') + '"'; }
+    $("fc-export").addEventListener("click", function () {
+      var rows = CARDS.map(function (c) {
+        var tag = ("Pharmacie_" + DECKS[c.deck].title).replace(/[^\wÀ-ÿ]+/g, "_").replace(/_+$/, "");
+        return [csvCell(textHtml(c, c.q)), csvCell(textHtml(c, c.a)), csvCell(tag)].join(";");
+      });
+      var header = "#separator:;\n#html:true\n#columns:Front;Back;Tags\n#tags column:3\n";
+      var blob = new Blob([header + rows.join("\n") + "\n"], { type: "text/csv;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "flashcards-pharmacie-anki.csv";
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+    });
+
+    /* Cartes perso */
+    function saveCustom(l) { P.write(CUSTOM_KEY, l); }
+    function renderMine() {
+      var l = P.customCards ? P.customCards() : [];
+      $("fc-mine").innerHTML = l.length ? l.map(function (c) {
+        return '<li><span class="t"><b>' + P.esc(DECKS[c.deck] ? DECKS[c.deck].name : c.deck) + '</b>' + P.esc(c.q) + '</span>' +
+          '<button type="button" data-del="' + P.esc(c.id) + '" aria-label="Supprimer cette carte" title="Supprimer">🗑</button></li>';
+      }).join("") : '<li><span class="t">Aucune carte perso pour l\'instant.</span></li>';
+      Array.prototype.forEach.call($("fc-mine").querySelectorAll("[data-del]"), function (b) {
+        b.addEventListener("click", function () {
+          if (!confirm("Supprimer cette carte ?")) return;
+          var id = b.getAttribute("data-del");
+          saveCustom(P.customCards().filter(function (c) { return c.id !== id; }));
+          delete state[id]; saveState();
+          refresh();
+        });
+      });
+    }
+    function refresh() { loadCards(); renderMine(); start(); }
+
+    var sel = $("fc-new-deck");
+    sel.innerHTML = Object.keys(DECKS).map(function (k) { return '<option value="' + k + '">' + P.esc(DECKS[k].name) + '</option>'; }).join("");
+    $("fc-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var q = $("fc-new-q").value.trim(), a = $("fc-new-a").value.trim(), msg = $("fc-msg");
+      if (!q || !a) { msg.textContent = "Remplis la question et la réponse."; return; }
+      var l = P.customCards();
+      l.push({ id: "perso-" + Date.now().toString(36), deck: sel.value, q: q, a: a, custom: true });
+      saveCustom(l);
+      $("fc-new-q").value = ""; $("fc-new-a").value = "";
+      msg.textContent = "Carte ajoutée ✔";
+      refresh();
+    });
+
+    loadCards();
+    if (!CARDS.length) { $("fc-stage").innerHTML = '<div class="fc-done"><h2>Banque de cartes introuvable</h2></div>'; }
+    var qs = window.location.search.match(/[?&]d=([a-z]+)/);
+    if (qs && DECKS[qs[1]]) deck = qs[1];
+    if (/[?&]mode=etude/.test(window.location.search)) { mode = "study"; $("fc-mode-rev").classList.remove("on"); $("fc-mode-study").classList.add("on"); $("fc-mode-rev").setAttribute("aria-pressed", "false"); $("fc-mode-study").setAttribute("aria-pressed", "true"); }
+    renderMine();
+    start();
+  })();
+  </script>
+</body>
+</html>

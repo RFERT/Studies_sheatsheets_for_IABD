@@ -1,0 +1,26 @@
+{
+  "name": "Préparateur en pharmacie — DEUST",
+  "short_name": "Pharmacie",
+  "description": "Cours, quiz, flashcards, antisèches et examen blanc pour le DEUST Préparateur/Technicien en pharmacie. Révision hors-ligne.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f1221",
+  "theme_color": "#0f1221",
+  "lang": "fr",
+  "categories": ["education", "medical"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Flashcards", "short_name": "Flashcards", "url": "flashcards.html", "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Examen blanc", "short_name": "Examen", "url": "examen.html", "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Antisèches", "short_name": "Antisèches", "url": "aide.html", "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ]
+}

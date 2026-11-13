@@ -1,0 +1,132 @@
+/* =========================================================
+   flash.css — Page Flashcards du portail Pharmacie
+   Se charge après style.css (variables : --bg-card, --border, --primary…)
+   ========================================================= */
+
+.fc-wrap { max-width: 760px; margin: 0 auto; padding: 10px 20px 60px;
+  padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+.fc-wrap > * { min-width: 0; }
+
+.fc-warn { max-width: 760px; margin: 14px auto 0; font-size: 14px; }
+
+/* Sélecteur de mode */
+.fc-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 6px 0 12px; }
+.fc-mode { cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-soft);
+  border-radius: 12px; padding: 10px 12px; min-height: 46px; font: inherit; font-size: 15px; font-weight: 600; }
+.fc-mode.on { border-color: var(--primary); color: var(--text);
+  background: color-mix(in srgb, var(--primary) 16%, transparent); }
+
+/* Paquets */
+.fc-decks { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
+.fc-deck { cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-soft);
+  border-radius: 999px; padding: 8px 14px; min-height: 42px; font: inherit; font-size: 14px; max-width: 100%;
+  display: inline-flex; align-items: center; gap: 6px; }
+.fc-deck.on { border-color: var(--primary); color: var(--text);
+  background: color-mix(in srgb, var(--primary) 16%, transparent); }
+.fc-deck .n { color: var(--muted); font-size: 12px; font-weight: 700; }
+.fc-deck.on .n { color: var(--primary); }
+
+/* Compteurs */
+.fc-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.fc-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 6px; text-align: center; min-width: 0; }
+.fc-stat .v { font-size: 24px; font-weight: 800; color: var(--primary); line-height: 1.2; }
+.fc-stat .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* Progression de la séance */
+.fc-prog { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+.fc-prog .bar { flex: 1; height: 6px; border-radius: 999px; background: var(--bg-elev); overflow: hidden; }
+.fc-prog .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+
+/* Carte */
+.fc-card { position: relative; width: 100%; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 18px; box-shadow: var(--shadow); min-height: 240px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 38px 24px 26px; cursor: pointer;
+  font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; overflow-wrap: anywhere; }
+.fc-card:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+.fc-card.back { border-color: var(--accent); }
+.fc-tag { position: absolute; top: 12px; left: 16px; right: 16px; text-align: left; font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fc-side { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
+.fc-q { font-size: 21px; font-weight: 700; color: var(--text); line-height: 1.4; }
+.fc-a { font-size: 18px; color: var(--text-soft); line-height: 1.55; }
+.fc-a strong { color: var(--text); }
+.fc-a code, .fc-q code { background: var(--bg-elev); padding: 2px 7px; border-radius: 6px;
+  font-family: "Cascadia Code", Consolas, monospace; font-size: 0.86em; color: var(--primary); }
+[data-theme="light"] .fc-a code, [data-theme="light"] .fc-q code { color: #0b6b47; }
+.fc-hint { text-align: center; color: var(--muted); font-size: 13px; margin: 12px 0; }
+
+/* Notation */
+.fc-rate { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.fc-rate button { cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text);
+  border-radius: 12px; padding: 12px 6px; min-height: 64px; font: inherit; font-size: 14px;
+  display: flex; flex-direction: column; gap: 3px; align-items: center; justify-content: center; }
+.fc-rate button small { font-size: 11px; color: var(--muted); }
+.fc-rate button.again { border-color: color-mix(in srgb, var(--danger) 55%, var(--border)); }
+.fc-rate button.hard  { border-color: color-mix(in srgb, var(--accent-2) 60%, var(--border)); }
+.fc-rate button.good  { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); }
+.fc-rate button.easy  { border-color: color-mix(in srgb, var(--primary) 60%, var(--border)); }
+.fc-rate button:hover, .fc-rate button:focus-visible { background: var(--bg-elev); }
+
+/* Navigation en mode étude */
+.fc-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.fc-nav .btn { min-height: 48px; justify-content: center; font-size: 15px; }
+
+/* Fin de séance */
+.fc-done { text-align: center; background: var(--bg-card); border: 1px solid var(--accent);
+  border-radius: 16px; padding: 34px 20px; box-shadow: var(--shadow); }
+.fc-done h2 { margin: 0 0 8px; }
+.fc-done p { color: var(--muted); margin: 6px 0; }
+
+/* Barre d'actions */
+.fc-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+.fc-actions .btn { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+.fc-actions .btn.danger { border-color: color-mix(in srgb, var(--danger) 55%, var(--border)); }
+
+/* Cartes perso */
+.fc-custom { margin-top: 22px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+.fc-custom > summary { cursor: pointer; padding: 14px 16px; min-height: 48px; font-weight: 700; list-style: none;
+  display: flex; align-items: center; gap: 8px; }
+.fc-custom > summary::-webkit-details-marker { display: none; }
+.fc-custom > summary::after { content: "＋"; margin-left: auto; color: var(--primary); }
+.fc-custom[open] > summary::after { content: "－"; }
+.fc-custom-body { padding: 0 16px 16px; }
+.fc-form { display: grid; gap: 10px; }
+.fc-form label { font-size: 13px; color: var(--muted); display: grid; gap: 4px; }
+.fc-form select, .fc-form textarea { width: 100%; font: inherit; font-size: 16px; color: var(--text);
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.fc-form select { min-height: 44px; }
+.fc-form textarea { min-height: 76px; resize: vertical; }
+.fc-form select:focus, .fc-form textarea:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+.fc-form .btn.primary { min-height: 46px; justify-content: center; }
+.fc-msg { font-size: 13px; color: var(--primary); min-height: 18px; }
+.fc-mine { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+.fc-mine li { display: flex; align-items: center; gap: 10px; background: var(--bg-elev);
+  border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; min-width: 0; }
+.fc-mine .t { flex: 1; min-width: 0; font-size: 14px; color: var(--text-soft); overflow-wrap: anywhere; }
+.fc-mine .t b { display: block; color: var(--text); font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+.fc-mine button { flex: none; width: 42px; height: 42px; cursor: pointer; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--danger); border-radius: 10px; font-size: 16px; }
+
+@media (max-width: 560px) {
+  .fc-wrap { padding: 8px 14px 48px; }
+  .fc-stats { gap: 6px; }
+  .fc-stat { padding: 8px 2px; }
+  .fc-stat .v { font-size: 20px; }
+  .fc-stat .l { font-size: 9.5px; letter-spacing: 0; }
+  .fc-q { font-size: 19px; }
+  .fc-a { font-size: 17px; }
+  .fc-card { min-height: 220px; padding: 36px 16px 22px; }
+  .fc-rate { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fc-actions .btn { flex: 1 1 100%; }
+}
+
+@media (hover: none) {
+  .fc-kbd { display: none; }
+}
+
+@media print {
+  .fc-card { box-shadow: none; min-height: 0; }
+  .fc-rate, .fc-nav, .fc-hint { display: none; }
+}

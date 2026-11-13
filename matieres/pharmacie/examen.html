@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>Examen blanc &amp; quiz mélangés — DEUST Préparateur en pharmacie</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/examen.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <main class="wrap ex-wrap" id="ex-app">
+    <h1 class="ex-title">📝 Examen blanc &amp; quiz mélangés</h1>
+    <p class="ex-lead no-print">Mélange les questions de tes modules, passe-les comme à l'examen (chronomètre, correction à la fin) ou en entraînement, puis analyse tes points faibles.</p>
+
+    <div id="ex-loading" class="ex-panel" role="status" aria-live="polite">⏳ Chargement des questions…</div>
+    <div id="ex-error" class="ex-panel ex-error" hidden></div>
+    <section id="ex-config" class="ex-screen" hidden aria-label="Configuration de la session"></section>
+    <section id="ex-run" class="ex-screen" hidden aria-label="Session en cours"></section>
+    <section id="ex-result" class="ex-screen" hidden aria-label="Résultats"></section>
+    <div class="sr-only" id="ex-live" aria-live="polite" aria-atomic="true"></div>
+  </main>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/nav.js"></script>
+  <script src="assets/examen.js"></script>
+</body>
+</html>

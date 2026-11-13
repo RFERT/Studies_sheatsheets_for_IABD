@@ -6,10 +6,11 @@
   <meta name="theme-color" content="#0f1221" />
   <title>Portail Préparateur / Technicien en pharmacie — DEUST</title>
   <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/portal-extra.css" />
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie<small style="display:block;font-size:11px;color:var(--muted);font-weight:400">DEUST · portail de révision</small></div>
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
     <div class="spacer"></div>
     <div class="portal-switch" role="group" aria-label="Choisir le portail">
       <a class="ps-opt" href="../../index.html">🎓 IABD</a>
@@ -21,32 +22,61 @@
   <div class="hero">
     <span class="eyebrow">Portail de révision · DEUST</span>
     <h1>Préparateur / Technicien en pharmacie</h1>
-    <p>Un portail <strong>autonome</strong> et complet couvrant le programme du DEUST, réparti sur les <strong>2 années</strong>. Recherche globale, filtres par thème, suivi de progression et <strong>9 modules</strong> interactifs : cours clairs, tableaux, quiz à feedback immédiat et exercices corrigés.</p>
+    <p>Un portail <strong>autonome</strong> et complet couvrant le programme du DEUST, réparti sur les <strong>2 années</strong>. Recherche globale, flashcards, antisèches, glossaire, examen blanc, suivi de progression et <strong>9 modules</strong> interactifs : cours clairs, tableaux, quiz à feedback immédiat et exercices corrigés.</p>
     <div class="callout warn" style="margin-top:16px">
       <span class="label">⚠️ Avertissement</span>
       Support <strong>pédagogique</strong> destiné à la révision. Il ne remplace pas les référentiels officiels (ANSM, Légifrance, Vidal) ni l'enseignement encadré. Vérifie toujours la source officielle avant toute application professionnelle.
     </div>
   </div>
 
-  <div class="search-wrap">
+  <nav class="quick" aria-label="Accès rapide">
+    <a class="qtile" href="flashcards.html"><span class="qt-ic">🗂️</span><span class="qt-txt"><b>Flashcards</b><span id="qt-fc">Répétition espacée</span></span></a>
+    <a class="qtile" href="examen.html"><span class="qt-ic">⏱️</span><span class="qt-txt"><b>Examen blanc</b><span>Chronométré, avec bilan</span></span></a>
+    <a class="qtile" href="aide.html"><span class="qt-ic">⚡</span><span class="qt-txt"><b>Antisèches</b><span>Fiches imprimables</span></span></a>
+    <a class="qtile" href="glossaire.html"><span class="qt-ic">📖</span><span class="qt-txt"><b>Glossaire</b><span id="qt-gl">Termes &amp; définitions</span></span></a>
+  </nav>
+
+  <div class="search-wrap" id="recherche">
     <div class="search-box" role="search">
       <span class="search-ic">🔎</span>
-      <input id="search-input" type="search" autocomplete="off" spellcheck="false"
-        placeholder="Rechercher un module, une notion, une section…  ( / ou Ctrl K )"
-        aria-label="Rechercher dans le portail pharmacie" />
+      <input id="search-input" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
+        placeholder="Module, notion, terme, flashcard…  ( / ou Ctrl K )"
+        aria-label="Rechercher dans le portail pharmacie (raccourcis : barre oblique ou Ctrl+K)" />
+      <div class="search-kbds" tabindex="0" aria-label="Aide sur la recherche">
+        <kbd class="search-kbd">/</kbd>
+        <kbd class="search-kbd">Ctrl&nbsp;K</kbd>
+        <div class="search-tip" role="tooltip">
+          <b>Recherche globale</b>
+          <p>Trouve un module, une section, une notion, un terme du glossaire, une flashcard ou une antisèche. Sans accents, plusieurs mots possibles.</p>
+          <ul>
+            <li><kbd>/</kbd> ou <kbd>Ctrl K</kbd> — ouvrir la recherche</li>
+            <li><kbd>↑</kbd> <kbd>↓</kbd> — naviguer dans les résultats</li>
+            <li><kbd>Entrée</kbd> — ouvrir le résultat</li>
+            <li><kbd>Échap</kbd> — fermer</li>
+          </ul>
+        </div>
+      </div>
     </div>
     <div id="search-results" class="search-results" hidden></div>
   </div>
 
   <div id="stats" class="stats"><!-- rendu par portal.js --></div>
 
-  <div id="tagbar" class="tagbar"><!-- rendu par portal.js --></div>
-
   <div class="wrap">
 
-    <h2 style="max-width:var(--maxw);margin:30px auto 0;font-size:22px">📈 Ma progression</h2>
-    <p style="max-width:var(--maxw);margin:2px auto 0;color:var(--muted);font-size:14px">Suivi automatique et privé (stocké sur cet appareil). Il se met à jour dès que tu marques un module comme terminé.</p>
-    <div id="dash" class="dash"><!-- rendu par portal.js --></div>
+    <section class="psec" id="daily-section" hidden>
+      <h2>🎯 Ta révision du jour</h2>
+      <p class="psub">Une sélection guidée de ce qu'il te reste à faire aujourd'hui, selon tes partiels, ta progression et tes flashcards.</p>
+      <div id="daily"><!-- rendu par portal.js --></div>
+    </section>
+
+    <section class="psec" id="dashboard-section">
+      <h2>📈 Ma progression</h2>
+      <p class="psub">Suivi automatique et privé (stocké sur cet appareil). Il se met à jour dès que tu termines un module ou réponds à un quiz.</p>
+      <div id="dash"><!-- rendu par portal.js --></div>
+    </section>
+
+    <div id="tagbar" class="tagbar"><!-- rendu par portal.js --></div>
 
     <div class="yearhead" id="yh1">
       <h2 style="color:var(--primary)">📘 Année 1 — Sciences fondamentales &amp; bases du métier</h2>
@@ -60,16 +90,55 @@
     </div>
     <div class="grid" id="year2"><!-- rendu par portal.js --></div>
 
+    <section class="psec" id="insights-section" hidden>
+      <h2>📊 Mon bilan</h2>
+      <p class="psub">Un résumé de ta semaine et tes points faibles repérés automatiquement à partir de tes quiz.</p>
+      <div id="insights"><!-- rendu par portal.js --></div>
+    </section>
+
+    <section class="psec" id="exams-section" hidden>
+      <h2>🗓️ Mes examens</h2>
+      <p class="psub">Ajoute les dates de tes partiels : compte à rebours automatique (J‑X). Privé, stocké sur cet appareil.</p>
+      <div id="exams"><!-- rendu par portal.js --></div>
+    </section>
+
+    <section class="psec" id="timetable-section" hidden>
+      <h2>📅 Prochain jour de cours</h2>
+      <p class="psub">Enregistre ton emploi du temps (sur cet appareil) : à chaque visite, je te propose de réviser les modules de ta prochaine journée de cours.</p>
+      <div id="timetable"><!-- rendu par portal.js --></div>
+    </section>
+
     <div class="callout" style="margin-top:26px;border-color:var(--primary)">
       <span class="label" style="color:var(--primary)">💡 Comment utiliser ce portail</span>
       Suis l'ordre Année 1 → Année 2, ou cible une notion via la <strong>recherche</strong> et les <strong>filtres par thème</strong>. Dans chaque module : lis les encarts, fais les <strong>quiz</strong> au fil de l'eau, traite les <strong>exercices</strong> avant la solution, puis relis l'encart « À retenir » et clique sur <strong>« Marquer comme terminé »</strong> pour suivre ta progression.
+    </div>
+    <div class="callout" style="border-color:var(--accent)">
+      <span class="label" style="color:var(--accent)">🎯 Comment réviser efficacement</span>
+      Ancre l'essentiel avec les <a href="flashcards.html">flashcards</a> (répétition espacée), relis l'<a href="aide.html">antisèche</a> du module, vérifie le vocabulaire dans le <a href="glossaire.html">glossaire</a>, puis teste-toi avec l'<a href="examen.html">examen blanc</a>. Règle ton <strong>objectif hebdomadaire</strong> : la régularité compte plus que la durée.
+    </div>
+    <div class="callout" style="border-color:var(--accent-2)">
+      <span class="label" style="color:var(--accent-2)">⌨️ Raccourcis clavier</span>
+      <kbd class="kb">/</kbd> ou <kbd class="kb">Ctrl K</kbd> ouvrir la recherche · <kbd class="kb">↑</kbd> <kbd class="kb">↓</kbd> naviguer · <kbd class="kb">Entrée</kbd> ouvrir · <kbd class="kb">Échap</kbd> fermer.
     </div>
   </div>
 
   <div class="footer">
     Portail autonome — DEUST Préparateur / Technicien en pharmacie · bonne révision 💚
+    <div class="foot-links">
+      <a href="flashcards.html">🗂️ Flashcards</a>
+      <a href="aide.html">⚡ Antisèches</a>
+      <a href="glossaire.html">📖 Glossaire</a>
+      <a href="examen.html">⏱️ Examen blanc</a>
+      <a href="parametrage.html">⚙️ À configurer</a>
+      <a href="ameliorations.html">🗺️ Améliorations</a>
+    </div>
   </div>
 
+  <script src="assets/data.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/glossary-data.js"></script>
+  <script src="assets/cards-data.js"></script>
+  <script src="assets/nav.js"></script>
   <script src="assets/portal.js"></script>
 </body>
 </html>

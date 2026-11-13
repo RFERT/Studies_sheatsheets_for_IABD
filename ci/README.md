@@ -16,7 +16,11 @@ Sans dépendance (Python seul). Échoue (rouge) si :
 - un **lien interne** d'une page `.html` pointe vers un fichier/dossier inexistant ;
 - une page `.html` citée dans `assets/nav.js` / `assets/portal.js` n'existe pas ;
 - un module `file` du manifeste `matieres/cours.js` est introuvable ;
-- un JSON (`manifest.webmanifest`, `assets/search-index.json`) est mal formé.
+- un JSON (`manifest.webmanifest`, `assets/search-index.json`) est mal formé ;
+- **portail Pharmacie** (`matieres/pharmacie/`) : antisèche `md/aide-<id>.md` ou page `modules/<id>.html`
+  manquante pour un module de `assets/data.js`, page citée dans son `nav.js`/`portal.js` absente,
+  `manifest.webmanifest` invalide, fichier du portail **absent de `CORE` dans son `sw.js`** (ou entrée de
+  `CORE` qui n'existe pas), ou **dépendance au portail IABD** (`../../`, `matieres/cours.js`, clés `esgi-*`/`cmd-*`/…).
 
 Lancer en local avant de pousser :
 ```bash

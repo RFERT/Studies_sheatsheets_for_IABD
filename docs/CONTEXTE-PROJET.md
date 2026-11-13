@@ -19,9 +19,42 @@ utilisable sur PC et sur téléphone (Samsung S26 Ultra), hors-ligne, et publiab
 | Industrialisation | **Système de cours Markdown « zéro build »** : un `.md` + une ligne dans `matieres/cours.js` → page, portail, navbar et recherche auto (moteur `cours.html`/`course.js`/`markdown.js`). Exemple : matière **Git**. Modèle `matieres/_MODELE-de-cours.md`, guide `docs/CREER-UN-COURS.md` |
 | Miroirs Markdown | Les cours **maths** (`matieres/mathematiques/md/`) et **python** (`matieres/python/md/`) existent aussi en `.md` (générés depuis le HTML). **Non câblés au manifeste** : les pages HTML restent les versions live, les `.md` sont une source éditable / base de future migration |
 | Culture | encarts « Culture & histoire » dans les cours existants |
+| Portail Pharmacie | **2ᵉ portail autonome** (`matieres/pharmacie/`, DEUST Préparateur en pharmacie) : 9 modules HTML, parité fonctionnelle avec le portail IABD (flashcards SM‑2, examen blanc, antisèches, glossaire, suivi, PWA…), stockage `pharma-*`, `sw.js` et manifeste propres. Voir la section « Portail Pharmacie (autonome) » ci-dessous |
 
 Matières encore **à construire** : voir `SUBJECTS` dans `assets/portal.js` et la page `ameliorations.html`
 (compétences hors programme ESGI : Git, SQL, Docker, Spark, MLOps…).
+
+## 2 bis. Portail Pharmacie (autonome)
+Dossier `matieres/pharmacie/` (détail : [`matieres/pharmacie/README.md`](../matieres/pharmacie/README.md)).
+C'est un **site dans le site** : même esprit (statique, zéro build, mobile d'abord, hors-ligne) mais **100 % indépendant**
+du portail IABD — copie adaptée du code, jamais de dépendance.
+
+- **Architecture** : `assets/data.js` (modules, source unique) → `assets/common.js` (clés de stockage + utilitaires)
+  → `assets/nav.js` (navbar, thème, accent, Pomodoro, PWA…) → scripts de page. Pages : `index.html` (accueil),
+  `modules/<id>.html` ×9, `flashcards.html`, `aide.html` (`?m=<id>`) + `md/aide-<id>.md`, `glossaire.html`,
+  `examen.html`, `parametrage.html`, `ameliorations.html`. Design system propre : `assets/style.css` (+ un CSS par outil).
+- **Parité fonctionnelle avec IABD** : tableau de bord, streak, objectif hebdo, heatmap, favoris, reprise, révision du jour,
+  examens J‑X, emploi du temps, bilan/points faibles, notes par module, flashcards SM‑2 + cartes à trous + export Anki,
+  examen blanc chronométré, antisèches imprimables, glossaire interactif, lecture audio (TTS), partage lien + QR,
+  recherche + filtres, raccourcis clavier, thème clair/sombre/auto, couleur d'accent, export/import de progression,
+  PWA + iOS (iPhone 13), paramétrage, feuille de route + boîte à idées locale.
+- **Séparation du stockage** : toutes les clés du portail Pharmacie sont préfixées **`pharma-`** (liste et formats dans
+  le README du dossier). Aucune clé `esgi-*` / `cmd-*` / `pds-*` / `rust_*` n'est lue ni écrite : les deux portails
+  peuvent cohabiter sur la même origine GitHub Pages sans se polluer. Format du journal `pharma-activity` identique à
+  `esgi-activity`.
+- **PWA séparée** : `matieres/pharmacie/sw.js` (cache `pharma-vN`) et `manifest.webmanifest` propres, portée = le dossier.
+  Le `sw.js` racine IABD ne pré-cache pas les fichiers pharmacie.
+- **Pièges** :
+  - incrémenter `CACHE` dans `matieres/pharmacie/sw.js` à chaque fichier modifié/ajouté, et le lister dans `CORE` ;
+  - ne jamais référencer `../../assets/` ni `matieres/cours.js` depuis ce dossier (la CI échoue) ;
+  - un nouveau module = `data.js` + `modules/<id>.html` + `md/aide-<id>.md` + cartes + termes + `sw.js` (`MODULES`) ;
+  - ordre des scripts imposé (`data.js` → `common.js` → `nav.js` → …) ; le thème n'est géré que par `nav.js` ;
+  - pas d'index de recherche généré (`build-search-index.py` ne concerne que le portail IABD) : la recherche du
+    portail Pharmacie s'appuie sur les données embarquées (`data.js`, glossaire, antisèches) ;
+  - contenus de révision uniquement : vérifier les textes réglementaires (CSP, ANSM) avant de s'y fier.
+- **CI** : `ci/validate_site.py` contrôle liens, antisèches, manifeste, `CORE` de `sw.js` et autonomie du dossier.
+- **Backlog** : voir `matieres/pharmacie/ameliorations.html` (calculateur de doses/dilutions, base de médicaments,
+  interactions interactives, ordonnance à analyser, cas de comptoir, schémas anatomiques, module Dispensation…).
 
 ## 3. Séparation proposée du travail
 ### 🛠️ Discussion « SITE » (infrastructure)

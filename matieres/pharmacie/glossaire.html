@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>Glossaire — Préparateur en pharmacie</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    .gl-wrap { max-width: var(--maxw); margin: 0 auto; padding: 20px 16px calc(80px + env(safe-area-inset-bottom)); }
+    .gl-wrap h1 { margin: 4px 0 6px; font-size: clamp(24px, 6vw, 34px); }
+    .gl-intro { color: var(--text-soft); margin: 0 0 16px; }
+    .gl-tools { padding: 8px 0 10px; }
+    .gl-search { width: 100%; min-height: 46px; padding: 10px 14px; font-size: 16px; font-family: inherit; color: var(--text);
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; box-sizing: border-box; }
+    .gl-search:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+    .gl-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+    .gl-row .chip { min-height: 40px; display: inline-flex; align-items: center; font-family: inherit; background: var(--bg-card); color: var(--text-soft); }
+    .gl-az { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+    .gl-az button { min-width: 40px; min-height: 40px; padding: 0 6px; font: inherit; font-weight: 700; color: var(--text);
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; }
+    .gl-az button.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .gl-az button:disabled { opacity: .35; cursor: default; }
+    .gl-count { color: var(--muted); font-size: 14px; margin: 12px 0 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .gl-count .btn { min-height: 40px; }
+    .gl-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    @media (min-width: 760px) { .gl-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .gl-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; min-width: 0; }
+    .gl-item h2 { margin: 0 0 4px; font-size: 17px; overflow-wrap: anywhere; }
+    .gl-item .al { font-weight: 400; color: var(--muted); font-size: 13px; }
+    .gl-item p { margin: 0 0 8px; color: var(--text-soft); font-size: 15px; line-height: 1.5; }
+    .gl-item a { display: inline-flex; align-items: center; min-height: 36px; font-size: 13px; color: var(--accent); text-decoration: none; }
+    .gl-item a:hover { text-decoration: underline; }
+    .gl-item mark { background: color-mix(in srgb, var(--accent-2) 35%, transparent); color: inherit; border-radius: 3px; }
+    .gl-letter { grid-column: 1 / -1; margin: 10px 0 0; font-size: 20px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 2px; }
+    .gl-empty { padding: 24px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: 12px; }
+    .gl-quiz { background: var(--bg-card); border: 1px solid var(--primary); border-radius: 14px; padding: 16px; margin: 12px 0; }
+    .gl-quiz[hidden] { display: none; }
+    .gl-quiz .q { font-size: clamp(20px, 5.5vw, 26px); font-weight: 700; margin: 6px 0 12px; overflow-wrap: anywhere; }
+    .gl-quiz .a { color: var(--text-soft); min-height: 3em; line-height: 1.5; margin-bottom: 12px; }
+    .gl-quiz .meta { color: var(--muted); font-size: 13px; }
+    .gl-quiz .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .gl-quiz .btn { min-height: 44px; }
+    @media print { .gl-tools, .gl-quiz, .topbar, .gl-count .btn { display: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <main class="gl-wrap">
+    <h1>📚 Glossaire</h1>
+    <p class="gl-intro">Les termes clés du cours, avec une définition courte. Recherche, index A–Z, filtre par module et mode quiz.</p>
+
+    <section class="gl-quiz" id="gl-quiz" hidden aria-live="polite">
+      <div class="meta" id="gl-qmeta"></div>
+      <div class="q" id="gl-qterm"></div>
+      <div class="a" id="gl-qdef">Essaie de formuler la définition, puis révèle-la.</div>
+      <div class="acts">
+        <button class="btn primary" id="gl-reveal" type="button">👁️ Révéler</button>
+        <button class="btn" id="gl-next" type="button">🎲 Autre terme</button>
+        <button class="btn" id="gl-close" type="button">✖ Fermer</button>
+      </div>
+    </section>
+
+    <div class="gl-tools">
+      <input class="gl-search" id="gl-q" type="search" placeholder="Rechercher un terme (ex. demi-vie, AMM…)" autocomplete="off" aria-label="Rechercher dans le glossaire" />
+      <div class="gl-row" id="gl-mods" role="group" aria-label="Filtrer par module"></div>
+      <div class="gl-az" id="gl-az" role="group" aria-label="Index alphabétique"></div>
+    </div>
+
+    <div class="gl-count"><span id="gl-count"></span><button class="btn" id="gl-quizbtn" type="button">🎯 Mode quiz</button></div>
+    <div class="gl-list" id="gl-list"></div>
+  </main>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/nav.js"></script>
+  <script src="assets/glossary-data.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var P = window.PHARMA || {};
+    var RAW = window.PHARMA_GLOSSARY || [];
+    var MODS = P.modules || [];
+    var $ = function (id) { return document.getElementById(id); };
+    var esc = P.esc || function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+
+    function norm(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[-'’]/g, " ").toLowerCase(); }
+    function modInfo(id) { return P.byId ? P.byId(id) : null; }
+
+    var items = RAW.map(function (e) {
+      var al = e.a || [];
+      return { t: e.t, d: e.d, m: e.m, a: al, key: norm([e.t].concat(al).join(" ")), full: norm(e.t + " " + al.join(" ") + " " + e.d),
+        letter: (norm(e.t).replace(/[^a-z0-9]/g, "").charAt(0) || "#").toUpperCase() };
+    }).sort(function (x, y) { return norm(x.t).localeCompare(norm(y.t), "fr"); });
+
+    var state = { q: "", mod: "", letter: "" };
+
+    function highlight(text, q) {
+      var out = esc(text);
+      if (!q) return out;
+      var i = norm(text).indexOf(q);
+      if (i < 0 || norm(text).length !== text.length) return out;
+      return esc(text.slice(0, i)) + "<mark>" + esc(text.slice(i, i + q.length)) + "</mark>" + esc(text.slice(i + q.length));
+    }
+
+    function filtered(ignoreLetter) {
+      var q = norm(state.q).trim();
+      return items.filter(function (e) {
+        if (state.mod && e.m !== state.mod) return false;
+        if (!ignoreLetter && state.letter && e.letter !== state.letter) return false;
+        if (q && e.full.indexOf(q) < 0) return false;
+        return true;
+      }).sort(function (x, y) {
+        if (!q) return 0;
+        var sx = x.key.indexOf(q) === 0 ? 0 : x.key.indexOf(q) > 0 ? 1 : 2;
+        var sy = y.key.indexOf(q) === 0 ? 0 : y.key.indexOf(q) > 0 ? 1 : 2;
+        return sx - sy;
+      });
+    }
+
+    function renderMods() {
+      var html = '<button type="button" class="chip' + (state.mod ? "" : " on") + '" data-mod="">Tous</button>';
+      MODS.forEach(function (m) {
+        var n = items.filter(function (e) { return e.m === m.id; }).length;
+        if (!n) return;
+        html += '<button type="button" class="chip' + (state.mod === m.id ? " on" : "") + '" data-mod="' + m.id + '">' + esc(m.emoji || "") + " " + esc(m.title.split(" ")[0]) + " · " + n + "</button>";
+      });
+      $("gl-mods").innerHTML = html;
+    }
+
+    function renderAz() {
+      var avail = {};
+      filtered(true).forEach(function (e) { avail[e.letter] = true; });
+      var html = "";
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("").forEach(function (L) {
+        if (L === "#" && !avail["#"]) return;
+        if (!avail[L] && state.letter !== L) return;
+        html += '<button type="button" data-l="' + L + '" class="' + (state.letter === L ? "on" : "") + '"' + (avail[L] ? "" : " disabled") + ">" + L + "</button>";
+      });
+      $("gl-az").innerHTML = html;
+    }
+
+    function renderList() {
+      var list = filtered(false), q = norm(state.q).trim();
+      $("gl-count").textContent = list.length + " terme" + (list.length > 1 ? "s" : "") + " sur " + items.length;
+      if (!list.length) { $("gl-list").innerHTML = '<div class="gl-empty">Aucun terme trouvé. Essaie une autre orthographe ou retire un filtre.</div>'; return; }
+      var html = "", last = "";
+      list.forEach(function (e) {
+        if (!q && e.letter !== last) { last = e.letter; html += '<h3 class="gl-letter" id="L-' + e.letter + '">' + e.letter + "</h3>"; }
+        var mi = modInfo(e.m);
+        html += '<article class="gl-item"><h2>' + highlight(e.t, q) + (e.a.length ? ' <span class="al">(' + esc(e.a.join(", ")) + ")</span>" : "") + "</h2>" +
+          "<p>" + highlight(e.d, q) + "</p>" +
+          (mi ? '<a href="' + esc(mi.file) + '">' + esc(mi.emoji || "") + " " + esc(mi.title) + " →</a>" : "") + "</article>";
+      });
+      $("gl-list").innerHTML = html;
+    }
+
+    function render() { renderMods(); renderAz(); renderList(); }
+
+    $("gl-q").addEventListener("input", function () { state.q = this.value; state.letter = ""; render(); });
+    $("gl-mods").addEventListener("click", function (ev) {
+      var b = ev.target.closest("[data-mod]"); if (!b) return;
+      state.mod = b.getAttribute("data-mod"); render();
+    });
+    $("gl-az").addEventListener("click", function (ev) {
+      var b = ev.target.closest("[data-l]"); if (!b || b.disabled) return;
+      var L = b.getAttribute("data-l");
+      state.letter = state.letter === L ? "" : L; render();
+      var h = $("L-" + L); if (h && !state.letter) h.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    var cur = null, pool = [];
+    function nextTerm() {
+      if (!pool.length) pool = filtered(true).slice().sort(function () { return Math.random() - 0.5; });
+      if (!pool.length) pool = items.slice().sort(function () { return Math.random() - 0.5; });
+      cur = pool.pop();
+      var mi = modInfo(cur.m);
+      $("gl-qmeta").textContent = (mi ? mi.emoji + " " + mi.title + " · " : "") + (pool.length) + " restant(s) dans le tirage";
+      $("gl-qterm").textContent = cur.t;
+      $("gl-qdef").textContent = "Essaie de formuler la définition, puis révèle-la.";
+      $("gl-reveal").disabled = false;
+    }
+    $("gl-quizbtn").addEventListener("click", function () {
+      pool = []; $("gl-quiz").hidden = false; nextTerm();
+      $("gl-quiz").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    $("gl-reveal").addEventListener("click", function () {
+      if (!cur) return;
+      $("gl-qdef").textContent = cur.d;
+      this.disabled = true;
+      if (P.logActivity) P.logActivity({ k: "glossaire", m: cur.m });
+    });
+    $("gl-next").addEventListener("click", nextTerm);
+    $("gl-close").addEventListener("click", function () { $("gl-quiz").hidden = true; });
+
+    render();
+  })();
+  </script>
+</body>
+</html>

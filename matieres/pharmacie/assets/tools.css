@@ -1,0 +1,180 @@
+/* =========================================================
+   tools.css — Outils des pages de module (portail Pharmacie)
+   Chargé après style.css. Thèmes clair + sombre via les variables de style.css.
+   ========================================================= */
+
+[hidden] { display: none !important; }
+
+/* ---------- Barre d'outils ---------- */
+.mod-tools { margin: 4px 0 16px; }
+.mod-tools .mt-main, .mod-tools .mt-more { display: flex; flex-wrap: wrap; gap: 8px; }
+.mod-tools .mt-more { margin-top: 8px; }
+.mod-tools .btn {
+  min-height: 44px; width: auto; margin: 0; padding: 8px 14px; font-size: 14px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mod-tools a.btn:hover { text-decoration: none; }
+.mod-tools .mt-more-btn { display: none; }
+.btn.on {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 18%, var(--bg-card));
+}
+.btn:focus-visible, .opt:focus-visible, .gloss:focus-visible, .cloze:focus-visible, .mod-notes summary:focus-visible,
+textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .mod-tools .mt-main { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .mod-tools .mt-more { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .mod-tools .mt-more.open { display: grid; }
+  .mod-tools .mt-more-btn { display: inline-flex; }
+  .mod-tools .btn { padding: 8px 4px; font-size: 13px; }
+}
+
+/* ---------- Panneaux (révision…) ---------- */
+.mod-panel {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px;
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 14px; margin: 0 0 16px; font-size: 14px; color: var(--text-soft);
+}
+.mod-panel .rev-msg { flex: 1 1 100%; }
+.mod-panel .rev-count { flex: 1 1 auto; color: var(--muted); font-size: 13px; }
+.mod-panel .btn { min-height: 44px; width: auto; margin: 0; }
+
+/* ---------- Notes ---------- */
+.mod-notes {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 16px; margin: 0 0 18px;
+}
+.mod-notes[open] { border-color: var(--accent); }
+.mod-notes summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: 32px; display: flex; align-items: center; list-style: none; }
+.mod-notes summary::-webkit-details-marker { display: none; }
+.mod-notes summary::before { content: "▸ "; margin-right: 6px; }
+.mod-notes[open] summary::before { content: "▾ "; }
+.mod-notes textarea {
+  display: block; width: 100%; min-height: 140px; margin-top: 10px; resize: vertical;
+  background: var(--bg-soft); color: var(--text); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; font: inherit; font-size: 16px; line-height: 1.5;
+}
+.mod-notes textarea:focus { border-color: var(--primary); }
+.notes-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.notes-foot #notes-count { flex: 1 1 auto; }
+.mod-notes .notes-foot .btn { min-height: 44px; width: auto; margin: 0; padding: 8px 14px; font-size: 13px; }
+
+/* ---------- Glossaire interactif ---------- */
+.gloss {
+  border-bottom: 1px dotted var(--accent); cursor: help; border-radius: 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.gloss:hover, .gloss:focus { background: color-mix(in srgb, var(--accent) 16%, transparent); outline: none; }
+.gloss:focus-visible { outline: 2px solid var(--accent); }
+.gloss-tip {
+  position: fixed; z-index: 450; max-width: min(320px, calc(100vw - 16px));
+  background: var(--bg-card); color: var(--text); border: 1px solid var(--accent); border-radius: 10px;
+  padding: 10px 12px; box-shadow: var(--shadow); font-size: 14px; line-height: 1.45; pointer-events: none;
+}
+.gloss-tip strong { display: block; color: var(--accent); margin-bottom: 2px; }
+.gloss-tip span { color: var(--text-soft); }
+
+/* ---------- Mode révision (trous) ---------- */
+.cloze { cursor: pointer; border-radius: 5px; -webkit-tap-highlight-color: transparent; }
+.cloze:not(.revealed) {
+  color: transparent !important; background: color-mix(in srgb, var(--primary) 30%, var(--bg-elev));
+  border-bottom: 2px dashed var(--primary); -webkit-user-select: none; user-select: none;
+}
+.cloze:not(.revealed) * { color: transparent !important; }
+.cloze.revealed { background: color-mix(in srgb, var(--accent-2) 22%, transparent); }
+
+/* ---------- Lecture audio ---------- */
+.tts-now { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.tts-bar {
+  position: fixed; z-index: 65; left: 12px; bottom: 76px;
+  left: max(12px, env(safe-area-inset-left)); bottom: max(76px, calc(env(safe-area-inset-bottom) + 66px));
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 6px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 999px; box-shadow: var(--shadow);
+}
+.tts-bar .btn { min-width: 44px; min-height: 44px; padding: 6px 10px; justify-content: center; margin: 0; }
+.tts-pos { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+body.has-exam .tts-bar { bottom: 190px; }
+
+/* ---------- Récapitulatif des quiz ---------- */
+.quiz-recap {
+  background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+  border-radius: 12px; padding: 16px 18px; margin: 28px 0 14px; text-align: center;
+}
+.quiz-recap .qr-title { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.quiz-recap .qr-score { color: var(--text-soft); margin-bottom: 10px; }
+.quiz-recap .qr-bar { height: 8px; border-radius: 999px; background: var(--bg-elev); overflow: hidden; margin-bottom: 14px; }
+.quiz-recap .qr-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width .3s ease; }
+.quiz-recap .btn { min-height: 44px; width: auto; margin: 0; }
+@media (max-width: 560px) { .quiz-recap .btn { width: 100%; } }
+
+/* ---------- Barre d'examen (réajustements mobile) ---------- */
+.exam-bar { flex-wrap: wrap; justify-content: center; border-radius: 18px; gap: 6px 10px; padding: 8px 10px; }
+.exam-bar .exam-score { flex: 1 1 150px; white-space: normal; text-align: center; font-size: 12.5px; }
+.exam-bar .btn { min-height: 40px; width: auto; margin: 0; }
+.exam-bar .btn[disabled] { opacity: .5; cursor: default; }
+body.has-exam .exam-bar { bottom: max(72px, calc(env(safe-area-inset-bottom) + 62px)); }
+body.has-exam .wrap { padding-bottom: 190px; }
+
+/* ---------- Toast ---------- */
+.mod-toast {
+  position: fixed; z-index: 500; left: 50%; bottom: 84px; transform: translate(-50%, 10px);
+  max-width: calc(100vw - 32px); background: var(--bg-elev); color: var(--text);
+  border: 1px solid var(--border); border-radius: 999px; padding: 10px 18px; font-size: 14px;
+  box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; text-align: center;
+}
+.mod-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Aide raccourcis ---------- */
+.kbd-help {
+  position: fixed; inset: 0; z-index: 600; display: flex; align-items: center; justify-content: center;
+  padding: 14px; background: rgba(5, 8, 16, .62); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); overflow-y: auto;
+}
+.kbd-box {
+  position: relative; width: min(420px, 100%); max-height: 100%; overflow-y: auto;
+  background: var(--bg-card); color: var(--text); border: 1px solid var(--border); border-radius: 16px;
+  padding: 20px; box-shadow: var(--shadow);
+}
+.kbd-box h3 { margin: 0 0 12px; font-size: 19px; color: var(--text); }
+.kbd-x {
+  position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; border: 0; border-radius: 10px;
+  background: transparent; color: var(--muted); font-size: 18px; cursor: pointer;
+}
+.kbd-x:hover { background: var(--bg-elev); color: var(--text); }
+.kbd-box dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 14.5px; }
+.kbd-box dt { white-space: nowrap; }
+.kbd-box dd { margin: 0; color: var(--text-soft); }
+kbd {
+  display: inline-block; min-width: 1.6em; text-align: center; padding: 1px 7px; border-radius: 6px;
+  border: 1px solid var(--border); border-bottom-width: 2px; background: var(--bg-elev); color: var(--text);
+  font-family: "Cascadia Code", Consolas, monospace; font-size: .85em;
+}
+
+/* ---------- Quiz : focus clavier ---------- */
+.quiz .opt { -webkit-tap-highlight-color: transparent; }
+
+/* ---------- Garde-fou mobile ---------- */
+.lesson img, .lesson table { max-width: 100%; }
+.lesson { overflow-wrap: break-word; }
+
+/* ================= IMPRESSION / EXPORT PDF ================= */
+@media print {
+  .mod-tools, .mod-notes, .mod-panel, .tts-bar, .quiz-recap, .gloss-tip, .kbd-help, .mod-toast,
+  .exam-bar, .to-top, .xtop, .pomo, .ph-share-ov, .xnav, .xskip, .lesson-progress { display: none !important; }
+  .gloss { border: 0 !important; background: none !important; }
+  .cloze, .cloze:not(.revealed), .cloze.revealed { color: inherit !important; background: none !important; border: 0 !important; }
+  .cloze:not(.revealed) * { color: inherit !important; }
+  .lesson, .lesson p, .lesson li, .lesson td, .lesson th, .lesson strong, .lesson .callout, .lesson .callout .label,
+  .lesson .quiz, .lesson .quiz *, .lesson details.solution, .lesson details.solution *, .lesson h1, .lesson h2, .lesson h3,
+  .lesson h4, .lesson .subtitle, .lesson code { color: #000 !important; }
+  .callout, .quiz, details.solution, .culture, .jobs, th, td, code, .tag { background: #fff !important; }
+  pre { background: #f4f4f4 !important; }
+  pre code { color: #000 !important; }
+  .quiz .opt { border-color: #bbb !important; background: #fff !important; }
+  .quiz .opt.correct { font-weight: 700; }
+  details.solution, details.solution[open] { display: block !important; }
+  details.solution > *:not(summary) { display: block !important; }
+  h2, h3 { break-after: avoid; }
+  .wrap { padding-bottom: 0 !important; }
+}
