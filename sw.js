@@ -3,7 +3,7 @@
    Stratégie : cache-first avec mise en cache à la volée.
    Ne fonctionne qu'en https:// ou localhost (pas en file://).
    ========================================================= */
-const CACHE = "esgi-cours-v18";
+const CACHE = "esgi-cours-v20";
 const CORE = [
   "./",
   "./index.html",
@@ -25,6 +25,9 @@ const CORE = [
   "./assets/ideas-config.js",
   "./assets/search-index.js",
   "./assets/icon.svg",
+  "./assets/apple-touch-icon.png",
+  "./assets/icon-192.png",
+  "./assets/icon-512.png",
   "./matieres/cours.js"
 ];
 

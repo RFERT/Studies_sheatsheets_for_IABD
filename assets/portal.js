@@ -789,6 +789,115 @@ function renderExams() {
   }));
 }
 
+/* ---------- Emploi du temps & révision du prochain jour de cours ---------- */
+const TT_KEY = "esgi-timetable";
+const DOW = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+function getTimetable() {
+  try { const v = JSON.parse(localStorage.getItem(TT_KEY)); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function setTimetable(l) { try { localStorage.setItem(TT_KEY, JSON.stringify(l)); } catch (e) {} }
+function subjectByName(name) {
+  const n = normalize(name);
+  return SUBJECTS.find((s) => normalize(s.name) === n) || null;
+}
+function subjectByCode(code) {
+  return SUBJECTS.find((s) => (s.code || "").toLowerCase() === (code || "").toLowerCase()) || null;
+}
+function aideUrlFor(code) {
+  if (!window.COURS || !Array.isArray(window.COURS.subjects)) return null;
+  const c = window.COURS.subjects.find((x) => (x.code || "").toLowerCase() === (code || "").toLowerCase());
+  return c && c.aide ? ("aide.html?c=" + encodeURIComponent(c.code)) : null;
+}
+function ttTimeToMin(t) { const m = /^(\d{1,2}):(\d{2})/.exec(t || ""); return m ? (+m[1] * 60 + +m[2]) : null; }
+function nextClassDay(entries) {
+  const now = new Date(), dow = now.getDay(), nowMin = now.getHours() * 60 + now.getMinutes();
+  for (let off = 0; off <= 7; off++) {
+    const d = (dow + off) % 7;
+    let day = entries.filter((e) => e.day === d);
+    if (!day.length) continue;
+    if (off === 0) {
+      day = day.filter((e) => { const tm = ttTimeToMin(e.time); return tm === null || tm >= nowMin; });
+      if (!day.length) continue;
+    }
+    day = day.slice().sort((a, b) => {
+      const ta = ttTimeToMin(a.time), tb = ttTimeToMin(b.time);
+      return (ta === null ? 1e9 : ta) - (tb === null ? 1e9 : tb);
+    });
+    return { offset: off, day: d, entries: day };
+  }
+  return null;
+}
+function renderTimetable() {
+  const host = document.getElementById("timetable");
+  const sec = document.getElementById("timetable-section");
+  if (!host) return;
+  if (sec) sec.hidden = false;
+  const tt = getTimetable();
+  const next = nextClassDay(tt);
+
+  let suggestion;
+  if (next) {
+    const when = next.offset === 0 ? "aujourd'hui" : next.offset === 1 ? "demain" : (next.offset === 7 ? "dans une semaine" : "dans " + next.offset + " jours");
+    const rows = next.entries.map((e) => {
+      const s = e.code ? subjectByCode(e.code) : subjectByName(e.label);
+      const href = s ? (s.href || ("cours.html?c=" + encodeURIComponent(s.code))) : null;
+      const aide = s ? aideUrlFor(s.code) : null;
+      const emoji = s ? s.emoji : "📘";
+      const links = (href ? `<a class="tt-go" href="${href}">Réviser →</a>` : "") +
+        (aide ? ` <a class="tt-aide" href="${aide}">⚡ Antisèche</a>` : "");
+      const meta = (e.time ? e.time : "") + (href ? "" : (e.time ? " · " : "") + "pas de cours en ligne");
+      return `<div class="daily-item"><span class="di-ic">${emoji}</span>
+        <span class="di-txt"><b>${escapeHtml(e.label)}</b><span>${escapeHtml(meta)}</span></span>
+        ${links ? `<span class="tt-links">${links}</span>` : ""}</div>`;
+    }).join("");
+    suggestion = `<div class="tt-next">
+      <div class="tt-next-head">🎒 <b>${DOW[next.day]}</b> <span class="tt-when">${when}</span> — révise :</div>
+      ${rows}</div>`;
+  } else {
+    suggestion = `<p class="tt-empty">Ajoute tes cours ci-dessous : je te proposerai ensuite, à chaque visite, de réviser les matières de ta prochaine journée. 👇</p>`;
+  }
+
+  const dayOpts = [1, 2, 3, 4, 5, 6, 0].map((d) => `<option value="${d}">${DOW[d]}</option>`).join("");
+  const dataSubjects = SUBJECTS.map((s) => `<option value="${escapeHtml(s.name)}"></option>`).join("");
+  const list = tt.slice().sort((a, b) => ((a.day === 0 ? 7 : a.day) - (b.day === 0 ? 7 : b.day)) || (a.time || "").localeCompare(b.time || ""))
+    .map((e) => `<div class="tt-row"><span class="tt-rday">${DOW[e.day].slice(0, 3)}.</span>
+      <span class="tt-rsubj">${escapeHtml(e.label)}</span>
+      <span class="tt-rtime">${escapeHtml(e.time || "")}</span>
+      <button class="tt-del" data-id="${e.id}" title="Supprimer" aria-label="Supprimer">✕</button></div>`).join("");
+
+  host.innerHTML = suggestion + `
+    <details class="tt-editor"${tt.length ? "" : " open"}>
+      <summary>🗓️ Mon emploi du temps${tt.length ? " (" + tt.length + " cours)" : ""}</summary>
+      <div class="tt-list">${list || '<p class="tt-empty">Aucun cours enregistré pour l\'instant.</p>'}</div>
+      <form class="tt-form" id="tt-form">
+        <select id="tt-day" aria-label="Jour de la semaine">${dayOpts}</select>
+        <input id="tt-subj" list="tt-subjects" placeholder="Matière (ex. SQL, Machine Learning…)" autocomplete="off" maxlength="60" required />
+        <datalist id="tt-subjects">${dataSubjects}</datalist>
+        <input id="tt-time" type="time" aria-label="Heure (facultatif)" />
+        <button type="submit" class="btn primary">+ Ajouter</button>
+      </form>
+      <p class="tt-note">🔒 Enregistré uniquement sur cet appareil, réutilisé à chaque visite.</p>
+    </details>`;
+
+  const form = document.getElementById("tt-form");
+  if (form) form.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const day = +document.getElementById("tt-day").value;
+    const label = (document.getElementById("tt-subj").value || "").trim();
+    const time = document.getElementById("tt-time").value || "";
+    if (!label) return;
+    const match = subjectByName(label);
+    const l = getTimetable();
+    l.push({ id: "t" + Date.now().toString(36), day, label, code: match ? match.code : undefined, time });
+    setTimetable(l);
+    renderTimetable();
+  });
+  host.querySelectorAll(".tt-del").forEach((b) => b.addEventListener("click", () => {
+    setTimetable(getTimetable().filter((x) => x.id !== b.getAttribute("data-id")));
+    renderTimetable();
+  }));
+}
+
 /* ---------- Mode « révision du jour » ---------- */
 function doneMapFor(code) {
   try { return JSON.parse(localStorage.getItem("cours-" + code.toLowerCase() + "-done")) || {}; } catch (e) { return {}; }
@@ -855,6 +964,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setFavicon("🎓");
   initTheme();
   updateStreak();
+  renderTimetable();
   renderDailyReview();
   renderDashboard();
   renderExams();
