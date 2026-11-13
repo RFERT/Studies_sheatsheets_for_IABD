@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>Chimie générale &amp; organique — DEUST Préparateur en pharmacie</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Année 1 · Chimie</div>
+    <h1>Module 1 — Chimie générale &amp; organique</h1>
+    <p class="subtitle">La chimie est le langage du médicament. Avant de comprendre comment un principe actif agit, il faut savoir ce qu'est un atome, une liaison, une solution et un pH. Ce module pose le socle scientifique de toute la formation.</p>
+
+    <div class="domains"><span class="domain sci"><span class="dot"></span>SCIENCES</span></div>
+
+    <div class="callout" style="border-color:var(--primary)">
+      <span class="label" style="color:var(--primary)">🎯 Objectifs</span>
+      Décrire l'atome et le tableau périodique ; distinguer les types de liaisons ; calculer une masse molaire, une concentration et une dilution ; définir le pH et un tampon ; reconnaître les grandes fonctions de la chimie organique.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#atome">L'atome &amp; le tableau périodique</a></li>
+        <li><a href="#liaisons">Liaisons chimiques</a></li>
+        <li><a href="#solutions">Mole, concentrations &amp; dilutions</a></li>
+        <li><a href="#ph">Acides, bases &amp; pH</a></li>
+        <li><a href="#orga">Chimie organique &amp; fonctions</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="atome">
+      <h2>1. L'atome &amp; le tableau périodique</h2>
+      <div class="callout def">
+        <span class="label">Structure de l'atome</span>
+        Un <strong>noyau</strong> (protons chargés +, neutrons neutres) entouré d'<strong>électrons</strong> (–). L'atome est électriquement neutre : autant d'électrons que de protons.
+        <ul>
+          <li><strong>Numéro atomique Z</strong> = nombre de protons (identité de l'élément).</li>
+          <li><strong>Nombre de masse A</strong> = protons + neutrons.</li>
+          <li><strong>Isotopes</strong> = même Z, A différent (ex. carbone 12 et 14).</li>
+        </ul>
+      </div>
+      <div class="callout info">
+        <span class="label">Ions</span>
+        Un atome qui gagne ou perd des électrons devient un <strong>ion</strong> : <strong>cation</strong> (+, perte d'e⁻, ex. Na⁺) ou <strong>anion</strong> (–, gain d'e⁻, ex. Cl⁻). Les ions Na⁺, K⁺, Ca²⁺, Cl⁻ sont les <em>électrolytes</em> essentiels de l'organisme.
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple</span>
+        Le sodium : Z = 11 (11 protons). En perdant 1 électron il forme Na⁺, l'ion dominant du milieu extracellulaire (sérum physiologique = NaCl).
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Qu'est-ce qui définit l'identité chimique d'un élément ?</div>
+        <div class="options">
+          <div class="opt">Le nombre de neutrons</div>
+          <div class="opt">Le nombre de protons (numéro atomique Z)</div>
+          <div class="opt">Le nombre total de particules</div>
+          <div class="opt">Sa masse en grammes</div>
+        </div>
+        <div class="feedback" data-explain="C'est le numéro atomique Z (nombre de protons) qui définit l'élément. Changer le nombre de neutrons donne un isotope, changer les électrons donne un ion, mais c'est toujours le même élément."></div>
+      </div>
+    </section>
+
+    <section class="block" id="liaisons">
+      <h2>2. Les liaisons chimiques</h2>
+      <div class="callout def">
+        <span class="label">Trois grands types</span>
+        <ul>
+          <li><strong>Liaison covalente</strong> : partage d'électrons entre deux atomes (ex. molécule d'eau H₂O). C'est la liaison des molécules organiques.</li>
+          <li><strong>Liaison ionique</strong> : attraction entre ions de charges opposées (ex. NaCl). Se dissocie dans l'eau.</li>
+          <li><strong>Liaison hydrogène</strong> : liaison faible entre un H et un atome électronégatif (O, N). Explique la cohésion de l'eau et la structure des protéines/ADN.</li>
+        </ul>
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Pourquoi l'eau dissout le sel</span>
+        L'eau est une molécule <strong>polaire</strong> (un côté δ–, un côté δ+). Elle entoure les ions Na⁺ et Cl⁻ et les sépare : c'est la <em>solvatation</em>. Un principe actif polaire sera hydrosoluble ; un principe actif apolaire (lipophile) préférera les graisses.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Quel type de liaison unit les atomes d'une molécule organique comme le glucose ?</div>
+        <div class="options">
+          <div class="opt">Ionique</div>
+          <div class="opt">Hydrogène uniquement</div>
+          <div class="opt">Covalente</div>
+          <div class="opt">Métallique</div>
+        </div>
+        <div class="feedback" data-explain="Les molécules organiques sont bâties sur des liaisons covalentes (partage d'électrons), en particulier des liaisons carbone-carbone et carbone-hydrogène."></div>
+      </div>
+    </section>
+
+    <section class="block" id="solutions">
+      <h2>3. Mole, concentrations &amp; dilutions</h2>
+      <div class="callout def">
+        <span class="label">Notions clés</span>
+        <ul>
+          <li><strong>Masse molaire M</strong> (g/mol) = masse d'une mole. Ex. NaCl : 23 + 35,5 = 58,5 g/mol.</li>
+          <li><strong>Concentration molaire</strong> : C = n / V (mol/L).</li>
+          <li><strong>Concentration massique</strong> : Cₘ = m / V (g/L) ; lien : Cₘ = C × M.</li>
+          <li><strong>Dilution</strong> : la quantité de soluté est conservée → <strong>C₁V₁ = C₂V₂</strong>.</li>
+        </ul>
+      </div>
+      <div class="callout example">
+        <span class="label">Exemple — sérum physiologique</span>
+        Le NaCl 0,9 % correspond à 9 g/L. Pour 500 mL : m = 9 × 0,5 = 4,5 g de NaCl.
+      </div>
+      <div class="callout warn">
+        <span class="label">⚠️ Piège d'unités</span>
+        Toujours convertir les volumes en litres avant le calcul. « 0,9 % (m/V) » veut dire 0,9 g pour 100 mL, soit 9 g pour 1000 mL.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">On veut 250 mL d'une solution à 0,1 mol/L à partir d'une solution mère à 1 mol/L. Quel volume de mère prélever ?</div>
+        <div class="options">
+          <div class="opt">25 mL</div>
+          <div class="opt">2,5 mL</div>
+          <div class="opt">100 mL</div>
+          <div class="opt">250 mL</div>
+        </div>
+        <div class="feedback" data-explain="C₁V₁ = C₂V₂ → V₁ = C₂V₂/C₁ = (0,1 × 250)/1 = 25 mL, que l'on complète à 250 mL avec le solvant."></div>
+      </div>
+    </section>
+
+    <section class="block" id="ph">
+      <h2>4. Acides, bases &amp; pH</h2>
+      <div class="callout def">
+        <span class="label">Le pH</span>
+        Le pH mesure l'acidité : pH = −log[H₃O⁺]. Échelle de 0 à 14 (à 25 °C).
+        <ul>
+          <li>pH &lt; 7 : acide · pH = 7 : neutre · pH &gt; 7 : basique.</li>
+          <li><strong>Acide</strong> = libère des H⁺ ; <strong>base</strong> = capte des H⁺.</li>
+          <li>Acide/base <strong>fort</strong> = totalement dissocié ; <strong>faible</strong> = partiellement.</li>
+        </ul>
+      </div>
+      <div class="callout info">
+        <span class="label">Solution tampon</span>
+        Un <strong>tampon</strong> résiste aux variations de pH quand on ajoute un acide ou une base. Le sang est tamponné (système bicarbonate) et maintenu à <strong>pH ≈ 7,40</strong> : une variation de ±0,1 est déjà grave.
+      </div>
+      <div class="callout example">
+        <span class="label">Ordre de grandeur</span>
+        Suc gastrique ≈ pH 1,5–2 (très acide) · sang ≈ 7,4 · sécrétions pancréatiques ≈ 8. Le pH conditionne l'absorption des médicaments (voir module Pharmacologie).
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Le pH du sang artériel normal est d'environ…</div>
+        <div class="options">
+          <div class="opt">2,0</div>
+          <div class="opt">5,5</div>
+          <div class="opt">7,0</div>
+          <div class="opt">7,4</div>
+        </div>
+        <div class="feedback" data-explain="Le sang est légèrement basique, maintenu vers 7,40 par le système tampon bicarbonate. En dessous de 7,35 on parle d'acidose, au-dessus de 7,45 d'alcalose."></div>
+      </div>
+    </section>
+
+    <section class="block" id="orga">
+      <h2>5. Chimie organique &amp; fonctions</h2>
+      <div class="callout def">
+        <span class="label">Le carbone, roi du vivant</span>
+        La chimie organique est celle du <strong>carbone</strong> (tétravalent : 4 liaisons). Les médicaments sont presque tous des molécules organiques. Leurs propriétés dépendent de leurs <strong>groupes fonctionnels</strong>.
+      </div>
+      <div class="jobs">
+        <div class="jhead">🧪 Principales fonctions à reconnaître</div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Fonction</th><th>Groupe</th><th>Exemple</th></tr></thead>
+            <tbody>
+              <tr><td>Alcool</td><td>–OH</td><td>Éthanol (antiseptique)</td></tr>
+              <tr><td>Acide carboxylique</td><td>–COOH</td><td>Acide acétylsalicylique (aspirine)</td></tr>
+              <tr><td>Amine</td><td>–NH₂</td><td>Nombreux principes actifs basiques</td></tr>
+              <tr><td>Ester</td><td>–COO–</td><td>Liaison de l'aspirine, arômes</td></tr>
+              <tr><td>Amide</td><td>–CO–NH–</td><td>Paracétamol, liaisons peptidiques</td></tr>
+              <tr><td>Cétone</td><td>&gt;C=O</td><td>Corps cétoniques</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Pourquoi ça compte</span>
+        La fonction détermine la solubilité (–COOH et –OH rendent hydrosoluble), l'acido-basicité et la réactivité. L'aspirine est un ester d'acide : son hydrolyse la dégrade, d'où sa sensibilité à l'humidité.
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1 — lecture de formule</strong></div>
+        <div class="qtext">Quelle fonction chimique porte le groupe –COOH ?</div>
+        <div class="options">
+          <div class="opt">Alcool</div>
+          <div class="opt">Amine</div>
+          <div class="opt">Acide carboxylique</div>
+          <div class="opt">Cétone</div>
+        </div>
+        <div class="feedback" data-explain="–COOH est le groupe acide carboxylique : il libère un H⁺ (caractère acide). On le trouve dans l'aspirine, l'acide lactique, les acides gras."></div>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>6. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Préparation d'une solution</h3>
+      <p>Tu dois préparer 1 L de solution de glucose à 50 g/L. Quelle masse de glucose pèses-tu ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>m = Cₘ × V = 50 × 1 = <strong>50 g</strong> de glucose, dissous puis complétés à 1 L (QSP 1 L).</p>
+      </details>
+
+      <h3>Exercice 2 — Dilution (⭐)</h3>
+      <p>À partir d'une eau oxygénée à 30 % (solution mère), comment obtenir 200 mL à 3 % ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>C₁V₁ = C₂V₂ → V₁ = (3 × 200)/30 = <strong>20 mL</strong> de solution à 30 %, complétés à 200 mL avec de l'eau. (Facteur de dilution = 10.)</p>
+      </details>
+
+      <h3>Exercice 3 — Reconnaître des fonctions (⭐)</h3>
+      <p>Le paracétamol possède un cycle portant un groupe –OH et un groupe –NH–CO–CH₃. Quelles deux fonctions reconnais-tu ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Un <strong>phénol</strong> (–OH porté par un cycle aromatique) et un <strong>amide</strong> (–NH–CO–). Ce sont ces fonctions qui expliquent sa faible solubilité dans l'eau et sa stabilité relative.</p>
+      </details>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">D'où vient la chimie du médicament.</p>
+      <ul class="names">
+        <li><b>Antoine Lavoisier</b> <span class="yr">(1789)</span> — fonde la chimie moderne et la conservation de la masse.</li>
+        <li><b>Dmitri Mendeleïev</b> <span class="yr">(1869)</span> — publie le tableau périodique des éléments.</li>
+        <li><b>Felix Hoffmann (Bayer)</b> <span class="yr">(1897)</span> — synthétise l'acide acétylsalicylique : l'aspirine, premier blockbuster de la chimie organique.</li>
+      </ul>
+      <p>Chaque fois que tu lis une notice, les excipients et le principe actif sont des molécules dont la chimie explique la conservation, la forme et l'action.</p>
+      <div class="clinks">
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Tableau_p%C3%A9riodique_des_%C3%A9l%C3%A9ments" target="_blank">Tableau périodique</a>
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Potentiel_hydrog%C3%A8ne" target="_blank">pH</a>
+      </div>
+    </section>
+
+    <div class="callout note">
+      <span class="label">📌 À retenir</span>
+      <ul>
+        <li>Z = protons (identité) ; A = protons + neutrons ; ions = gain/perte d'électrons.</li>
+        <li>Covalente (molécules), ionique (sels), hydrogène (eau, biomolécules).</li>
+        <li>C₁V₁ = C₂V₂ ; Cₘ = C × M ; convertir en litres.</li>
+        <li>pH = −log[H₃O⁺] ; sang ≈ 7,4 ; tampon = résiste aux variations.</li>
+        <li>Fonctions clés : –OH, –COOH, –NH₂, ester, amide.</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="chimie">Marquer comme terminé</button>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="../index.html"><div class="dir">← Accueil</div><div class="ttl">Portail pharmacie</div></a>
+      <a class="next" href="anatomie.html"><div class="dir">Suivant →</div><div class="ttl">Module 2 · Anatomie</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 1 — Chimie · DEUST Préparateur en pharmacie 💚</div>
+  <script src="../assets/app.js"></script>
+  <script src="../../../assets/nav.js"></script>
+</body>
+</html>

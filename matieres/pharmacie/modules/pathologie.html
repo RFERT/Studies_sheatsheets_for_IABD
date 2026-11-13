@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1221" />
+  <title>Pathologie — DEUST Préparateur en pharmacie</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💊</span> Préparateur en pharmacie</div>
+    <div class="spacer"></div>
+    <a class="btn" href="../index.html">← Accueil</a>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+  <div class="lesson-progress"><div class="bar"></div></div>
+
+  <div class="wrap lesson">
+    <div class="breadcrumb"><a href="../index.html">Accueil</a> › Année 2 · Pathologie</div>
+    <h1>Module 7 — Pathologie par système</h1>
+    <p class="subtitle">La pathologie étudie les maladies : leurs causes, leurs signes et leurs traitements. Au comptoir, elle permet de <strong>comprendre</strong> une ordonnance, de <strong>conseiller</strong> et surtout de <strong>repérer ce qui doit être orienté vers le médecin</strong>.</p>
+
+    <div class="domains"><span class="domain offi"><span class="dot"></span>OFFICINE</span><span class="domain hosp"><span class="dot"></span>HOSPITALIER</span></div>
+
+    <div class="callout warn">
+      <span class="label">⚠️ Cadre du conseil</span>
+      Le préparateur conseille dans son périmètre et oriente vers le pharmacien/médecin devant tout signe de gravité. Ce module est un support de révision, pas un outil de diagnostic.
+    </div>
+
+    <div class="callout" style="border-color:var(--primary)">
+      <span class="label" style="color:var(--primary)">🎯 Objectifs</span>
+      Distinguer signe/symptôme, aigu/chronique ; connaître les grandes pathologies (HTA, diabète, asthme/BPCO, infections, douleur/inflammation, troubles digestifs) et leurs principes de prise en charge.
+    </div>
+
+    <div class="toc">
+      <h4>Sommaire</h4>
+      <ol>
+        <li><a href="#vocab">Vocabulaire de la maladie</a></li>
+        <li><a href="#cardio">Cardiovasculaire : HTA</a></li>
+        <li><a href="#diabete">Métabolique : diabète</a></li>
+        <li><a href="#respi">Respiratoire : asthme &amp; BPCO</a></li>
+        <li><a href="#infect">Infectieux</a></li>
+        <li><a href="#exos">Exercices</a></li>
+      </ol>
+    </div>
+
+    <section class="block" id="vocab">
+      <h2>1. Vocabulaire de la maladie</h2>
+      <div class="callout def">
+        <span class="label">Notions de base</span>
+        <ul>
+          <li><strong>Signe</strong> : objectif, constaté (fièvre mesurée) ; <strong>symptôme</strong> : ressenti par le patient (douleur).</li>
+          <li><strong>Aigu</strong> : brutal, court ; <strong>chronique</strong> : durable (diabète, HTA).</li>
+          <li><strong>Étiologie</strong> : cause ; <strong>diagnostic</strong> : identification ; <strong>pronostic</strong> : évolution prévisible.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 1.1</strong></div>
+        <div class="qtext">Une fièvre à 39 °C mesurée au thermomètre est un…</div>
+        <div class="options">
+          <div class="opt">symptôme</div>
+          <div class="opt">diagnostic</div>
+          <div class="opt">signe</div>
+          <div class="opt">pronostic</div>
+        </div>
+        <div class="feedback" data-explain="La fièvre mesurée est objective : c'est un signe. La douleur ou la fatigue ressenties seraient des symptômes."></div>
+      </div>
+    </section>
+
+    <section class="block" id="cardio">
+      <h2>2. Cardiovasculaire : hypertension artérielle</h2>
+      <div class="callout def">
+        <span class="label">HTA</span>
+        Pression artérielle élevée de façon durable (repère : ≥ 140/90 mmHg au cabinet, confirmée). Souvent <strong>silencieuse</strong>, elle augmente le risque d'AVC, d'infarctus et d'insuffisance rénale.
+      </div>
+      <div class="callout info">
+        <span class="label">Prise en charge</span>
+        Mesures hygiéno-diététiques (sel, activité, tabac) + traitements : <strong>diurétiques</strong>, <strong>IEC/ARA2</strong>, <strong>inhibiteurs calciques</strong>, <strong>bêtabloquants</strong>. L'observance est cruciale car la maladie ne « se sent » pas.
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 2.1</strong></div>
+        <div class="qtext">Pourquoi l'observance est-elle un enjeu majeur dans l'HTA ?</div>
+        <div class="options">
+          <div class="opt">Parce que l'HTA est souvent asymptomatique : le patient ne « sent » pas le bénéfice</div>
+          <div class="opt">Parce que le traitement guérit en 3 jours</div>
+          <div class="opt">Parce qu'il n'existe pas de traitement</div>
+          <div class="opt">Parce que l'HTA ne présente aucun risque</div>
+        </div>
+        <div class="feedback" data-explain="L'HTA est silencieuse : sans symptôme ressenti, beaucoup de patients arrêtent le traitement. Or le bénéfice est la prévention à long terme (AVC, infarctus). D'où l'importance du conseil d'observance."></div>
+      </div>
+    </section>
+
+    <section class="block" id="diabete">
+      <h2>3. Métabolique : le diabète</h2>
+      <div class="callout def">
+        <span class="label">Deux grands types</span>
+        <ul>
+          <li><strong>Type 1</strong> : destruction des cellules du pancréas → carence en insuline, souvent jeune → <strong>insuline</strong> indispensable.</li>
+          <li><strong>Type 2</strong> : <strong>résistance à l'insuline</strong>, lié au mode de vie, plus tardif → règles hygiéno-diététiques + antidiabétiques oraux (metformine), parfois insuline.</li>
+        </ul>
+        Hyperglycémie chronique → complications (yeux, reins, nerfs, vaisseaux).
+      </div>
+      <div class="callout warn">
+        <span class="label">⚠️ Hypoglycémie</span>
+        Sous insuline ou sulfamides, une glycémie trop basse (sueurs, tremblements, confusion) est une <strong>urgence</strong> : resucrage immédiat. Signe de gravité à connaître au comptoir.
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 3.1</strong></div>
+        <div class="qtext">Quel traitement est indispensable dans le diabète de type 1 ?</div>
+        <div class="options">
+          <div class="opt">La metformine seule</div>
+          <div class="opt">L'insuline</div>
+          <div class="opt">Un simple régime</div>
+          <div class="opt">Un antibiotique</div>
+        </div>
+        <div class="feedback" data-explain="Le type 1 est une carence absolue en insuline : l'apport d'insuline est vital. La metformine est un traitement de première intention du type 2."></div>
+      </div>
+    </section>
+
+    <section class="block" id="respi">
+      <h2>4. Respiratoire : asthme &amp; BPCO</h2>
+      <div class="callout def">
+        <span class="label">Asthme</span>
+        Maladie inflammatoire des bronches avec crises réversibles (toux, sifflements, gêne). Traitement : <strong>bronchodilatateurs</strong> de crise (ex. salbutamol, à action rapide) et <strong>corticoïdes inhalés</strong> de fond.
+      </div>
+      <div class="callout def">
+        <span class="label">BPCO</span>
+        Bronchopneumopathie chronique obstructive, surtout liée au <strong>tabac</strong>, obstruction <em>peu réversible</em> et progressive. L'arrêt du tabac est la mesure la plus efficace.
+      </div>
+      <div class="callout tip">
+        <span class="label">💡 Conseil d'utilisation</span>
+        Un spray mal utilisé = médicament inefficace. Vérifier la technique d'inhalation et, pour les corticoïdes inhalés, conseiller de se <strong>rincer la bouche</strong> (prévention des mycoses).
+      </div>
+
+      <div class="quiz" data-answer="3">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 4.1</strong></div>
+        <div class="qtext">Après l'inhalation d'un corticoïde, que conseilles-tu systématiquement ?</div>
+        <div class="options">
+          <div class="opt">De doubler la dose</div>
+          <div class="opt">De ne plus respirer 1 minute</div>
+          <div class="opt">De boire un grand verre de lait</div>
+          <div class="opt">De se rincer la bouche</div>
+        </div>
+        <div class="feedback" data-explain="Se rincer la bouche après un corticoïde inhalé prévient la candidose buccale (mycose) et la raucité de la voix."></div>
+      </div>
+    </section>
+
+    <section class="block" id="infect">
+      <h2>5. Pathologies infectieuses</h2>
+      <div class="callout def">
+        <span class="label">Bactérie vs virus</span>
+        Les <strong>antibiotiques</strong> agissent sur les <strong>bactéries</strong>, pas sur les <strong>virus</strong> (rhume, grippe, Covid). Prescrire un antibiotique contre un virus est inutile et favorise l'<strong>antibiorésistance</strong>.
+      </div>
+      <div class="callout warn">
+        <span class="label">⚠️ Antibiorésistance</span>
+        Mauvais usage (arrêt prématuré, usage inapproprié) → bactéries résistantes. Message clé : respecter la durée prescrite, ne pas réutiliser un reste d'antibiotique. « Les antibiotiques, c'est pas automatique. »
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="qhead"><span class="ico">❓</span><strong>Quiz 5.1</strong></div>
+        <div class="qtext">Un patient demande un antibiotique pour un rhume (origine virale). Réponse correcte ?</div>
+        <div class="options">
+          <div class="opt">L'antibiotique est inefficace sur un virus ; conseil symptomatique et orientation si besoin</div>
+          <div class="opt">Délivrer un antibiotique sans ordonnance</div>
+          <div class="opt">Doubler la dose d'un ancien antibiotique</div>
+          <div class="opt">Un antibiotique guérit tous les rhumes</div>
+        </div>
+        <div class="feedback" data-explain="Le rhume est viral : l'antibiotique n'a aucun effet et favorise les résistances. De plus, un antibiotique nécessite une prescription. On propose un traitement symptomatique et on oriente si les signes s'aggravent."></div>
+      </div>
+    </section>
+
+    <section class="block" id="exos">
+      <h2>6. Exercices de synthèse</h2>
+
+      <h3>Exercice 1 — Signes de gravité</h3>
+      <p>Un diabétique sous insuline devient pâle, tremblant, confus. Quelle hypothèse et quelle conduite ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Signes d'<strong>hypoglycémie</strong>. Conduite : <strong>resucrage immédiat</strong> (sucre rapide) si le patient est conscient, surveillance, et appel des secours si trouble de conscience. Urgence à reconnaître.</p>
+      </details>
+
+      <h3>Exercice 2 — Conseil (⭐)</h3>
+      <p>Un patient asthmatique utilise son bronchodilatateur de crise plusieurs fois par jour depuis une semaine. Qu'en penses-tu ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Un recours fréquent au traitement de crise signale un <strong>asthme mal contrôlé</strong>. Il faut l'orienter vers le pharmacien/médecin : le traitement <strong>de fond</strong> (corticoïde inhalé) doit probablement être réévalué.</p>
+      </details>
+
+      <h3>Exercice 3 — Bon usage (⭐)</h3>
+      <p>Un patient veut arrêter son antibiotique car il se sent mieux au 3ᵉ jour sur 7. Que réponds-tu ?</p>
+      <details class="solution"><summary>Voir la solution</summary>
+        <p>Il faut <strong>terminer la durée prescrite</strong> : arrêter trop tôt peut laisser survivre des bactéries et favoriser les résistances/récidives. On explique l'importance de l'observance.</p>
+      </details>
+    </section>
+
+    <section class="culture" id="culture">
+      <div class="chead"><span class="cic">📜</span><span class="ctitle">Culture &amp; histoire</span><span class="ctag">hors programme · pour le plaisir</span></div>
+      <p class="csub">Comprendre la maladie pour mieux soigner.</p>
+      <ul class="names">
+        <li><b>Louis Pasteur</b> <span class="yr">(1860–1880)</span> — théorie microbienne, vaccination, asepsie.</li>
+        <li><b>Robert Koch</b> <span class="yr">(1882)</span> — identifie l'agent de la tuberculose, fonde la bactériologie.</li>
+      </ul>
+      <div class="clinks">
+        <a class="pill-link" href="https://fr.wikipedia.org/wiki/Diab%C3%A8te" target="_blank">Diabète</a>
+        <a class="pill-link" href="https://www.ameli.fr/" target="_blank">Ameli (repères santé)</a>
+      </div>
+    </section>
+
+    <div class="callout note">
+      <span class="label">📌 À retenir</span>
+      <ul>
+        <li>Signe = objectif, symptôme = ressenti ; aigu vs chronique.</li>
+        <li>HTA : silencieuse, enjeu = observance (prévention AVC/infarctus).</li>
+        <li>Diabète type 1 = insuline vitale ; type 2 = résistance, règles de vie + oraux ; hypoglycémie = urgence.</li>
+        <li>Asthme : bronchodilatateur de crise + corticoïde de fond (rincer la bouche).</li>
+        <li>Antibiotiques = bactéries seulement ; respecter la durée (antibiorésistance).</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin:30px 0">
+      <button class="btn" id="mark-done" data-module="pathologie">Marquer comme terminé</button>
+    </div>
+
+    <div class="pager">
+      <a class="prev" href="pharmacologie.html"><div class="dir">← Précédent</div><div class="ttl">Module 6 · Pharmacologie</div></a>
+      <a class="next" href="toxicologie.html"><div class="dir">Suivant →</div><div class="ttl">Module 8 · Toxicologie</div></a>
+    </div>
+  </div>
+
+  <div class="footer">Module 7 — Pathologie · DEUST Préparateur en pharmacie 💚</div>
+  <script src="../assets/app.js"></script>
+  <script src="../../../assets/nav.js"></script>
+</body>
+</html>

@@ -206,6 +206,7 @@
     { e: "∑", t: "Mathématiques", h: root + "matieres/mathematiques/index.html" },
     { e: "🐍", t: "Python & Data Science", h: root + "matieres/python/index.html" },
     { e: "🧮", t: "Bases de données (SQL)", h: root + "matieres/sql/index.html" },
+    { e: "💊", t: "Préparateur en pharmacie", h: root + "matieres/pharmacie/index.html" },
     { sep: 1 },
     { lbl: "Antisèches" },
     { e: "∑", t: "Aide-mémoire maths", h: root + "matieres/mathematiques/aide-memoire.html" },
