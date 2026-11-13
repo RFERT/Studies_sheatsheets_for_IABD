@@ -43,7 +43,7 @@ Dans un modèle de prix de logement, le coefficient de la surface est positif. Q
 - [x] À autres variables du modèle constantes, une surface plus grande augmente la prédiction
 - [ ] Le modèle sera précis sur n'importe quelle ville
   > Le coefficient décrit une association conditionnelle dans le modèle, pas une causalité. La qualité dépend aussi des données, de la forme du modèle et du contexte d'utilisation.
-  > :::
+:::
 
 ## 3. Descente de gradient : ajuster les poids
 
@@ -83,7 +83,7 @@ Un classifieur logistique estime une probabilité de fraude de 0,35. Le seuil de
 - [x] Fraude, car la probabilité dépasse le seuil choisi
 - [ ] Il est impossible de produire une classe
   > La classe dépend du seuil appliqué, ici 0,20. Le seuil par défaut n'est pas une règle universelle : il se choisit selon les coûts des faux positifs et faux négatifs.
-  > :::
+:::
 
 ## 5. Régulariser pour limiter le sur-apprentissage
 
@@ -107,7 +107,7 @@ Tu veux obtenir un modèle plus parcimonieux où certaines variables peuvent avo
 - [ ] L2 uniquement
 - [ ] La fonction sigmoïde
   > L1 peut annuler certains coefficients et effectuer une forme de sélection de variables. L2 les réduit généralement sans les annuler exactement.
-  > :::
+:::
 
 ## 6. Exercice — Prix et probabilité
 
@@ -123,4 +123,4 @@ La régression linéaire s'inscrit dans une longue histoire de l'ajustement stat
 Les modèles linéaires restent utiles parce qu'ils sont rapides, interprétables sous certaines hypothèses et constituent d'excellentes baselines. Leur simplicité est aussi une limite lorsque les relations sont fortement non linéaires ou comportent des interactions non représentées.
 
 - [Guide scikit-learn : modèles linéaires](https://scikit-learn.org/stable/modules/linear_model.html)
-  :::
+:::

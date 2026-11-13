@@ -38,7 +38,7 @@ Un système de dépistage doit éviter de manquer des cas positifs. Quelle métr
 - [x] Le rappel
 - [ ] Le nombre de variables du modèle
   > Le rappel mesure la proportion des positifs réels détectés. La précision reste utile pour quantifier les fausses alertes, mais elle répond à une autre question.
-  > :::
+:::
 
 ::: quiz Quiz 5.2 — Faux positifs
 Parmi les transactions signalées comme suspectes, une grande proportion est légitime. Quel indicateur est directement faible ?
@@ -47,7 +47,7 @@ Parmi les transactions signalées comme suspectes, une grande proportion est lé
 - [ ] Le rappel
 - [ ] Le nombre de plis de validation
   > Les transactions légitimes signalées sont des faux positifs. La précision diminue lorsque les prédictions positives contiennent beaucoup de faux positifs.
-  > :::
+:::
 
 ## 3. Seuil de décision et courbes
 
@@ -76,7 +76,7 @@ Une très grosse erreur isolée doit peser davantage dans le score. Quelle métr
 - [x] RMSE
 - [ ] Accuracy
   > RMSE met les erreurs au carré avant d'en prendre la moyenne et la racine ; les grosses erreurs ont donc un poids accru. La MAE est moins sensible aux extrêmes.
-  > :::
+:::
 
 ## 5. Validation et test final
 
@@ -93,7 +93,7 @@ Tu essaies 30 modèles et ajustes leur seuil en fonction des résultats sur le j
 - [ ] Il faut calculer la moyenne des 30 scores de test
 - [ ] Il faut augmenter le seuil pour obtenir un score plus stable
   > Chaque décision guidée par le test l'intègre indirectement au développement. Il faut sélectionner avec validation et ne consulter le test qu'à la fin.
-  > :::
+:::
 
 ## 6. Exercice — Choisir une métrique et un seuil
 
@@ -114,4 +114,4 @@ Les métriques de classification encodent des choix de décision. Le seuil, la p
 
 - [Guide scikit-learn : métriques et scoring](https://scikit-learn.org/stable/modules/model_evaluation.html)
 - [Guide scikit-learn : calibration des probabilités](https://scikit-learn.org/stable/modules/calibration.html)
-  :::
+:::

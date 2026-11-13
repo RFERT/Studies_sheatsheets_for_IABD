@@ -43,7 +43,7 @@ Un nœud ne contient que des exemples d'une classe. Quelle est son impureté de 
 - [x] 0
 - [ ] Elle ne peut pas être calculée
   > Si une classe a une proportion de 1, alors Gini vaut \(1 - 1^2 = 0\) : le nœud est parfaitement pur.
-  > :::
+:::
 
 ## 3. Bagging et forêts aléatoires
 
@@ -73,7 +73,7 @@ Quel est l'objectif principal du bagging dans une forêt aléatoire ?
 - [x] Combiner des arbres variés pour réduire l'instabilité des prédictions
 - [ ] Remplacer les données d'entraînement par des données synthétiques
   > Le bagging crée des échantillons bootstrap et agrège leurs modèles. La diversité des arbres aide à réduire la variance de l'ensemble.
-  > :::
+:::
 
 ## 4. Boosting : corriger progressivement
 
@@ -92,7 +92,7 @@ Quelle description correspond le mieux au boosting ?
 - [x] Ajouter les apprenants successivement pour améliorer l'ensemble courant
 - [ ] Retirer la cible avant l'entraînement
   > Le boosting construit le modèle par étapes, chaque étape dépendant de l'ensemble déjà appris. L'agrégation d'arbres indépendants caractérise plutôt le bagging.
-  > :::
+:::
 
 ## 5. Choisir entre arbre, forêt et boosting
 
@@ -115,4 +115,4 @@ Les arbres de décision existent depuis plusieurs décennies en statistique et e
 
 - [Guide scikit-learn : arbres de décision](https://scikit-learn.org/stable/modules/tree.html)
 - [Guide scikit-learn : méthodes d'ensemble](https://scikit-learn.org/stable/modules/ensemble.html)
-  :::
+:::

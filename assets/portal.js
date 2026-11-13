@@ -946,6 +946,57 @@ function renderDailyReview() {
   host.innerHTML = `<div class="daily-box">${items.join("")}</div>`;
 }
 
+/* ---------- Bilan hebdomadaire & points faibles ---------- */
+function getActivity() {
+  try { const v = JSON.parse(localStorage.getItem("esgi-activity")); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function renderInsights() {
+  const host = document.getElementById("insights");
+  const sec = document.getElementById("insights-section");
+  if (!host) return;
+  const act = getActivity();
+  if (!act.length) { if (sec) sec.hidden = true; return; }
+
+  const now = Date.now(), weekAgo = now - 7 * 864e5;
+  const week = act.filter((e) => e.t >= weekAgo);
+  const modW = week.filter((e) => e.k === "module").length;
+  const quizW = week.filter((e) => e.k === "quiz");
+  const okW = quizW.filter((e) => e.ok).length;
+  const days = new Set(week.map((e) => new Date(e.t).toDateString())).size;
+  const rate = quizW.length ? Math.round(okW / quizW.length * 100) : null;
+  const stat = (v, l) => `<div class="ins-stat"><b>${v}</b><span>${l}</span></div>`;
+  const weekHtml = `<div class="ins-week">
+    ${stat(modW, "module" + (modW > 1 ? "s" : "") + " terminé" + (modW > 1 ? "s" : ""))}
+    ${stat(quizW.length, "quiz répondu" + (quizW.length > 1 ? "s" : ""))}
+    ${rate !== null ? stat(rate + "%", "de réussite") : ""}
+    ${stat(days, "jour" + (days > 1 ? "s" : "") + " actif" + (days > 1 ? "s" : ""))}
+  </div>`;
+
+  const byCode = {};
+  act.filter((e) => e.k === "quiz").forEach((e) => {
+    const c = e.c || "?";
+    if (!byCode[c]) byCode[c] = { ok: 0, t: 0 };
+    byCode[c].t++; if (e.ok) byCode[c].ok++;
+  });
+  const weak = Object.keys(byCode).map((c) => ({ c: c, ok: byCode[c].ok, t: byCode[c].t, pct: Math.round(byCode[c].ok / byCode[c].t * 100) }))
+    .filter((x) => x.t >= 4 && x.pct < 70).sort((a, b) => a.pct - b.pct).slice(0, 3);
+  let weakHtml;
+  if (weak.length) {
+    weakHtml = `<h3 class="ins-h">🎯 À retravailler en priorité</h3>` + weak.map((w) => {
+      const s = subjectByCode(w.c);
+      const emoji = s ? s.emoji : "📘", name = s ? s.name : w.c;
+      const href = s ? (s.href || ("cours.html?c=" + encodeURIComponent(w.c))) : ("cours.html?c=" + encodeURIComponent(w.c));
+      return `<a class="daily-item" href="${href}"><span class="di-ic">${emoji}</span>
+        <span class="di-txt"><b>${escapeHtml(name)}</b><span>${w.pct}% de réussite aux quiz (${w.ok}/${w.t})</span></span><span class="di-go">→</span></a>`;
+    }).join("");
+  } else {
+    weakHtml = `<p class="ins-none">Continue à répondre aux quiz des cours : je repèrerai ici tes points faibles. 💪</p>`;
+  }
+
+  if (sec) sec.hidden = false;
+  host.innerHTML = weekHtml + weakHtml;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   mergeManifestCourses();
   setFavicon("🎓");
@@ -954,6 +1005,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTimetable();
   renderDailyReview();
   renderDashboard();
+  renderInsights();
   renderExams();
   renderSubjects();
   initSearch();

@@ -23,6 +23,16 @@ Lancer en local avant de pousser :
 python ci/validate_site.py
 ```
 
+### 1 bis. Tests de rendu des cours — [`ci/check_courses.py`](check_courses.py)
+Sans dépendance. Pour chaque `.md` référencé dans `matieres/cours.js`, vérifie qu'il est
+**rendable** par le moteur : front-matter avec `title`, blocs `:::` équilibrés (chaque
+`::: type` a son `:::` de fermeture **seul en début de ligne**), fences ``` en nombre pair,
+quiz avec une bonne réponse `- [x]`, exercices avec séparateur `??`. Évite qu'un bloc mal
+fermé « avale » le reste du cours.
+```bash
+python ci/check_courses.py
+```
+
 ### 2. Index de recherche
 `assets/build-search-index.py` est relancé automatiquement ; si `search-index.js/.json`
 changent, la CI les **committe** (`[skip ci]`). Plus besoin d'y penser à la main.

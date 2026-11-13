@@ -64,7 +64,7 @@ Une variable « chiffre d'affaires » va de 0 à 1 000 000 et une variable « sa
 - [x] Le chiffre d'affaires peut dominer la distance à cause de son échelle
 - [ ] Le nombre de groupes devient égal à cinq
   > Les grandes amplitudes contribuent davantage aux distances. Une mise à l'échelle peut être nécessaire, en respectant le découpage des données.
-  > :::
+:::
 
 ::: quiz Quiz 4.2 — Choix de K
 La silhouette maximale est obtenue pour \(K=2\). Peut-on conclure automatiquement qu'il existe exactement deux segments métier ?
@@ -73,7 +73,7 @@ La silhouette maximale est obtenue pour \(K=2\). Peut-on conclure automatiquemen
 - [x] Non, elle mesure une séparation géométrique selon une représentation donnée
 - [ ] Oui, à condition d'avoir standardisé les variables
   > La métrique aide à comparer des partitions mais ne valide pas leur sens métier. Il faut étudier les profils, la stabilité et l'objectif de segmentation.
-  > :::
+:::
 
 ## 4. PCA : résumer les directions de variation
 
@@ -99,7 +99,7 @@ Les deux premières composantes de PCA expliquent 95 % de la variance. Quelle af
 - [x] La représentation conserve 95 % de la variance mesurée, pas une garantie de performance supervisée
 - [ ] PCA a sélectionné les deux variables les plus importantes
   > La variance expliquée mesure l'information géométrique préservée au regard de la variance totale. Ce n'est ni une accuracy ni une sélection de colonnes d'origine.
-  > :::
+:::
 
 ## 5. Exercice — Segmentation de clients
 
@@ -114,4 +114,4 @@ La PCA s'appuie sur l'algèbre linéaire et la décomposition en valeurs propres
 
 - [Guide scikit-learn : clustering](https://scikit-learn.org/stable/modules/clustering.html)
 - [Guide scikit-learn : décomposition et PCA](https://scikit-learn.org/stable/modules/decomposition.html#pca)
-  :::
+:::

@@ -31,6 +31,8 @@ jobs:
           python-version: "3.x"
       - name: Vérifier liens, manifeste et JSON
         run: python ci/validate_site.py
+      - name: Tests de rendu des cours Markdown
+        run: python ci/check_courses.py
 
   deploy:
     name: Déploiement GitHub Pages

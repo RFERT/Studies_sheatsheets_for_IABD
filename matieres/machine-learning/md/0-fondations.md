@@ -51,7 +51,7 @@ Une équipe veut estimer le délai de livraison en heures à partir de commandes
 - [x] Régression supervisée
 - [ ] Apprentissage par renforcement
   > La cible est un nombre réel connu dans les exemples : c'est une régression supervisée. Des classes comme « rapide / lent » changeraient la tâche en classification.
-  > :::
+:::
 
 ::: quiz Quiz 1.2 — Cible et variables
 Pour entraîner un modèle qui prédit si une transaction est frauduleuse, quelle colonne joue le rôle de cible ?
@@ -60,7 +60,7 @@ Pour entraîner un modèle qui prédit si une transaction est frauduleuse, quell
 - [ ] L'identifiant de la transaction
 - [x] L'étiquette fraude / non-fraude
   > La cible est la réponse à prédire. Le montant peut être une variable d'entrée, tandis que l'identifiant n'est généralement pas une caractéristique porteuse de sens.
-  > :::
+:::
 
 ## 4. Apprendre n'est pas mémoriser
 
@@ -102,7 +102,7 @@ Une colonne « date de clôture du dossier » est renseignée après qu'un clien
 - [x] La colonne contient une information indisponible au moment de la prédiction
 - [ ] Il faut seulement augmenter le nombre de lignes
   > Cette information arrive après l'événement. Le modèle ne pourrait pas l'utiliser honnêtement pour anticiper une résiliation.
-  > :::
+:::
 
 ## 6. Un premier workflow raisonné
 
@@ -126,4 +126,4 @@ Le terme _Machine Learning_ s'est popularisé avec **Arthur Samuel** dans les an
 
 - [Guide scikit-learn : apprentissage supervisé](https://scikit-learn.org/stable/supervised_learning.html)
 - [Guide scikit-learn : sélection de modèles](https://scikit-learn.org/stable/model_selection.html)
-  :::
+:::

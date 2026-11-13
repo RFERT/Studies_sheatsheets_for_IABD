@@ -40,6 +40,19 @@
     try { localStorage.setItem(doneKey(code), JSON.stringify(d)); } catch (e) {}
   }
 
+  /* ---------- Journal d'activité (bilan hebdo + points faibles) ---------- */
+  var ACT_KEY = "esgi-activity";
+  function logActivity(entry) {
+    try {
+      var l = JSON.parse(localStorage.getItem(ACT_KEY)) || [];
+      if (!Array.isArray(l)) l = [];
+      entry.t = Date.now();
+      l.push(entry);
+      if (l.length > 600) l = l.slice(l.length - 600);
+      localStorage.setItem(ACT_KEY, JSON.stringify(l));
+    } catch (e) {}
+  }
+
   function findSubject(code) {
     if (!window.COURS || !Array.isArray(window.COURS.subjects)) return null;
     code = (code || "").toLowerCase();
@@ -184,7 +197,7 @@
 
       setBrand(subject);
       enhanceContent(host);
-      wireQuizzes(host);
+      wireQuizzes(host, subject, module);
       wireDone(subject, module, host);
       wireNotes(subject, module, host);
       wireTTS(host);
@@ -304,7 +317,7 @@
   }
 
   /* ---------- Quiz ---------- */
-  function wireQuizzes(host) {
+  function wireQuizzes(host, subject, module) {
     host.querySelectorAll(".quiz").forEach(function (quiz) {
       var answer = parseInt(quiz.getAttribute("data-answer"), 10);
       var opts = Array.prototype.slice.call(quiz.querySelectorAll(".opt"));
@@ -316,6 +329,7 @@
             if (j === answer) o.classList.add("correct");
             else if (j === i) o.classList.add("wrong");
           });
+          if (subject) logActivity({ k: "quiz", c: subject.code, m: module ? module.id : "", ok: i === answer });
           var fb = quiz.querySelector(".feedback");
           if (fb) {
             var ex = fb.getAttribute("data-explain");
@@ -336,6 +350,7 @@
       setDone(subject.code, module.id, now);
       btn.classList.toggle("is-done", now);
       btn.textContent = now ? "✓ Module terminé" : "Marquer ce module comme terminé";
+      if (now) logActivity({ k: "module", c: subject.code, m: module.id, title: module.title });
     });
   }
 

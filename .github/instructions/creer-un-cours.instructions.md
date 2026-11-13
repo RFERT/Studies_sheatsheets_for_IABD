@@ -91,6 +91,9 @@ Texte **gras**, *italique*, `code`, [lien](https://…), listes, tableaux.
   > WHERE filtre AVANT l'agrégation ; HAVING filtre après.
   :::
   ```
+  > ⚠️ Le `:::` de fermeture doit être **seul, en début de ligne** (pas `> :::` ni indenté),
+  > sinon le bloc n'est pas fermé et « avale » le reste du cours. Un `::: quiz` par bloc,
+  > fermé par son `:::`. (Le test CI `ci/check_courses.py` détecte ces oublis.)
 - Exercice corrigé (`??` sépare énoncé et solution repliable) :
   ```markdown
   ::: exo Exercice 1

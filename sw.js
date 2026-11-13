@@ -3,7 +3,7 @@
    Stratégie : cache-first avec mise en cache à la volée.
    Ne fonctionne qu'en https:// ou localhost (pas en file://).
    ========================================================= */
-const CACHE = "esgi-cours-v21";
+const CACHE = "esgi-cours-v22";
 const CORE = [
   "./",
   "./index.html",
@@ -33,9 +33,35 @@ const CORE = [
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(CORE).catch(() => {})).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then((c) => c.addAll(CORE).catch(() => {}))
+      .then(() => precacheCourses())
+      .then(() => self.skipWaiting())
   );
 });
+
+/* Pré-cache des cours Markdown : lit matieres/cours.js, extrait les chemins
+   `file:` (modules) et `aide:` (antisèches) et les met en cache pour une
+   consultation 100 % hors-ligne, sans liste à maintenir à la main. */
+function precacheCourses() {
+  return fetch("./matieres/cours.js", { cache: "no-cache" })
+    .then((r) => (r && r.ok ? r.text() : ""))
+    .then((txt) => {
+      const paths = [];
+      const re = /\b(?:file|aide)\s*:\s*["']([^"']+\.md)["']/g;
+      let m;
+      while ((m = re.exec(txt))) paths.push("./" + m[1].replace(/^\.?\/*/, ""));
+      if (!paths.length) return;
+      return caches.open(CACHE).then((c) =>
+        Promise.all(paths.map((p) =>
+          fetch(p, { cache: "no-cache" })
+            .then((res) => (res && res.ok ? c.put(p, res.clone()) : null))
+            .catch(() => null)
+        ))
+      );
+    })
+    .catch(() => {});
+}
 
 self.addEventListener("activate", (e) => {
   e.waitUntil(
