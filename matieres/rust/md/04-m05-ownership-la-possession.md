@@ -43,6 +43,11 @@ println!("{s2}");         // OK
 Pourquoi invalider `s1` ? Parce que `String` possède un pointeur vers le tas. Si `s1` et `s2` pointaient tous deux vers la même mémoire, à la fin de portée on la libérerait **deux fois** (« double free », bug de sécurité classique en C++). Le move garantit un **unique** propriétaire, donc une **unique** libération.
 :::
 
+::: viz ownership Move, clone et Copy : la mémoire pas à pas
+exemple: move
+Avance ligne par ligne et regarde la pile (à gauche) et le tas (à droite). Au move, seule la petite structure (pointeur, longueur, capacité) est copiée et `s1` est invalidée ; à la fin de portée, le tas n'est libéré **qu'une fois**. Change d'exemple pour comparer avec `clone()` (deux tampons) et avec un `i32` (type `Copy`, rien sur le tas).
+:::
+
 ### Copy vs Move
 
 Les types simples entièrement sur la pile (entiers, `bool`, `char`, `f64`, tuples de Copy…) implémentent le trait `Copy` : ils sont **copiés**, pas déplacés.
@@ -81,6 +86,11 @@ Passer une `String` (ou tout type non-Copy) à une fonction **par valeur** la **
 
 ::: why Le « pourquoi » de Rust
 Ce modèle élimine des classes entières de bugs **à la compilation** : use-after-free, double-free, fuites, data races. C’est le cœur de la promesse de Rust : « sécurité mémoire sans GC ». Le prix à payer est l’apprentissage de ces règles — d’où l’importance de ce module.
+:::
+
+::: viz ownership Passer une String à une fonction
+exemple: fonction
+Passer par valeur, c'est un **move** : le paramètre devient propriétaire et libère le tas à la fin de la fonction. Repère l'étape où `s` devient inutilisable dans `main`, puis demande-toi comment l'éviter (`&s`, ou renvoyer la valeur).
 :::
 
 ## Quiz d'entraînement

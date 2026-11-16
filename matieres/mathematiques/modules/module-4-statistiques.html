@@ -163,6 +163,11 @@
         </div>
         <div class="feedback" data-explain="Sans biais = correct « en espérance ». Un estimateur peut être sans biais tout en fluctuant (variance) ; on veut les deux : sans biais ET faible variance."></div>
       </div>
+
+      <figure class="viz" data-labo="estim-normale" data-viz="normale" data-opts='{"mu": "0", "sigma": "1", "a": "-1.96", "b": "1.96"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « normale » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — D'où vient l'intervalle à 95 % ?</strong><p>Par le TCL, la moyenne empirique est approximativement normale : 95 % de sa masse est à ±1,96 écart-type. Clique « μ ± 2σ » et compare : 95,45 %, pas exactement 95 %.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 4 -->
@@ -270,6 +275,11 @@
         </div>
         <div class="feedback" data-explain="R² = part de la variance de y expliquée par le modèle. 0,85 = bon ajustement, mais à croiser avec l'analyse des résidus."></div>
       </div>
+
+      <figure class="viz" data-labo="reg-regression" data-viz="regression" data-opts='{"degre": "1"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « regression » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Moindres carrés en direct</strong><p>La droite minimise la somme des carrés des résidus (pointillés). Ajoute une <b>valeur aberrante</b> : la pente bascule, car l'erreur au carré donne un poids énorme aux points lointains. Monte ensuite le degré pour voir le surapprentissage.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 6 -->
@@ -397,5 +407,7 @@
   <div class="footer">Module 4 — Statistiques · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

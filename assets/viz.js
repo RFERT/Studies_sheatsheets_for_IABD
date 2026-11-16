@@ -761,10 +761,919 @@
     return { draw: draw };
   }
 
+  /* ---------- Utilitaires partagés par les widgets 6 et suivants ---------- */
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function rng(seed) {
+    var s = (seed >>> 0) || 1;
+    return function () { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; };
+  }
+  function txt(ctx, s, x, y, color, font, align, base) {
+    ctx.fillStyle = color; ctx.font = font || "12px system-ui, sans-serif";
+    ctx.textAlign = align || "center"; ctx.textBaseline = base || "middle"; ctx.fillText(s, x, y);
+  }
+  function rrect(ctx, x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+  }
+  function rgba(hex, a) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex).trim());
+    if (!m) return hex;
+    var n = parseInt(m[1], 16);
+    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function check(on) { var c = el("input"); c.type = "checkbox"; c.checked = !!on; return c; }
+  function intFmt(n) { return Math.abs(n) < 1e15 ? String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "\u202f") : fmt(n); }
+
+  /* =========================================================
+     6. K-means pas à pas
+     ========================================================= */
+  var KCOL = ["#5b8cff", "#ff6b81", "#22c39a", "#ffb454", "#b98cff", "#2ec5d3"];
+  function KMeans(body, o) {
+    var k = clamp(Math.round(num(o, "k", 3)), 1, 6), g = clamp(Math.round(num(o, "groupes", 3)), 1, 6);
+    var mode = o.init === "aleatoire" ? "rand" : "pp", seed = Math.round(num(o, "graine", 7));
+    var pts = [], cen = [], asg = [], it = 0, phase = "assign", done = false, last = "";
+    var st = Stage(body, 0.62, 400, "Nuage de points, groupes et centroïdes de l'algorithme K-means");
+    var P = layout(body);
+    var rK = range(1, 6, 1, k), oK = el("output", "viz-val");
+    var rG = range(1, 6, 1, g), oG = el("output", "viz-val");
+    var sI = select([["pp", "k-means++"], ["rand", "Aléatoire"]], mode);
+    var bStep = btn("Étape ▶"), bRun = btn("⏩ Converger"), bInit = btn("🎲 Nouvelle init."), bData = btn("🔄 Nouveau jeu");
+    P.ctls.appendChild(ctl("k (centroïdes)", rK, oK));
+    P.ctls.appendChild(ctl("Vrais groupes", rG, oG));
+    P.ctls.appendChild(ctl("Initialisation", sI));
+    var bar = el("div", "viz-btns"); [bStep, bRun, bInit, bData].forEach(function (b) { bar.appendChild(b); });
+    P.ctls.appendChild(bar);
+    finish(body, P);
+
+    function d2(p, c) { var dx = p.x - c[0], dy = p.y - c[1]; return dx * dx + dy * dy; }
+    function gen() {
+      var r = rng(seed * 7919 + g), centers = [], i;
+      for (i = 0; i < g; i++) centers.push([1.6 + r() * 6.8, 1.6 + r() * 6.8]);
+      pts = [];
+      for (i = 0; i < 96; i++) {
+        var c = centers[i % g], u = r() || 1e-9, v = r(), R = Math.sqrt(-2 * Math.log(u)) * 0.75;
+        pts.push({ x: clamp(c[0] + R * Math.cos(2 * Math.PI * v), 0.2, 9.8), y: clamp(c[1] + R * Math.sin(2 * Math.PI * v), 0.2, 9.8) });
+      }
+    }
+    function init() {
+      var r = rng(seed * 104729 + k * 13 + (mode === "pp" ? 1 : 2)), i, q;
+      cen = []; asg = pts.map(function () { return -1; }); it = 0; phase = "assign"; done = false;
+      if (!pts.length) { last = "Clique dans le graphe pour ajouter des points."; return; }
+      last = "Centroïdes initiaux placés (" + (mode === "pp" ? "<b>k-means++</b> : tirés loin les uns des autres" : "<b>au hasard</b> parmi les points") + "). Clique sur <b>Étape</b>.";
+      if (mode === "pp") {
+        q = pts[Math.floor(r() * pts.length)]; cen.push([q.x, q.y]);
+        while (cen.length < k) {
+          var D = pts.map(function (p) { return Math.min.apply(null, cen.map(function (c) { return d2(p, c); })); });
+          var t = r() * D.reduce(function (s, v) { return s + v; }, 0), j = 0;
+          while (j < D.length - 1 && (t -= D[j]) > 0) j++;
+          cen.push([pts[j].x, pts[j].y]);
+        }
+      } else {
+        for (i = 0; i < k; i++) { q = pts[Math.floor(r() * pts.length)]; cen.push([q.x, q.y]); }
+      }
+    }
+    function inertia() { var s = 0; pts.forEach(function (p, i) { if (asg[i] >= 0) s += d2(p, cen[asg[i]]); }); return s; }
+    function step() {
+      if (done || !pts.length) return false;
+      if (phase === "assign") {
+        var ch = 0;
+        pts.forEach(function (p, i) {
+          var best = 0, bd = Infinity;
+          cen.forEach(function (c, j) { var d = d2(p, c); if (d < bd) { bd = d; best = j; } });
+          if (asg[i] !== best) { asg[i] = best; ch++; }
+        });
+        if (ch === 0 && it > 0) { done = true; last = "✅ <b>Convergé</b> en " + it + " itérations : plus aucun point ne change de groupe."; return false; }
+        last = "<b>Affectation</b> : chaque point rejoint le centroïde le plus proche (" + ch + " changement" + (ch > 1 ? "s" : "") + ").";
+        phase = "update";
+      } else {
+        cen = cen.map(function (c, j) {
+          var sx = 0, sy = 0, n = 0;
+          pts.forEach(function (p, i) { if (asg[i] === j) { sx += p.x; sy += p.y; n++; } });
+          return n ? [sx / n, sy / n] : c;
+        });
+        it++;
+        last = "<b>Mise à jour</b> : chaque centroïde se place au barycentre (moyenne) de ses points — itération " + it + ".";
+        phase = "assign";
+      }
+      return true;
+    }
+    function draw() {
+      oK.textContent = String(k); oG.textContent = String(g);
+      var msg = last;
+      if (done && k !== g) msg += k < g ? " ⚠️ k est plus petit que le nombre réel de groupes : des groupes distincts sont fusionnés."
+        : " ⚠️ k dépasse le nombre réel de groupes : un vrai groupe est découpé artificiellement (et l'inertie baisse quand même !).";
+      else if (done) msg += " Relance une <b>nouvelle init.</b> : l'inertie finale peut changer (minimum local).";
+      P.out.innerHTML = '<div class="viz-kv"><span>Itération <b>' + it + "</b></span><span>Inertie = <b>" + fmt(inertia(), 2) +
+        "</b></span><span>n = <b>" + pts.length + "</b></span></div>" + '<p class="viz-msg">' + msg + "</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, F = Frame(st, 0, 10, 0, 10, 24, true);
+      drawAxes(ctx, F, C);
+      if (phase === "update" && !done) {
+        ctx.save(); ctx.globalAlpha = 0.25; ctx.lineWidth = 1;
+        pts.forEach(function (p, i) {
+          if (asg[i] < 0) return;
+          ctx.strokeStyle = KCOL[asg[i]]; ctx.beginPath(); ctx.moveTo(F.X(p.x), F.Y(p.y));
+          ctx.lineTo(F.X(cen[asg[i]][0]), F.Y(cen[asg[i]][1])); ctx.stroke();
+        });
+        ctx.restore();
+      }
+      pts.forEach(function (p, i) { dot(ctx, F.X(p.x), F.Y(p.y), 4.5, asg[i] >= 0 ? KCOL[asg[i]] : C.muted); });
+      cen.forEach(function (c, j) {
+        var X = F.X(c[0]), Y = F.Y(c[1]);
+        ctx.save(); ctx.fillStyle = KCOL[j]; ctx.strokeStyle = C.text; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.rect(X - 8, Y - 8, 16, 16); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(X - 5, Y - 5); ctx.lineTo(X + 5, Y + 5); ctx.moveTo(X + 5, Y - 5); ctx.lineTo(X - 5, Y + 5); ctx.stroke();
+        ctx.restore();
+      });
+    }
+    rK.addEventListener("input", function () { k = clamp(Math.round(+rK.value), 1, 6); init(); draw(); });
+    rG.addEventListener("input", function () { g = clamp(Math.round(+rG.value), 1, 6); gen(); init(); draw(); });
+    sI.addEventListener("change", function () { mode = sI.value; init(); draw(); });
+    bStep.addEventListener("click", function () { step(); draw(); });
+    bRun.addEventListener("click", function () { var n = 0; while (step() && n++ < 400) {} draw(); });
+    bInit.addEventListener("click", function () { seed++; init(); draw(); });
+    bData.addEventListener("click", function () { seed++; gen(); init(); draw(); });
+    st.canvas.addEventListener("click", function (ev) {
+      if (!st.w) return;
+      var F = Frame(st, 0, 10, 0, 10, 24, true), m = st.pos(ev), x = F.ix(m.x), y = F.iy(m.y);
+      if (x < 0 || x > 10 || y < 0 || y > 10) return;
+      pts.push({ x: x, y: y }); asg.push(-1);
+      if (!cen.length) init(); else { done = false; phase = "assign"; }
+      last = "Point ajouté : relance des <b>Étapes</b> pour voir l'algorithme s'adapter.";
+      draw();
+    });
+    gen(); init(); draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     7. Seuil de décision : matrice de confusion & courbe ROC
+     ========================================================= */
+  function Seuil(body, o) {
+    var sep = clamp(num(o, "separation", 1.6), 0, 4), prev = clamp(num(o, "prevalence", 0.3), 0.01, 0.9), t = clamp(num(o, "seuil", 0), -4, 4);
+    var st = Stage(body, 0.5, 360, "Distributions des scores des classes négative et positive, seuil de décision et courbe ROC");
+    var P = layout(body);
+    var rS = range(0, 4, 0.1, sep), oS = el("output", "viz-val");
+    var rP = range(1, 90, 1, Math.round(prev * 100)), oP = el("output", "viz-val");
+    var rT = range(-4, 4, 0.05, t), oT = el("output", "viz-val");
+    P.ctls.appendChild(ctl("Séparation des classes", rS, oS));
+    P.ctls.appendChild(ctl("Part de positifs", rP, oP));
+    P.ctls.appendChild(ctl("Seuil de décision", rT, oT));
+    finish(body, P);
+    var N = 1000, wl = 0;
+    function rates(th) { return { tpr: 1 - Phi(th - sep / 2), fpr: 1 - Phi(th + sep / 2) }; }
+    function draw() {
+      oS.textContent = fmt(sep, 1); oP.textContent = Math.round(prev * 100) + " %"; oT.textContent = fmt(t, 2);
+      var Pn = N * prev, Nn = N - Pn, r = rates(t);
+      var TP = Pn * r.tpr, FN = Pn - TP, FP = Nn * r.fpr, TN = Nn - FP;
+      var prec = TP + FP > 1e-9 ? TP / (TP + FP) : 1, rec = r.tpr, f1 = prec + rec > 0 ? 2 * prec * rec / (prec + rec) : 0;
+      var acc = (TP + TN) / N, auc = Phi(sep / Math.SQRT2), R = Math.round, msg;
+      if (sep < 0.15) msg = "Classes indiscernables : la courbe ROC colle à la diagonale (AUC ≈ 0,5) — le modèle ne fait pas mieux que le hasard.";
+      else if (rec > 0.9 && prec < 0.6) msg = "Seuil <b>bas</b> : presque tous les positifs sont détectés (rappel ↑) au prix de nombreuses fausses alertes (précision ↓). Utile en dépistage.";
+      else if (prec > 0.9 && rec < 0.6) msg = "Seuil <b>haut</b> : quand le modèle dit « positif » il a presque toujours raison (précision ↑), mais il en rate beaucoup (rappel ↓). Utile contre le spam.";
+      else msg = "Déplace le seuil (ou clique sur le graphe de gauche) : VP, FP, FN et VN s'échangent. La courbe ROC, elle, ne dépend que de la <b>séparation</b> des classes.";
+      if (prev < 0.1 && acc > 0.9) msg += " ⚠️ Avec si peu de positifs, l'accuracy est élevée même quand on rate des positifs : ne la regarde pas seule.";
+      P.out.innerHTML = '<table class="viz-cm"><tr><th></th><th>Prédit +</th><th>Prédit −</th></tr>' +
+        '<tr><th>Réel +</th><td class="tp">VP ' + R(TP) + '</td><td class="fn">FN ' + R(FN) + "</td></tr>" +
+        '<tr><th>Réel −</th><td class="fp">FP ' + R(FP) + '</td><td class="tn">VN ' + R(TN) + "</td></tr></table>" +
+        '<div class="viz-kv"><span>Précision <b>' + fmt(prec * 100, 1) + " %</b></span><span>Rappel <b>" + fmt(rec * 100, 1) +
+        " %</b></span><span>F1 <b>" + fmt(f1, 3) + "</b></span><span>Accuracy <b>" + fmt(acc * 100, 1) + " %</b></span><span>Taux de FP <b>" +
+        fmt(r.fpr * 100, 1) + " %</b></span><span>AUC <b>" + fmt(auc, 3) + "</b></span></div>" +
+        '<p class="viz-msg">' + msg + "</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx;
+      wl = Math.round(st.w * 0.6);
+      var FL = Frame({ w: wl, h: st.h }, -5, 5, 0, Math.max(prev, 1 - prev) * 0.43, 26);
+      drawAxes(ctx, FL, C);
+      function area(mu, w, a, b, color) {
+        if (b <= a) return;
+        ctx.beginPath(); ctx.moveTo(FL.X(a), FL.Y(0));
+        for (var i = 0; i <= 120; i++) { var x = a + (b - a) * i / 120; ctx.lineTo(FL.X(x), FL.Y(w * pdf(x, mu, 1))); }
+        ctx.lineTo(FL.X(b), FL.Y(0)); ctx.closePath(); ctx.fillStyle = rgba(color, 0.38); ctx.fill();
+      }
+      function curve(mu, w, color) {
+        ctx.strokeStyle = color; ctx.lineWidth = 2.2; ctx.beginPath();
+        for (var i = 0; i <= 200; i++) { var x = -5 + 10 * i / 200; if (i === 0) ctx.moveTo(FL.X(x), FL.Y(w * pdf(x, mu, 1))); else ctx.lineTo(FL.X(x), FL.Y(w * pdf(x, mu, 1))); }
+        ctx.stroke();
+      }
+      area(-sep / 2, 1 - prev, -5, t, C.muted); area(-sep / 2, 1 - prev, t, 5, C.red);
+      area(sep / 2, prev, -5, t, C.orange); area(sep / 2, prev, t, 5, C.green);
+      curve(-sep / 2, 1 - prev, C.soft); curve(sep / 2, prev, C.green);
+      ctx.save(); ctx.strokeStyle = C.text; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5; ctx.beginPath();
+      ctx.moveTo(FL.X(t), FL.Y(FL.ymin)); ctx.lineTo(FL.X(t), FL.Y(FL.ymax)); ctx.stroke(); ctx.restore();
+      txt(ctx, "seuil", FL.X(t), 12, C.text, "bold 12px system-ui, sans-serif");
+      txt(ctx, "négatifs", FL.X(-sep / 2 - 1.6), 30, C.soft); txt(ctx, "positifs", FL.X(sep / 2 + 1.6), 30, C.green);
+      ctx.save(); ctx.translate(wl, 0);
+      var FR = Frame({ w: st.w - wl, h: st.h }, 0, 1, 0, 1, 26, true);
+      drawAxes(ctx, FR, C);
+      ctx.strokeStyle = C.muted; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(FR.X(0), FR.Y(0)); ctx.lineTo(FR.X(1), FR.Y(1)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = C.primary; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (var i = 0; i <= 160; i++) { var q = rates(7 - 14 * i / 160); if (i === 0) ctx.moveTo(FR.X(q.fpr), FR.Y(q.tpr)); else ctx.lineTo(FR.X(q.fpr), FR.Y(q.tpr)); }
+      ctx.stroke();
+      dot(ctx, FR.X(r.fpr), FR.Y(r.tpr), 6, C.red, C.card);
+      txt(ctx, "ROC (TPR vs FPR)", FR.X(0.5), 12, C.text, "bold 12px system-ui, sans-serif");
+      ctx.restore();
+    }
+    rS.addEventListener("input", function () { sep = +rS.value; draw(); });
+    rP.addEventListener("input", function () { prev = +rP.value / 100; draw(); });
+    rT.addEventListener("input", function () { t = +rT.value; draw(); });
+    st.canvas.addEventListener("click", function (ev) {
+      var m = st.pos(ev);
+      if (!st.w || m.x > wl) return;
+      var FL = Frame({ w: wl, h: st.h }, -5, 5, 0, 1, 26);
+      t = clamp(Math.round(FL.ix(m.x) * 20) / 20, -4, 4); rT.value = t; draw();
+    });
+    draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     8. Théorème de Bayes en population (1 000 personnes)
+     ========================================================= */
+  function Bayes(body, o) {
+    var p = clamp(num(o, "prevalence", 0.01), 0.001, 0.5), se = clamp(num(o, "sensibilite", 0.99), 0.5, 1), sp = clamp(num(o, "specificite", 0.95), 0.5, 1);
+    function sOf(x) { return Math.round(Math.log(x / 0.001) / Math.log(500) * 100); }
+    function pOf(s) { return 0.001 * Math.pow(500, s / 100); }
+    var st = Stage(body, 0.42, 300, "Population de 1000 personnes répartie en vrais positifs, faux positifs, faux négatifs et vrais négatifs");
+    var P = layout(body);
+    var rP = range(0, 100, 1, sOf(p)), oP = el("output", "viz-val");
+    var rSe = range(50, 100, 0.5, se * 100), oSe = el("output", "viz-val");
+    var rSp = range(50, 100, 0.5, sp * 100), oSp = el("output", "viz-val");
+    P.ctls.appendChild(ctl("Prévalence P(M)", rP, oP));
+    P.ctls.appendChild(ctl("Sensibilité P(+ | M)", rSe, oSe));
+    P.ctls.appendChild(ctl("Spécificité P(− | non M)", rSp, oSp));
+    finish(body, P);
+    function draw() {
+      oP.textContent = fmt(p * 100, p < 0.01 ? 2 : 1) + " %"; oSe.textContent = fmt(se * 100, 1) + " %"; oSp.textContent = fmt(sp * 100, 1) + " %";
+      var M = Math.round(1000 * p), TP = Math.round(M * se), FN = M - TP, FP = Math.round((1000 - M) * (1 - sp)), TN = 1000 - M - FP;
+      var vpp = se * p / (se * p + (1 - sp) * (1 - p)), vpn = sp * (1 - p) / (sp * (1 - p) + (1 - se) * p);
+      var C = palette(body);
+      var leg = function (c, t) { return '<span><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:' + c + ';margin-right:5px"></i>' + t + "</span>"; };
+      var msg = "Sur 1 000 personnes : <b>" + M + "</b> malades, <b>" + (TP + FP) + "</b> tests positifs dont seulement <b>" + TP + "</b> vrais positifs.";
+      if (vpp < 0.5) msg += " ⚠️ <b>Paradoxe du faux positif</b> : la maladie est si rare que les sains testés positifs sont plus nombreux que les malades. P(M | +) ≠ P(+ | M) !";
+      P.out.innerHTML = '<div class="viz-kv">' + leg(C.green, "VP " + TP) + leg(C.red, "FP " + FP) + leg(C.orange, "FN " + FN) + leg(rgba(C.muted, 0.45), "VN " + TN) + "</div>" +
+        '<div class="viz-kv"><span>P(M | +) = VPP = <b>' + fmt(vpp * 100, 1) + " %</b></span><span>P(non M | −) = VPN = <b>" + fmt(vpn * 100, 2) + " %</b></span></div>" +
+        '<p class="viz-msg">' + msg + " Bayes : <code>P(M | +) = P(+ | M)·P(M) / P(+)</code>.</p>";
+      if (!st.fit()) return;
+      var ctx = st.ctx, cols = 50, rows = 20, cs = Math.min((st.w - 16) / cols, (st.h - 16) / rows), x0 = (st.w - cs * cols) / 2, y0 = (st.h - cs * rows) / 2;
+      for (var i = 0; i < 1000; i++) {
+        var col = i < TP ? C.green : i < TP + FP ? C.red : i < TP + FP + FN ? C.orange : rgba(C.muted, 0.35);
+        ctx.fillStyle = col;
+        ctx.fillRect(x0 + (i % cols) * cs + 1, y0 + Math.floor(i / cols) * cs + 1, Math.max(1, cs - 2), Math.max(1, cs - 2));
+      }
+    }
+    rP.addEventListener("input", function () { p = pOf(+rP.value); draw(); });
+    rSe.addEventListener("input", function () { se = +rSe.value / 100; draw(); });
+    rSp.addEventListener("input", function () { sp = +rSp.value / 100; draw(); });
+    draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     9. Triangle de Pascal & modèles de dénombrement
+     ========================================================= */
+  function binom(n, k) { if (k < 0 || k > n) return 0; k = Math.min(k, n - k); var r = 1; for (var i = 1; i <= k; i++) r = r * (n - k + i) / i; return Math.round(r); }
+  function Pascal(body, o) {
+    var N = clamp(Math.round(num(o, "lignes", 8)), 3, 15), n = clamp(Math.round(num(o, "n", 5)), 0, N), k = clamp(Math.round(num(o, "k", 2)), 0, n), par = o.mode === "parite";
+    var st = Stage(body, 0.6, 420, "Triangle de Pascal avec le coefficient binomial sélectionné et ses deux parents");
+    var P = layout(body);
+    var rN = range(3, 15, 1, N), oN = el("output", "viz-val");
+    var rn = range(0, 15, 1, n), on = el("output", "viz-val");
+    var rk = range(0, 15, 1, k), ok = el("output", "viz-val");
+    var cPar = check(par);
+    P.ctls.appendChild(ctl("Lignes affichées", rN, oN));
+    P.ctls.appendChild(ctl("n", rn, on));
+    P.ctls.appendChild(ctl("k", rk, ok));
+    P.ctls.appendChild(ctl("Colorier la parité", cPar));
+    finish(body, P);
+    function geom() { var cw = Math.min(48, (st.w - 12) / (N + 1)), ch = Math.min(30, (st.h - 12) / (N + 1)); return { cw: cw, ch: ch }; }
+    function cell(r, c, G) { return { x: st.w / 2 + (c - r / 2) * G.cw, y: 6 + G.ch / 2 + r * G.ch }; }
+    function draw() {
+      n = Math.min(n, N); k = Math.min(k, n);
+      rn.max = N; rn.value = n; rk.max = n; rk.value = k;
+      oN.textContent = String(N); on.textContent = String(n); ok.textContent = String(k);
+      var v = binom(n, k), A = 1, i;
+      for (i = 0; i < k; i++) A *= (n - i);
+      P.out.innerHTML = '<div class="viz-kv"><span>C(' + n + ", " + k + ") = n! / (k!·(n−k)!) = <b>" + intFmt(v) + "</b></span>" +
+        (n > 0 ? "<span>Pascal : C(" + (n - 1) + ", " + (k - 1) + ") + C(" + (n - 1) + ", " + k + ") = " + binom(n - 1, k - 1) + " + " + binom(n - 1, k) + "</span>" : "") +
+        "<span>Somme de la ligne = 2^" + n + " = <b>" + intFmt(Math.pow(2, n)) + "</b></span></div>" +
+        '<p class="viz-msg">Tirer k = ' + k + " objets parmi n = " + n + " : ordonné avec remise <b>n^k = " + intFmt(Math.pow(n, k)) +
+        "</b> · ordonné sans remise <b>A = n!/(n−k)! = " + intFmt(A) + "</b> · non ordonné sans remise <b>C(n, k) = " + intFmt(v) +
+        "</b> · non ordonné avec remise <b>C(n+k−1, k) = " + intFmt(binom(n + k - 1, k)) + "</b>. Clique sur une case du triangle.</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, G = geom(), fs = Math.max(8, Math.min(13, G.cw * 0.3));
+      for (var r = 0; r <= N; r++) for (var c = 0; c <= r; c++) {
+        var q = cell(r, c, G), val = binom(r, c), fill = C.card, tc = C.text;
+        if (r === n && c === k) { fill = C.primary; tc = "#fff"; }
+        else if (r === n - 1 && (c === k - 1 || c === k)) { fill = C.orange; tc = "#1b1b1b"; }
+        else if (par && val % 2 === 1) fill = rgba(C.accent, 0.45);
+        rrect(ctx, q.x - G.cw / 2 + 1.5, q.y - G.ch / 2 + 1.5, G.cw - 3, G.ch - 3, 5);
+        ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = C.border; ctx.lineWidth = 1; ctx.stroke();
+        txt(ctx, val >= 1e4 ? (val / 1000).toFixed(0) + "k" : String(val), q.x, q.y + 0.5, tc, fs + "px system-ui, sans-serif");
+      }
+    }
+    rN.addEventListener("input", function () { N = +rN.value; draw(); });
+    rn.addEventListener("input", function () { n = +rn.value; draw(); });
+    rk.addEventListener("input", function () { k = +rk.value; draw(); });
+    cPar.addEventListener("change", function () { par = cPar.checked; draw(); });
+    st.canvas.addEventListener("click", function (ev) {
+      if (!st.w) return;
+      var m = st.pos(ev), G = geom(), r = Math.floor((m.y - 6) / G.ch);
+      if (r < 0 || r > N) return;
+      var c = Math.round((m.x - st.w / 2) / G.cw + r / 2);
+      if (c < 0 || c > r) return;
+      n = r; k = c; draw();
+    });
+    draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     10. Entropie de Shannon & impureté de Gini
+     ========================================================= */
+  function Entropie(body, o) {
+    var k = clamp(Math.round(num(o, "k", 4)), 2, 6), w = [];
+    var init = String(o.poids || "").split(/[\s,;]+/).map(parseFloat);
+    for (var i = 0; i < 6; i++) w.push(isFinite(init[i]) ? init[i] : 50);
+    var st = Stage(body, 0.42, 300, "Diagramme en barres d'une distribution de probabilité et son entropie");
+    var P = layout(body);
+    var rK = range(2, 6, 1, k), oK = el("output", "viz-val");
+    var box = el("div", "viz-ctls"), sl = [];
+    var b1 = btn("Uniforme"), b2 = btn("Presque certaine"), b3 = btn("Pièce truquée 90/10");
+    P.ctls.appendChild(ctl("Nombre de classes", rK, oK));
+    var bar = el("div", "viz-btns"); [b1, b2, b3].forEach(function (b) { bar.appendChild(b); });
+    P.ctls.appendChild(bar);
+    P.ctls.appendChild(box);
+    finish(body, P);
+    function rebuild() {
+      box.innerHTML = ""; sl = [];
+      for (var j = 0; j < k; j++) (function (j) {
+        var r = range(0, 100, 1, w[j]);
+        r.addEventListener("input", function () { w[j] = +r.value; draw(); });
+        box.appendChild(ctl("Poids classe " + (j + 1), r)); sl.push(r);
+      })(j);
+    }
+    function probs() {
+      var s = 0, j; for (j = 0; j < k; j++) s += w[j];
+      var p = []; for (j = 0; j < k; j++) p.push(s > 0 ? w[j] / s : 1 / k);
+      return p;
+    }
+    function draw() {
+      oK.textContent = String(k);
+      var p = probs(), H = 0, G = 1, Hm = Math.log(k) / Math.LN2;
+      p.forEach(function (q) { if (q > 0) H -= q * Math.log(q) / Math.LN2; G -= q * q; });
+      var msg = H < 0.05 ? "Distribution (presque) certaine : aucune surprise, entropie ≈ 0 bit. Un nœud d'arbre <b>pur</b>."
+        : H > Hm - 0.02 ? "Distribution <b>uniforme</b> : incertitude maximale, H = log₂ k = " + fmt(Hm, 3) + " bits."
+        : "Entre les deux : plus les probabilités sont déséquilibrées, plus l'entropie baisse.";
+      P.out.innerHTML = '<div class="viz-kv"><span>H = −Σ p log₂ p = <b>' + fmt(H, 3) + " bits</b></span><span>H max = log₂ " + k + " = <b>" + fmt(Hm, 3) +
+        "</b></span><span>Gini = 1 − Σ p² = <b>" + fmt(G, 3) + "</b></span></div>" +
+        '<p class="viz-msg">' + msg + " Au-dessus des barres : la <b>surprise</b> −log₂ p d'un résultat. Un arbre de décision choisit la coupure qui fait le plus baisser H (ou Gini) : c'est le <b>gain d'information</b>.</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, F = Frame(st, 0, k, 0, 1.15, 28);
+      drawAxes(ctx, F, C);
+      p.forEach(function (q, j) {
+        var x0 = F.X(j + 0.15), x1 = F.X(j + 0.85), y = F.Y(q);
+        ctx.fillStyle = KCOL[j]; ctx.fillRect(x0, y, x1 - x0, F.Y(0) - y);
+        txt(ctx, fmt(q, 2), (x0 + x1) / 2, y - 18, C.text, "bold 12px system-ui, sans-serif");
+        txt(ctx, q > 0 ? fmt(-Math.log(q) / Math.LN2, 2) + " bit" : "∞", (x0 + x1) / 2, y - 6, C.soft, "11px system-ui, sans-serif");
+      });
+    }
+    function setAll(arr) { for (var j = 0; j < 6; j++) w[j] = arr[j] != null ? arr[j] : 0; rebuild(); draw(); }
+    rK.addEventListener("input", function () { k = +rK.value; rebuild(); draw(); });
+    b1.addEventListener("click", function () { setAll([50, 50, 50, 50, 50, 50]); });
+    b2.addEventListener("click", function () { setAll([100, 1, 1, 1, 1, 1]); });
+    b3.addEventListener("click", function () { k = 2; rK.value = 2; setAll([90, 10]); });
+    rebuild(); draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     11. Parcours de graphe : BFS, DFS, Dijkstra pas à pas
+     ========================================================= */
+  var GNODES = { A: [0.05, 0.5], B: [0.28, 0.12], C: [0.28, 0.88], D: [0.52, 0.36], E: [0.52, 0.8], F: [0.76, 0.1], G: [0.76, 0.56], H: [0.96, 0.9] };
+  var GEDGES = [["A", "B", 4], ["A", "C", 2], ["B", "C", 1], ["B", "D", 5], ["C", "D", 9], ["C", "E", 8], ["D", "E", 2],
+    ["D", "F", 3], ["D", "G", 6], ["E", "G", 4], ["F", "G", 1], ["G", "H", 2], ["E", "H", 7]];
+  function Graphe(body, o) {
+    var algo = ["bfs", "dfs", "dijkstra"].indexOf(o.algo) >= 0 ? o.algo : "bfs", src = GNODES[o.depart] ? o.depart : "A";
+    var names = Object.keys(GNODES), adj = {};
+    names.forEach(function (n) { adj[n] = []; });
+    GEDGES.forEach(function (e) { adj[e[0]].push([e[1], e[2]]); adj[e[1]].push([e[0], e[2]]); });
+    names.forEach(function (n) { adj[n].sort(function (a, b) { return a[0] < b[0] ? -1 : 1; }); });
+    var st = Stage(body, 0.55, 380, "Graphe pondéré parcouru pas à pas");
+    var P = layout(body);
+    var sA = select([["bfs", "BFS (largeur, file)"], ["dfs", "DFS (profondeur, pile)"], ["dijkstra", "Dijkstra (poids ≥ 0)"]], algo);
+    var sS = select(names.map(function (n) { return [n, n]; }), src);
+    var bPrev = btn("◀ Pas"), bNext = btn("Pas ▶"), bPlay = btn("▶ Animer"), bReset = btn("↺");
+    P.ctls.appendChild(ctl("Algorithme", sA));
+    P.ctls.appendChild(ctl("Sommet de départ", sS));
+    var bar = el("div", "viz-btns"); [bPrev, bNext, bPlay, bReset].forEach(function (b) { bar.appendChild(b); });
+    P.ctls.appendChild(bar);
+    finish(body, P);
+    var steps = [], idx = 0, timer = null;
+    function build() {
+      steps = [];
+      var S = { cur: null, done: [], front: [], dist: {}, parent: {}, order: [], msg: "" };
+      function snap() { steps.push(JSON.parse(JSON.stringify(S))); }
+      if (algo === "bfs") {
+        var q = [src], seen = {}; seen[src] = 1; S.dist[src] = 0; S.front = q.slice();
+        S.msg = "Départ : on enfile <b>" + src + "</b> (distance 0)."; snap();
+        while (q.length) {
+          var u = q.shift(), added = [];
+          S.cur = u; S.order.push(u); S.done.push(u);
+          adj[u].forEach(function (e) { var v = e[0]; if (!seen[v]) { seen[v] = 1; S.dist[v] = S.dist[u] + 1; S.parent[v] = u; q.push(v); added.push(v); } });
+          S.front = q.slice();
+          S.msg = "On défile <b>" + u + "</b> et on enfile ses voisins pas encore vus" + (added.length ? " : " + added.join(", ") : " (aucun)") + ".";
+          snap();
+        }
+        S.cur = null; S.msg = "✅ BFS terminé : les distances en <b>nombre d'arêtes</b> sont minimales. BFS = plus court chemin d'un graphe <b>non pondéré</b>."; snap();
+      } else if (algo === "dfs") {
+        var vis = {}, stack = [];
+        (function dfs(u, d) {
+          vis[u] = 1; stack.push(u); S.cur = u; S.order.push(u); S.done.push(u); S.front = stack.slice(); S.dist[u] = d;
+          S.msg = "On visite <b>" + u + "</b> et on s'enfonce vers son premier voisin non visité."; snap();
+          adj[u].forEach(function (e) { if (!vis[e[0]]) { S.parent[e[0]] = u; dfs(e[0], d + 1); } });
+          stack.pop(); S.cur = stack.length ? stack[stack.length - 1] : null; S.front = stack.slice();
+          S.msg = "<b>" + u + "</b> n'a plus de voisin non visité : on <b>remonte</b> (backtrack)."; snap();
+        })(src, 0);
+        S.cur = null; S.msg = "✅ DFS terminé. Les arêtes colorées forment l'<b>arbre de parcours en profondeur</b> ; la profondeur affichée n'est PAS une plus courte distance."; snap();
+      } else {
+        var D = {}, fixed = {};
+        names.forEach(function (n) { D[n] = Infinity; }); D[src] = 0; S.dist[src] = 0; S.front = [src];
+        S.msg = "Initialisation : d(" + src + ") = 0, tous les autres à +∞."; snap();
+        for (;;) {
+          var m = null;
+          names.forEach(function (n) { if (!fixed[n] && D[n] < Infinity && (m === null || D[n] < D[m])) m = n; });
+          if (m === null) break;
+          fixed[m] = 1; S.cur = m; S.order.push(m); S.done.push(m);
+          var rel = [];
+          adj[m].forEach(function (e) {
+            var v = e[0], nd = D[m] + e[1];
+            if (!fixed[v] && nd < D[v]) { rel.push(v + " : " + (D[v] === Infinity ? "∞" : D[v]) + " → " + nd); D[v] = nd; S.dist[v] = nd; S.parent[v] = m; }
+          });
+          S.front = names.filter(function (n) { return !fixed[n] && D[n] < Infinity; });
+          S.msg = "On <b>fixe " + m + "</b> (plus petite distance provisoire = " + D[m] + ") puis on relâche ses arêtes" + (rel.length ? " : " + rel.join(" ; ") : " (aucune amélioration)") + ".";
+          snap();
+        }
+        S.cur = null; S.msg = "✅ Dijkstra terminé : distances minimales depuis " + src + ". Les arêtes colorées forment l'arbre des plus courts chemins."; snap();
+      }
+      idx = 0;
+    }
+    function px(n) { var pd = 26; return { x: pd + GNODES[n][0] * (st.w - 2 * pd), y: pd + GNODES[n][1] * (st.h - 2 * pd) }; }
+    function draw() {
+      var s = steps[idx], lab = algo === "bfs" ? "File" : algo === "dfs" ? "Pile d'appels" : "Provisoires";
+      P.out.innerHTML = '<div class="viz-kv"><span>Étape <b>' + idx + " / " + (steps.length - 1) + "</b></span><span>Ordre : <b>" +
+        (s.order.join(" → ") || "—") + "</b></span><span>" + lab + " : <b>[" + s.front.join(", ") + "]</b></span>" +
+        (algo === "dijkstra" ? "<span>d = <b>" + names.map(function (n) { return n + ":" + (s.dist[n] != null ? s.dist[n] : "∞"); }).join(" ") + "</b></span>" : "") +
+        '</div><p class="viz-msg">' + s.msg + "</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, R = clamp(st.w / 32, 12, 19);
+      GEDGES.forEach(function (e) {
+        var a = px(e[0]), b = px(e[1]), tree = s.parent[e[1]] === e[0] || s.parent[e[0]] === e[1];
+        ctx.strokeStyle = tree ? C.primary : C.border; ctx.lineWidth = tree ? 4 : 1.6;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        if (algo === "dijkstra") {
+          var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+          dot(ctx, mx, my, 9, C.card); txt(ctx, String(e[2]), mx, my + 0.5, C.soft, "bold 11px system-ui, sans-serif");
+        }
+      });
+      names.forEach(function (n) {
+        var q = px(n), fill = C.card, tc = C.text;
+        if (n === s.cur) { fill = C.red; tc = "#fff"; }
+        else if (s.front.indexOf(n) >= 0) { fill = C.orange; tc = "#1b1b1b"; }
+        else if (s.done.indexOf(n) >= 0) { fill = C.green; tc = "#0b1d16"; }
+        dot(ctx, q.x, q.y, R, fill, n === src ? C.text : C.muted);
+        txt(ctx, n, q.x, q.y + 0.5, tc, "bold 14px system-ui, sans-serif");
+        if (s.dist[n] != null) txt(ctx, (algo === "dfs" ? "p=" : "d=") + s.dist[n], q.x, q.y - R - 8, C.text, "11px system-ui, sans-serif");
+      });
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } bPlay.textContent = "▶ Animer"; }
+    sA.addEventListener("change", function () { stop(); algo = sA.value; build(); draw(); });
+    sS.addEventListener("change", function () { stop(); src = sS.value; build(); draw(); });
+    bNext.addEventListener("click", function () { stop(); if (idx < steps.length - 1) idx++; draw(); });
+    bPrev.addEventListener("click", function () { stop(); if (idx > 0) idx--; draw(); });
+    bReset.addEventListener("click", function () { stop(); idx = 0; draw(); });
+    bPlay.addEventListener("click", function () {
+      if (timer) { stop(); return; }
+      if (idx >= steps.length - 1) idx = 0;
+      bPlay.textContent = "⏸ Pause";
+      timer = setInterval(function () { if (idx < steps.length - 1) { idx++; draw(); } else stop(); }, 900);
+    });
+    st.canvas.addEventListener("click", function (ev) {
+      if (!st.w) return;
+      var m = st.pos(ev);
+      names.forEach(function (n) { var q = px(n); if (Math.hypot(q.x - m.x, q.y - m.y) < 22) { stop(); src = n; sS.value = n; build(); draw(); } });
+    });
+    build(); draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     12. Fonctions d'activation & leurs dérivées
+     ========================================================= */
+  function gelu(x) { return x * Phi(x); }
+  var ACT = {
+    sigmoide: ["Sigmoïde σ(x)", function (x) { return 1 / (1 + Math.exp(-x)); }, function (x) { var s = 1 / (1 + Math.exp(-x)); return s * (1 - s); },
+      "Sortie dans ]0 ; 1[, lisible comme une probabilité. Mais σ′(x) ≤ 0,25 : à travers 10 couches, le gradient est multiplié par au plus 0,25¹⁰ ≈ 10⁻⁶ → <b>gradient évanescent</b>. À réserver à la sortie d'une classification binaire."],
+    tanh: ["Tangente hyperbolique", function (x) { var e = Math.exp(2 * x); return isFinite(e) ? (e - 1) / (e + 1) : 1; }, function (x) { var e = Math.exp(2 * x), t = isFinite(e) ? (e - 1) / (e + 1) : 1; return 1 - t * t; },
+      "Sortie dans ]−1 ; 1[ et <b>centrée en 0</b> (mieux que la sigmoïde en couche cachée), mais elle sature aussi : pour |x| grand, la dérivée tend vers 0."],
+    relu: ["ReLU = max(0, x)", function (x) { return Math.max(0, x); }, function (x) { return x > 0 ? 1 : 0; },
+      "Dérivée = 1 pour x > 0 : le gradient traverse les couches sans s'atténuer, et le calcul est trivial → activation <b>par défaut</b> des réseaux profonds. Pour x < 0 la dérivée est nulle : un neurone toujours négatif ne s'entraîne plus (<b>ReLU morte</b>)."],
+    leaky: ["Leaky ReLU (α = 0,1)", function (x) { return x > 0 ? x : 0.1 * x; }, function (x) { return x > 0 ? 1 : 0.1; },
+      "Petite pente α pour x < 0 (souvent 0,01 ; 0,1 ici pour la lisibilité) : la dérivée ne s'annule jamais, ce qui évite les neurones morts."],
+    gelu: ["GELU = x·Φ(x)", gelu, function (x) { return (gelu(x + 1e-4) - gelu(x - 1e-4)) / 2e-4; },
+      "Version lisse de ReLU : x pondéré par la probabilité gaussienne Φ(x). Activation des <b>Transformers</b> (BERT, GPT)."],
+    lineaire: ["Identité (aucune activation)", function (x) { return x; }, function () { return 1; },
+      "Sans non-linéarité, empiler des couches ne sert à rien : W₂(W₁x) = (W₂W₁)x reste <b>linéaire</b>. Un tel réseau ne peut même pas apprendre XOR."]
+  };
+  function Activation(body, o) {
+    var key = ACT[o.fonction] ? o.fonction : "relu", x0 = clamp(num(o, "x", 1), -5, 5), showD = o.derivee !== "non";
+    var st = Stage(body, 0.5, 340, "Courbe d'une fonction d'activation et de sa dérivée");
+    var P = layout(body);
+    var sF = select(Object.keys(ACT).map(function (k) { return [k, ACT[k][0]]; }), key);
+    var rX = range(-5, 5, 0.05, x0), oX = el("output", "viz-val"), cD = check(showD);
+    P.ctls.appendChild(ctl("Fonction", sF));
+    P.ctls.appendChild(ctl("Entrée x", rX, oX));
+    P.ctls.appendChild(ctl("Afficher la dérivée", cD));
+    finish(body, P);
+    function draw() {
+      var A = ACT[key], f = A[1], d = A[2];
+      oX.textContent = fmt(x0, 2);
+      P.out.innerHTML = '<div class="viz-kv"><span>f(' + fmt(x0, 2) + ") = <b>" + fmt(f(x0), 4) + "</b></span><span>f′(" + fmt(x0, 2) + ") = <b>" + fmt(d(x0), 4) +
+        '</b></span></div><p class="viz-msg">' + A[3] + "</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, F = Frame(st, -5, 5, -1.5, 3, 28);
+      drawAxes(ctx, F, C);
+      ctx.save(); ctx.beginPath(); ctx.rect(F.X(-5), F.Y(3), F.X(5) - F.X(-5), F.Y(-1.5) - F.Y(3)); ctx.clip();
+      function plot(g, color, dash) {
+        ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.setLineDash(dash || []); ctx.beginPath();
+        for (var i = 0; i <= 400; i++) { var x = -5 + 10 * i / 400; if (i === 0) ctx.moveTo(F.X(x), F.Y(g(x))); else ctx.lineTo(F.X(x), F.Y(g(x))); }
+        ctx.stroke(); ctx.setLineDash([]);
+      }
+      plot(f, C.primary);
+      if (showD) plot(d, C.orange, [6, 4]);
+      ctx.restore();
+      dot(ctx, F.X(x0), F.Y(f(x0)), 6, C.primary, C.card);
+      if (showD) dot(ctx, F.X(x0), F.Y(d(x0)), 5, C.orange, C.card);
+      txt(ctx, "f", F.X(4.6), F.Y(clamp(f(4.6), -1.3, 2.8)) - 10, C.primary, "bold 13px system-ui, sans-serif");
+      if (showD) txt(ctx, "f′", F.X(-4.6), F.Y(clamp(d(-4.6), -1.3, 2.8)) - 10, C.orange, "bold 13px system-ui, sans-serif");
+    }
+    sF.addEventListener("change", function () { key = sF.value; draw(); });
+    rX.addEventListener("input", function () { x0 = +rX.value; draw(); });
+    cD.addEventListener("change", function () { showD = cD.checked; draw(); });
+    st.canvas.addEventListener("click", function (ev) {
+      if (!st.w) return;
+      var F = Frame(st, -5, 5, -1.5, 3, 28);
+      x0 = clamp(Math.round(F.ix(st.pos(ev).x) * 20) / 20, -5, 5); rX.value = x0; draw();
+    });
+    draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     13. Convolution 2D (couche de CNN)
+     ========================================================= */
+  function imgFrom(rows) { return rows.map(function (r) { return r.split("").map(function (c) { return (+c) / 9; }); }); }
+  var CIMG = {
+    carre: ["Carré", imgFrom(["00000000", "00000000", "00999900", "00999900", "00999900", "00999900", "00000000", "00000000"])],
+    bord: ["Bord vertical", imgFrom(["00009999", "00009999", "00009999", "00009999", "00009999", "00009999", "00009999", "00009999"])],
+    croix: ["Croix", imgFrom(["00099000", "00099000", "00099000", "99999999", "99999999", "00099000", "00099000", "00099000"])],
+    diagonale: ["Diagonale", imgFrom(["90000000", "99000000", "09900000", "00990000", "00099000", "00009900", "00000990", "00000099"])],
+    damier: ["Damier", imgFrom(["90909090", "09090909", "90909090", "09090909", "90909090", "09090909", "90909090", "09090909"])]
+  };
+  var CKER = {
+    identite: ["Identité", [[0, 0, 0], [0, 1, 0], [0, 0, 0]]],
+    flou: ["Flou (moyenne)", [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]]],
+    sobelx: ["Sobel : bords verticaux", [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]],
+    sobely: ["Sobel : bords horizontaux", [[-1, -2, -1], [0, 0, 0], [1, 2, 1]]],
+    nettete: ["Netteté", [[0, -1, 0], [-1, 5, -1], [0, -1, 0]]],
+    laplacien: ["Laplacien (contours)", [[0, 1, 0], [1, -4, 1], [0, 1, 0]]]
+  };
+  function Convolution(body, o) {
+    var im = CIMG[o.image] ? o.image : "carre", ke = CKER[o.noyau] ? o.noyau : "sobelx";
+    var pad = num(o, "padding", 0) ? 1 : 0, str = num(o, "stride", 1) === 2 ? 2 : 1, relu = o.relu === "oui", si = 0, sj = 0;
+    var st = Stage(body, 0.5, 340, "Image d'entrée, noyau de convolution et carte de caractéristiques en sortie");
+    var P = layout(body);
+    var sI = select(Object.keys(CIMG).map(function (k) { return [k, CIMG[k][0]]; }), im);
+    var sK = select(Object.keys(CKER).map(function (k) { return [k, CKER[k][0]]; }), ke);
+    var sP = select([["0", "0 (valid)"], ["1", "1 (same)"]], String(pad)), sS = select([["1", "1"], ["2", "2"]], String(str)), cR = check(relu);
+    P.ctls.appendChild(ctl("Image", sI)); P.ctls.appendChild(ctl("Noyau", sK));
+    P.ctls.appendChild(ctl("Padding", sP)); P.ctls.appendChild(ctl("Stride", sS)); P.ctls.appendChild(ctl("ReLU", cR));
+    finish(body, P);
+    var L = null;
+    function compute() {
+      var I = CIMG[im][1], K = CKER[ke][1], S = 8 + 2 * pad, n = Math.floor((S - 3) / str) + 1, Pd = [], out = [], a, b, i, j;
+      for (i = 0; i < S; i++) { Pd.push([]); for (j = 0; j < S; j++) Pd[i].push(i - pad >= 0 && i - pad < 8 && j - pad >= 0 && j - pad < 8 ? I[i - pad][j - pad] : 0); }
+      for (i = 0; i < n; i++) { out.push([]); for (j = 0; j < n; j++) {
+        var s = 0; for (a = 0; a < 3; a++) for (b = 0; b < 3; b++) s += K[a][b] * Pd[i * str + a][j * str + b];
+        out[i].push(relu ? Math.max(0, s) : s);
+      } }
+      return { K: K, S: S, n: n, Pd: Pd, out: out };
+    }
+    function draw() {
+      var R = compute();
+      si = Math.min(si, R.n - 1); sj = Math.min(sj, R.n - 1);
+      var terms = [], a, b;
+      for (a = 0; a < 3; a++) for (b = 0; b < 3; b++) {
+        var kv = R.K[a][b], xv = R.Pd[si * str + a][sj * str + b];
+        if (kv !== 0 && xv !== 0) terms.push(fmt(kv, 2) + "×" + fmt(xv, 2));
+      }
+      P.out.innerHTML = '<div class="viz-kv"><span>Taille de sortie = ⌊(8 + 2·' + pad + " − 3) / " + str + "⌋ + 1 = <b>" + R.n + "×" + R.n +
+        "</b></span><span>Sortie[" + si + "][" + sj + "] = <b>" + fmt(R.out[si][sj], 3) + "</b></span></div>" +
+        '<p class="viz-msg">Σ noyau × fenêtre = ' + (terms.length ? terms.join(" + ") : "0") + (relu ? " puis ReLU" : "") +
+        ". Clique sur une case de la sortie : sa <b>fenêtre</b> (champ récepteur) s'allume dans l'entrée. Les mêmes 9 poids glissent sur toute l'image : c'est le <b>partage de poids</b> des CNN.</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, cols = R.S + 1 + 3 + 1 + R.n;
+      var cs = Math.min((st.w - 16) / cols, (st.h - 36) / R.S, 34), y0 = 26;
+      var xi = (st.w - cs * cols) / 2, xk = xi + (R.S + 1) * cs, xo = xk + 4 * cs;
+      L = { cs: cs, y0: y0, xo: xo, n: R.n };
+      txt(ctx, "Entrée " + R.S + "×" + R.S, xi + R.S * cs / 2, 12, C.soft, "bold 12px system-ui, sans-serif");
+      txt(ctx, "Noyau 3×3", xk + 1.5 * cs, 12, C.soft, "bold 12px system-ui, sans-serif");
+      txt(ctx, "Sortie " + R.n + "×" + R.n, xo + R.n * cs / 2, 12, C.soft, "bold 12px system-ui, sans-serif");
+      var i, j, v;
+      for (i = 0; i < R.S; i++) for (j = 0; j < R.S; j++) {
+        v = R.Pd[i][j]; var g = Math.round(30 + v * 210);
+        ctx.fillStyle = "rgb(" + g + "," + g + "," + g + ")"; ctx.fillRect(xi + j * cs, y0 + i * cs, cs - 1, cs - 1);
+        if (pad && (i === 0 || j === 0 || i === R.S - 1 || j === R.S - 1)) { ctx.strokeStyle = C.muted; ctx.setLineDash([2, 2]); ctx.strokeRect(xi + j * cs + 0.5, y0 + i * cs + 0.5, cs - 2, cs - 2); ctx.setLineDash([]); }
+      }
+      ctx.strokeStyle = C.orange; ctx.lineWidth = 3; ctx.strokeRect(xi + sj * str * cs, y0 + si * str * cs, 3 * cs - 1, 3 * cs - 1);
+      var km = 0; R.K.forEach(function (r) { r.forEach(function (x) { km = Math.max(km, Math.abs(x)); }); });
+      for (i = 0; i < 3; i++) for (j = 0; j < 3; j++) {
+        v = R.K[i][j]; ctx.fillStyle = rgba(v >= 0 ? C.blue : C.red, 0.15 + 0.6 * Math.abs(v) / (km || 1));
+        ctx.fillRect(xk + j * cs, y0 + i * cs, cs - 1, cs - 1);
+        if (cs >= 18) txt(ctx, Math.abs(v) < 1 && v !== 0 ? fmt(v, 2) : String(v), xk + j * cs + cs / 2, y0 + i * cs + cs / 2, C.text, Math.min(12, cs * 0.38) + "px system-ui, sans-serif");
+      }
+      var om = 0; R.out.forEach(function (r) { r.forEach(function (x) { om = Math.max(om, Math.abs(x)); }); });
+      for (i = 0; i < R.n; i++) for (j = 0; j < R.n; j++) {
+        v = R.out[i][j]; ctx.fillStyle = rgba(v >= 0 ? C.green : C.red, 0.1 + 0.8 * Math.abs(v) / (om || 1));
+        ctx.fillRect(xo + j * cs, y0 + i * cs, cs - 1, cs - 1);
+        if (cs >= 22) txt(ctx, fmt(v, 1), xo + j * cs + cs / 2, y0 + i * cs + cs / 2, C.text, Math.min(11, cs * 0.32) + "px system-ui, sans-serif");
+      }
+      ctx.strokeStyle = C.orange; ctx.lineWidth = 3; ctx.strokeRect(xo + sj * cs, y0 + si * cs, cs - 1, cs - 1);
+      txt(ctx, "∗", xk - cs / 2, y0 + 1.5 * cs, C.text, "bold 18px system-ui, sans-serif");
+      txt(ctx, "=", xk + 3.5 * cs, y0 + 1.5 * cs, C.text, "bold 18px system-ui, sans-serif");
+    }
+    sI.addEventListener("change", function () { im = sI.value; draw(); });
+    sK.addEventListener("change", function () { ke = sK.value; draw(); });
+    sP.addEventListener("change", function () { pad = +sP.value; draw(); });
+    sS.addEventListener("change", function () { str = +sS.value; draw(); });
+    cR.addEventListener("change", function () { relu = cR.checked; draw(); });
+    st.canvas.addEventListener("click", function (ev) {
+      if (!L) return;
+      var m = st.pos(ev), j = Math.floor((m.x - L.xo) / L.cs), i = Math.floor((m.y - L.y0) / L.cs);
+      if (i >= 0 && j >= 0 && i < L.n && j < L.n) { si = i; sj = j; draw(); }
+    });
+    draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     14. Filtre de Bloom
+     ========================================================= */
+  function fnv(s, seed) { var h = (2166136261 ^ seed) >>> 0; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
+  var BWORDS = ["spark", "kafka", "hadoop", "python", "rust", "sql", "data", "cluster", "stream", "bloom", "hash", "lac", "nosql", "parquet", "hive"];
+  function Bloom(body, o) {
+    var m = clamp(Math.round(num(o, "m", 32)), 8, 128), k = clamp(Math.round(num(o, "k", 3)), 1, 8), items = [], hl = [], mode = "", res = "", wi = 0;
+    var st = Stage(body, 0.32, 240, "Tableau de bits d'un filtre de Bloom");
+    var P = layout(body);
+    var rM = range(8, 128, 8, m), oM = el("output", "viz-val"), rK = range(1, 8, 1, k), oK = el("output", "viz-val");
+    var inp = el("input"); inp.type = "text"; inp.placeholder = "un mot"; inp.setAttribute("aria-label", "Mot à ajouter ou tester");
+    inp.style.cssText = "font:inherit;padding:7px 9px;border-radius:8px;border:1px solid var(--border);background:var(--bg-elev);color:var(--text);width:140px";
+    var bAdd = btn("➕ Ajouter"), bTest = btn("🔎 Tester"), b5 = btn("+5 mots"), bClr = btn("🧹 Vider");
+    P.ctls.appendChild(ctl("m (bits)", rM, oM)); P.ctls.appendChild(ctl("k (hachages)", rK, oK)); P.ctls.appendChild(ctl("Mot", inp));
+    var bar = el("div", "viz-btns"); [bAdd, bTest, b5, bClr].forEach(function (b) { bar.appendChild(b); });
+    P.ctls.appendChild(bar);
+    finish(body, P);
+    function pos(w) { var h1 = fnv(w, 0), h2 = fnv(w, 0x9e3779b9) | 1, out = []; for (var i = 0; i < k; i++) out.push((h1 + i * h2) % m); return out; }
+    function bits() { var b = []; for (var i = 0; i < m; i++) b.push(0); items.forEach(function (w) { pos(w).forEach(function (p) { b[p] = 1; }); }); return b; }
+    function add(w) { w = (w || "").trim().toLowerCase(); if (!w) return; if (items.indexOf(w) < 0) items.push(w); hl = pos(w); mode = "add"; res = "« " + w + " » ajouté : ses " + k + " bits [" + hl.join(", ") + "] passent à 1."; }
+    function test(w) {
+      w = (w || "").trim().toLowerCase(); if (!w) return;
+      var B = bits(); hl = pos(w); mode = "test";
+      var all = hl.every(function (p) { return B[p]; });
+      if (!all) res = "« " + w + " » : au moins un bit vaut 0 → <b>certainement absent</b> (jamais de faux négatif).";
+      else if (items.indexOf(w) >= 0) res = "« " + w + " » : tous ses bits valent 1 → <b>probablement présent</b> (et c'est vrai).";
+      else res = "« " + w + " » : tous ses bits valent 1 alors qu'il n'a jamais été ajouté → ⚠️ <b>faux positif</b> !";
+    }
+    function draw() {
+      oM.textContent = String(m); oK.textContent = String(k);
+      var B = bits(), ones = B.reduce(function (s, v) { return s + v; }, 0), n = items.length;
+      var th = Math.pow(1 - Math.exp(-k * n / m), k), kopt = n ? Math.max(1, Math.round(m / n * Math.LN2)) : null;
+      P.out.innerHTML = '<div class="viz-kv"><span>n = <b>' + n + "</b> mot(s)</span><span>bits à 1 : <b>" + ones + " / " + m + "</b></span><span>P(faux positif) ≈ (1 − e^(−kn/m))^k = <b>" +
+        fmt(th * 100, 2) + " %</b></span>" + (kopt ? "<span>k optimal ≈ (m/n)·ln 2 = <b>" + kopt + "</b></span>" : "") + "</div>" +
+        '<p class="viz-msg">' + (res || "Ajoute des mots puis teste-en d'autres : quand le tableau se remplit de 1, les faux positifs apparaissent.") + "</p>" +
+        (n ? '<p class="viz-msg">Ensemble : ' + items.join(", ") + "</p>" : "");
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, cols = Math.min(32, m), rows = Math.ceil(m / cols), cs = Math.min((st.w - 16) / cols, (st.h - 16) / rows, 40);
+      var x0 = (st.w - cs * cols) / 2, y0 = (st.h - cs * rows) / 2;
+      for (var i = 0; i < m; i++) {
+        var x = x0 + (i % cols) * cs, y = y0 + Math.floor(i / cols) * cs;
+        rrect(ctx, x + 1, y + 1, cs - 2, cs - 2, 4); ctx.fillStyle = B[i] ? C.primary : C.card; ctx.fill();
+        if (hl.indexOf(i) >= 0) { ctx.lineWidth = 3; ctx.strokeStyle = mode === "add" ? C.green : (B[i] ? C.orange : C.red); ctx.stroke(); }
+        else { ctx.lineWidth = 1; ctx.strokeStyle = C.border; ctx.stroke(); }
+        if (cs >= 20) txt(ctx, String(B[i]), x + cs / 2, y + cs / 2, B[i] ? "#fff" : C.muted, Math.min(12, cs * 0.4) + "px system-ui, sans-serif");
+      }
+    }
+    rM.addEventListener("input", function () { m = +rM.value; hl = []; res = ""; draw(); });
+    rK.addEventListener("input", function () { k = +rK.value; hl = []; res = ""; draw(); });
+    bAdd.addEventListener("click", function () { add(inp.value); inp.value = ""; draw(); });
+    bTest.addEventListener("click", function () { test(inp.value); draw(); });
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); add(inp.value); inp.value = ""; draw(); } });
+    b5.addEventListener("click", function () { for (var i = 0; i < 5; i++) { add(BWORDS[wi % BWORDS.length]); wi++; } res = "5 mots ajoutés. Teste maintenant un mot jamais ajouté (ex. « java », « scala »)."; hl = []; draw(); });
+    bClr.addEventListener("click", function () { items = []; hl = []; res = ""; wi = 0; draw(); });
+    draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     15. Ownership Rust : pile, tas, moves et emprunts pas à pas
+     Variables : [nom, valeur, état]. Valeur "#id" = possède un bloc du tas,
+     "&x" / "&mut x" = référence vers x (variable ou bloc "#id"), sinon littéral.
+     ========================================================= */
+  var OWN = {
+    move: ["Move d'une String", [
+      'let s1 = String::from("salut");', "let s2 = s1;", '// println!("{s1}");  ← E0382', 'println!("{s2}");', "}   // fin de portée"], [
+      [0, [["main", [["s1", "#1"]]]], [["#1", '"salut"']], "<code>s1</code> vit sur la <b>pile</b> (pointeur, longueur 5, capacité 5) ; les octets sont sur le <b>tas</b>. s1 en est l'unique <b>propriétaire</b>."],
+      [1, [["main", [["s1", "#1", "moved"], ["s2", "#1"]]]], [["#1", '"salut"']], "<b>Move</b> : seuls (ptr, len, cap) sont copiés dans s2 — le tas n'est <b>pas</b> dupliqué. Pour éviter une double libération, Rust <b>invalide s1</b>."],
+      [2, [["main", [["s1", "#1", "moved"], ["s2", "#1"]]]], [["#1", '"salut"']], "Décommenter cette ligne → <b>E0382 borrow of moved value</b>. En Python, s1 et s2 désigneraient le même objet ; en C, ce serait un futur <i>double free</i>.", 1],
+      [3, [["main", [["s1", "#1", "moved"], ["s2", "#1"]]]], [["#1", '"salut"']], "s2 est le seul propriétaire : on l'utilise normalement."],
+      [4, [["main", []]], [["#1", '"salut"', "freed"]], "Fin de portée : <b>drop</b> est appelé <b>une seule fois</b>, pour s2. s1 (déplacée) n'est pas libérée. Ni GC, ni fuite, ni double free."]]],
+    clone: ["clone() : copie profonde", [
+      'let s1 = String::from("salut");', "let s2 = s1.clone();", 'println!("{s1} {s2}");', "}   // fin de portée"], [
+      [0, [["main", [["s1", "#1"]]]], [["#1", '"salut"']], "s1 possède un tampon sur le tas."],
+      [1, [["main", [["s1", "#1"], ["s2", "#2"]]]], [["#1", '"salut"'], ["#2", '"salut"']], "<b>clone()</b> alloue un <b>nouveau</b> tampon et copie les octets : deux propriétaires indépendants. Coût O(n) — c'est pour ça qu'il est explicite."],
+      [2, [["main", [["s1", "#1"], ["s2", "#2"]]]], [["#1", '"salut"'], ["#2", '"salut"']], "Les deux variables restent utilisables."],
+      [3, [["main", []]], [["#1", '"salut"', "freed"], ["#2", '"salut"', "freed"]], "Fin de portée : drop dans l'ordre <b>inverse</b> de déclaration (s2 puis s1), chaque tampon libéré une fois."]]],
+    copy: ["Types Copy (i32)", [
+      "let x = 5;", "let y = x;", 'println!("{x} {y}");', "}"], [
+      [0, [["main", [["x", "5"]]]], [], "Un i32 tient entièrement sur la pile : rien sur le tas."],
+      [1, [["main", [["x", "5"], ["y", "5"]]]], [], "i32 implémente <b>Copy</b> : l'affectation copie les 4 octets, <b>x reste valide</b>. Pas de move pour les types simples (entiers, flottants, bool, char, &T)."],
+      [2, [["main", [["x", "5"], ["y", "5"]]]], [], "Les deux sont utilisables."],
+      [3, [["main", []]], [], "Fin de portée : rien à libérer sur le tas."]]],
+    emprunt: ["Emprunts partagés &T (NLL)", [
+      'let mut s = String::from("hi");', "let r1 = &s;", "let r2 = &s;", 'println!("{r1} {r2}");', "s.push('!');", "}"], [
+      [0, [["main", [["s", "#1"]]]], [["#1", '"hi"']], "s possède le tampon « hi »."],
+      [1, [["main", [["s", "#1"], ["r1", "&s"]]]], [["#1", '"hi"']], "<b>r1 = &s</b> : r1 pointe vers s mais ne possède rien. Tant que r1 sert encore, s est <b>gelée</b> (pas de modification)."],
+      [2, [["main", [["s", "#1"], ["r1", "&s"], ["r2", "&s"]]]], [["#1", '"hi"']], "Plusieurs références <b>partagées</b> en même temps : autorisé, ce ne sont que des lectures."],
+      [3, [["main", [["s", "#1"], ["r1", "&s"], ["r2", "&s"]]]], [["#1", '"hi"']], "Dernière utilisation de r1 et r2 : grâce aux <b>NLL</b> (non-lexical lifetimes), leurs emprunts se terminent ici, pas à la fin du bloc."],
+      [4, [["main", [["s", "#1"]]]], [["#1", '"hi!"']], "Plus aucun emprunt vivant : s peut être modifiée. Si r1 était encore utilisé après cette ligne → <b>E0502</b>."],
+      [5, [["main", []]], [["#1", '"hi!"', "freed"]], "Fin de portée : s est libérée ; les références n'avaient rien à libérer."]]],
+    realloc: ["Pourquoi E0502 ? (Vec)", [
+      "let mut v = vec![1, 2, 3];", "let premier = &v[0];", "// v.push(4);  ← E0502", 'println!("{premier}");', "v.push(4);", "}"], [
+      [0, [["main", [["v", "#1"]]]], [["#1", "[1, 2, 3]  cap 3"]], "v possède un tampon de capacité 3, plein."],
+      [1, [["main", [["v", "#1"], ["premier", "&#1"]]]], [["#1", "[1, 2, 3]  cap 3"]], "<b>premier</b> pointe <b>dans</b> le tampon du vecteur, sur le tas."],
+      [2, [["main", [["v", "#1"], ["premier", "&#1"]]]], [["#1", "[1, 2, 3]  cap 3"]], "push pourrait <b>réallouer</b> (capacité pleine) : premier pointerait vers de la mémoire libérée. Rust refuse → <b>E0502</b> : emprunt mutable pendant un emprunt partagé.", 1],
+      [3, [["main", [["v", "#1"], ["premier", "&#1"]]]], [["#1", "[1, 2, 3]  cap 3"]], "Dernière utilisation de premier : l'emprunt se termine."],
+      [4, [["main", [["v", "#2"]]]], [["#1", "[1, 2, 3]  cap 3", "freed"], ["#2", "[1, 2, 3, 4]  cap 6"]], "push réalloue : nouveau tampon plus grand, copie, <b>l'ancien est libéré</b>. Exactement le scénario dangereux que le borrow checker a empêché à la ligne 3."],
+      [5, [["main", []]], [["#1", "[1, 2, 3]  cap 3", "freed"], ["#2", "[1, 2, 3, 4]  cap 6", "freed"]], "Fin de portée : v est libéré."]]],
+    fonction: ["Passer à une fonction", [
+      "fn main() {", '    let s = String::from("hey");', "    prend(s);                 // move", '    // println!("{s}");     ← E0382', "}", "fn prend(t: String) { /* … */ }   // drop(t) ici"], [
+      [1, [["main", [["s", "#1"]]]], [["#1", '"hey"']], "s possède « hey »."],
+      [5, [["main", [["s", "#1", "moved"]]], ["prend", [["t", "#1"]]]], [["#1", '"hey"']], "Passer par valeur = <b>move</b> : le paramètre t devient propriétaire. Un nouveau cadre de pile est créé pour prend."],
+      [2, [["main", [["s", "#1", "moved"]]]], [["#1", '"hey"', "freed"]], "Au retour de prend, t sort de portée → <b>drop</b> : le tas est libéré. Pour garder s, passer <code>&s</code> (emprunt) ou renvoyer la String."],
+      [3, [["main", [["s", "#1", "moved"]]]], [["#1", '"hey"', "freed"]], "Utiliser s ici → <b>E0382</b> : elle a été déplacée dans prend.", 1],
+      [4, [["main", []]], [["#1", '"hey"', "freed"]], "Fin de main : s étant déplacée, il n'y a rien à libérer."]]]
+  };
+  function Ownership(body, o) {
+    var key = OWN[o.exemple] ? o.exemple : "move", idx = 0;
+    var code = el("pre", "viz-code");
+    body.appendChild(code);
+    var st = Stage(body, 0.42, 300, "Schéma mémoire : pile à gauche, tas à droite, flèches de possession et d'emprunt");
+    var P = layout(body);
+    var sE = select(Object.keys(OWN).map(function (k) { return [k, OWN[k][0]]; }), key);
+    var bPrev = btn("◀ Précédent"), bNext = btn("Suivant ▶"), bReset = btn("↺");
+    P.ctls.appendChild(ctl("Exemple", sE));
+    var bar = el("div", "viz-btns"); [bPrev, bNext, bReset].forEach(function (b) { bar.appendChild(b); });
+    P.ctls.appendChild(bar);
+    finish(body, P);
+    function escH(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+    function draw() {
+      var E = OWN[key], S = E[2][idx];
+      code.innerHTML = E[1].map(function (l, i) { return '<span class="' + (i === S[0] ? (S[4] ? "cur err" : "cur") : "") + '">' + escH(l) + "</span>"; }).join("\n");
+      P.out.innerHTML = '<div class="viz-kv"><span>Étape <b>' + (idx + 1) + " / " + E[2].length + '</b></span></div><p class="viz-msg">' + S[3] + "</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, W = st.w, xs = 10, ws = Math.round(W * 0.5) - 20, xh = Math.round(W * 0.58), wh = W - xh - 10;
+      txt(ctx, "PILE", xs + ws / 2, 12, C.soft, "bold 12px system-ui, sans-serif");
+      txt(ctx, "TAS", xh + wh / 2, 12, C.soft, "bold 12px system-ui, sans-serif");
+      var rowH = 30, y = 26, rows = {}, heap = {};
+      S[1].forEach(function (fr) {
+        var h = 22 + fr[1].length * rowH + 6;
+        rrect(ctx, xs, y, ws, h, 8); ctx.strokeStyle = C.border; ctx.lineWidth = 1.5; ctx.stroke();
+        txt(ctx, "cadre " + fr[0] + "()", xs + 8, y + 11, C.muted, "11px system-ui, sans-serif", "left");
+        fr[1].forEach(function (v, i) {
+          var ry = y + 22 + i * rowH, moved = v[2] === "moved";
+          var borrowed = S[1].some(function (f) { return f[1].some(function (w) { return w[1] === "&" + v[0] || w[1] === "&mut " + v[0]; }); });
+          rrect(ctx, xs + 6, ry, ws - 12, rowH - 6, 6); ctx.fillStyle = moved ? rgba(C.muted, 0.15) : C.card; ctx.fill();
+          ctx.strokeStyle = borrowed ? C.orange : C.border; ctx.lineWidth = borrowed ? 2 : 1; ctx.stroke();
+          txt(ctx, v[0], xs + 14, ry + (rowH - 6) / 2, moved ? C.muted : C.text, "bold 13px ui-monospace, monospace", "left");
+          var val = v[1].charAt(0) === "#" ? "ptr ●" : v[1].charAt(0) === "&" ? "& ●" : v[1];
+          var note = moved ? "déplacée" : borrowed ? "empruntée" : "";
+          txt(ctx, val + (note ? "  · " + note : ""), xs + ws - 14, ry + (rowH - 6) / 2, moved ? C.muted : C.soft, "12px ui-monospace, monospace", "right");
+          if (moved) { ctx.strokeStyle = C.muted; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(xs + 12, ry + (rowH - 6) / 2); ctx.lineTo(xs + 14 + ctx.measureText(v[0]).width + 30, ry + (rowH - 6) / 2); ctx.stroke(); }
+          rows[v[0]] = { x: xs + ws - 8, y: ry + (rowH - 6) / 2, v: v, moved: moved };
+        });
+        y += h + 8;
+      });
+      var hy = 26;
+      S[2].forEach(function (b) {
+        var freed = b[2] === "freed";
+        rrect(ctx, xh, hy, wh, 34, 8); ctx.fillStyle = freed ? "transparent" : rgba(C.accent, 0.16); ctx.fill();
+        ctx.setLineDash(freed ? [5, 4] : []); ctx.strokeStyle = freed ? C.muted : C.accent; ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+        txt(ctx, b[1], xh + wh / 2, hy + 13, freed ? C.muted : C.text, "13px ui-monospace, monospace");
+        txt(ctx, b[0] + (freed ? " · libéré" : ""), xh + wh / 2, hy + 27, C.muted, "10px system-ui, sans-serif");
+        heap[b[0]] = { x: xh, y: hy + 17, freed: freed };
+        hy += 44;
+      });
+      Object.keys(rows).forEach(function (n) {
+        var r = rows[n], v = r.v[1];
+        if (r.moved) return;
+        if (v.charAt(0) === "#" && heap[v]) arrow(ctx, r.x, r.y, heap[v].x - 2, heap[v].y, C.accent, 2);
+        else if (v.charAt(0) === "&") {
+          var t = v.replace(/^&(mut )?/, "");
+          if (t.charAt(0) === "#" && heap[t]) arrow(ctx, r.x, r.y, heap[t].x - 2, heap[t].y + 8, C.orange, 2);
+          else if (rows[t]) {
+            ctx.save(); ctx.strokeStyle = C.orange; ctx.lineWidth = 2; ctx.beginPath();
+            var bx = r.x + 26; ctx.moveTo(r.x, r.y); ctx.bezierCurveTo(bx, r.y, bx, rows[t].y, rows[t].x + 6, rows[t].y); ctx.stroke(); ctx.restore();
+            dot(ctx, rows[t].x + 6, rows[t].y, 3.5, C.orange);
+          }
+        }
+      });
+    }
+    sE.addEventListener("change", function () { key = sE.value; idx = 0; draw(); });
+    bNext.addEventListener("click", function () { if (idx < OWN[key][2].length - 1) idx++; draw(); });
+    bPrev.addEventListener("click", function () { if (idx > 0) idx--; draw(); });
+    bReset.addEventListener("click", function () { idx = 0; draw(); });
+    draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     16. Jointures SQL (tables HTML)
+     ========================================================= */
+  var JCLI = [[1, "Ada", "Paris"], [2, "Alan", "Lyon"], [3, "Grace", "Paris"], [4, "Linus", null]];
+  var JCMD = [[10, 1, 120], [11, 1, 40], [12, 3, 75], [13, 5, 60]];
+  var JT = {
+    inner: ["INNER JOIN", "FROM clients c\nINNER JOIN commandes o ON o.client_id = c.id", "Seules les paires qui vérifient la condition ON. Alan et Linus (sans commande) et la commande 13 (client 5 inexistant) disparaissent. Ada apparaît <b>2 fois</b> : une ligne par correspondance."],
+    left: ["LEFT JOIN", "FROM clients c\nLEFT JOIN commandes o ON o.client_id = c.id", "<b>Tous les clients</b> sont gardés ; sans commande, les colonnes de o valent NULL (Alan, Linus). C'est la jointure la plus utilisée en analyse."],
+    right: ["RIGHT JOIN", "FROM clients c\nRIGHT JOIN commandes o ON o.client_id = c.id", "<b>Toutes les commandes</b> sont gardées, même l'orpheline 13 (client 5 inconnu) avec des NULL côté c. Équivaut à un LEFT JOIN en inversant les tables."],
+    full: ["FULL OUTER JOIN", "FROM clients c\nFULL OUTER JOIN commandes o ON o.client_id = c.id", "LEFT + RIGHT : rien n'est perdu. Indisponible en MySQL (on l'émule avec un UNION de LEFT et RIGHT)."],
+    cross: ["CROSS JOIN", "FROM clients c\nCROSS JOIN commandes o", "<b>Produit cartésien</b> : 4 × 4 = 16 lignes, sans aucune condition. C'est ce qu'on obtient en oubliant le ON !"],
+    anti: ["Anti-jointure", "FROM clients c\nLEFT JOIN commandes o ON o.client_id = c.id\nWHERE o.id IS NULL", "Les clients <b>sans aucune commande</b> : LEFT JOIN puis on garde les lignes où o.id IS NULL (équivaut à NOT EXISTS)."],
+    semi: ["Semi-jointure (EXISTS)", "FROM clients c\nWHERE EXISTS (SELECT 1 FROM commandes o\n              WHERE o.client_id = c.id)", "Les clients ayant <b>au moins une</b> commande, chacun <b>une seule fois</b> (contrairement à INNER JOIN qui duplique Ada)."]
+  };
+  function Jointure(body, o) {
+    var type = JT[o.type] ? o.type : "inner";
+    var P = layout(body), sT = select(Object.keys(JT).map(function (k) { return [k, JT[k][0]]; }), type);
+    var top = el("div", "viz-join-src"), res = el("div", "viz-join-res");
+    body.appendChild(top);
+    P.ctls.appendChild(ctl("Type de jointure", sT));
+    body.appendChild(P.ctls); body.appendChild(res); body.appendChild(P.out);
+    P.out.setAttribute("aria-live", "polite");
+    function cell(v) { return v === null || v === undefined ? '<td class="null">NULL</td>' : "<td>" + v + "</td>"; }
+    function rowsFor(t) {
+      var out = [], hit = {};
+      function match(c) { return JCMD.filter(function (x) { return x[1] === c[0]; }); }
+      if (t === "cross") JCLI.forEach(function (c) { JCMD.forEach(function (x) { out.push([c, x]); }); });
+      else if (t === "anti") JCLI.forEach(function (c) { if (!match(c).length) out.push([c, null]); });
+      else if (t === "semi") JCLI.forEach(function (c) { if (match(c).length) out.push([c, null]); });
+      else if (t === "right") JCMD.forEach(function (x) { var cs = JCLI.filter(function (c) { return c[0] === x[1]; }); if (cs.length) cs.forEach(function (c) { out.push([c, x]); }); else out.push([null, x]); });
+      else {
+        JCLI.forEach(function (c) { var m = match(c); m.forEach(function (x) { out.push([c, x]); hit[x[0]] = 1; }); if (!m.length && t !== "inner") out.push([c, null]); });
+        JCLI.forEach(function (c) { match(c).forEach(function (x) { hit[x[0]] = 1; }); });
+        if (t === "full") JCMD.forEach(function (x) { if (!hit[x[0]]) out.push([null, x]); });
+      }
+      return out;
+    }
+    function draw() {
+      var rows = rowsFor(type), only = type === "anti" || type === "semi";
+      var usedC = {}, usedO = {};
+      rows.forEach(function (r) { if (r[0]) usedC[r[0][0]] = 1; if (r[1]) usedO[r[1][0]] = 1; });
+      top.innerHTML = '<div><div class="viz-lbl">clients c</div><table class="viz-tbl"><tr><th>id</th><th>nom</th><th>ville</th></tr>' +
+        JCLI.map(function (c) { return '<tr class="' + (usedC[c[0]] ? "in" : "out") + '">' + cell(c[0]) + cell(c[1]) + cell(c[2]) + "</tr>"; }).join("") + "</table></div>" +
+        '<div><div class="viz-lbl">commandes o</div><table class="viz-tbl"><tr><th>id</th><th>client_id</th><th>montant</th></tr>' +
+        JCMD.map(function (x) { return '<tr class="' + (only ? "na" : usedO[x[0]] ? "in" : "out") + '">' + cell(x[0]) + cell(x[1]) + cell(x[2]) + "</tr>"; }).join("") + "</table></div>";
+      var head = only ? "<tr><th>c.id</th><th>c.nom</th></tr>" : "<tr><th>c.id</th><th>c.nom</th><th>o.id</th><th>o.client_id</th><th>o.montant</th></tr>";
+      res.innerHTML = '<pre class="viz-code"><span>SELECT ' + (only ? "c.id, c.nom" : "c.id, c.nom, o.id, o.client_id, o.montant") + "</span>\n<span>" +
+        JT[type][1].replace(/&/g, "&amp;").replace(/</g, "&lt;").split("\n").join("</span>\n<span>") + ";</span></pre>" +
+        '<div class="viz-lbl">Résultat : ' + rows.length + " ligne" + (rows.length > 1 ? "s" : "") + '</div><table class="viz-tbl res">' + head +
+        rows.map(function (r) {
+          var c = r[0] || [null, null], x = r[1] || [null, null, null];
+          return "<tr>" + cell(c[0]) + cell(c[1]) + (only ? "" : cell(x[0]) + cell(x[1]) + cell(x[2])) + "</tr>";
+        }).join("") + "</table>";
+      P.out.innerHTML = '<p class="viz-msg">' + JT[type][2] + " Lignes en surbrillance dans les tables sources = celles qui participent au résultat.</p>";
+    }
+    sT.addEventListener("change", function () { type = sT.value; draw(); });
+    draw();
+    return { draw: function () {} };
+  }
+
   /* ---------- Registre & montage ---------- */
   var WIDGETS = {
     gradient: Gradient, matrice: Matrix, matrix: Matrix, relation: Relation,
-    regression: Regression, normale: Normal, gauss: Normal
+    regression: Regression, normale: Normal, gauss: Normal,
+    kmeans: KMeans, seuil: Seuil, roc: Seuil, pascal: Pascal, bayes: Bayes, graphe: Graphe, entropie: Entropie,
+    activation: Activation, convolution: Convolution, bloom: Bloom, ownership: Ownership, jointure: Jointure
   };
   var CATALOG = [
     { id: "relation", emoji: "🔗", title: "Relations binaires",
@@ -781,7 +1690,40 @@
       course: { label: "Machine Learning · Modèles linéaires", href: "cours.html?c=ML&m=modeles-lineaires" } },
     { id: "normale", emoji: "🔔", title: "Loi normale",
       desc: "Fais varier μ et σ, choisis un intervalle [a, b] : la probabilité, les z-scores et la règle 68-95-99,7 deviennent visuels.",
-      course: { label: "Maths · Probabilités", href: "matieres/mathematiques/modules/module-3-probabilites.html" } }
+      course: { label: "Maths · Probabilités", href: "matieres/mathematiques/modules/module-3-probabilites.html" } },
+    { id: "bayes", emoji: "🧫", title: "Bayes & paradoxe du faux positif",
+      desc: "1 000 personnes, un test de dépistage : règle prévalence, sensibilité et spécificité et vois pourquoi un test « fiable à 99 % » peut donner surtout des faux positifs.",
+      course: { label: "Maths · Probabilités (Bayes)", href: "matieres/mathematiques/modules/module-3-probabilites.html" } },
+    { id: "pascal", emoji: "🔺", title: "Triangle de Pascal & dénombrement",
+      desc: "Clique une case : C(n, k), ses deux parents (règle de Pascal), la somme 2ⁿ et les 4 modèles de tirage (avec/sans ordre, avec/sans remise). Colorie la parité pour faire apparaître Sierpiński.",
+      course: { label: "Maths · Combinatoire avancée", href: "matieres/mathematiques/modules/module-10-combinatoire.html" } },
+    { id: "graphe", emoji: "🕸️", title: "Parcours de graphe : BFS, DFS, Dijkstra",
+      desc: "Déroule pas à pas un parcours en largeur, en profondeur ou l'algorithme de Dijkstra : file/pile, ordre de visite, distances et arbre de parcours.",
+      course: { label: "Maths · Graphes", href: "matieres/mathematiques/modules/module-6-graphes.html" } },
+    { id: "entropie", emoji: "🎲", title: "Entropie & impureté de Gini",
+      desc: "Modifie une distribution : entropie de Shannon, surprise de chaque issue et indice de Gini — les mesures d'impureté des arbres de décision.",
+      course: { label: "Maths · Théorie de l'information", href: "matieres/mathematiques/modules/module-8-information.html" } },
+    { id: "bloom", emoji: "🌸", title: "Filtre de Bloom",
+      desc: "Ajoute des mots, teste-en d'autres : bits à 1, faux positifs (jamais de faux négatifs) et taux théorique (1 − e^(−kn/m))^k.",
+      course: { label: "Maths · Big Data", href: "matieres/mathematiques/modules/module-9-big-data.html" } },
+    { id: "kmeans", emoji: "🎯", title: "K-means pas à pas",
+      desc: "Alterne affectation et mise à jour des centroïdes, compare initialisation aléatoire et k-means++, observe l'inertie et l'effet d'un mauvais k.",
+      course: { label: "Machine Learning · Non supervisé", href: "cours.html?c=ML&m=non-supervise" } },
+    { id: "seuil", emoji: "🚦", title: "Seuil de décision & courbe ROC",
+      desc: "Déplace le seuil d'un classifieur : matrice de confusion, précision, rappel, F1, accuracy et point sur la courbe ROC en direct.",
+      course: { label: "Machine Learning · Évaluation", href: "cours.html?c=ML&m=evaluation" } },
+    { id: "activation", emoji: "⚡", title: "Fonctions d'activation",
+      desc: "Sigmoïde, tanh, ReLU, Leaky ReLU, GELU : la courbe et sa dérivée, pour comprendre le gradient évanescent et les neurones morts.",
+      course: { label: "Deep Learning · Le neurone", href: "cours.html?c=DL&m=neurone" } },
+    { id: "convolution", emoji: "🖼️", title: "Convolution (CNN)",
+      desc: "Fais glisser un noyau 3×3 sur une image : détection de bords, flou, padding, stride, ReLU et champ récepteur.",
+      course: { label: "Deep Learning · CNN", href: "cours.html?c=DL&m=cnn" } },
+    { id: "ownership", emoji: "🦀", title: "Ownership Rust : pile & tas",
+      desc: "Avance ligne par ligne : moves, clone, Copy, emprunts, réallocation d'un Vec et passage à une fonction, avec les erreurs E0382/E0502 expliquées.",
+      course: { label: "Rust · Ownership", href: "cours.html?c=RUST&m=m05-ownership-la-possession" } },
+    { id: "jointure", emoji: "🔗", title: "Jointures SQL",
+      desc: "INNER, LEFT, RIGHT, FULL, CROSS, anti- et semi-jointure sur deux petites tables : la requête, le résultat et les lignes qui participent.",
+      course: { label: "SQL · Jointures", href: "matieres/sql/index.html" } }
   ];
 
   var live = [];

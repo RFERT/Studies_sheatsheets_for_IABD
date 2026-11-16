@@ -23,7 +23,9 @@ ROOT = Path(__file__).resolve().parent.parent
 errors = []
 checked = 0
 # Widgets acceptés par « ::: viz <nom> » (doit rester aligné sur WIDGETS dans assets/viz.js)
-VIZ_WIDGETS = {"gradient", "matrice", "matrix", "relation", "regression", "normale", "gauss"}
+VIZ_WIDGETS = {"gradient", "matrice", "matrix", "relation", "regression", "normale", "gauss",
+               "kmeans", "seuil", "roc", "pascal", "bayes", "graphe", "entropie", "activation",
+               "convolution", "bloom", "ownership", "jointure"}
 
 
 def md_paths_from_manifest():

@@ -57,6 +57,12 @@ Le taux d'apprentissage \(\eta\) règle la taille du pas. Trop grand, il peut d�
 La perte formalise ce que l'algorithme considère comme une erreur. Une erreur quadratique, une erreur absolue et une perte logistique ne punissent pas les prédictions de la même manière.
 :::
 
+::: viz gradient La descente de gradient en direct
+fonction: convexe
+lr: 0.1
+Sur une perte convexe comme la MSE, la descente converge vers l'unique minimum si le pas η est raisonnable. Monte η au-delà de 1 pour voir la divergence ; passe à la fonction non convexe pour voir l'effet de l'initialisation.
+:::
+
 ## 4. Régression logistique : prédire une probabilité
 
 Malgré son nom, la **régression logistique** sert à la classification. Elle calcule d'abord un score linéaire \(z = w_0 + \mathbf{w}^{\mathsf T}\mathbf{x}\), puis le transforme en probabilité avec la fonction sigmoïde :
@@ -107,6 +113,11 @@ Tu veux obtenir un modèle plus parcimonieux où certaines variables peuvent avo
 - [ ] L2 uniquement
 - [ ] La fonction sigmoïde
   > L1 peut annuler certains coefficients et effectuer une forme de sélection de variables. L2 les réduit généralement sans les annuler exactement.
+:::
+
+::: viz regression Complexité du modèle et surapprentissage
+degre: 1
+Un polynôme de degré d est encore un **modèle linéaire** (en ses coefficients) appliqué aux features x, x², …, xᵈ. Monte le degré : l'erreur d'entraînement baisse toujours, mais la courbe se met à osciller entre les points — c'est exactement ce que la régularisation (Ridge, Lasso) pénalise.
 :::
 
 ## 6. Exercice — Prix et probabilité

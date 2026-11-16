@@ -22,6 +22,12 @@ où \(p_k\) est la proportion de la classe \(k\) dans le nœud. Gini vaut 0 quan
 Dans un nœud composé pour moitié de positifs et pour moitié de négatifs, \(G = 1 - 0{,}5^2 - 0{,}5^2 = 0{,}5\). Un nœud contenant une seule classe a un Gini égal à 0.
 :::
 
+::: viz entropie Impureté d'un nœud : entropie et Gini
+k: 2
+poids: 70 30
+Un arbre cherche la question qui produit des enfants les plus **purs** possible. Règle les proportions d'un nœud : 50/50 est le plus impur (H = 1 bit, Gini = 0,5), 100/0 est pur (H = 0). Le gain d'information d'une coupure = impureté du parent − moyenne pondérée des impuretés des enfants.
+:::
+
 ## 2. Profondeur et sur-apprentissage
 
 Un arbre très profond peut isoler presque chaque ligne : il apprend alors le bruit de l'entraînement. On limite sa complexité avec `max_depth`, `min_samples_leaf` ou une procédure d'élagage. Ces choix sont des **hyperparamètres** à comparer sur validation.

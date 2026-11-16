@@ -148,6 +148,11 @@
         </div>
         <div class="feedback" data-explain="BFS utilise une FILE (FIFO) pour traiter les sommets dans l'ordre de découverte. DFS utilise une PILE (LIFO) ou la récursion."></div>
       </div>
+
+      <figure class="viz" data-labo="parcours-graphe" data-viz="graphe" data-opts='{"algo": "bfs", "depart": "A"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « graphe » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — BFS et DFS pas à pas</strong><p>Avance étape par étape : BFS traite les sommets par <b>couches</b> (file FIFO), DFS s'enfonce puis remonte (pile / récursion). Compare l'ordre de visite et l'arbre obtenu depuis le même départ.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 4 -->
@@ -180,6 +185,11 @@
         </div>
         <div class="feedback" data-explain="Dijkstra calcule le plus court chemin pondéré avec des poids ≥ 0 (distances/temps). A* l'améliore avec une heuristique (distance à vol d'oiseau)."></div>
       </div>
+
+      <figure class="viz" data-labo="chemins-graphe" data-viz="graphe" data-opts='{"algo": "dijkstra", "depart": "A"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « graphe » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Dijkstra : fixer, puis relâcher</strong><p>À chaque étape, Dijkstra <b>fixe</b> le sommet de plus petite distance provisoire puis relâche ses arêtes. Observe B : d(B) passe de 4 à 3 grâce au détour par C.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 5 -->
@@ -350,5 +360,7 @@
   <div class="footer">Module 6 — Théorie des graphes · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

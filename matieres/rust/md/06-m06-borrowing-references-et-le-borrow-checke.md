@@ -61,6 +61,11 @@ rm.push('!');
 Cette règle « lecteurs multiples **xor** un seul écrivain » est exactement ce qui interdit les **data races** — **à la compilation**, même en mono-thread pour les invariants (ex. invalidation d’itérateur). Si une donnée est modifiable par un seul chemin à la fois, personne ne peut lire un état incohérent. C’est le même principe que « readers–writer lock », mais vérifié statiquement, coût zéro à l’exécution.
 :::
 
+::: viz ownership Emprunts partagés et fin d'emprunt (NLL)
+exemple: emprunt
+Les références `r1` et `r2` pointent vers `s` sans rien posséder ; tant qu'elles servent, `s` est **gelée** (cadre orange). Repère l'étape où les emprunts se terminent : c'est leur **dernière utilisation**, pas l'accolade fermante.
+:::
+
 ### NLL : les emprunts finissent à leur dernière utilisation
 
 Depuis « Non-Lexical Lifetimes », un emprunt s’arrête à sa **dernière utilisation**, pas à la fin du bloc. D’où le fait que l’exemple ci-dessus compile.
@@ -82,6 +87,11 @@ Python n’a pas ce problème car tout est référence comptée par le GC : tu p
 
 ::: why Le « pourquoi » de Rust
 Pas de `&mut` sur une valeur non déclarée `mut` : la mutabilité de la variable et celle de la référence doivent être cohérentes. `let x = 5; let r = &mut x;` échoue → il faut `let mut x`.
+:::
+
+::: viz ownership Pourquoi E0502 protège d'un vrai bug
+exemple: realloc
+`premier` pointe **dans** le tampon du vecteur. Un `push` peut réallouer ce tampon et libérer l'ancien : la référence pointerait alors vers de la mémoire libérée. Va jusqu'à l'étape du `push` pour voir l'ancien bloc libéré — exactement le scénario que le borrow checker interdit.
 :::
 
 ## Quiz d'entraînement

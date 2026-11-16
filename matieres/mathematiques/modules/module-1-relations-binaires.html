@@ -137,6 +137,11 @@
         </div>
         <div class="feedback" data-explain="\(M=M^{\top}\) signifie \(M_{ij}=M_{ji}\), soit \(x_i\mathcal R x_j \Leftrightarrow x_j\mathcal R x_i\) : c'est exactement la symétrie. Les autres propriétés sont indépendantes."></div>
       </div>
+
+      <figure class="viz" data-labo="props-relation" data-viz="relation" data-opts='{"n": "5", "preset": "divise"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « relation » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Les 4 propriétés en direct</strong><p>Voici « a divise b » sur {1, …, 5}. Clique dans la matrice pour ajouter ou retirer des couples : dès qu'une propriété tombe, un <b>contre-exemple</b> s'affiche. Essaie de rendre la relation symétrique sans perdre la réflexivité : que devient l'antisymétrie ?</p></figcaption>
+      </figure>
     </section>
 
     <!-- ========== SECTION 3 ========== -->
@@ -197,6 +202,11 @@
         </div>
         <div class="feedback" data-explain="Si A et B ont un ami commun, et B et C ont un ami commun, A et C n'en ont pas forcément : la transitivité tombe. (Elle est bien symétrique, et réflexive si l'on se considère son propre ami.)"></div>
       </div>
+
+      <figure class="viz" data-labo="equiv-relation" data-viz="relation" data-opts='{"n": "6", "preset": "mod3"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « relation » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Relation d'équivalence = partition</strong><p>La congruence modulo 3 regroupe {1, …, 6} en 3 <b>classes</b> disjointes. Retire un seul couple (2, 5) : la transitivité casse et les classes disparaissent.</p></figcaption>
+      </figure>
     </section>
 
     <!-- ========== SECTION 4 ========== -->
@@ -360,6 +370,11 @@
         </div>
         <div class="feedback" data-explain="En rendant transitive une relation symétrique et réflexive, on obtient une relation d'équivalence dont les classes sont les composantes connexes du graphe — les « communautés »."></div>
       </div>
+
+      <figure class="viz" data-labo="ops-relation" data-viz="relation" data-opts='{"n": "4", "preset": "lt"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « relation » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Clôtures</strong><p>Pars de « < » (strict) et applique la clôture <b>réflexive</b> : tu obtiens « ≤ ». Vide la relation, coche une chaîne 1→2→3→4 et applique la clôture <b>transitive</b> (algorithme de Warshall).</p></figcaption>
+      </figure>
     </section>
 
     <!-- ========== SECTION 7 ========== -->
@@ -465,5 +480,7 @@
   <div class="footer">Module 1 — Relations binaires · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

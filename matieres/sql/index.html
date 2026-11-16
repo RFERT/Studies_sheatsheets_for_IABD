@@ -76,6 +76,11 @@
   .lesson table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
   .lesson th,.lesson td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
   .lesson th{background:var(--bg3)}
+  /* Visualisations du labo (assets/viz.js) : correspondance avec les variables de cette page */
+  .lesson .viz{--bg-card:var(--bg2);--bg-soft:var(--panel);--bg-elev:var(--bg3);--border:var(--line);--text:var(--txt);
+    --text-soft:#c3cad6;--primary:var(--acc);--accent:var(--ok);--shadow:none}
+  .lesson .viz table{width:auto;margin:4px 0}
+  .lesson .viz th,.lesson .viz td{padding:4px 10px}
   code{font-family:var(--mono);background:var(--bg3);padding:2px 6px;border-radius:6px;font-size:.9em;color:var(--acc2)}
   pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto;margin:12px 0}
   pre code{background:none;padding:0;color:#dfe4ee;font-size:13.5px;line-height:1.55;display:block}
@@ -603,7 +608,11 @@ LEFT JOIN commandes AS co
       <tr><td><code>RIGHT JOIN</code></td><td>toutes celles de droite (+ correspondances)</td></tr>
       <tr><td><code>FULL OUTER JOIN</code></td><td>toutes des deux côtés (NULL où ça manque)</td></tr>
       <tr><td><code>CROSS JOIN</code></td><td>produit cartésien (toutes les combinaisons)</td></tr>
-    </table>`+
+    </table>
+    <figure class="viz" data-labo="jointures-jointure" data-viz="jointure" data-opts='{"type":"inner"}'>
+      <div class="viz-fallback">🧪 Visualisation interactive « jointure » (chargement…)</div>
+      <figcaption><strong>🧪 Labo — Toutes les jointures sur le même exemple</strong><p>4 clients (Alan et Linus n'ont rien commandé) et 4 commandes (la n° 13 référence un client 5 inexistant). Change le type de jointure et compte les lignes : pourquoi Ada apparaît-elle deux fois avec INNER JOIN mais une seule fois avec EXISTS ? Pourquoi CROSS JOIN donne-t-il 16 lignes ?</p></figcaption>
+    </figure>`+
     `<h3>Self-join : une table avec elle-même</h3>`+
     code(`-- Un employé et son manager (table employes(id, nom, manager_id))
 SELECT e.nom AS employe, m.nom AS manager
@@ -1072,6 +1081,7 @@ ORDER BY total DESC;`,
 });
 </script>
 
+<script src="../../assets/viz.js"></script>
 <script>
 /* ============================================================
    MOTEUR : rendu, navigation, scoring, adaptativité
@@ -1159,6 +1169,7 @@ function render(){
   if(s.sub) html+=`<div class="sub">${s.sub}</div>`;
   if(s.lesson){ html+=`<div class="card lesson">${s.lesson}</div>`; }
   c.innerHTML=html;
+  if(window.Viz) window.Viz.mount(c);
   const qs=(s.quiz||s.exam||[]);
   if(qs.length){
     const holder=document.createElement('div'); holder.id='quizHolder'; c.appendChild(holder);

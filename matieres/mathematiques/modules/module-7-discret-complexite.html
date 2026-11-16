@@ -145,6 +145,11 @@
         </div>
         <div class="feedback" data-explain="La somme des coefficients binomiaux = 2ⁿ (poser a=b=1 dans le binôme). C'est aussi le nombre de parties d'un ensemble à n éléments."></div>
       </div>
+
+      <figure class="viz" data-labo="binome-pascal" data-viz="pascal" data-opts='{"n": "6", "k": "2"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « pascal » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Le triangle de Pascal</strong><p>Clique une case : C(n, k) est la somme de ses deux parents (règle de Pascal) et chaque ligne somme à 2ⁿ. La légende donne aussi les 4 modèles de tirage pour le même couple (n, k).</p></figcaption>
+      </figure>
     </section>
 
     <!-- 4 -->
@@ -359,5 +364,7 @@
   <div class="footer">Module 7 — Discret &amp; Complexité · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

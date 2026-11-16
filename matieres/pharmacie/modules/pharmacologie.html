@@ -70,6 +70,11 @@
         </div>
         <div class="feedback" data-explain="Le métabolisme (M) se fait majoritairement dans le foie, via les cytochromes P450, qui transforment le PA en métabolites généralement éliminables."></div>
       </div>
+
+      <figure class="pk-viz" data-pk="adme-adme" data-opts='{"preset":"adme"}'>
+        <div class="pk-fallback">💊 Simulateur de pharmacocinétique (chargement…)</div>
+        <figcaption><strong>💊 Simulateur — Voie IV ou voie orale ?</strong><p>En IV (bolus), tout le médicament est d'emblée dans le sang : la concentration démarre à son maximum puis décroît. Passe en voie <b>orale</b> : il faut d'abord absorber le comprimé (montée), et seule la fraction <b>F</b> (biodisponibilité) atteint la circulation, à cause de l'absorption incomplète et de l'<b>effet de premier passage hépatique</b>. Baisse F : toute la courbe s'écrase.</p><p class="pk-note">Médicament fictif (fenêtre thérapeutique 4 à 10 mg/L) : support pédagogique, pas un outil de calcul de posologie.</p></figcaption>
+      </figure>
     </section>
 
     <section class="block" id="demi">
@@ -94,6 +99,16 @@
         </div>
         <div class="feedback" data-explain="24 h = 4 demi-vies. À chaque demi-vie on divise par 2 : 1 → 1/2 → 1/4 → 1/8 → 1/16. Il reste environ 1/16 de la dose."></div>
       </div>
+
+      <figure class="pk-viz" data-pk="demi-demi" data-opts='{"preset":"demi"}'>
+        <div class="pk-fallback">💊 Simulateur de pharmacocinétique (chargement…)</div>
+        <figcaption><strong>💊 Simulateur — Demi-vie, prises répétées et état d'équilibre</strong><p>La 1re prise ne suffit pas à atteindre la zone efficace : chaque prise s'ajoute au reste de la précédente (<b>accumulation</b>) jusqu'à l'<b>état d'équilibre</b>, atteint après ≈ 4 à 5 demi-vies. Coche la <b>dose de charge</b> : l'effet est obtenu dès la 1re prise. Passe l'intervalle à 12 h : la concentration retombe sous la CME entre deux prises.</p><p class="pk-note">Médicament fictif (fenêtre thérapeutique 4 à 10 mg/L) : support pédagogique, pas un outil de calcul de posologie.</p></figcaption>
+      </figure>
+
+      <figure class="pk-viz" data-pk="demi-accumulation" data-opts='{"preset":"accumulation"}'>
+        <div class="pk-fallback">💊 Simulateur de pharmacocinétique (chargement…)</div>
+        <figcaption><strong>💊 Simulateur — Demi-vie longue : attention à l'accumulation</strong><p>Avec t½ = 12 h et une prise toutes les 8 h, chaque prise arrive alors qu'il reste encore beaucoup de la précédente : le facteur d'accumulation R dépasse 2 et la concentration finit dans la zone toxique. Allonge l'intervalle ou baisse la dose pour revenir dans la fenêtre.</p><p class="pk-note">Médicament fictif (fenêtre thérapeutique 4 à 10 mg/L) : support pédagogique, pas un outil de calcul de posologie.</p></figcaption>
+      </figure>
     </section>
 
     <section class="block" id="pd">
@@ -252,5 +267,6 @@
   <script src="../assets/glossary-data.js"></script>
   <script src="../assets/share.js"></script>
   <script src="../assets/app.js"></script>
+<script src="../assets/pk.js"></script>
 </body>
 </html>

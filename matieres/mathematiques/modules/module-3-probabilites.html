@@ -183,6 +183,11 @@
         </div>
         <div class="feedback" data-explain="\(P(A)\) est l'a priori (prior) : ce qu'on croyait avant d'observer \(B\). \(P(A\mid B)\) est l'a posteriori."></div>
       </div>
+
+      <figure class="viz" data-labo="bayes-bayes" data-viz="bayes" data-opts='{"prevalence": "0.01", "sensibilite": "0.99", "specificite": "0.95"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « bayes » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Le paradoxe du faux positif</strong><p>Un test sensible à 99 % pour une maladie touchant 1 % de la population : sur 1 000 personnes, compte les carrés rouges (sains testés positifs) et verts (malades testés positifs). Monte la prévalence : la valeur prédictive positive grimpe.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 4 -->
@@ -274,6 +279,11 @@
         </div>
         <div class="feedback" data-explain="Pour Poisson, E[X]=Var[X]=λ. Si sur des données réelles la variance dépasse largement la moyenne, on parle de surdispersion (Poisson mal adaptée)."></div>
       </div>
+
+      <figure class="viz" data-labo="lois-normale" data-viz="normale" data-opts='{"mu": "0", "sigma": "1", "a": "-1.96", "b": "1.96"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « normale » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Loi normale et probabilité d'un intervalle</strong><p>P(−1,96 ≤ Z ≤ 1,96) ≈ 95 % : c'est l'origine du « 1,96 » des intervalles de confiance. Change μ et σ : la cloche se déplace et s'élargit, mais les z-scores restent les mêmes.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 6 -->
@@ -462,5 +472,7 @@
   <div class="footer">Module 3 — Probabilités · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>
