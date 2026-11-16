@@ -46,6 +46,7 @@ window.COURS = {
         "clustering",
         "scikit-learn",
       ],
+      aide: "matieres/machine-learning/md/aide.md",
       modules: [
         {
           id: "fondations",
@@ -119,8 +120,9 @@ window.COURS = {
       tags: ["Ownership", "Borrowing", "Lifetimes", "Traits"],
       extra: [
         { label: "🔥 Révision express", href: "matieres/rust/revision-express.html" },
-        { label: "⚡ Antisèche", href: "matieres/rust/cheatsheet-rust.html" }
+        { label: "🧩 Aide-mémoire interactif", href: "matieres/rust/cheatsheet-rust.html" }
       ],
+      aide: "matieres/rust/md/aide.md",
       modules: [
         { id: "m01-installation-cargo-et-la-chaine-d-outils", title: "Module 1 — Installation, Cargo & la chaîne d’outils", badge: "Module 1", desc: "Mettre en place un environnement Rust professionnel et comprendre le rôle de chaque outil.", file: "matieres/rust/md/00-m01-installation-cargo-et-la-chaine-d-outils.md" },
         { id: "m02-variables-mutabilite-shadowing-et-types", title: "Module 2 — Variables, mutabilité, shadowing & types primitifs", badge: "Module 2", desc: "Immutabilité par défaut, inférence de types, et les types scalaires de base.", file: "matieres/rust/md/01-m02-variables-mutabilite-shadowing-et-types.md" },
@@ -144,6 +146,37 @@ window.COURS = {
         { id: "cp-niveau-intermediaire-confirme", title: "Checkpoint — Niveau Intermédiaire confirmé", badge: "✔ Checkpoint", desc: "Synthèse des modules 11 à 16 : traits, lifetimes, iterators, smart pointers, concurrence, organisation.", file: "matieres/rust/md/19-cp-niveau-intermediaire-confirme.md" },
         { id: "examen-final", title: "Examen final — Tout le langage", badge: "★ Examen final", desc: "15 questions couvrant l’ensemble du parcours. À la fin : évaluation détaillée et feuille de route.", file: "matieres/rust/md/20-examen-final.md" }
       ]
+    },
+    // Matières codées sur-mesure : seule l'antisèche est générée depuis le Markdown.
+    {
+      code: "MATH",
+      name: "Mathématiques",
+      emoji: "∑",
+      color: "#6c8cff",
+      page: "matieres/mathematiques/index.html",
+      desc: "Maths pour la Data, le Big Data & l'IA : logique, matrices, combinatoire, probas, stats, optimisation, graphes, information.",
+      tags: ["Matrices", "Combinatoire", "Probas", "Optimisation"],
+      aide: "matieres/mathematiques/md/aide.md",
+    },
+    {
+      code: "DATA",
+      name: "Python & Data Science",
+      emoji: "🐍",
+      color: "#3b82f6",
+      page: "matieres/python/index.html",
+      desc: "Python avancé puis la stack data : NumPy, Pandas, visualisation, feature engineering, scikit-learn.",
+      tags: ["Pandas", "NumPy", "scikit-learn"],
+      aide: "matieres/python/md/aide.md",
+    },
+    {
+      code: "SQL",
+      name: "Bases de données",
+      emoji: "🧮",
+      color: "#22c3a6",
+      page: "matieres/sql/index.html",
+      desc: "SQL de A à Z : SELECT, NULL, agrégation, jointures, sous-requêtes, fenêtrage, DML, transactions & index.",
+      tags: ["SQL", "Jointures", "Window functions"],
+      aide: "matieres/sql/md/aide.md",
     },
   ],
 };

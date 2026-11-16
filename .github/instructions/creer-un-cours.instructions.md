@@ -56,6 +56,10 @@ automatiquement depuis **un seul fichier Markdown**, sans coder de page.
    automatiquement (carte du portail, menu « Antisèches », recherche, bouton sur
    la page du cours), avec boutons **Imprimer/PDF**, **Copier**, **Télécharger .md**.
 
+> 🧩 **Matière codée sur-mesure** (Maths, Python, SQL…) : déclare une entrée sans `modules`
+> avec `page: "matieres/<x>/index.html"` + `aide: "matieres/<x>/md/aide.md"`. Le cours codé
+> reste utilisé ; seule l'antisèche est générée et greffée à sa carte, au menu et à la recherche.
+
 > 📐 **Mise en page** : chaque titre `##` devient une **carte** qui coule en colonnes.
 > Garde les cartes **courtes et autonomes** (une notion = une carte). Même syntaxe que
 > les cours (`:::`, quiz, `exo`, `culture`, LaTeX, code). Exemple réel : `matieres/git/md/aide.md`.
