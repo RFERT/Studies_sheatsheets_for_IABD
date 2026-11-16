@@ -183,7 +183,9 @@
       var f = mods[i] && mods[i].file;
       if (typeof f === "string") { var m = f.match(/^\.?\/?(.*?)\/md\//); if (m) return m[1]; }
     }
-    return null;
+    // Matière codée déclarée seulement pour son antisèche : dossier déduit de `page`.
+    var pm = s && typeof s.page === "string" && s.page.match(/^\.?\/?(matieres\/[^\/]+)\//);
+    return pm ? pm[1] : null;
   }
   function codedFolderSet() {
     var set = {};
@@ -224,7 +226,7 @@
         if (/aide-memoire\.html|cheatsheet-/.test(a.getAttribute("href") || "")) coded[a.getAttribute("href")] = 1;
       });
       var frag = window.COURS.subjects
-        .filter(function (s) { return s.aide && !s.page; })
+        .filter(function (s) { return s.aide; })
         .map(function (s) {
           var href = root + "aide.html?c=" + encodeURIComponent(s.code);
           return '<a href="' + href + '"><span>' + (s.emoji || "⚡") + "</span> Antisèche " + s.name + "</a>";
@@ -242,9 +244,9 @@
     { e: "🧮", t: "Bases de données (SQL)", h: root + "matieres/sql/index.html" },
     { sep: 1 },
     { lbl: "Antisèches" },
-    { e: "∑", t: "Aide-mémoire maths", h: root + "matieres/mathematiques/aide-memoire.html" },
-    { e: "🐍", t: "Antisèche Python", h: root + "matieres/python/aide-memoire.html" },
-    { e: "🦀", t: "Antisèche Rust", h: root + "matieres/rust/cheatsheet-rust.html" },
+    { e: "∑", t: "Aide-mémoire maths (interactif)", h: root + "matieres/mathematiques/aide-memoire.html" },
+    { e: "🐍", t: "Aide-mémoire Python (interactif)", h: root + "matieres/python/aide-memoire.html" },
+    { e: "🦀", t: "Aide-mémoire Rust (interactif)", h: root + "matieres/rust/cheatsheet-rust.html" },
     { sep: 1 },
     { lbl: "Outils" },
     { e: "🗂️", t: "Flashcards", h: root + "flashcards.html" },

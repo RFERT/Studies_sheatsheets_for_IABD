@@ -13,7 +13,7 @@ const SUBJECTS = [
     featured: true,
     href: "matieres/mathematiques/index.html",
     extra: [
-      { label: "⚡ Aide-mémoire", href: "matieres/mathematiques/aide-memoire.html" }
+      { label: "🧩 Aide-mémoire interactif", href: "matieres/mathematiques/aide-memoire.html" }
     ],
     desc: "Maths pour la Data, le Big Data & l'IA : logique, relations binaires, algèbre linéaire, probas, stats, optimisation, graphes, info, Big Data.",
     tags: ["Algèbre", "Probas", "Optimisation", "Big Data"],
@@ -29,7 +29,7 @@ const SUBJECTS = [
     featured: true,
     href: "matieres/python/index.html",
     extra: [
-      { label: "⚡ Aide-mémoire", href: "matieres/python/aide-memoire.html" }
+      { label: "🧩 Aide-mémoire interactif", href: "matieres/python/aide-memoire.html" }
     ],
     desc: "Python avancé (générateurs, décorateurs, typing) puis la stack data : NumPy, Pandas, visualisation, feature engineering, scikit-learn. Niveau pro.",
     tags: ["Pandas", "NumPy", "scikit-learn"],
@@ -644,9 +644,14 @@ function pushAideSearch(c) {
 /* Carte pointant vers une page codée (seulement si elle n'est pas déjà sur le portail). */
 function addCodedCard(c, href) {
   const url = typeof href === "string" ? href : null;
-  const already = SUBJECTS.some((s) => !s.fromManifest &&
+  const existing = SUBJECTS.find((s) => !s.fromManifest &&
     ((s.code || "").toLowerCase() === (c.code || "").toLowerCase() || (url && s.href === url)));
-  if (already || !url) return;
+  if (existing) {
+    // Matière codée déjà sur le portail : on lui greffe seulement l'antisèche Markdown.
+    if (c.aide) { existing.extra = withAide(existing.extra, c); pushAideSearch(c); }
+    return;
+  }
+  if (!url) return;
   SUBJECTS.push({
     code: c.code, name: c.name, emoji: c.emoji || "📘", color: c.color || "#6c8cff",
     status: "ready", featured: !!c.featured, href: url, extra: withAide(c.extra, c),
