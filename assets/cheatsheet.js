@@ -208,6 +208,15 @@
     try { addCopyButtons(host); } catch (e) {}
     try { highlightCode(host); } catch (e) {}
     try { wireCloze(host); } catch (e) {}
+    try { wireViz(host); } catch (e) {}
+  }
+  function wireViz(host) {
+    if (!host.querySelector(".viz[data-viz]")) return;
+    if (window.Viz) { window.Viz.mount(host); return; }
+    var s = document.createElement("script");
+    s.src = "assets/viz.js";
+    s.onload = function () { if (window.Viz) window.Viz.mount(host); };
+    document.head.appendChild(s);
   }
   function wireCloze(host) {
     host.querySelectorAll(".cloze").forEach(function (c) {

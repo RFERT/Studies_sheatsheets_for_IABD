@@ -297,7 +297,7 @@ function renderDashboard() {
         <span class="dr-top"><b>${s.name}</b><span class="dr-num">${pr.done}/${pr.total} ${pr.unit}</span></span>
         ${progressBar(pr.pct, s.color)}
       </span>
-      <span class="dr-pct" style="color:${s.color}">${pr.pct}%</span>
+      <span class="dr-pct" style="--sc:${s.color}">${pr.pct}%</span>
     </a>`).join("");
 
   const hint = started
@@ -550,7 +550,7 @@ function renderSubjects() {
     const hrefAttr = clickable && s.href ? ` href="${s.href}"` : "";
     const statusTxt = { ready: "● Disponible", soon: "○ Bientôt", wip: "◐ En cours" }[s.status] || "";
     const extras = (s.extra || []).map((e) =>
-      `<a class="tag extra" href="${e.href}" style="border-color:${s.color};color:${s.color}">${e.label}</a>`
+      `<a class="tag extra" href="${e.href}" style="border-color:${s.color}">${e.label}</a>`
     ).join("");
     const extrasRow = extras ? `<div class="subject-extras">${extras}</div>` : "";
     const pr = readProgress(s);
@@ -759,8 +759,8 @@ function renderExams() {
     <div class="exams-box">
       ${list.length ? `<div class="exam-list">${rows}</div>` : `<p class="exam-empty">Aucun examen pour l'instant. Ajoute ta première date de partiel 👇</p>`}
       <form class="exam-form" id="exam-form">
-        <input type="text" id="exam-name" placeholder="Intitulé (ex. Partiel Rust)" maxlength="80" required />
-        <input type="date" id="exam-date" min="${today}" required />
+        <input type="text" id="exam-name" placeholder="Intitulé (ex. Partiel Rust)" maxlength="80" required aria-label="Intitulé de l'examen" />
+        <input type="date" id="exam-date" min="${today}" required aria-label="Date de l'examen" />
         <button type="submit" class="btn primary">+ Ajouter</button>
       </form>
     </div>`;
@@ -908,6 +908,10 @@ function flashcardsDue() {
   Object.keys(st).forEach((k) => { if ((st[k] && st[k].due || 0) <= today) n++; });
   return n;
 }
+function quizMissedCount() {
+  let st; try { st = JSON.parse(localStorage.getItem("esgi-qstats")) || {}; } catch (e) { st = {}; }
+  return Object.keys(st).filter((k) => st[k] && st[k].last === false).length;
+}
 function renderDailyReview() {
   const host = document.getElementById("daily");
   const sec = document.getElementById("daily-section");
@@ -946,6 +950,11 @@ function renderDailyReview() {
   const due = flashcardsDue();
   items.push(`<a class="daily-item" href="flashcards.html"><span class="di-ic">🗂️</span>
     <span class="di-txt"><b>Flashcards</b><span>${due > 0 ? (due + " carte" + (due > 1 ? "s" : "") + " planifiée" + (due > 1 ? "s" : "") + " à revoir") : "Révise tes cartes du jour"}</span></span><span class="di-go">→</span></a>`);
+
+  // 5. Quiz adaptatif (questions ratées à retravailler)
+  const missed = quizMissedCount();
+  items.push(`<a class="daily-item" href="quiz.html${missed ? "?mode=erreurs" : ""}"><span class="di-ic">🎯</span>
+    <span class="di-txt"><b>Quiz adaptatif</b><span>${missed ? (missed + " question" + (missed > 1 ? "s" : "") + " ratée" + (missed > 1 ? "s" : "") + " à retravailler") : "Une série qui insiste sur tes points faibles"}</span></span><span class="di-go">→</span></a>`);
 
   if (sec) sec.hidden = false;
   host.innerHTML = `<div class="daily-box">${items.join("")}</div>`;
@@ -993,7 +1002,8 @@ function renderInsights() {
       const href = s ? (s.href || ("cours.html?c=" + encodeURIComponent(w.c))) : ("cours.html?c=" + encodeURIComponent(w.c));
       return `<a class="daily-item" href="${href}"><span class="di-ic">${emoji}</span>
         <span class="di-txt"><b>${escapeHtml(name)}</b><span>${w.pct}% de réussite aux quiz (${w.ok}/${w.t})</span></span><span class="di-go">→</span></a>`;
-    }).join("");
+    }).join("") +
+    `<p class="ins-cta"><a class="btn" href="quiz.html?c=${weak.map((w) => encodeURIComponent(w.c)).join(",")}">🎯 M'entraîner sur ces points faibles (quiz adaptatif)</a></p>`;
   } else {
     weakHtml = `<p class="ins-none">Continue à répondre aux quiz des cours : je repèrerai ici tes points faibles. 💪</p>`;
   }

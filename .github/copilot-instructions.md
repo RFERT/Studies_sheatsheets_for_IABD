@@ -52,6 +52,18 @@ Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans co
   Intégration AUTO : `portal.js` ajoute un lien « ⚡ Antisèche » sur la carte + recherche ; `nav.js` l'ajoute à la
   section « Antisèches » ; `course.js` met un bouton sur la page de la matière. URL : `aide.html?c=CODE`.
   Modèle : `matieres/_MODELE-aide-memoire.md` ; exemple réel : `matieres/git/md/aide.md`.
+- **Visualisations** : bloc `::: viz <widget> <légende>` (+ options `clé: valeur`) → `<figure class="viz">` monté par
+  `assets/viz.js` (chargé à la demande par course.js / cheatsheet.js ; CSS `viz.css` injecté par viz.js).
+  Widgets : `relation`, `matrice`, `gradient`, `regression`, `normale` ; galerie `labo.html`. Ajouter un widget =
+  une fonction dans `viz.js` (`WIDGETS` + `CATALOG`) **et** son nom dans `VIZ_WIDGETS` de `ci/check_courses.py`.
+- **Quiz adaptatif** (`quiz.html` + `assets/quiz.js`) : construit la banque au chargement en aspirant les `.quiz`
+  de tous les modules Markdown, antisèches, pages codées (entrées `module` de `SEARCH_INDEX`) et `extra` ; génère des
+  questions depuis glossaire / `::: def` / `- **Terme** : déf` / tableaux 2 colonnes / `==trous==`. Pondération par
+  taux d'erreur (stats par question `esgi-qstats`), réinjection des ratées, journalise dans `esgi-activity`.
+  Paramètres d'URL : `?c=CODE[,CODE2]&mode=adaptatif|erreurs|nouvelles|aleatoire`.
+- **Accessibilité AA** : contrastes ≥ 4,5:1 vérifiés à axe-core (thèmes sombre et clair). Pour colorer du texte
+  avec la couleur d'une matière, utiliser `color-mix(in srgb, var(--sc) var(--sc-mix), var(--text))` (jamais
+  `color: var(--sc)` brut) ; texte sur fond primaire/accent : `var(--on-primary)` / `var(--on-accent)`.
 - ⚠️ Le rendu lit les `.md` via `fetch()` : OK sur GitHub Pages / `localhost` ; en `file://` certains navigateurs
   bloquent (le moteur affiche alors un message d'aide). Préférer tester via `python -m http.server`.
 - Si tu ajoutes un fichier au moteur, pense à `sw.js` (`CORE` + bump `CACHE`).

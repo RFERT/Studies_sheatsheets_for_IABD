@@ -113,6 +113,27 @@ Texte **gras**, *italique*, `code`, [lien](https://…), listes, tableaux.
   Ex. `La commande est ==git commit==.`
 - **Glossaire** (définition au survol) : `[[terme|définition courte]]` → le terme reçoit une bulle d'aide.
   Ex. `[[HEAD|dernier commit de la branche courante]]`. (Ces deux syntaxes marchent aussi dans les antisèches.)
+- **Visualisation interactive** : `::: viz <widget> <légende>`, puis des options `clé: valeur`, puis `:::`.
+  Widgets : `relation` (`n`, `preset` : vide|egal|le|lt|divise|parite|mod3|plein), `matrice` (`preset` :
+  identite|rotation|homothetie|etirement|cisaillement|symetrie|projection|singuliere|propres),
+  `gradient` (`fonction` : convexe|nonconvexe|plateau, `lr`, `x0`, `momentum`), `regression` (`degre`),
+  `normale` (`mu`, `sigma`, `a`, `b`). Les lignes qui ne sont pas des options deviennent un texte d'accompagnement.
+  ```markdown
+  ::: viz gradient Descente de gradient sur une fonction non convexe
+  fonction: nonconvexe
+  lr: 0.02
+  :::
+  ```
+  Un nom de widget inconnu fait échouer la CI (`ci/check_courses.py`). Galerie complète : `labo.html`.
+
+### Nourrir le quiz adaptatif (automatique)
+
+`quiz.html` aspire **tous** les `::: quiz` du site et **génère** des questions depuis le Markdown.
+Plus tu utilises ces structures, plus la banque est riche (rien d'autre à faire) :
+- `[[terme|définition]]` (glossaire) ; `::: def Terme` (titre = terme, 1ʳᵉ phrase = définition) ;
+- listes `- **Terme** : définition` (séparateurs `:`, `—`, `–`, `→`, `=`) ; tableaux à **2 colonnes** (terme | définition) ;
+- cartes à trous `==réponse==` dans une phrase (≥ 4 trous par matière pour avoir des distracteurs).
+Garde des définitions courtes (12 à 240 caractères) et des termes uniques par matière.
 
 ## Conventions de qualité (cohérence avec les cours existants)
 

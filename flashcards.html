@@ -21,7 +21,7 @@
       border-radius: 18px; box-shadow: var(--shadow); min-height: 240px; display: flex; flex-direction: column;
       align-items: center; justify-content: center; text-align: center; padding: 30px 28px; cursor: pointer; }
     .fc-tag { position: absolute; top: 14px; left: 16px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--muted); }
+      text-transform: uppercase; color: color-mix(in srgb, var(--sc, var(--muted)) var(--sc-mix), var(--text)); }
     .fc-side { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
     .fc-q { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.4; }
     .fc-a { font-size: 19px; color: var(--text-soft); line-height: 1.5; }
@@ -174,10 +174,10 @@
       }
       var c=CARDS[cur]; var col=DECKS[c[0]].color;
       if(!flipped){
-        stage.innerHTML='<div class="fc-card" id="fc-card"><span class="fc-tag" style="color:'+col+'">'+c[1]+'</span><div class="fc-side">Question</div><div class="fc-q">'+c[2]+'</div></div><div class="fc-hint">Clique la carte ou appuie sur <b>Espace</b> pour révéler</div>';
+        stage.innerHTML='<div class="fc-card" id="fc-card"><span class="fc-tag" style="--sc:'+col+'">'+c[1]+'</span><div class="fc-side">Question</div><div class="fc-q">'+c[2]+'</div></div><div class="fc-hint">Clique la carte ou appuie sur <b>Espace</b> pour révéler</div>';
         document.getElementById("fc-card").addEventListener("click", flip);
       } else {
-        stage.innerHTML='<div class="fc-card" id="fc-card"><span class="fc-tag" style="color:'+col+'">'+c[1]+'</span><div class="fc-side">Réponse</div><div class="fc-a">'+c[3]+'</div></div>'+
+        stage.innerHTML='<div class="fc-card" id="fc-card"><span class="fc-tag" style="--sc:'+col+'">'+c[1]+'</span><div class="fc-side">Réponse</div><div class="fc-a">'+c[3]+'</div></div>'+
           '<div class="fc-rate">'+
           '<button class="again" data-r="again">😵 À revoir<small>bientôt</small></button>'+
           '<button class="hard" data-r="hard">😓 Difficile<small>&lt; 2 j</small></button>'+

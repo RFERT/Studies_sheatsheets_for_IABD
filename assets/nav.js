@@ -250,6 +250,8 @@
     { sep: 1 },
     { lbl: "Outils" },
     { e: "🗂️", t: "Flashcards", h: root + "flashcards.html" },
+    { e: "🎯", t: "Quiz adaptatif", h: root + "quiz.html" },
+    { e: "🧪", t: "Labo (visualisations)", h: root + "labo.html" },
     { e: "🚀", t: "Améliorations", h: root + "ameliorations.html" },
     { e: "⚙️", t: "À configurer", h: root + "parametrage.html" },
   ];
