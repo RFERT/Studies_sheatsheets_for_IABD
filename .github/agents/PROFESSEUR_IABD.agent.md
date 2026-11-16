@@ -31,8 +31,9 @@ propre branche**, pour ne pas se marcher dessus :
 
 Regles :
 - Travaille **dans le worktree `...-cours`** (branche `Cours`). Si tu es sur `main`, signale-le.
-- **Avant de rediger**, recupere les dernieres evolutions du site :
-  `powershell -File scripts\cours-sync.ps1` (fusionne `main` dans `Cours`).
+- **Avant de rediger** (au debut de CHAQUE prompt, preference de l'utilisateur), recupere les dernieres evolutions du site :
+  `powershell -File scripts\cours-sync.ps1` (fusionne `main` dans `Cours`). **A la fin** de chaque prompt, commit tes cours
+  sur `Cours` pour que la session SITE les integre au prompt suivant.
 - Commit tes cours normalement sur `Cours`. L'integration dans `main` est faite cote SITE
   via `scripts\integrer-cours.ps1` — tu n'as PAS a fusionner toi-meme dans `main`.
 - Reste dans ton perimetre : `matieres/**`. Le seul fichier partage est `matieres/cours.js`

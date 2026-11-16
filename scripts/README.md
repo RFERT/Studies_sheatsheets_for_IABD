@@ -41,10 +41,11 @@ powershell -File scripts\integrer-cours.ps1
 ```
 (ajouter `-NoPush` pour ne pas pousser tout de suite).
 
-> 🤖 **Intégration auto (préférence de l'utilisateur)** : pendant une session de travail,
-> la session SITE **intègre automatiquement** le travail du prof dès qu'un nouveau commit
-> est repéré sur `Cours` (vérifier `git log --oneline main..Cours` ; s'il y a du nouveau,
-> lancer `scripts\integrer-cours.ps1`). Pense à **bumper `CACHE` dans `sw.js`** si le merge
+> 🤖 **Intégration auto (préférence de l'utilisateur)** : à **chaque prompt**, la session SITE
+> **intègre automatiquement** le travail du prof au début (vérifier `git log --oneline main..Cours` ;
+> s'il y a du nouveau, lancer `scripts\integrer-cours.ps1 -NoPush`) et, **à la fin**, lance
+> `scripts\cours-sync.ps1` dans le worktree `...-cours` pour y redescendre `main`. La session PROF
+> lance `cours-sync.ps1` au début de chaque prompt et committe ses cours à la fin. Pense à **bumper `CACHE` dans `sw.js`** si le merge
 > a modifié des fichiers CORE (`portal.js`, `nav.js`, etc.) sans que le prof l'ait fait.
 
 ### Si une 3ᵉ session modifie `main` en direct (worktree `...-site`, branche `Site`)

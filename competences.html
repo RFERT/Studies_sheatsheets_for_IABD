@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0f1117" />
-  <title>Compétences info — Catalogue de cours hors cursus</title>
+  <title>Compétences pro — Catalogue de cours hors cursus</title>
   <link rel="stylesheet" href="assets/portal.css" />
   <style>
     .sk-wrap { max-width: var(--maxw); margin: 0 auto; padding: 8px 28px 60px; }
@@ -63,6 +63,8 @@
     .sk-body { padding: 0 16px 16px 68px; }
     .sk-lbl { font-size: 11.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
     .sk-body ol { margin: 0 0 10px; padding-left: 20px; }
+    .sk-body ul.plain { list-style: none; margin: 0 0 10px; padding: 0; }
+    .sk-body ul.plain li { padding-left: 10px; border-left: 2px solid color-mix(in srgb, var(--cc) 55%, transparent); margin: 8px 0; }
     .sk-body li { color: var(--text-soft); margin: 4px 0; font-size: 14.5px; }
     .sk-hint { margin: 0; font-size: 13px; color: var(--muted); }
     .sk-hint code { font-size: 12px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; color: var(--text-soft); }
@@ -92,14 +94,14 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="logo">💼</span> <span>Compétences info<small>catalogue de cours hors cursus</small></span></div>
+    <div class="brand"><span class="logo">💼</span> <span>Compétences pro<small>catalogue de cours hors cursus</small></span></div>
     <div class="spacer"></div>
     <button class="btn" id="theme-toggle">☀️ Clair</button>
   </header>
 
   <div class="hero" style="padding-bottom:4px">
     <span class="eyebrow">Au-delà du cursus IABD</span>
-    <h1>Compétences informatiques 💼</h1>
+    <h1>Compétences pro 💼</h1>
     <p>Tout ce qu'un·e informaticien·ne complet·e devrait savoir et que le cursus couvre peu : hardware, systèmes, réseaux, génie logiciel, DevOps, sécurité, soft skills. Les cours se remplissent au fur et à mesure : ouvre une carte pour voir son programme.</p>
   </div>
 
@@ -125,7 +127,7 @@
     <p class="sk-empty" id="sk-empty" hidden>Aucun cours ne correspond à ta recherche.</p>
   </main>
 
-  <div class="footer">Compétences info · <a href="index.html">retour au portail</a> · <a href="ameliorations.html">feuille de route</a> 💙</div>
+  <div class="footer">Compétences pro · <a href="index.html">retour au portail</a> · <a href="ameliorations.html">feuille de route</a> 💙</div>
 
   <script src="matieres/cours.js"></script>
   <script src="matieres/competences.js"></script>
@@ -197,13 +199,15 @@
           (extra ? '<div class="sk-extra">' + extra + "</div>" : "") + "</div>";
       }
       var prog2 = (k.programme || []).map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("");
+      var plain = (k.programme || []).some(function (p) { return /^Module\s/.test(p); });
+      var listTag = plain ? 'ul class="plain"' : "ol", listEnd = plain ? "ul" : "ol";
       return '<details class="sk-card" id="' + slug(k.code) + '" data-cat="' + esc(c.id) + '" data-txt="' + esc(txt) + '">' +
         '<summary class="sk-head">' + ic +
         '<span class="sk-main"><span class="sk-name">' + esc(k.name) + "</span>" +
         '<span class="sk-desc">' + esc(k.desc) + "</span>" +
         '<span class="sk-pill">○ À venir</span></span>' +
         '<span class="sk-chev" aria-hidden="true">▾</span></summary>' +
-        '<div class="sk-body"><div class="sk-lbl">Programme prévu</div><ol>' + prog2 + "</ol>" +
+        '<div class="sk-body"><div class="sk-lbl">Programme prévu</div><' + listTag + ">" + prog2 + "</" + listEnd + ">" +
         '<p class="sk-hint">🚧 Cours en préparation : le programme est indicatif. Code catalogue <code>' + esc(k.code) + "</code></p></div></details>";
     }
 

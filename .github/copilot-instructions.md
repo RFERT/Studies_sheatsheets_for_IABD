@@ -28,6 +28,17 @@ propre dossier (worktree) et sa propre branche** pour ne pas se marcher dessus :
 > (côté site : fusionner `Cours` dans `main`, valider, pousser). Garder `matieres/cours.js`
 > en modifications ciblées (seul fichier touché des deux côtés).
 
+> 🔄 **Synchronisation à CHAQUE prompt (préférence de l'utilisateur, obligatoire)** :
+> - **Session SITE (`main`)** — *au début* : `git log --oneline main..Cours` ; s'il y a du nouveau,
+>   committer d'abord son propre travail en cours (le script exige `main` propre), puis
+>   `powershell -File scripts\integrer-cours.ps1 -NoPush`. *À la fin* (après commit/push) : lancer
+>   `scripts\cours-sync.ps1` **dans le worktree** `..\Studies_sheatsheets_for_IABD-cours` pour que le
+>   prof reparte de la dernière version (il refuse de tourner si `Cours` a des modifs suivies non commit :
+>   le signaler, ne jamais committer le travail du prof à sa place).
+> - **Session PROF (`Cours`)** — *au début* : `scripts\cours-sync.ps1` ; *à la fin* : committer ses cours
+>   (la session SITE les intégrera au prompt suivant).
+> - Toujours vérifier `git log --oneline -5` avant de committer : une 3ᵉ session peut avoir avancé `main`.
+
 ## 🏭 Système de cours « industrialisé » (Markdown, zéro build)
 Un cours peut être écrit en **Markdown pur** et rendu automatiquement, sans coder de page HTML.
 - Moteur : `cours.html` (coquille) + `assets/course.js` (rendu) + `assets/markdown.js` (parseur maison) + `assets/course.css`.

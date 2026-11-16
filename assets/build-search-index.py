@@ -43,7 +43,7 @@ SUBJECTS = {
     "rust": {"name": "Rust",          "emoji": "🦀", "color": "#f74c00"},
     "python": {"name": "Python & Data Science", "emoji": "🐍", "color": "#3b82f6"},
     "portal": {"name": "Portail",     "emoji": "🎓", "color": "#27e0b0"},
-    "skills": {"name": "Compétences info", "emoji": "💼", "color": "#ff6b81"},
+    "skills": {"name": "Compétences pro", "emoji": "💼", "color": "#ff6b81"},
 }
 
 entries = []
@@ -158,8 +158,8 @@ add("portal", "page", "Quiz adaptatif — toutes les questions des cours", "quiz
 add("portal", "page", "Labo — visualisations interactives", "labo.html",
     "labo visualisation interactive relations binaires matrice transformation valeurs propres descente de gradient régression surapprentissage loi normale gaussienne")
 
-# ---- Catalogue « Compétences info » (matieres/competences.js, un cours par ligne) ----
-add("skills", "page", "Compétences info — catalogue de cours hors cursus", "competences.html",
+# ---- Catalogue « Compétences pro » (matieres/competences.js, un cours par ligne) ----
+add("skills", "page", "Compétences pro — catalogue de cours hors cursus", "competences.html",
     "compétences pro informatique hardware systèmes réseaux génie logiciel devops cloud mlops sécurité soft skills catalogue")
 skills = ROOT / "matieres" / "competences.js"
 if skills.exists():

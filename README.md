@@ -12,7 +12,7 @@ Aucune dépendance ni serveur requis : tout fonctionne en `file://`.
 ```
 index.html               Portail : tableau de bord, recherche, cartes de matières
 ameliorations.html       Feuille de route & idées d'évolution
-competences.html         Catalogue « Compétences info » : menu filtrable de cours hors cursus
+competences.html         Catalogue « Compétences pro » : menu filtrable de cours hors cursus
                          (données : matieres/competences.js)
 flashcards.html          Flashcards à répétition espacée (toutes matières)
 quiz.html                Quiz adaptatif : banque auto (tous les quiz + questions générées)

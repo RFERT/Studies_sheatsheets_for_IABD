@@ -245,7 +245,7 @@
     { e: "∑", t: "Mathématiques", h: root + "matieres/mathematiques/index.html" },
     { e: "🐍", t: "Python & Data Science", h: root + "matieres/python/index.html" },
     { e: "🧮", t: "Bases de données (SQL)", h: root + "matieres/sql/index.html" },
-    { e: "💼", t: "Compétences info (catalogue)", h: root + "competences.html" },
+    { e: "💼", t: "Compétences pro (catalogue)", h: root + "competences.html" },
     { sep: 1 },
     { lbl: "Antisèches" },
     { e: "∑", t: "Aide-mémoire maths (interactif)", h: root + "matieres/mathematiques/aide-memoire.html" },
