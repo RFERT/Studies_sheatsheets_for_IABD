@@ -12,6 +12,8 @@ Aucune dépendance ni serveur requis : tout fonctionne en `file://`.
 ```
 index.html               Portail : tableau de bord, recherche, cartes de matières
 ameliorations.html       Feuille de route & idées d'évolution
+competences.html         Catalogue « Compétences info » : menu filtrable de cours hors cursus
+                         (données : matieres/competences.js)
 flashcards.html          Flashcards à répétition espacée (toutes matières)
 cours.html               Moteur de cours générique (rend les cours Markdown)
 manifest.webmanifest     Manifeste PWA (installable)

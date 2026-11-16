@@ -75,6 +75,7 @@ matieres/pharmacie/
 | `pharma-streak` | `{ last:"YYYY-MM-DD", count, best }` série de jours consécutifs |
 | `pharma-active-days` | `{ "YYYY-MM-DD": n }` activité par jour (heatmap) |
 | `pharma-weekly-goal` | objectif hebdomadaire (nombre d'activités / minutes) |
+| `pharma-pomo-guard` | `"1"`/`"0"` : alerte bruyante du Pomodoro quand on quitte la page (défaut : activée) |
 | `pharma-flashcards` | état SM‑2 par carte `{ "<idCarte>": { ef, interval, reps, due, … } }` |
 | `pharma-flashcards-custom` | cartes créées par l'utilisateur `[ { id, q, a, module } ]` |
 | `pharma-favorites` | favoris / marque‑pages (modules, sections) |

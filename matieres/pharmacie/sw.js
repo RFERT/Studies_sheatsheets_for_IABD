@@ -4,7 +4,7 @@
    Stratégie : réseau d'abord, repli sur le cache (contenu toujours à jour
    en ligne, utilisable hors-ligne). Ne fonctionne qu'en https:// ou localhost.
    ========================================================= */
-const CACHE = "pharma-v1";
+const CACHE = "pharma-v2";
 const MODULES = ["chimie", "anatomie", "physiologie", "galenique", "legislation", "pharmacologie", "pathologie", "toxicologie", "diagnostic"];
 const CORE = [
   "./",
@@ -62,6 +62,17 @@ self.addEventListener("activate", (e) => {
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k.indexOf("pharma-") === 0 && k !== CACHE).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
+  );
+});
+
+// Clic sur la notification du Pomodoro : ramène l'onglet de révision au premier plan
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const c of list) { if ("focus" in c) return c.focus(); }
+      return self.clients.openWindow("./");
+    })
   );
 });
 

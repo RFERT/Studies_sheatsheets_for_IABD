@@ -83,11 +83,11 @@ const SUBJECTS = [
     name: "Compétences pro",
     emoji: "💼",
     color: "#ff6b81",
-    status: "soon",
-    href: "ameliorations.html",
-    desc: "Git avancé, Docker, CI/CD, Agile, clean code, cloud... Compétences clés pour l'entreprise (voir la feuille de route).",
-    tags: ["Git", "Docker", "Cloud"],
-    meta: "Idées & roadmap"
+    status: "wip",
+    href: "competences.html",
+    desc: "Catalogue des compétences info hors cursus : hardware, Linux, réseaux, Git, tests, Docker, CI/CD, cloud, MLOps, sécurité, Agile, soft skills… Les cours se remplissent au fur et à mesure.",
+    tags: ["Hardware", "DevOps", "Sécurité", "Soft skills"],
+    meta: "Catalogue de cours"
   }
 ];
 

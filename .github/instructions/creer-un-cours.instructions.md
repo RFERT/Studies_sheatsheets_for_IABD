@@ -35,6 +35,11 @@ portail / la navbar / la recherche se remplissent automatiquement depuis le mani
    ```
 3. **Rien d'autre.** La page est servie par `cours.html?c=SQL&m=intro`.
 
+> 💼 **Cours du catalogue « Compétences info »** (`competences.html`) : si le sujet y figure
+> (Docker, Linux, réseaux, hardware, tests…), **réutilise exactement son `code`** listé dans
+> [`matieres/competences.js`](../../matieres/competences.js) (ex. `DOCKER`, `HWGPU`). La carte du
+> catalogue passe alors toute seule de « À venir » à « Disponible ». Son `programme` donne le plan prévu.
+
 > ⚙️ **Priorité au cours codé (automatique).** Si une matière existe déjà en
 > **version codée sur-mesure** (page HTML déclarée dans `assets/portal.js`, même
 > `code` ou même dossier `matieres/<x>/`), le système **n'utilise PAS** le Markdown

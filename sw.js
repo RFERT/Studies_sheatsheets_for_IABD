@@ -3,11 +3,12 @@
    Stratégie : cache-first avec mise en cache à la volée.
    Ne fonctionne qu'en https:// ou localhost (pas en file://).
    ========================================================= */
-const CACHE = "esgi-cours-v23";
+const CACHE = "esgi-cours-v25";
 const CORE = [
   "./",
   "./index.html",
   "./ameliorations.html",
+  "./competences.html",
   "./parametrage.html",
   "./flashcards.html",
   "./cours.html",
@@ -28,7 +29,8 @@ const CORE = [
   "./assets/apple-touch-icon.png",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
-  "./matieres/cours.js"
+  "./matieres/cours.js",
+  "./matieres/competences.js"
 ];
 
 self.addEventListener("install", (e) => {
@@ -68,6 +70,17 @@ self.addEventListener("activate", (e) => {
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k.indexOf("esgi-cours-") === 0 && k !== CACHE).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
+  );
+});
+
+// Clic sur la notification du Pomodoro : ramène l'onglet de révision au premier plan
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const c of list) { if ("focus" in c) return c.focus(); }
+      return self.clients.openWindow("./");
+    })
   );
 });
 

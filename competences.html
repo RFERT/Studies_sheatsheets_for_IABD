@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Compétences info — Catalogue de cours hors cursus</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+  <style>
+    .sk-wrap { max-width: var(--maxw); margin: 0 auto; padding: 8px 28px 60px; }
+    .sk-tools { position: sticky; top: var(--sk-top, 64px); z-index: 30; display: flex; flex-direction: column; gap: 10px;
+      padding: 12px 0; margin-bottom: 10px; background: color-mix(in srgb, var(--bg) 90%, transparent);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+    .sk-search { display: flex; align-items: center; gap: 10px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 0 14px; }
+    .sk-search:focus-within { border-color: var(--primary); }
+    .sk-search input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--text);
+      font: inherit; font-size: 16px; padding: 11px 0; }
+    .sk-search input::placeholder { color: var(--muted); }
+    .sk-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .sk-chip { cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-soft);
+      border-radius: 999px; padding: 7px 14px; min-height: 40px; font: inherit; font-size: 14px; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 6px; }
+    .sk-chip .n { font-size: 12px; color: var(--muted); }
+    .sk-chip.on { border-color: var(--primary); color: var(--text); background: color-mix(in srgb, var(--primary) 18%, var(--bg-card)); }
+    .sk-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .sk-count { color: var(--muted); font-size: 13.5px; }
+    .sk-bar .btn { font-size: 13px; padding: 7px 12px; }
+
+    .sk-cat { margin: 26px 0 8px; scroll-margin-top: 190px; }
+    .sk-cat-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .sk-cat-ic { flex: none; width: 46px; height: 46px; display: grid; place-items: center; font-size: 24px; border-radius: 12px;
+      background: color-mix(in srgb, var(--cc) 22%, var(--bg-card)); border: 1px solid color-mix(in srgb, var(--cc) 55%, transparent); }
+    .sk-cat-head h2 { margin: 0; font-size: 22px; line-height: 1.2; }
+    .sk-cat-head p { margin: 2px 0 0; color: var(--text-soft); font-size: 14.5px; }
+    .sk-cat-n { margin-left: auto; flex: none; font-size: 12.5px; color: var(--muted); border: 1px solid var(--border);
+      border-radius: 999px; padding: 3px 10px; background: var(--bg-card); }
+
+    .sk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px; align-items: start; }
+    .sk-card { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--cc);
+      border-radius: 14px; overflow: hidden; scroll-margin-top: 190px; transition: border-color .15s ease; }
+    .sk-card:hover { border-color: color-mix(in srgb, var(--cc) 70%, var(--border)); border-left-color: var(--cc); }
+    .sk-card[open] { box-shadow: var(--shadow); }
+    .sk-card.flash { animation: skflash 1.6s ease; }
+    @keyframes skflash { 0%, 40% { box-shadow: 0 0 0 3px var(--cc); } 100% { box-shadow: none; } }
+    .sk-head { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; cursor: pointer; list-style: none;
+      color: inherit; text-decoration: none; min-height: 64px; }
+    .sk-head::-webkit-details-marker { display: none; }
+    a.sk-head:hover { text-decoration: none; }
+    .sk-ic { flex: none; width: 40px; height: 40px; display: grid; place-items: center; font-size: 21px; border-radius: 10px;
+      background: color-mix(in srgb, var(--cc) 18%, var(--bg-elev)); }
+    .sk-main { flex: 1; min-width: 0; }
+    .sk-name { font-weight: 700; font-size: 16px; color: var(--text); line-height: 1.3; }
+    .sk-desc { display: block; color: var(--text-soft); font-size: 14px; margin-top: 3px; }
+    .sk-pill { display: inline-block; font-size: 11.5px; font-weight: 700; border-radius: 999px; padding: 1px 9px; margin: 5px 0 0;
+      border: 1px solid var(--border); color: var(--muted); background: var(--bg-elev); }
+    .sk-pill.live { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    [data-theme="light"] .sk-pill.live { color: #0b6e55; border-color: #13a27f; }
+    .sk-chev { flex: none; color: var(--muted); font-size: 14px; margin-top: 10px; transition: transform .2s ease; }
+    .sk-card[open] .sk-chev { transform: rotate(180deg); }
+    .sk-go { flex: none; color: var(--primary); font-weight: 700; font-size: 14px; margin-top: 9px; white-space: nowrap; }
+    [data-theme="light"] .sk-go { color: #3653d8; }
+    .sk-body { padding: 0 16px 16px 68px; }
+    .sk-lbl { font-size: 11.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .sk-body ol { margin: 0 0 10px; padding-left: 20px; }
+    .sk-body li { color: var(--text-soft); margin: 4px 0; font-size: 14.5px; }
+    .sk-hint { margin: 0; font-size: 13px; color: var(--muted); }
+    .sk-hint code { font-size: 12px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; color: var(--text-soft); }
+    .sk-extra { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 0 16px 14px 68px; }
+    .sk-extra a { font-size: 13px; font-weight: 600; border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; background: var(--bg-elev); }
+    .sk-prog { flex: 1 1 140px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+    .sk-prog .pbar { flex: 1; }
+    .sk-empty { color: var(--muted); font-style: italic; text-align: center; padding: 30px 10px; }
+    .sk-empty[hidden], .sk-cat[hidden], .sk-card[hidden] { display: none; }
+
+    @media (max-width: 560px) {
+      .sk-wrap { padding: 4px 14px 48px; }
+      .sk-tools { position: static; padding: 10px 0; }
+      .sk-cat, .sk-card { scroll-margin-top: 80px; }
+      .sk-chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -14px; padding: 0 14px 4px; scrollbar-width: thin; }
+      .sk-cat-head h2 { font-size: 19px; }
+      .sk-cat-head p { font-size: 13.5px; }
+      .sk-cat-ic { width: 42px; height: 42px; font-size: 22px; }
+      .sk-head { padding: 13px 13px; gap: 10px; }
+      .sk-body, .sk-extra { padding-left: 16px; }
+    }
+    @media print {
+      .sk-tools, .sk-chev { display: none !important; }
+      .sk-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">💼</span> <span>Compétences info<small>catalogue de cours hors cursus</small></span></div>
+    <div class="spacer"></div>
+    <button class="btn" id="theme-toggle">☀️ Clair</button>
+  </header>
+
+  <div class="hero" style="padding-bottom:4px">
+    <span class="eyebrow">Au-delà du cursus IABD</span>
+    <h1>Compétences informatiques 💼</h1>
+    <p>Tout ce qu'un·e informaticien·ne complet·e devrait savoir et que le cursus couvre peu : hardware, systèmes, réseaux, génie logiciel, DevOps, sécurité, soft skills. Les cours se remplissent au fur et à mesure : ouvre une carte pour voir son programme.</p>
+  </div>
+
+  <div class="stats" style="margin-top:20px">
+    <div class="stat"><div class="num" id="st-total">–</div><div class="lbl">Cours au catalogue</div></div>
+    <div class="stat"><div class="num" id="st-live">–</div><div class="lbl">Disponibles</div></div>
+    <div class="stat"><div class="num" id="st-cats">–</div><div class="lbl">Familles</div></div>
+  </div>
+
+  <main class="sk-wrap" id="main">
+    <div class="sk-tools">
+      <label class="sk-search">
+        <span aria-hidden="true">🔎</span>
+        <input id="sk-q" type="search" placeholder="Filtrer : docker, réseau, GPU, tests…" aria-label="Filtrer les cours" autocomplete="off" />
+      </label>
+      <div class="sk-chips" id="sk-chips" role="group" aria-label="Familles de compétences"></div>
+      <div class="sk-bar">
+        <span class="sk-count" id="sk-count" role="status" aria-live="polite"></span>
+        <button type="button" class="btn" id="sk-toggle">📖 Tout déplier</button>
+      </div>
+    </div>
+    <div id="sk-list"></div>
+    <p class="sk-empty" id="sk-empty" hidden>Aucun cours ne correspond à ta recherche.</p>
+  </main>
+
+  <div class="footer">Compétences info · <a href="index.html">retour au portail</a> · <a href="ameliorations.html">feuille de route</a> 💙</div>
+
+  <script src="matieres/cours.js"></script>
+  <script src="matieres/competences.js"></script>
+  <script src="assets/nav.js"></script>
+  <script>
+  (function () {
+    /* Thème */
+    var TK = "esgi-portal-theme";
+    function theme(t) { document.documentElement.setAttribute("data-theme", t); localStorage.setItem(TK, t); var b = document.getElementById("theme-toggle"); if (b) b.textContent = t === "light" ? "🌙 Sombre" : "☀️ Clair"; }
+    var saved = localStorage.getItem(TK); if (!saved) { saved = (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark"; }
+    theme(saved);
+    document.getElementById("theme-toggle").addEventListener("click", function () { theme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); });
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">💼</text></svg>';
+    var l = document.createElement("link"); l.rel = "icon"; l.href = "data:image/svg+xml," + encodeURIComponent(svg); document.head.appendChild(l);
+
+    /* La barre de filtres colle juste sous la topbar (hauteur variable selon l'écran). */
+    function stickTools() {
+      var tb = document.querySelector(".topbar");
+      if (tb) document.documentElement.style.setProperty("--sk-top", tb.offsetHeight + "px");
+    }
+    stickTools();
+    window.addEventListener("resize", stickTools);
+
+    var CATS = (window.COMPETENCES && window.COMPETENCES.categories) || [];
+    var SUBJ = (window.COURS && window.COURS.subjects) || [];
+
+    function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    function norm(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    function slug(code) { return "c-" + String(code).toLowerCase(); }
+
+    /* Un cours du catalogue devient « Disponible » dès qu'une matière de même
+       code existe dans matieres/cours.js (avec des modules ou une page codée). */
+    function liveInfo(code) {
+      var s = SUBJ.filter(function (x) { return x && String(x.code).toLowerCase() === String(code).toLowerCase(); })[0];
+      if (!s) return null;
+      var mods = Array.isArray(s.modules) ? s.modules : [];
+      if (!mods.length && !s.page) return null;
+      var done = 0;
+      try {
+        var raw = JSON.parse(localStorage.getItem("cours-" + String(s.code).toLowerCase() + "-done")) || {};
+        done = mods.filter(function (m) { return raw[m.id]; }).length;
+      } catch (e) {}
+      return {
+        href: s.page || ("cours.html?c=" + encodeURIComponent(s.code)),
+        mods: mods.length, done: done,
+        aide: s.aide && !s.page ? ("aide.html?c=" + encodeURIComponent(s.code)) : null
+      };
+    }
+
+    var total = 0, live = 0;
+    CATS.forEach(function (c) {
+      c.courses.forEach(function (k) { k._live = liveInfo(k.code); total++; if (k._live) live++; });
+    });
+
+    function cardHTML(k, c) {
+      var txt = norm([k.name, k.code, k.desc, c.name, (k.programme || []).join(" ")].join(" "));
+      var ic = '<span class="sk-ic" aria-hidden="true">' + esc(k.emoji || c.emoji) + "</span>";
+      var L = k._live;
+      if (L) {
+        var pct = L.mods ? Math.round(L.done / L.mods * 100) : 0;
+        var prog = L.done ? '<span class="sk-prog"><span class="pbar"><span style="width:' + pct + '%;background:' + esc(c.color) + '"></span></span>' + L.done + "/" + L.mods + "</span>" : "";
+        var extra = (L.aide ? '<a href="' + esc(L.aide) + '">⚡ Antisèche</a>' : "") + prog;
+        return '<div class="sk-card live" id="' + slug(k.code) + '" data-cat="' + esc(c.id) + '" data-live="1" data-txt="' + esc(txt) + '">' +
+          '<a class="sk-head" href="' + esc(L.href) + '">' + ic +
+          '<span class="sk-main"><span class="sk-name">' + esc(k.name) + "</span>" +
+          '<span class="sk-desc">' + esc(k.desc) + "</span>" +
+          '<span class="sk-pill live">● Disponible' + (L.mods ? " · " + L.mods + " module" + (L.mods > 1 ? "s" : "") : "") + "</span></span>" +
+          '<span class="sk-go">Ouvrir →</span></a>' +
+          (extra ? '<div class="sk-extra">' + extra + "</div>" : "") + "</div>";
+      }
+      var prog2 = (k.programme || []).map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("");
+      return '<details class="sk-card" id="' + slug(k.code) + '" data-cat="' + esc(c.id) + '" data-txt="' + esc(txt) + '">' +
+        '<summary class="sk-head">' + ic +
+        '<span class="sk-main"><span class="sk-name">' + esc(k.name) + "</span>" +
+        '<span class="sk-desc">' + esc(k.desc) + "</span>" +
+        '<span class="sk-pill">○ À venir</span></span>' +
+        '<span class="sk-chev" aria-hidden="true">▾</span></summary>' +
+        '<div class="sk-body"><div class="sk-lbl">Programme prévu</div><ol>' + prog2 + "</ol>" +
+        '<p class="sk-hint">🚧 Cours en préparation : le programme est indicatif. Code catalogue <code>' + esc(k.code) + "</code></p></div></details>";
+    }
+
+    var list = document.getElementById("sk-list");
+    list.innerHTML = CATS.map(function (c) {
+      var n = c.courses.length, nl = c.courses.filter(function (k) { return k._live; }).length;
+      return '<section class="sk-cat" id="cat-' + esc(c.id) + '" data-cat="' + esc(c.id) + '" style="--cc:' + esc(c.color) + '">' +
+        '<div class="sk-cat-head"><span class="sk-cat-ic" aria-hidden="true">' + esc(c.emoji) + "</span>" +
+        "<div><h2>" + esc(c.name) + "</h2><p>" + esc(c.desc) + "</p></div>" +
+        '<span class="sk-cat-n" title="disponibles / total">' + nl + "/" + n + "</span></div>" +
+        '<div class="sk-grid">' + c.courses.map(function (k) { return cardHTML(k, c); }).join("") + "</div></section>";
+    }).join("");
+
+    document.getElementById("st-total").textContent = total;
+    document.getElementById("st-live").textContent = live;
+    document.getElementById("st-cats").textContent = CATS.length;
+
+    /* Filtres : famille (chips) + texte libre (insensible aux accents) */
+    var state = { cat: "all", q: "" };
+    var chips = document.getElementById("sk-chips");
+    var chipDefs = [{ id: "all", label: "Toutes", n: total }]
+      .concat(CATS.map(function (c) { return { id: c.id, label: c.emoji + " " + c.name, n: c.courses.length }; }))
+      .concat([{ id: "live", label: "✅ Disponibles", n: live }]);
+    chips.innerHTML = chipDefs.map(function (d) {
+      return '<button type="button" class="sk-chip" data-f="' + esc(d.id) + '" aria-pressed="false">' + esc(d.label) + ' <span class="n">' + d.n + "</span></button>";
+    }).join("");
+
+    var cards = Array.prototype.slice.call(list.querySelectorAll(".sk-card"));
+    var sections = Array.prototype.slice.call(list.querySelectorAll(".sk-cat"));
+    var countEl = document.getElementById("sk-count");
+    var emptyEl = document.getElementById("sk-empty");
+
+    function apply() {
+      var words = norm(state.q).split(/\s+/).filter(Boolean);
+      var shown = 0;
+      cards.forEach(function (el) {
+        var okCat = state.cat === "all" || (state.cat === "live" ? el.getAttribute("data-live") === "1" : el.getAttribute("data-cat") === state.cat);
+        var t = el.getAttribute("data-txt");
+        var okQ = words.every(function (w) { return t.indexOf(w) !== -1; });
+        el.hidden = !(okCat && okQ);
+        if (!el.hidden) shown++;
+      });
+      sections.forEach(function (s) { s.hidden = !s.querySelector(".sk-card:not([hidden])"); });
+      Array.prototype.forEach.call(chips.children, function (b) {
+        var on = b.getAttribute("data-f") === state.cat;
+        b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      countEl.textContent = shown + " cours affiché" + (shown > 1 ? "s" : "") + " sur " + total;
+      emptyEl.hidden = shown > 0;
+    }
+
+    chips.addEventListener("click", function (e) {
+      var b = e.target.closest(".sk-chip"); if (!b) return;
+      state.cat = b.getAttribute("data-f");
+      apply();
+      if (history.replaceState) history.replaceState(null, "", state.cat === "all" ? location.pathname + location.search : "#cat-" + state.cat);
+    });
+    document.getElementById("sk-q").addEventListener("input", function (e) { state.q = e.target.value; apply(); });
+
+    var toggle = document.getElementById("sk-toggle");
+    toggle.addEventListener("click", function () {
+      var dets = list.querySelectorAll("details.sk-card:not([hidden])");
+      var anyClosed = Array.prototype.some.call(dets, function (d) { return !d.open; });
+      Array.prototype.forEach.call(dets, function (d) { d.open = anyClosed; });
+      toggle.textContent = anyClosed ? "📕 Tout replier" : "📖 Tout déplier";
+    });
+
+    /* Liens profonds : #cat-<famille> ou #c-<code> (ouvre et met en évidence la carte) */
+    function fromHash() {
+      var h = decodeURIComponent((location.hash || "").slice(1));
+      if (!h) return;
+      if (h.indexOf("cat-") === 0 && CATS.some(function (c) { return "cat-" + c.id === h; })) {
+        state.cat = h.slice(4); apply(); return;
+      }
+      var el = document.getElementById(h.toLowerCase());
+      if (el && el.classList.contains("sk-card")) {
+        state.cat = "all"; state.q = ""; document.getElementById("sk-q").value = ""; apply();
+        if (el.tagName === "DETAILS") el.open = true;
+        el.scrollIntoView({ block: "center" });
+        el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+      }
+    }
+    apply();
+    fromHash();
+    window.addEventListener("hashchange", fromHash);
+  })();
+  </script>
+</body>
+</html>

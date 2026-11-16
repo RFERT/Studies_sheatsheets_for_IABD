@@ -21,8 +21,13 @@ utilisable sur PC et sur téléphone (Samsung S26 Ultra), hors-ligne, et publiab
 | Culture | encarts « Culture & histoire » dans les cours existants |
 | Portail Pharmacie | **2ᵉ portail autonome** (`matieres/pharmacie/`, DEUST Préparateur en pharmacie) : 9 modules HTML, parité fonctionnelle avec le portail IABD (flashcards SM‑2, examen blanc, antisèches, glossaire, suivi, PWA…), stockage `pharma-*`, `sw.js` et manifeste propres. Voir la section « Portail Pharmacie (autonome) » ci-dessous |
 
-Matières encore **à construire** : voir `SUBJECTS` dans `assets/portal.js` et la page `ameliorations.html`
-(compétences hors programme ESGI : Git, SQL, Docker, Spark, MLOps…).
+Matières encore **à construire** : voir `SUBJECTS` dans `assets/portal.js`, la page `ameliorations.html`
+et surtout le **catalogue « Compétences info »** (`competences.html`, carte « Compétences pro » du portail) :
+46 cours hors cursus en 7 familles (hardware, systèmes & réseaux, génie logiciel, architecture/web, DevOps/MLOps,
+sécurité, soft skills), décrits dans `matieres/competences.js` (`code`, `name`, `desc`, `programme`).
+Ce sont des coquilles « À venir » : **pour en remplir un, écrire le cours Markdown et le déclarer dans
+`matieres/cours.js` avec le même `code`** — la carte passe seule en « Disponible » (ex. `GIT`). Liens profonds :
+`competences.html#c-<code>` (carte) et `#cat-<famille>` ; chaque cours est indexé dans la recherche globale.
 
 ## 2 bis. Portail Pharmacie (autonome)
 Dossier `matieres/pharmacie/` (détail : [`matieres/pharmacie/README.md`](../matieres/pharmacie/README.md)).

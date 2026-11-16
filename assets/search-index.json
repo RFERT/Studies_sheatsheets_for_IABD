@@ -2041,5 +2041,428 @@
 "t": "Flashcards — répétition espacée",
 "u": "flashcards.html",
 "k": "flashcards répétition espacée spaced repetition révision mémorisation SM-2 cartes quiz"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "page",
+"t": "Compétences info — catalogue de cours hors cursus",
+"u": "competences.html",
+"k": "compétences pro informatique hardware systèmes réseaux génie logiciel devops cloud mlops sécurité soft skills catalogue"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Architecture des ordinateurs",
+"u": "competences.html#c-hwarchi",
+"k": "Comment un processeur exécute ton code : binaire, registres, caches, pipeline, multicœur. Modèle de von Neumann & cycle fetch-decode-execute Représentation des nombres : entiers, complément à 2, flottants IEEE 754 Hiérarchie mémoire : registres, caches L1/L2/L3, RAM, localité Pipeline, prédiction de branchement, SIMD, multicœur Premiers pas en assembleur x86-64 / ARM"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Composants & montage d'un PC",
+"u": "competences.html#c-hwpc",
+"k": "Choisir, assembler et diagnostiquer une machine : carte mère, CPU, RAM, SSD, alimentation. Rôle de chaque composant et goulots d'étranglement Compatibilités : sockets, chipsets, générations de RAM, PCIe Montage pas à pas, BIOS/UEFI, premier démarrage Refroidissement, alimentation, consommation Diagnostic de panne et outils de benchmark"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "GPU & accélérateurs pour l'IA",
+"u": "competences.html#c-hwgpu",
+"k": "Pourquoi le deep learning tourne sur GPU : architecture massivement parallèle, CUDA, VRAM, TPU/NPU. CPU vs GPU : latence contre débit Architecture GPU : SM, warps, Tensor Cores, VRAM CUDA et l'écosystème (cuDNN, PyTorch sur GPU) TPU, NPU et puces spécialisées Choisir et surveiller un GPU (nvidia-smi, mémoire, précision mixte)"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Stockage & systèmes de fichiers",
+"u": "competences.html#c-hwstock",
+"k": "HDD, SSD, NVMe, RAID, systèmes de fichiers et sauvegardes : où vivent physiquement les données. HDD, SSD SATA, NVMe : fonctionnement et performances IOPS, débit, latence : mesurer un disque RAID 0/1/5/10 et tolérance aux pannes Systèmes de fichiers : NTFS, ext4, APFS, ZFS Stratégie de sauvegarde 3-2-1"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Électronique, embarqué & IoT",
+"u": "competences.html#c-hwemb",
+"k": "Logique booléenne, microcontrôleurs, Arduino, Raspberry Pi, capteurs et IA embarquée (edge AI). Logique booléenne, portes et circuits combinatoires Microcontrôleurs vs ordinateurs monocartes Arduino et Raspberry Pi : GPIO, capteurs, actionneurs Protocoles : I²C, SPI, UART, MQTT Edge AI : faire tourner un modèle sur un petit appareil"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Linux & ligne de commande",
+"u": "competences.html#c-linux",
+"k": "Être à l'aise dans un terminal : fichiers, permissions, processus, pipes, scripts bash, SSH. Arborescence, navigation et manipulation de fichiers Permissions, utilisateurs, sudo Pipes, redirections, grep/sed/awk Processus, services, gestion des paquets Scripts bash et SSH"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Windows & PowerShell",
+"u": "competences.html#c-pwsh",
+"k": "Automatiser Windows : objets PowerShell, scripts, WSL, gestion des chemins et des services. Cmdlets, pipeline d'objets, Get-Help Fichiers, chemins et encodages Scripts, fonctions et modules Tâches planifiées et services WSL : Linux dans Windows"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Systèmes d'exploitation",
+"u": "competences.html#c-os",
+"k": "Ce que fait l'OS pour toi : processus, threads, ordonnancement, mémoire virtuelle, appels système. Processus, threads et changement de contexte Ordonnancement et priorités Mémoire virtuelle, pagination, swap Appels système et interruptions Concurrence : mutex, sémaphores, interblocages"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Langage C & mémoire",
+"u": "competences.html#c-langc",
+"k": "Consolider le C : pointeurs, allocation dynamique, structures, compilation et outils de débogage mémoire. Types, pointeurs et arithmétique de pointeurs Pile, tas, malloc/free et fuites mémoire Structures, tableaux et chaînes Entrées/sorties : stdio, fichiers Compilation (gcc, make) et Valgrind"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Réseaux informatiques",
+"u": "competences.html#c-net",
+"k": "Comprendre Internet : modèles OSI/TCP-IP, adressage IP, TCP/UDP, DNS, HTTP et outils de diagnostic. Modèles OSI et TCP/IP Adressage IPv4/IPv6, masques, sous-réseaux TCP vs UDP, ports, sockets DNS, DHCP, NAT HTTP/HTTPS et diagnostic (ping, traceroute, curl, Wireshark)"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Virtualisation",
+"u": "competences.html#c-virt",
+"k": "Machines virtuelles, hyperviseurs et différences avec les conteneurs. Hyperviseurs de type 1 et 2 Créer et gérer une VM (VirtualBox, Hyper-V, Proxmox) Réseau et stockage virtuels VM vs conteneurs : quand choisir quoi Snapshots, clones et sauvegardes"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Git & GitHub (avancé)",
+"u": "competences.html#c-git",
+"k": "Branches, rebase, résolution de conflits, workflows d'équipe et pull requests. Les bases de Git Branches & fusion Rebase interactif et réécriture d'historique Workflows d'équipe (GitHub Flow, Git Flow) Pull requests et résolution de conflits"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Algorithmique & structures de données",
+"u": "competences.html#c-algo",
+"k": "Complexité, tris, arbres, graphes, tables de hachage, programmation dynamique : la base des entretiens techniques. Complexité temporelle et spatiale (notation O) Tableaux, listes, piles, files, tables de hachage Tris et recherche dichotomique Arbres, tas et graphes (BFS, DFS, Dijkstra) Récursivité et programmation dynamique"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Tests logiciels & TDD",
+"u": "competences.html#c-test",
+"k": "Tests unitaires et d'intégration, mocks, couverture et développement piloté par les tests. Pourquoi tester : pyramide des tests pytest : assertions, fixtures, paramétrage Mocks, stubs et isolation Couverture de code et ses limites TDD : rouge, vert, refactor"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Clean code, refactoring & SOLID",
+"u": "competences.html#c-clean",
+"k": "Nommer, découper, simplifier : rendre le code lisible et facile à faire évoluer. Nommage, fonctions courtes, responsabilité unique Code smells et refactorings classiques Principes SOLID, DRY, KISS, YAGNI Gestion des erreurs propre Linters et formatters (ruff, black, clippy)"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Design patterns",
+"u": "competences.html#c-pattern",
+"k": "Les solutions éprouvées aux problèmes de conception récurrents, avec exemples en Python. Patterns de création : Factory, Builder, Singleton Patterns de structure : Adapter, Decorator, Facade Patterns de comportement : Strategy, Observer, Command Injection de dépendances Anti-patterns à éviter"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Débogage & logs",
+"u": "competences.html#c-debug",
+"k": "Trouver un bug méthodiquement : stack traces, débogueur, points d'arrêt, journalisation. Lire une stack trace et reproduire un bug Débogueur : points d'arrêt, pas à pas, inspection Logging : niveaux, formats, rotation Débogage par dichotomie (git bisect) Lire et filtrer des logs en production"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Performance & profilage",
+"u": "competences.html#c-perf",
+"k": "Mesurer avant d'optimiser : profileurs, mémoire, vectorisation, cache et parallélisme. Mesurer : benchmarks et timeit Profiler CPU (cProfile, py-spy) et mémoire Vectorisation NumPy vs boucles Python Cache, mémoïsation, structures adaptées Parallélisme : threads, processus, async"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Revue de code & collaboration",
+"u": "competences.html#c-review",
+"k": "Faire et recevoir une revue de code utile, conventions d'équipe et qualité automatisée. Objectifs d'une revue de code Rédiger une bonne pull request Commenter avec bienveillance et précision Conventions : commits, branches, style Automatiser : pre-commit, CI, linters"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Expressions régulières",
+"u": "competences.html#c-regex",
+"k": "Chercher, valider et extraire du texte avec les regex, en Python et en ligne de commande. Caractères, classes et quantificateurs Ancres, groupes et captures Lookahead / lookbehind Le module re de Python Regex en ligne de commande (grep, sed) et pièges courants"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Documentation technique",
+"u": "competences.html#c-doc",
+"k": "README, docstrings, schémas et décisions d'architecture : documenter pour les autres (et pour soi). Un README qui donne envie Docstrings et documentation générée (Sphinx, MkDocs) Schémas en texte (Mermaid) ADR : tracer les décisions d'architecture Documenter une API (OpenAPI)"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Environnement de dev & productivité",
+"u": "competences.html#c-devenv",
+"k": "Maîtriser ses outils : VS Code, terminal, environnements virtuels, raccourcis, dotfiles. VS Code : raccourcis, extensions, débogueur intégré Environnements Python : venv, pip, uv, conda Terminal efficace et alias Gestion des secrets et variables d'environnement Dotfiles et reproductibilité du poste"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Architecture logicielle",
+"u": "competences.html#c-archi",
+"k": "Monolithe, microservices, architecture en couches ou hexagonale, événements et scalabilité. Monolithe vs microservices Architecture en couches et hexagonale Communication synchrone vs asynchrone Scalabilité, cache, répartition de charge Choisir une architecture pour un projet data/IA"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "APIs REST & FastAPI",
+"u": "competences.html#c-api",
+"k": "Concevoir une API REST propre et servir un modèle de ML avec FastAPI. HTTP : méthodes, codes de statut, en-têtes Concevoir des routes REST et du JSON FastAPI : routes, validation Pydantic, docs auto Authentification (clés, OAuth2, JWT) Servir un modèle de ML en API"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Développement web (HTML/CSS/JS)",
+"u": "competences.html#c-web",
+"k": "Les bases du front : structure HTML, mise en page CSS responsive, JavaScript et DOM. HTML sémantique et accessibilité CSS : boîtes, flexbox, grid, responsive JavaScript : syntaxe, DOM, événements fetch et appels d'API Publier un site statique (GitHub Pages)"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Modélisation & conception (UML)",
+"u": "competences.html#c-uml",
+"k": "Modéliser un système avant de coder : cas d'utilisation, classes, séquences, modèles de données. Cas d'utilisation et besoins Diagrammes de classes Diagrammes de séquence et d'activité Du modèle conceptuel au schéma de données Outils : PlantUML, Mermaid"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Docker & conteneurs",
+"u": "competences.html#c-docker",
+"k": "Images, conteneurs, Dockerfile, volumes, réseaux et Docker Compose. Conteneur vs VM : ce qui change vraiment Images, couches et Dockerfile Volumes, réseaux et variables d'environnement Docker Compose pour une stack complète Bonnes pratiques : images légères, multi-stage, sécurité"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Kubernetes",
+"u": "competences.html#c-k8s",
+"k": "Orchestrer des conteneurs : pods, déploiements, services, configuration et mise à l'échelle. Pourquoi un orchestrateur Pods, ReplicaSets, Deployments Services, Ingress et réseau ConfigMaps, Secrets, volumes Mise à l'échelle automatique et Helm"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "CI/CD",
+"u": "competences.html#c-cicd",
+"k": "Automatiser tests, builds et déploiements avec GitHub Actions et GitLab CI. Intégration continue vs déploiement continu GitHub Actions : workflows, jobs, steps GitLab CI : pipelines et runners Tests, lint et artefacts dans le pipeline Déploiement automatisé et secrets"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Cloud computing (AWS, GCP, Azure)",
+"u": "competences.html#c-cloud",
+"k": "Les briques du cloud : calcul, stockage, réseau, IAM, services managés et maîtrise des coûts. IaaS, PaaS, SaaS et modèle de responsabilité partagée Calcul : VM, serverless, conteneurs managés Stockage objet et bases managées Réseau, IAM et sécurité Coûts : estimer, surveiller, optimiser"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Infrastructure as Code",
+"u": "competences.html#c-iac",
+"k": "Décrire son infrastructure en code versionné avec Terraform et Ansible. Pourquoi l'IaC : reproductibilité et revue Terraform : providers, ressources, état Modules et environnements Ansible : configuration de machines Bonnes pratiques et sécurité de l'état"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "MLOps",
+"u": "competences.html#c-mlops",
+"k": "Industrialiser le ML : suivi d'expériences, versionnage de données, déploiement et monitoring de modèles. Cycle de vie d'un modèle en production Suivi d'expériences avec MLflow Versionner données et modèles (DVC) Déployer un modèle (batch, API, temps réel) Monitoring : dérive des données et du modèle"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Observabilité & monitoring",
+"u": "competences.html#c-obs",
+"k": "Logs, métriques et traces : savoir ce qui se passe en production avec Prometheus et Grafana. Les trois piliers : logs, métriques, traces Prometheus : métriques et requêtes Grafana : tableaux de bord Alertes utiles (et pas trop nombreuses) SLI, SLO et gestion des incidents"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Orchestration de pipelines (Airflow)",
+"u": "competences.html#c-airflow",
+"k": "Planifier et fiabiliser des pipelines de données (ETL/ELT) avec Apache Airflow. ETL vs ELT et pipelines de données Airflow : DAGs, tâches, opérateurs Planification, rejouabilité, idempotence Dépendances, capteurs et XCom Surveiller et tester un pipeline"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Sécurité applicative (OWASP)",
+"u": "competences.html#c-secapp",
+"k": "Les failles les plus courantes (injections, XSS, secrets exposés) et comment s'en protéger. Le Top 10 OWASP Injections SQL et commandes XSS, CSRF et sécurité web Gestion des secrets et des dépendances vulnérables Authentification et contrôle d'accès"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Cryptographie appliquée",
+"u": "competences.html#c-crypto",
+"k": "Hachage, chiffrement symétrique et asymétrique, signatures, TLS et stockage des mots de passe. Hachage et intégrité (SHA-2, HMAC) Chiffrement symétrique (AES) et asymétrique (RSA, courbes elliptiques) Signatures et certificats TLS / HTTPS de bout en bout Stocker des mots de passe (bcrypt, Argon2)"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Cybersécurité systèmes & réseaux",
+"u": "competences.html#c-cyber",
+"k": "Pare-feu, VPN, durcissement, bases du test d'intrusion et entraînement en CTF. Surface d'attaque et modèle de menace Pare-feu, VPN, segmentation réseau Durcissement d'un serveur Linux Bases du test d'intrusion (éthique et légal) S'entraîner : CTF et plateformes d'apprentissage"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "RGPD, éthique & IA responsable",
+"u": "competences.html#c-rgpd",
+"k": "Données personnelles, consentement, biais, explicabilité et cadre européen de l'IA (AI Act). Données personnelles et principes du RGPD Bases légales, consentement et droits des personnes Anonymisation vs pseudonymisation Biais, équité et explicabilité des modèles Le règlement européen sur l'IA (AI Act)"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Gestion de projet Agile",
+"u": "competences.html#c-agile",
+"k": "Scrum, Kanban, user stories, estimation et rituels d'équipe. Manifeste Agile et cycle en V Scrum : rôles, sprints, rituels Kanban et flux de travail User stories, backlog, estimation Outils : Jira, GitHub Projects"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Vulgarisation & communication",
+"u": "competences.html#c-vulga",
+"k": "Expliquer la data et l'IA à des non-experts, à l'écrit comme à l'oral. Connaître son public Simplifier sans trahir Analogies utiles (et trompeuses) Présenter des résultats à un décideur Écrire un e-mail ou un rapport technique clair"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Data storytelling & dataviz",
+"u": "competences.html#c-story",
+"k": "Transformer une analyse en message convaincant : choisir le bon graphique et raconter une histoire. Structure d'une histoire de données Choisir le bon graphique Couleurs, hiérarchie visuelle, désencombrement Tableaux de bord utiles Pièges : graphiques trompeurs"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Veille technologique",
+"u": "competences.html#c-veille",
+"k": "Organiser une veille efficace sans se noyer : sources, outils, prise de notes. Pourquoi et comment faire de la veille Sources : papiers, blogs, newsletters, conférences Lire un article scientifique (arXiv) Outils : RSS, agrégateurs, prise de notes Partager sa veille"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Préparation aux entretiens",
+"u": "competences.html#c-entretien",
+"k": "Entretiens techniques et comportementaux, tests de code, études de cas data. CV et profil LinkedIn d'un profil IABD Entretien comportemental (méthode STAR) Exercices de code et live coding Études de cas data / ML Négociation et questions à poser"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Portfolio & projets perso",
+"u": "competences.html#c-portfolio",
+"k": "Construire un GitHub soigné et des projets qui montrent tes compétences. Choisir des projets qui parlent aux recruteurs Un dépôt GitHub professionnel README, démos et notebooks présentables Publier : GitHub Pages, Hugging Face Spaces Raconter ses projets en entretien"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Anglais technique",
+"u": "competences.html#c-anglais",
+"k": "Lire la doc, écrire des issues et présenter en anglais dans un contexte tech. Vocabulaire technique essentiel Lire une documentation et un article Écrire une issue, une PR, un e-mail Présenter un projet à l'oral Faux-amis et erreurs fréquentes"
+},
+{
+"s": "Compétences info",
+"emoji": "💼",
+"color": "#ff6b81",
+"type": "cours",
+"t": "Soutenance & prise de parole",
+"u": "competences.html#c-oral",
+"k": "Préparer une soutenance de projet : structure, slides, démo et questions du jury. Structurer une présentation Des slides lisibles Réussir une démo en direct Gérer le stress et le temps Répondre aux questions du jury"
 }
 ]

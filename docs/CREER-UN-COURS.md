@@ -58,6 +58,10 @@ Ouvre [`matieres/cours.js`](../matieres/cours.js) et ajoute une entrée dans `su
 **C'est fini.** La matière apparaît sur le portail, dans le menu « Cours » et dans la recherche.
 La page du cours est servie par `cours.html?c=GIT` (index) et `cours.html?c=GIT&m=bases` (module).
 
+> 💼 Si le sujet figure dans le catalogue **« Compétences info »** (`competences.html`), reprends
+> exactement son `code` depuis [`matieres/competences.js`](../matieres/competences.js) : la carte du
+> catalogue devient « Disponible » et pointe vers ton cours, sans autre modification.
+
 ## Syntaxe disponible
 
 | Élément | Écriture |

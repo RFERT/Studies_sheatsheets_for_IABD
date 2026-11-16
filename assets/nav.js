@@ -56,6 +56,9 @@
     padding:8px;border-radius:9px;font-size:13px;font-family:inherit}
   .pomo-row button:hover{border-color:var(--xacc)}
   .pomo-row button.primary{background:var(--xacc);color:#07121f;border-color:transparent;font-weight:700}
+  .pomo-guard{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12.5px;color:var(--xtext);cursor:pointer;min-height:28px}
+  .pomo-guard input{width:18px;height:18px;accent-color:var(--xacc);flex:none}
+  .pomo-note{margin:6px 0 0;font-size:11.5px;line-height:1.4;color:var(--xmuted)}
   .xskip{position:absolute;left:-999px;top:0;z-index:300;background:var(--xacc);color:#07121f;padding:10px 16px;border-radius:0 0 10px 0;font-weight:700;text-decoration:none}
   .xskip:focus{left:0}
   :focus-visible{outline:2px solid var(--xacc);outline-offset:2px}
@@ -240,6 +243,7 @@
     { e: "∑", t: "Mathématiques", h: root + "matieres/mathematiques/index.html" },
     { e: "🐍", t: "Python & Data Science", h: root + "matieres/python/index.html" },
     { e: "🧮", t: "Bases de données (SQL)", h: root + "matieres/sql/index.html" },
+    { e: "💼", t: "Compétences info (catalogue)", h: root + "competences.html" },
     { sep: 1 },
     { lbl: "Antisèches" },
     { e: "∑", t: "Aide-mémoire maths", h: root + "matieres/mathematiques/aide-memoire.html" },
@@ -343,32 +347,147 @@
     '<div class="pomo-mode" id="pomoMode">Travail</div>' +
     '<div class="pomo-row"><button class="primary" id="pomoToggle">▶ Démarrer</button><button id="pomoReset">↺</button></div>' +
     '<div class="pomo-row"><button id="pomoWork">25 min</button><button id="pomoBreak">Pause 5</button></div>' +
+    '<label class="pomo-guard"><input type="checkbox" id="pomoGuard"> 🔔 Alerte bruyante si je quitte la page</label>' +
+    '<div class="pomo-row"><button id="pomoTest">🔊 Tester l\'alerte</button></div>' +
+    '<p class="pomo-note" id="pomoNote"></p>' +
     "</div>" +
     '<button class="pomo-fab" id="pomoFab" title="Minuteur Pomodoro" aria-label="Minuteur Pomodoro">🍅</button>';
   document.body.appendChild(pomo);
   var fab = pomo.querySelector("#pomoFab"), panel = pomo.querySelector("#pomoPanel");
   var timeEl = pomo.querySelector("#pomoTime"), modeEl = pomo.querySelector("#pomoMode");
   var toggle = pomo.querySelector("#pomoToggle");
+  /* Alerte anti-distraction : quand on quitte la page en pleine période de travail,
+     sirène + voix + notification (vibration, reste affichée) 15 s après, puis toutes les 3 min. */
+  var GUARD_KEY = "esgi-pomo-guard", GUARD_EVERY = 3 * 60 * 1000, GUARD_GRACE = 15 * 1000;
+  var guardOn = true, guardGrace = null, guardTimer = null, flashTimer = null, alarmCtx = null, endAt = 0;
+  var baseTitle = document.title;
+  var guardBox = pomo.querySelector("#pomoGuard"), noteEl = pomo.querySelector("#pomoNote");
+  try { guardOn = localStorage.getItem(GUARD_KEY) !== "0"; } catch (e) {}
+  guardBox.checked = guardOn;
+  function canNotify() { return "Notification" in window; }
+  function paintNote() {
+    var m = "";
+    if (guardOn) {
+      if (!canNotify()) m = "Notifications indisponibles ici : sirène et voix seulement.";
+      else if (Notification.permission === "denied") m = "Notifications bloquées dans le navigateur : sirène et voix seulement.";
+      else if (Notification.permission === "default") m = "Autorise les notifications au prochain clic sur Démarrer.";
+      else m = "Actif pendant le Travail. Garde cet onglet ouvert en arrière-plan.";
+    }
+    noteEl.textContent = m;
+  }
+  function unlockAlert() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) { if (!alarmCtx) alarmCtx = new AC(); if (alarmCtx.state === "suspended") alarmCtx.resume(); }
+    } catch (e) {}
+    if (canNotify() && Notification.permission === "default") {
+      try { var r = Notification.requestPermission(paintNote); if (r && r.then) r.then(paintNote); } catch (e) {}
+    }
+    paintNote();
+  }
+  function siren(sec) {
+    if (!alarmCtx) return;
+    try {
+      var t0 = alarmCtx.currentTime, o = alarmCtx.createOscillator(), g = alarmCtx.createGain();
+      o.type = "square"; g.gain.value = 0.9;
+      for (var i = 0; i < sec * 4; i++) o.frequency.setValueAtTime(i % 2 ? 660 : 1040, t0 + i * 0.25);
+      o.connect(g); g.connect(alarmCtx.destination);
+      o.start(t0); o.stop(t0 + sec);
+    } catch (e) {}
+  }
+  function speak(txt) {
+    try {
+      var u = new SpeechSynthesisUtterance(txt);
+      u.lang = "fr-FR"; u.volume = 1; u.rate = 1.05;
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function pushNotif(title, body) {
+    if (!canNotify() || Notification.permission !== "granted") return;
+    var opts = { body: body, icon: root + "assets/icon-192.png", tag: "pomo-guard", renotify: true,
+                 requireInteraction: true, silent: false, vibrate: [500, 150, 500, 150, 500, 150, 900] };
+    function direct() {
+      try { var n = new Notification(title, opts); n.onclick = function () { window.focus(); n.close(); }; } catch (e) {}
+    }
+    if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+      navigator.serviceWorker.getRegistration().then(function (reg) {
+        if (reg && reg.showNotification) reg.showNotification(title, opts).catch(direct); else direct();
+      }).catch(direct);
+    } else direct();
+  }
+  function closeNotifs() {
+    try {
+      navigator.serviceWorker.getRegistration().then(function (reg) {
+        if (reg) reg.getNotifications({ tag: "pomo-guard" }).then(function (l) { l.forEach(function (n) { n.close(); }); });
+      });
+    } catch (e) {}
+  }
+  function nag() {
+    siren(4);
+    speak("Reviens travailler ! Il reste " + Math.ceil(remaining / 60) + " minutes de concentration.");
+    pushNotif("🍅 Reviens te concentrer !", "Tu as quitté la page : il reste " + fmt(remaining) + " de travail. Retourne réviser !");
+  }
+  function guardActive() { return guardOn && timer && mode === "Travail"; }
+  function clearGuard() {
+    clearTimeout(guardGrace); clearInterval(guardTimer); clearInterval(flashTimer);
+    guardGrace = guardTimer = flashTimer = null;
+    document.title = baseTitle;
+    try { speechSynthesis.cancel(); } catch (e) {}
+    closeNotifs();
+  }
+  function startGuard() {
+    clearGuard();
+    if (!guardActive()) return;
+    guardGrace = setTimeout(function () {
+      if (!guardActive() || !document.hidden) return;
+      nag();
+      var on = false;
+      flashTimer = setInterval(function () { on = !on; document.title = on ? "🍅 REVIENS ! " + fmt(remaining) : baseTitle; }, 1000);
+      guardTimer = setInterval(function () { if (guardActive() && document.hidden) nag(); else clearGuard(); }, GUARD_EVERY);
+    }, GUARD_GRACE);
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) startGuard();
+    else { clearGuard(); if (timer) tick(); }
+  });
+  guardBox.addEventListener("change", function () {
+    guardOn = guardBox.checked;
+    try { localStorage.setItem(GUARD_KEY, guardOn ? "1" : "0"); } catch (e) {}
+    if (guardOn) unlockAlert(); else clearGuard();
+    paintNote();
+  });
+  pomo.querySelector("#pomoTest").addEventListener("click", function () {
+    unlockAlert(); siren(2); speak("Reviens travailler !");
+    pushNotif("🍅 Test de l'alerte", "Voilà à quoi ressemblera la notification quand tu quitteras la page.");
+    setTimeout(closeNotifs, 6000);
+  });
+
   function paint() { timeEl.textContent = fmt(remaining); modeEl.textContent = mode; }
-  function stop() { clearInterval(timer); timer = null; toggle.textContent = "▶ Reprendre"; fab.classList.remove("run"); }
+  function stop() { clearInterval(timer); timer = null; toggle.textContent = "▶ Reprendre"; fab.classList.remove("run"); clearGuard(); }
   function tick() {
-    remaining--;
+    remaining = Math.max(0, Math.round((endAt - Date.now()) / 1000));
     if (remaining <= 0) {
       stop();
       mode = (mode === "Travail") ? "Pause" : "Travail";
       remaining = (mode === "Travail") ? WORK : BREAK;
-      try { new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=").play(); } catch (e) {}
-      alert(mode === "Pause" ? "🍅 Session terminée ! Fais une pause de 5 min." : "⏰ Pause finie — au travail !");
+      var msg = mode === "Pause" ? "🍅 Session terminée ! Fais une pause de 5 min." : "⏰ Pause finie — au travail !";
+      if (document.hidden) { siren(3); pushNotif("🍅 Pomodoro", msg); }
+      else { try { new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=").play(); } catch (e) {} }
+      alert(msg);
     }
     paint();
   }
   fab.addEventListener("click", function () { panel.classList.toggle("open"); });
   toggle.addEventListener("click", function () {
     if (timer) { stop(); }
-    else { timer = setInterval(tick, 1000); toggle.textContent = "⏸ Pause"; fab.classList.add("run"); }
+    else {
+      endAt = Date.now() + remaining * 1000;
+      timer = setInterval(tick, 1000); toggle.textContent = "⏸ Pause"; fab.classList.add("run");
+      if (guardOn) unlockAlert();
+    }
   });
   pomo.querySelector("#pomoReset").addEventListener("click", function () { stop(); remaining = (mode === "Travail") ? WORK : BREAK; toggle.textContent = "▶ Démarrer"; paint(); });
   pomo.querySelector("#pomoWork").addEventListener("click", function () { stop(); mode = "Travail"; remaining = WORK; toggle.textContent = "▶ Démarrer"; paint(); });
   pomo.querySelector("#pomoBreak").addEventListener("click", function () { stop(); mode = "Pause"; remaining = BREAK; toggle.textContent = "▶ Démarrer"; paint(); });
-  paint();
+  paint(); paintNote();
 })();

@@ -129,6 +129,7 @@ a:hover { text-decoration: underline; }
 .subject .status.ready { color: var(--accent); }
 .subject .status.soon { color: var(--muted); }
 .subject .status.wip { color: #ffb454; }
+[data-theme="light"] .subject .status.wip { color: #9a5b00; }
 .subject .go { font-size: 14px; color: var(--sc, var(--primary)); font-weight: 700; }
 .subject-extras { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 22px 18px; margin-top: -4px; }
 .subject-extras .tag.extra { background: var(--bg-elev); font-weight: 600; transition: background 0.15s ease; }

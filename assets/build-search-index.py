@@ -43,6 +43,7 @@ SUBJECTS = {
     "rust": {"name": "Rust",          "emoji": "🦀", "color": "#f74c00"},
     "python": {"name": "Python & Data Science", "emoji": "🐍", "color": "#3b82f6"},
     "portal": {"name": "Portail",     "emoji": "🎓", "color": "#27e0b0"},
+    "skills": {"name": "Compétences info", "emoji": "💼", "color": "#ff6b81"},
 }
 
 entries = []
@@ -152,6 +153,18 @@ add("portal", "page", "À configurer — réglages & déploiements", "parametrag
     "configurer paramétrage réglages déploiement backend github pages api cloudflare worker google apps script clé secret setup à faire côté utilisateur")
 add("portal", "page", "Flashcards — répétition espacée", "flashcards.html",
     "flashcards répétition espacée spaced repetition révision mémorisation SM-2 cartes quiz")
+
+# ---- Catalogue « Compétences info » (matieres/competences.js, un cours par ligne) ----
+add("skills", "page", "Compétences info — catalogue de cours hors cursus", "competences.html",
+    "compétences pro informatique hardware systèmes réseaux génie logiciel devops cloud mlops sécurité soft skills catalogue")
+skills = ROOT / "matieres" / "competences.js"
+if skills.exists():
+    for line in skills.read_text(encoding="utf-8").splitlines():
+        m = re.search(r'code:\s*"([^"]+)".*?name:\s*"([^"]+)".*?desc:\s*"([^"]*)".*?programme:\s*\[(.*?)\]', line)
+        if m:
+            code, name, desc, prog = m.groups()
+            add("skills", "cours", name, f"competences.html#c-{code.lower()}",
+                desc + " " + " ".join(re.findall(r'"([^"]+)"', prog)))
 
 # Dé-duplication (title+url)
 seen, uniq = set(), []
