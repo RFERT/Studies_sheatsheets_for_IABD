@@ -98,6 +98,12 @@ if current is not None:
 Le pipeline Unix reproduit exactement le modèle : `cat texte.txt | python mapper.py | sort | python reducer.py`. Le `sort` joue le rôle du shuffle.
 :::
 
+::: viz mapreduce Le word count réparti, étape par étape
+texte: chat
+reducers: 2
+Clique sur Map, Shuffle puis Reduce. Modifie le texte (une ligne = un bloc) et le nombre de reducers : une même clé arrive toujours chez le même reducer. Active ensuite le **combiner** et compare le nombre de paires qui traversent le réseau.
+:::
+
 ## 3. Le combiner : réduire avant de transférer
 
 Pour un mot fréquent comme « le », chaque tâche map émet des milliers de paires (le, 1) qui traversent le réseau. Un **combiner** applique une réduction **locale**, sur la sortie de chaque map, avant le shuffle : (le, 1) × 3 000 devient (le, 3 000).

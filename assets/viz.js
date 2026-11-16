@@ -1668,12 +1668,216 @@
     return { draw: function () {} };
   }
 
+  /* =========================================================
+     17. MapReduce pas à pas (word count, tables HTML)
+     ========================================================= */
+  var MRTEXT = {
+    chat: "le chat dort\nle chien et le chat\nle chat mange",
+    logs: "GET /home 200\nGET /panier 404\nPOST /panier 200\nGET /home 200",
+    big: "spark lit hdfs\nkafka nourrit spark\nspark ecrit parquet\nhdfs stocke parquet"
+  };
+  function hstr(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+  function MapReduce(body, o) {
+    var preset = MRTEXT[o.texte] ? o.texte : "chat", R = clamp(Math.round(num(o, "reducers", 2)), 1, 3), comb = o.combiner === "oui", phase = 3;
+    var ta = el("textarea", "viz-mr-in"); ta.value = MRTEXT[preset]; ta.rows = 4; ta.setAttribute("aria-label", "Texte d'entrée, une ligne par bloc");
+    var P = layout(body);
+    var sT = select([["chat", "Phrases"], ["logs", "Logs web"], ["big", "Vocabulaire Big Data"]], preset);
+    var rR = range(1, 3, 1, R), oR = el("output", "viz-val"), cC = check(comb);
+    var bM = btn("1 · Map"), bS = btn("2 · Shuffle"), bRd = btn("3 · Reduce");
+    P.ctls.appendChild(ctl("Exemple", sT)); P.ctls.appendChild(ctl("Reducers", rR, oR)); P.ctls.appendChild(ctl("Combiner", cC));
+    var bar = el("div", "viz-btns"); [bM, bS, bRd].forEach(function (b) { bar.appendChild(b); });
+    P.ctls.appendChild(bar);
+    var lbl = el("div", "viz-lbl", "Entrée : une ligne = un bloc HDFS (modifiable)");
+    var grid = el("div", "viz-mr");
+    body.appendChild(lbl); body.appendChild(ta); body.appendChild(P.ctls); body.appendChild(grid); body.appendChild(P.out);
+    P.out.setAttribute("aria-live", "polite");
+    function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+    function draw() {
+      oR.textContent = String(R);
+      var blocks = ta.value.split("\n").map(function (l) { return l.trim(); }).filter(Boolean).slice(0, 6);
+      var maps = blocks.map(function (b) {
+        var pairs = b.toLowerCase().split(/\s+/).map(function (w) { return [w, 1]; });
+        if (!comb) return pairs;
+        var acc = {}, order = [];
+        pairs.forEach(function (p) { if (!(p[0] in acc)) { acc[p[0]] = 0; order.push(p[0]); } acc[p[0]] += 1; });
+        return order.map(function (w) { return [w, acc[w]]; });
+      });
+      var sent = maps.reduce(function (s, m) { return s + m.length; }, 0), raw = blocks.reduce(function (s, b) { return s + b.split(/\s+/).length; }, 0);
+      var red = []; for (var r = 0; r < R; r++) red.push({});
+      maps.forEach(function (m) { m.forEach(function (p) { var g = red[hstr(p[0]) % R]; (g[p[0]] = g[p[0]] || []).push(p[1]); }); });
+      var col = function (title, inner) { return '<div class="viz-mr-col"><div class="viz-lbl">' + title + "</div>" + inner + "</div>"; };
+      var html = col("Blocs", blocks.map(function (b, i) { return '<div class="viz-mr-box"><small>bloc ' + (i + 1) + "</small>" + esc(b) + "</div>"; }).join(""));
+      if (phase >= 1) html += col("Map" + (comb ? " + combiner" : ""), maps.map(function (m, i) {
+        return '<div class="viz-mr-box"><small>map ' + (i + 1) + "</small>" + m.map(function (p) { return "(" + esc(p[0]) + ", " + p[1] + ")"; }).join(" ") + "</div>"; }).join(""));
+      if (phase >= 2) html += col("Shuffle & tri", red.map(function (g, i) {
+        return '<div class="viz-mr-box"><small>reducer ' + (i + 1) + "</small>" + Object.keys(g).sort().map(function (k) { return esc(k) + " → [" + g[k].join(", ") + "]"; }).join("<br>") + "</div>"; }).join(""));
+      if (phase >= 3) html += col("Reduce", red.map(function (g, i) {
+        return '<div class="viz-mr-box"><small>sortie ' + (i + 1) + "</small>" + Object.keys(g).sort().map(function (k) { return "(" + esc(k) + ", <b>" + g[k].reduce(function (s, v) { return s + v; }, 0) + "</b>)"; }).join(" ") + "</div>"; }).join(""));
+      grid.innerHTML = html;
+      P.out.innerHTML = '<div class="viz-kv"><span>Paires envoyées sur le réseau : <b>' + sent + "</b>" + (comb ? " (au lieu de " + raw + " sans combiner)" : "") + "</span><span>Reducers : <b>" + R + "</b></span></div>" +
+        '<p class="viz-msg">' + (phase < 2 ? "Chaque map traite <b>son</b> bloc, localement, sans communiquer avec les autres." :
+          phase < 3 ? "Le shuffle envoie chaque clé vers le reducer <b>hash(clé) mod " + R + "</b> : toutes les valeurs d'un même mot se retrouvent au même endroit, triées." :
+          "Chaque reducer additionne la liste de valeurs de ses clés. " + (comb ? "Le combiner a déjà sommé localement : moins de paires transférées, même résultat." : "Active le <b>combiner</b> pour réduire le volume transféré.")) + "</p>";
+    }
+    sT.addEventListener("change", function () { ta.value = MRTEXT[sT.value]; draw(); });
+    rR.addEventListener("input", function () { R = clamp(Math.round(+rR.value), 1, 3); draw(); });
+    cC.addEventListener("change", function () { comb = cC.checked; draw(); });
+    ta.addEventListener("input", draw);
+    bM.addEventListener("click", function () { phase = 1; draw(); });
+    bS.addEventListener("click", function () { phase = 2; draw(); });
+    bRd.addEventListener("click", function () { phase = 3; draw(); });
+    draw();
+    return { draw: function () {} };
+  }
+
+  /* =========================================================
+     18. Répartir des clés : modulo N vs hachage cohérent
+     ========================================================= */
+  function Hachage(body, o) {
+    var meth = ["modulo", "coherent", "virtuels"].indexOf(o.methode) >= 0 ? o.methode : "modulo";
+    var N = clamp(Math.round(num(o, "noeuds", 4)), 2, 10), K = clamp(Math.round(num(o, "cles", 120)), 20, 300), prev = null, moved = null;
+    var st = Stage(body, 0.5, 360, "Anneau de hachage : clés colorées selon le nœud qui les stocke");
+    var P = layout(body);
+    var sM = select([["modulo", "hash(clé) mod N"], ["coherent", "Hachage cohérent"], ["virtuels", "Cohérent + 20 nœuds virtuels"]], meth);
+    var rK = range(20, 300, 10, K), oK = el("output", "viz-val"), oN = el("output", "viz-val");
+    var bAdd = btn("➕ Ajouter un nœud"), bDel = btn("➖ Retirer un nœud");
+    P.ctls.appendChild(ctl("Méthode", sM)); P.ctls.appendChild(ctl("Nombre de clés", rK, oK)); P.ctls.appendChild(ctl("Nœuds", el("span"), oN));
+    var bar = el("div", "viz-btns"); bar.appendChild(bAdd); bar.appendChild(bDel); P.ctls.appendChild(bar);
+    finish(body, P);
+    function u(s) { return fnv(s, 7) / 4294967296; }
+    function owner(key, n) {
+      if (meth === "modulo") return fnv(key, 7) % n;
+      var pts = [], v = meth === "virtuels" ? 20 : 1, h = u(key), best = null, first = null;
+      for (var i = 0; i < n; i++) for (var j = 0; j < v; j++) pts.push([u("noeud-" + i + "#" + j), i]);
+      pts.forEach(function (p) { if (p[0] >= h && (!best || p[0] < best[0])) best = p; if (!first || p[0] < first[0]) first = p; });
+      return (best || first)[1];
+    }
+    function assign(n) { var a = []; for (var i = 0; i < K; i++) a.push(owner("cle-" + i, n)); return a; }
+    function change(dn) {
+      var n2 = clamp(N + dn, 2, 10); if (n2 === N) return;
+      prev = assign(N); N = n2; var now = assign(N);
+      moved = prev.map(function (x, i) { return x !== now[i]; });
+      draw();
+    }
+    function draw() {
+      oK.textContent = String(K); oN.textContent = String(N);
+      var a = assign(N), load = []; for (var i = 0; i < N; i++) load.push(0);
+      a.forEach(function (x) { load[x]++; });
+      var nm = moved ? moved.filter(Boolean).length : 0, ideal = K / N;
+      var mx = Math.max.apply(null, load), mn = Math.min.apply(null, load);
+      P.out.innerHTML = '<div class="viz-kv">' + (moved ? "<span>Clés déplacées : <b>" + nm + " / " + K + " (" + Math.round(100 * nm / K) + " %)</b></span>" : "") +
+        "<span>Charge min / max : <b>" + mn + " / " + mx + "</b> (idéal " + fmt(ideal, 1) + ")</span></div>" +
+        '<p class="viz-msg">' + (meth === "modulo" ? "Avec <code>hash mod N</code>, changer N redistribue presque <b>toutes</b> les clés (≈ 1 − 1/N déplacées) : un cache se vide, une base doit tout migrer."
+          : meth === "coherent" ? "Sur l'anneau, chaque clé va au premier nœud rencontré dans le sens horaire. Ajouter un nœud ne déplace que les clés de <b>son arc</b> (≈ 1/N). Mais avec un seul point par nœud, les arcs sont très inégaux : charge déséquilibrée."
+          : "Chaque nœud occupe 20 positions sur l'anneau (<b>nœuds virtuels</b>) : la charge s'équilibre et un ajout ne déplace toujours qu'≈ 1/N des clés. C'est la technique de Dynamo et Cassandra.") +
+        " Clique sur « Ajouter un nœud » : les clés entourées de rouge ont changé de nœud.</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, cx = st.h / 2 + 10, cy = st.h / 2, R = st.h / 2 - 26;
+      ctx.strokeStyle = C.border; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.stroke();
+      function at(t, r) { var ang = -Math.PI / 2 + 2 * Math.PI * t; return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)]; }
+      for (var k = 0; k < K; k++) {
+        var p = at(u("cle-" + k), R);
+        dot(ctx, p[0], p[1], 4, KCOL[a[k] % 6], moved && moved[k] ? C.red : null);
+      }
+      if (meth !== "modulo") {
+        var v = meth === "virtuels" ? 20 : 1;
+        for (var i2 = 0; i2 < N; i2++) for (var j = 0; j < v; j++) {
+          var q = at(u("noeud-" + i2 + "#" + j), R + 12);
+          ctx.fillStyle = KCOL[i2 % 6]; ctx.fillRect(q[0] - 4, q[1] - 4, 8, 8);
+        }
+      } else txt(ctx, "position = hash(clé), couleur = hash mod " + N, cx, cy, C.muted, "12px system-ui, sans-serif");
+      var x0 = cx + R + 40, w = st.w - x0 - 16, bh = Math.min(26, (st.h - 40) / N);
+      if (w > 60) {
+        txt(ctx, "Charge par nœud", x0 + w / 2, 12, C.soft, "bold 12px system-ui, sans-serif");
+        load.forEach(function (l, i) {
+          var y = 26 + i * bh; ctx.fillStyle = KCOL[i % 6]; ctx.fillRect(x0, y, w * l / Math.max(mx, 1), bh - 6);
+          txt(ctx, "n" + (i + 1) + " : " + l, x0 + 4, y + (bh - 6) / 2, "#fff", "11px system-ui, sans-serif", "left");
+        });
+        ctx.strokeStyle = C.text; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(x0 + w * ideal / Math.max(mx, 1), 22); ctx.lineTo(x0 + w * ideal / Math.max(mx, 1), 26 + N * bh); ctx.stroke(); ctx.setLineDash([]);
+      }
+    }
+    sM.addEventListener("change", function () { meth = sM.value; moved = null; draw(); });
+    rK.addEventListener("input", function () { K = clamp(Math.round(+rK.value), 20, 300); moved = null; draw(); });
+    bAdd.addEventListener("click", function () { change(1); });
+    bDel.addEventListener("click", function () { change(-1); });
+    draw();
+    return { draw: draw };
+  }
+
+  /* =========================================================
+     19. Matrice d'attention (softmax, échelle, masque causal)
+     ========================================================= */
+  var ATOK = ["le", "chat", "noir", "dort", "sur", "le", "tapis"];
+  var ASC = [ // scores QKᵀ illustratifs (fictifs) : ligne = token qui « regarde »
+    [1, 3, 0.5, 0, 0, 0.5, 1], [1, 2, 3, 2.5, 0, 0, 0.5], [0.5, 3.5, 1, 0.5, 0, 0, 0], [0, 3.5, 0.5, 1, 1.5, 0, 1.5],
+    [0, 0.5, 0, 2.5, 1, 1, 3], [0.5, 0, 0, 0, 1, 1, 3.5], [0.5, 1, 0, 1, 2.5, 2, 1]];
+  function Attention(body, o) {
+    var q = clamp(Math.round(num(o, "token", 1)), 0, ATOK.length - 1), tau = clamp(num(o, "echelle", 1), 0.2, 5), causal = o.masque === "causal";
+    var st = Stage(body, 0.5, 360, "Matrice des poids d'attention entre les mots d'une phrase");
+    var P = layout(body);
+    var sQ = select(ATOK.map(function (t, i) { return [String(i), (i + 1) + ". " + t]; }), String(q));
+    var rT = range(0.2, 5, 0.1, tau), oT = el("output", "viz-val"), cM = check(causal);
+    P.ctls.appendChild(ctl("Token qui regarde (query)", sQ)); P.ctls.appendChild(ctl("Diviseur des scores (≈ √d_k)", rT, oT)); P.ctls.appendChild(ctl("Masque causal (GPT)", cM));
+    finish(body, P);
+    function weights() {
+      return ASC.map(function (row, i) {
+        var s = row.map(function (v, j) { return causal && j > i ? -Infinity : v / tau; }), m = Math.max.apply(null, s);
+        var e = s.map(function (v) { return v === -Infinity ? 0 : Math.exp(v - m); }), z = e.reduce(function (a, b) { return a + b; }, 0);
+        return e.map(function (v) { return v / z; });
+      });
+    }
+    var L = null;
+    function draw() {
+      oT.textContent = fmt(tau, 1);
+      var W = weights(), row = W[q], top = row.indexOf(Math.max.apply(null, row));
+      var H = -row.reduce(function (s, p) { return p > 0 ? s + p * Math.log(p) / Math.LN2 : s; }, 0);
+      P.out.innerHTML = '<div class="viz-kv"><span>« ' + ATOK[q] + " » regarde surtout <b>« " + ATOK[top] + " » (" + fmt(row[top] * 100, 0) + " %)</b></span><span>Entropie des poids : <b>" + fmt(H, 2) + " bit</b></span></div>" +
+        '<p class="viz-msg">' + (tau < 0.5 ? "Diviseur petit → scores énormes → la softmax <b>sature</b> : presque tout le poids sur un seul mot, gradients quasi nuls. C'est ce qu'évite la division par √d_k."
+          : tau > 3 ? "Diviseur grand → scores écrasés → poids presque <b>uniformes</b> : le mot n'apprend rien de spécifique."
+          : "Chaque ligne est une softmax (somme = 1) : la sortie du mot est la moyenne des valeurs des autres mots, pondérée par ces poids.") +
+        (causal ? " Masque causal : un mot ne voit que les mots <b>précédents</b> (triangle inférieur)." : "") + " Scores fictifs, choisis pour l'illustration.</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, n = ATOK.length, lab = 46, cs = Math.min((st.h - lab - 8) / n, (st.w * 0.55 - lab) / n), x0 = lab + 8, y0 = lab;
+      L = { x0: x0, y0: y0, cs: cs, n: n };
+      for (var i = 0; i < n; i++) {
+        txt(ctx, ATOK[i], x0 - 6, y0 + i * cs + cs / 2, i === q ? C.text : C.soft, (i === q ? "bold " : "") + "12px system-ui, sans-serif", "right");
+        ctx.save(); ctx.translate(x0 + i * cs + cs / 2, y0 - 6); ctx.rotate(-Math.PI / 4); txt(ctx, ATOK[i], 0, 0, C.soft, "11px system-ui, sans-serif", "left"); ctx.restore();
+        for (var j = 0; j < n; j++) {
+          ctx.fillStyle = causal && j > i ? rgba(C.muted, 0.12) : rgba(C.primary, 0.08 + 0.92 * W[i][j]);
+          ctx.fillRect(x0 + j * cs + 1, y0 + i * cs + 1, cs - 2, cs - 2);
+          if (cs > 26 && !(causal && j > i)) txt(ctx, fmt(W[i][j], 2), x0 + j * cs + cs / 2, y0 + i * cs + cs / 2, W[i][j] > 0.5 ? "#fff" : C.text, "10px system-ui, sans-serif");
+        }
+      }
+      ctx.strokeStyle = C.orange; ctx.lineWidth = 2.5; ctx.strokeRect(x0, y0 + q * cs, n * cs, cs);
+      var bx = x0 + n * cs + 30, bw = st.w - bx - 12, bh = Math.min(28, (st.h - 30) / n);
+      if (bw > 60) {
+        txt(ctx, "Poids de « " + ATOK[q] + " »", bx + bw / 2, 12, C.soft, "bold 12px system-ui, sans-serif");
+        row.forEach(function (p, j) {
+          var y = 26 + j * bh; ctx.fillStyle = j === top ? C.orange : C.primary; ctx.fillRect(bx + 44, y, (bw - 90) * p, bh - 6);
+          txt(ctx, ATOK[j], bx + 40, y + (bh - 6) / 2, C.soft, "11px system-ui, sans-serif", "right");
+          txt(ctx, fmt(p * 100, 0) + " %", bx + 48 + (bw - 90) * p, y + (bh - 6) / 2, C.text, "11px system-ui, sans-serif", "left");
+        });
+      }
+    }
+    sQ.addEventListener("change", function () { q = +sQ.value; draw(); });
+    rT.addEventListener("input", function () { tau = +rT.value; draw(); });
+    cM.addEventListener("change", function () { causal = cM.checked; draw(); });
+    st.canvas.addEventListener("click", function (ev) {
+      if (!L) return;
+      var m = st.pos(ev), i = Math.floor((m.y - L.y0) / L.cs);
+      if (i >= 0 && i < L.n && m.x >= L.x0 && m.x <= L.x0 + L.n * L.cs) { q = i; sQ.value = String(i); draw(); }
+    });
+    draw();
+    return { draw: draw };
+  }
+
   /* ---------- Registre & montage ---------- */
   var WIDGETS = {
     gradient: Gradient, matrice: Matrix, matrix: Matrix, relation: Relation,
     regression: Regression, normale: Normal, gauss: Normal,
     kmeans: KMeans, seuil: Seuil, roc: Seuil, pascal: Pascal, bayes: Bayes, graphe: Graphe, entropie: Entropie,
-    activation: Activation, convolution: Convolution, bloom: Bloom, ownership: Ownership, jointure: Jointure
+    activation: Activation, convolution: Convolution, bloom: Bloom, ownership: Ownership, jointure: Jointure,
+    mapreduce: MapReduce, hachage: Hachage, attention: Attention
   };
   var CATALOG = [
     { id: "relation", emoji: "🔗", title: "Relations binaires",
@@ -1723,7 +1927,16 @@
       course: { label: "Rust · Ownership", href: "cours.html?c=RUST&m=m05-ownership-la-possession" } },
     { id: "jointure", emoji: "🔗", title: "Jointures SQL",
       desc: "INNER, LEFT, RIGHT, FULL, CROSS, anti- et semi-jointure sur deux petites tables : la requête, le résultat et les lignes qui participent.",
-      course: { label: "SQL · Jointures", href: "matieres/sql/index.html" } }
+      course: { label: "SQL · Jointures", href: "matieres/sql/index.html" } },
+    { id: "mapreduce", emoji: "🗂️", title: "MapReduce pas à pas",
+      desc: "Un word count réparti en blocs : map local, shuffle par hachage de la clé, reduce. Active le combiner et compare le nombre de paires envoyées sur le réseau.",
+      course: { label: "Big Data · Hadoop & MapReduce", href: "cours.html?c=BIGD&m=hadoop" } },
+    { id: "hachage", emoji: "💍", title: "Partitionner : modulo vs hachage cohérent",
+      desc: "Ajoute ou retire un nœud : avec hash mod N presque toutes les clés bougent, avec l'anneau de hachage cohérent seulement ≈ 1/N. Les nœuds virtuels équilibrent la charge.",
+      course: { label: "Big Data · Fondations", href: "cours.html?c=BIGD&m=fondations" } },
+    { id: "attention", emoji: "👁️", title: "Matrice d'attention",
+      desc: "Choisis un mot : ses poids d'attention sur la phrase, l'effet de la division par √d_k sur la softmax (saturation ou uniformité) et le masque causal d'un GPT.",
+      course: { label: "Deep Learning · Transformers", href: "cours.html?c=DL&m=transformers" } }
   ];
 
   var live = [];

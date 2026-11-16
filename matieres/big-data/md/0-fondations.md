@@ -81,6 +81,13 @@ On découpe les données en morceaux répartis sur les machines. Deux stratégie
 Avec `hash(clé) mod N`, passer de 10 à 11 machines déplace environ 90 % des clés. Le **hachage cohérent** (anneau) n'en déplace qu'environ 1/N : c'est ce qu'utilisent Cassandra, DynamoDB et de nombreux caches distribués.
 :::
 
+::: viz hachage Modulo ou hachage cohérent ?
+methode: modulo
+noeuds: 4
+cles: 150
+Ajoute un nœud avec `hash(clé) mod N` : presque toutes les clés changent de machine. Passe en **hachage cohérent** et recommence : seules les clés de l'arc pris par le nouveau nœud bougent. Avec un seul point par nœud, la charge est très inégale ; les **nœuds virtuels** corrigent ce défaut.
+:::
+
 ### Répliquer
 
 Chaque partition est copiée sur plusieurs machines (souvent 3) : si une machine tombe, les données restent disponibles et lisibles ailleurs. Mais il faut alors **synchroniser les copies** lors des écritures — d'où le théorème CAP.
