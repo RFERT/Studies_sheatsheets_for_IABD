@@ -69,6 +69,11 @@
         </div>
         <div class="feedback" data-explain="Une DL50 basse signifie qu'une petite dose suffit à être létale : A est plus toxique que B."></div>
       </div>
+
+      <figure class="pk-viz" data-pk="dose-surdosage" data-opts='{"preset":"surdosage"}'>
+        <div class="pk-fallback">💊 Simulateur de pharmacocinétique (chargement…)</div>
+        <figcaption><strong>💊 Simulateur — Quand la posologie habituelle devient toxique</strong><p>Même posologie qu'en temps normal, mais un patient insuffisant rénal élimine deux fois moins vite (t½ doublée) : le médicament s'<b>accumule</b> et dépasse le seuil toxique. Décoche « insuffisance rénale » pour comparer. C'est pourquoi la posologie de nombreux médicaments est <b>adaptée à la fonction rénale</b>, et pourquoi le préparateur signale toute ordonnance douteuse au pharmacien.</p><p class="pk-note">Médicament fictif (fenêtre thérapeutique 4 à 10 mg/L) : support pédagogique, pas un outil de calcul de posologie.</p></figcaption>
+      </figure>
     </section>
 
     <section class="block" id="medic">
@@ -220,5 +225,6 @@
   <script src="../assets/glossary-data.js"></script>
   <script src="../assets/share.js"></script>
   <script src="../assets/app.js"></script>
+<script src="../assets/pk.js"></script>
 </body>
 </html>

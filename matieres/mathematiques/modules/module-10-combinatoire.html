@@ -94,6 +94,11 @@
         </div>
         <div class="feedback" data-explain="L'ordre compte (or ≠ argent) et pas de répétition (un athlète = une médaille) : arrangement. \(A_8^3 = 8\cdot7\cdot6 = 336\)."></div>
       </div>
+
+      <figure class="viz" data-labo="modeles-pascal" data-viz="pascal" data-opts='{"n": "5", "k": "3"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « pascal » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Les 4 modèles sur un même exemple</strong><p>Pour n = 5 et k = 3, compare les 4 nombres de la légende : avec ordre et remise (n^k), avec ordre sans remise (A), sans ordre ni remise (C), sans ordre avec remise (C(n+k−1, k)). Change n et k pour vérifier l'ordre de grandeur.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 2 -->
@@ -199,6 +204,11 @@
         </div>
         <div class="feedback" data-explain="Coefficient de \(x^2\) = \(\binom{5}{2} = \frac{5\cdot4}{2} = 10\). La somme de toute la ligne (1,5,10,10,5,1) vaut \(2^5 = 32\)."></div>
       </div>
+
+      <figure class="viz" data-labo="binome-pascal" data-viz="pascal" data-opts='{"lignes": "15", "n": "10", "k": "4", "mode": "parite"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « pascal » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Pascal, binôme et motif de Sierpiński</strong><p>Les coefficients de (a + b)ⁿ forment la ligne n. Avec « Colorier la parité », les coefficients impairs dessinent le triangle de Sierpiński (théorème de Lucas).</p></figcaption>
+      </figure>
     </section>
 
     <!-- 5 -->
@@ -445,5 +455,7 @@
   <div class="footer">Module 10 — Combinatoire avancée · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

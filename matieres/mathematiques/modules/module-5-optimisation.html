@@ -206,6 +206,11 @@
         </div>
         <div class="feedback" data-explain="Un pas trop grand fait dépasser le minimum à chaque itération : la perte oscille ou explose. Trop petit = lent. Il faut un juste milieu."></div>
       </div>
+
+      <figure class="viz" data-labo="gd-gradient" data-viz="gradient" data-opts='{"fonction": "convexe", "lr": "0.1"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « gradient » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Régler le pas d'apprentissage η</strong><p>Sur x², fais varier η : convergence lente (η = 0,01), rapide (η ≈ 0,5), oscillation (η ≈ 0,9) puis <b>divergence</b> (η > 1). Explique pourquoi avec x ← x − η·2x = (1 − 2η)x.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 5 -->
@@ -239,6 +244,11 @@
         </div>
         <div class="feedback" data-explain="En traitant des mini-lots, on met à jour les paramètres fréquemment sans charger l'intégralité des données : idéal pour des volumes massifs et un entraînement rapide."></div>
       </div>
+
+      <figure class="viz" data-labo="variantes-gradient" data-viz="gradient" data-opts='{"fonction": "nonconvexe", "lr": "0.02", "momentum": "0"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « gradient » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Minima locaux et momentum</strong><p>Départ x₀ = 1,9 : la descente s'arrête dans le minimum <b>local</b>. Ajoute du momentum (β ≈ 0,8) : l'élan peut franchir la bosse et atteindre le minimum global. Teste aussi la fonction « plateau » (gradient évanescent).</p></figcaption>
+      </figure>
     </section>
 
     <!-- 6 -->
@@ -264,6 +274,11 @@
         </div>
         <div class="feedback" data-explain="Backprop = application systématique de la chain rule (f∘g)'=f'(g)·g' pour propager les gradients couche par couche, de la sortie vers l'entrée."></div>
       </div>
+
+      <figure class="viz" data-labo="backprop-activation" data-viz="activation" data-opts='{"fonction": "sigmoide", "x": "2"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « activation » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Pourquoi la chain rule peut tuer le gradient</strong><p>La rétropropagation multiplie les dérivées couche après couche. Avec la sigmoïde, σ′ ≤ 0,25 : le produit s'effondre (gradient évanescent). Compare avec ReLU, dont la dérivée vaut 1 pour x > 0.</p></figcaption>
+      </figure>
     </section>
 
     <!-- DATA & MÉTIERS -->
@@ -364,5 +379,7 @@
   <div class="footer">Module 5 — Analyse &amp; Optimisation · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

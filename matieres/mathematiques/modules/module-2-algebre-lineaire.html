@@ -147,6 +147,11 @@
         </div>
         <div class="feedback" data-explain="Les dimensions intérieures (4 et 4) coïncident, le produit est défini et a la taille des dimensions extérieures : \(3\times 2\)."></div>
       </div>
+
+      <figure class="viz" data-labo="matrices-matrice" data-viz="matrice" data-opts='{"preset": "rotation"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « matrice » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Une matrice transforme le plan</strong><p>Les <b>colonnes</b> de M sont les images des vecteurs de base e₁ et e₂. Modifie un coefficient, puis anime le passage de l'identité à M : toute la grille suit, car l'application est <b>linéaire</b>.</p></figcaption>
+      </figure>
     </section>
 
     <!-- ===== 4 ===== -->
@@ -215,6 +220,11 @@
         </div>
         <div class="feedback" data-explain="\(2\cdot2 - 4\cdot1 = 0\). Déterminant nul ⇒ non inversible (la 2ᵉ ligne est la moitié de la 1ʳᵉ : colonnes/lignes dépendantes, rang 1)."></div>
       </div>
+
+      <figure class="viz" data-labo="det-matrice" data-viz="matrice" data-opts='{"preset": "singuliere"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « matrice » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Le déterminant mesure l'aire</strong><p>Le carré unité devient un parallélogramme d'aire |det M|. Ici det = 0 : le plan est écrasé sur une droite, l'information est perdue, M n'est <b>pas inversible</b>. Passe au preset « symétrie » : det = −1, l'orientation s'inverse.</p></figcaption>
+      </figure>
     </section>
 
     <!-- ===== 6 ===== -->
@@ -252,6 +262,11 @@
         </div>
         <div class="feedback" data-explain="La transformation ne change pas la direction d'un vecteur propre ; elle l'étire (ou le compresse/inverse) d'un facteur \(\lambda\). Ce sont les « axes naturels » de la transformation."></div>
       </div>
+
+      <figure class="viz" data-labo="propres-matrice" data-viz="matrice" data-opts='{"preset": "propres"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « matrice » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Vecteurs propres : les directions conservées</strong><p>Pour [[2, 1], [1, 2]], les directions (1, 1) et (1, −1) sont seulement étirées (facteurs 3 et 1) : ce sont les vecteurs propres, et trace = 3 + 1, det = 3 × 1. Essaie la rotation : aucune direction réelle n'est conservée (valeurs propres complexes).</p></figcaption>
+      </figure>
     </section>
 
     <!-- ===== 7 ===== -->
@@ -406,5 +421,7 @@
   <div class="footer">Module 2 — Algèbre linéaire · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

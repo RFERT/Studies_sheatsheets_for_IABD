@@ -122,7 +122,16 @@ Texte **gras**, *italique*, `code`, [lien](https://…), listes, tableaux.
   Widgets : `relation` (`n`, `preset` : vide|egal|le|lt|divise|parite|mod3|plein), `matrice` (`preset` :
   identite|rotation|homothetie|etirement|cisaillement|symetrie|projection|singuliere|propres),
   `gradient` (`fonction` : convexe|nonconvexe|plateau, `lr`, `x0`, `momentum`), `regression` (`degre`),
-  `normale` (`mu`, `sigma`, `a`, `b`). Les lignes qui ne sont pas des options deviennent un texte d'accompagnement.
+  `normale` (`mu`, `sigma`, `a`, `b`), `bayes` (`prevalence`, `sensibilite`, `specificite`),
+  `pascal` (`lignes`, `n`, `k`, `mode: parite`), `graphe` (`algo` : bfs|dfs|dijkstra, `depart` : A…H),
+  `entropie` (`k`, `poids` : « 70 30 »), `bloom` (`m`, `k`), `kmeans` (`k`, `groupes`, `init` : aleatoire),
+  `seuil` / `roc` (`separation`, `prevalence`, `seuil`), `activation` (`fonction` :
+  sigmoide|tanh|relu|leaky|gelu|lineaire, `x`), `convolution` (`image` : carre|bord|croix|diagonale|damier,
+  `noyau` : identite|flou|sobelx|sobely|nettete|laplacien, `padding`, `stride`, `relu: oui`),
+  `ownership` (`exemple` : move|clone|copy|emprunt|realloc|fonction), `jointure` (`type` :
+  inner|left|right|full|cross|anti|semi). Les lignes qui ne sont pas des options deviennent un texte d'accompagnement.
+  Dans une **page codée** : `<figure class="viz" data-viz="nom" data-opts='{"clé":"valeur"}'>` + charger
+  `assets/viz.js` puis appeler `Viz.mount(document)`.
   ```markdown
   ::: viz gradient Descente de gradient sur une fonction non convexe
   fonction: nonconvexe

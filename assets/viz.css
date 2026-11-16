@@ -57,6 +57,31 @@
 .viz-prop small { color: var(--muted); }
 .viz-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+/* Matrice de confusion (seuil), code pas à pas (ownership), tables (jointure) */
+.viz-cm { border-collapse: collapse; margin: 0 0 10px; font-variant-numeric: tabular-nums; font-size: 13.5px; }
+.viz-cm th, .viz-cm td { border: 1px solid var(--border); padding: 5px 10px; text-align: center; }
+.viz-cm th { color: var(--text-soft); font-weight: 600; }
+.viz-cm td { color: var(--text); font-weight: 700; }
+.viz-cm .tp { background: color-mix(in srgb, #22c39a 22%, transparent); }
+.viz-cm .tn { background: color-mix(in srgb, #727c9e 18%, transparent); }
+.viz-cm .fp { background: color-mix(in srgb, #ff6b81 22%, transparent); }
+.viz-cm .fn { background: color-mix(in srgb, #ffb454 24%, transparent); }
+.viz-code { margin: 0 0 10px; padding: 10px 12px; border-radius: 10px; background: var(--bg-elev); border: 1px solid var(--border);
+  font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--text-soft); overflow-x: auto; white-space: pre; }
+.viz-code span { display: inline-block; min-width: 100%; padding: 0 6px; border-radius: 5px; }
+.viz-code span.cur { background: color-mix(in srgb, var(--primary) 26%, transparent); color: var(--text); font-weight: 600; }
+.viz-code span.err { background: color-mix(in srgb, #ff6b81 28%, transparent); }
+.viz-join-src { display: flex; flex-wrap: wrap; gap: 14px 22px; }
+.viz-join-res { margin-top: 12px; }
+.viz-lbl { font-weight: 700; font-size: 13px; color: var(--text); margin: 4px 0; }
+.viz-tbl { border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.viz-tbl th, .viz-tbl td { border: 1px solid var(--border); padding: 4px 10px; text-align: left; }
+.viz-tbl th { color: var(--text-soft); background: var(--bg-elev); }
+.viz-tbl td { color: var(--text); }
+.viz-tbl td.null { color: var(--muted); font-style: italic; }
+.viz-tbl tr.in td { background: color-mix(in srgb, #22c39a 16%, transparent); }
+.viz-tbl tr.out td { opacity: 0.45; }
+
 @media (max-width: 640px) {
   .viz { padding: 12px 10px 10px; margin: 18px -4px; }
   .viz-rel-top { grid-template-columns: 1fr; }

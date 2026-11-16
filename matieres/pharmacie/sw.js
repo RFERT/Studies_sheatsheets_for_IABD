@@ -4,7 +4,7 @@
    Stratégie : réseau d'abord, repli sur le cache (contenu toujours à jour
    en ligne, utilisable hors-ligne). Ne fonctionne qu'en https:// ou localhost.
    ========================================================= */
-const CACHE = "pharma-v2";
+const CACHE = "pharma-v3";
 const MODULES = ["chimie", "anatomie", "physiologie", "galenique", "legislation", "pharmacologie", "pathologie", "toxicologie", "diagnostic"];
 const CORE = [
   "./",
@@ -33,6 +33,7 @@ const CORE = [
   "./assets/share.js",
   "./assets/app.js",
   "./assets/examen.js",
+  "./assets/pk.js",
   "./assets/icon.svg",
   "./assets/icon-192.png",
   "./assets/icon-512.png",

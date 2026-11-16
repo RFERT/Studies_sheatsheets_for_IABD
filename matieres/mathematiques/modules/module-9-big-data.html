@@ -116,6 +116,11 @@
         </div>
         <div class="feedback" data-explain="Un élément inséré a tous ses bits à 1 : le test le retrouvera toujours. Donc jamais de faux négatif. Seuls les faux positifs existent."></div>
       </div>
+
+      <figure class="viz" data-labo="bloom-bloom" data-viz="bloom" data-opts='{"m": "32", "k": "3"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « bloom » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Filtre de Bloom en action</strong><p>Ajoute 5 mots puis teste des mots jamais ajoutés : tant que le tableau est peu rempli, la réponse est « certainement absent ». Ajoute encore 10 mots : les <b>faux positifs</b> apparaissent. Augmente m pour les faire reculer.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 3 -->
@@ -366,5 +371,7 @@
   <div class="footer">Module 9 — Maths du Big Data · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

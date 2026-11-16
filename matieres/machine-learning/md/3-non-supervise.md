@@ -47,6 +47,12 @@ La standardisation est importante lorsque les variables ont des échelles très 
 K-means privilégie des groupes compacts selon la distance euclidienne. Il est sensible à l'initialisation et aux valeurs extrêmes, et ne convient pas à toutes les formes de groupes. Le nombre \(K\) doit être choisi et justifié.
 :::
 
+::: viz kmeans K-means pas à pas
+k: 3
+groupes: 3
+Alterne **Étape** (affectation, puis mise à jour) jusqu'à la convergence. Puis fixe k = 2 ou k = 5 alors qu'il y a 3 vrais groupes : l'algorithme converge quand même, mais vers un découpage absurde — K-means ne « découvre » pas k, c'est toi qui le choisis. Compare enfin l'initialisation aléatoire et k-means++ sur plusieurs essais.
+:::
+
 ## 3. Évaluer et interpréter des groupes
 
 Sans étiquettes de référence, il n'existe pas de score unique qui prouve qu'un clustering est « vrai ». On peut combiner :

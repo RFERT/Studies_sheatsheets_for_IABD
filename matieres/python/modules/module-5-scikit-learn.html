@@ -120,6 +120,11 @@ X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
         </div>
         <div class="feedback" data-explain="Le rappel mesure la proportion de vrais malades effectivement détectés. Le maximiser = minimiser les faux négatifs (malades manqués), ce qui est l'objectif ici."></div>
       </div>
+
+      <figure class="viz" data-labo="metriques-seuil" data-viz="seuil" data-opts='{"separation": "1.6", "prevalence": "0.1", "seuil": "0"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « seuil » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Précision, rappel et seuil de décision</strong><p>Un classifieur produit un score, le seuil le transforme en classe. Déplace le seuil : la matrice de confusion, la précision, le rappel et le point ROC bougent. C'est ce que fait <code>predict_proba</code> + un seuil choisi à la main.</p></figcaption>
+      </figure>
     </section>
 
     <section class="block" id="pipeline">
@@ -187,6 +192,11 @@ search.best_params_; search.best_score_</code></pre>
         </div>
         <div class="feedback" data-explain="Grand écart train/test = le modèle a mémorisé le train sans généraliser : overfitting. Remèdes : régularisation, modèle plus simple, plus de données, moins de features."></div>
       </div>
+
+      <figure class="viz" data-labo="diagnostic-regression" data-viz="regression" data-opts='{"degre": "9"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « regression » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Sous- et surapprentissage</strong><p>Degré 1 : modèle trop simple (biais). Degré 9 : la courbe passe par tous les points mais part en vrille entre eux (variance). Le bon degré est celui qui minimise l'erreur de <b>validation</b>, pas celle d'entraînement.</p></figcaption>
+      </figure>
     </section>
 
     <section class="culture" id="culture">
@@ -244,5 +254,7 @@ pipe = <span class="ty">Pipeline</span>([(<span class="st">"prep"</span>, pre), 
   <div class="footer">Module 5 — scikit-learn · Cours Python &amp; Data Science 🐍💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>

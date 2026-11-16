@@ -59,6 +59,12 @@ La **ROC-AUC** résume la capacité à classer un positif au-dessus d'un négati
 Un score de 0,8 ne signifie « environ 80 % de chances » que si les probabilités sont raisonnablement calibrées dans le contexte concerné. Un bon classement des exemples n'assure pas une bonne calibration.
 :::
 
+::: viz seuil Seuil de décision, matrice de confusion et ROC
+separation: 1.6
+prevalence: 0.1
+Le modèle produit un **score** ; le seuil le convertit en classe. Déplace le seuil : précision et rappel s'échangent, la matrice de confusion se recompose, le point rouge glisse sur la courbe ROC. Réduis la séparation à 0 : AUC = 0,5, le modèle ne vaut pas mieux qu'une pièce.
+:::
+
 ## 4. Métriques de régression
 
 | Métrique | Interprétation                                                   | Point d'attention                           |

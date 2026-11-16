@@ -114,6 +114,11 @@
         </div>
         <div class="feedback" data-explain="Peu d'incertitude → faible entropie → forte compressibilité. Les données répétitives/prévisibles se compressent bien."></div>
       </div>
+
+      <figure class="viz" data-labo="entropie-entropie" data-viz="entropie" data-opts='{"k": "4"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « entropie » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Entropie : mesurer l'incertitude</strong><p>Rends la distribution uniforme : H atteint son maximum log₂ k. Concentre toute la masse sur une classe : H → 0. Au-dessus de chaque barre, la surprise −log₂ p d'une issue.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 3 -->
@@ -209,6 +214,11 @@
         </div>
         <div class="feedback" data-explain="On privilégie l'attribut qui rend les groupes les plus « purs » (faible entropie après split), donc le plus grand gain d'information."></div>
       </div>
+
+      <figure class="viz" data-labo="tree-entropie" data-viz="entropie" data-opts='{"k": "2", "poids": "90 10"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « entropie » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Impureté d'un nœud d'arbre</strong><p>Un nœud 90 % / 10 % est presque pur (H ≈ 0,47 bit, Gini = 0,18). Un nœud 50 / 50 est le plus impur (H = 1 bit). Le gain d'information compare ces impuretés avant et après une coupure.</p></figcaption>
+      </figure>
     </section>
 
     <!-- DATA & MÉTIERS -->
@@ -311,5 +321,7 @@
   <div class="footer">Module 8 — Théorie de l'information · Cours interactif de maths pour la Data 💙</div>
   <script src="../assets/app.js"></script>
 <script src="../../../assets/nav.js"></script>
+<script src="../../../assets/viz.js"></script>
+<script>if (window.Viz) Viz.mount(document);</script>
 </body>
 </html>
