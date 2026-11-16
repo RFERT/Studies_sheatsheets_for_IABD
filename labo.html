@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1117" />
+  <title>Labo — Visualisations interactives</title>
+  <link rel="stylesheet" href="assets/portal.css" />
+  <link rel="stylesheet" href="assets/viz.css" data-viz-css="1" />
+  <style>
+    .lab-wrap { max-width: 980px; margin: 0 auto; padding: 6px 28px 60px; }
+    .lab-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+    .lab-toc a { border: 1px solid var(--border); background: var(--bg-card); color: var(--text); text-decoration: none;
+      border-radius: 999px; padding: 7px 14px; font-size: 14px; }
+    .lab-toc a:hover, .lab-toc a:focus-visible { border-color: var(--primary); }
+    .lab-item { scroll-margin-top: 80px; margin-top: 34px; }
+    .lab-item h2 { margin: 0 0 6px; font-size: 1.35rem; }
+    .lab-item > p { margin: 0 0 4px; color: var(--text-soft); line-height: 1.55; }
+    .lab-item .lab-course { font-size: 14px; }
+    .lab-howto { margin-top: 40px; }
+    .lab-howto pre { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; overflow-x: auto; }
+    @media (max-width: 560px) { .lab-wrap { padding: 4px 14px 48px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">🧪</span> <span>Labo<small>visualisations interactives</small></span></div>
+    <div class="spacer"></div>
+    <button class="btn" id="theme-toggle" type="button">☀️ Clair</button>
+  </header>
+
+  <div class="hero" style="padding-bottom:4px">
+    <span class="eyebrow">Comprendre en manipulant</span>
+    <h1>Labo de visualisations 🧪</h1>
+    <p>Des notions clés de maths et d'IA à <strong>manipuler</strong> : bouge les curseurs, clique dans les graphes, casse tout — c'est fait pour ça. Chaque visualisation renvoie vers le cours correspondant.</p>
+  </div>
+
+  <main class="lab-wrap" id="lab">
+    <nav class="lab-toc" id="lab-toc" aria-label="Visualisations disponibles"></nav>
+    <div id="lab-list"><p class="viz-fallback">Chargement…</p></div>
+
+    <section class="lab-howto callout">
+      <span class="label">✍️ Utiliser une visualisation dans un cours Markdown</span>
+      <p>Dans n'importe quel module ou antisèche (<code>matieres/**/md/*.md</code>), ajoute un bloc&nbsp;:</p>
+<pre><code>::: viz gradient Descente de gradient sur une fonction non convexe
+fonction: nonconvexe
+lr: 0.02
+:::</code></pre>
+      <p>Widgets : <code>relation</code> (options <code>n</code>, <code>preset</code>), <code>matrice</code> (<code>preset</code>), <code>gradient</code> (<code>fonction</code>, <code>lr</code>, <code>x0</code>, <code>momentum</code>), <code>regression</code> (<code>degre</code>), <code>normale</code> (<code>mu</code>, <code>sigma</code>, <code>a</code>, <code>b</code>).</p>
+    </section>
+  </main>
+
+  <div class="footer">Labo · visualisations interactives sans dépendance · apprendre en jouant 💙</div>
+
+  <script src="assets/nav.js"></script>
+  <script src="assets/viz.js"></script>
+  <script>
+  (function () {
+    var TK = "esgi-portal-theme";
+    function theme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      try { localStorage.setItem(TK, t); } catch (e) {}
+      var b = document.getElementById("theme-toggle"); if (b) b.textContent = t === "light" ? "🌙 Sombre" : "☀️ Clair";
+    }
+    var saved = localStorage.getItem(TK) ||
+      ((window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark");
+    theme(saved);
+    document.getElementById("theme-toggle").addEventListener("click", function () {
+      theme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
+    });
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">🧪</text></svg>';
+    var l = document.createElement("link"); l.rel = "icon"; l.href = "data:image/svg+xml," + encodeURIComponent(svg); document.head.appendChild(l);
+
+    function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    var cat = (window.Viz && window.Viz.catalog) || [];
+    document.getElementById("lab-toc").innerHTML = cat.map(function (c) {
+      return '<a href="#lab-' + c.id + '">' + c.emoji + " " + esc(c.title) + "</a>";
+    }).join("");
+    var list = document.getElementById("lab-list");
+    list.innerHTML = cat.map(function (c) {
+      return '<section class="lab-item" id="lab-' + c.id + '" aria-labelledby="lab-h-' + c.id + '">' +
+        '<h2 id="lab-h-' + c.id + '">' + c.emoji + " " + esc(c.title) + "</h2>" +
+        "<p>" + esc(c.desc) + "</p>" +
+        (c.course ? '<p class="lab-course">📘 Cours associé : <a href="' + esc(c.course.href) + '">' + esc(c.course.label) + "</a></p>" : "") +
+        '<figure class="viz" data-viz="' + c.id + '" data-opts="{}"><div class="viz-fallback">Chargement…</div></figure>' +
+        "</section>";
+    }).join("");
+    if (window.Viz) window.Viz.mount(list);
+  })();
+  </script>
+</body>
+</html>

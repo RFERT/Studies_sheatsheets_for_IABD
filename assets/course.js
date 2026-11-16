@@ -90,7 +90,7 @@
     var total = (subject.modules || []).length;
     host.className = "course-wrap index";
     var aideBtn = subject.aide
-      ? '<a class="btn" style="border-color:var(--sc);color:var(--sc)" href="aide.html?c=' +
+      ? '<a class="btn" style="border-color:var(--sc);color:color-mix(in srgb, var(--sc) var(--sc-mix), var(--text))" href="aide.html?c=' +
         encodeURIComponent(subject.code) + '">⚡ Antisèche (fiche de révision)</a>'
       : "";
     var shareBtn = '<button class="btn" id="share-btn" type="button" title="Partager (lien + QR)">🔗 Partager</button>';
@@ -202,6 +202,7 @@
       wireNotes(subject, module, host);
       wireTTS(host);
       wireShare(host, title);
+      wireViz(host);
       typeset(host);
       recordLast(subject, module, title);
     }).catch(function (err) {
@@ -418,6 +419,16 @@
         title: subject.emoji + " " + title
       }));
     } catch (e) {}
+  }
+
+  /* ---------- Visualisations interactives (::: viz), chargées à la demande ---------- */
+  function wireViz(host) {
+    if (!host.querySelector(".viz[data-viz]")) return;
+    if (window.Viz) { window.Viz.mount(host); return; }
+    var s = document.createElement("script");
+    s.src = "assets/viz.js";
+    s.onload = function () { if (window.Viz) window.Viz.mount(host); };
+    document.head.appendChild(s);
   }
 
   /* ---------- MathJax (chargé à la demande) ---------- */

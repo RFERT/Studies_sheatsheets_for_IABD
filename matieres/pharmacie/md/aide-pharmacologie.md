@@ -44,7 +44,7 @@ Ce que **le médicament fait à l'organisme**. Cibles : **récepteur, enzyme, ca
 
 | Type | Action | Exemple |
 |---|---|---|
-| **Agoniste** | se fixe **et active** le récepteur (mime l'effet naturel) | |
+| **Agoniste** | se fixe **et active** le récepteur (mime l'effet naturel) | **morphine** (récepteurs opioïdes), **salbutamol** (récepteurs β2) |
 | **Antagoniste** | se fixe **et bloque** le récepteur | **bêtabloquant** |
 | **Inhibiteur enzymatique** | bloque une enzyme | **IEC**, **statines** |
 

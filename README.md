@@ -15,6 +15,8 @@ ameliorations.html       Feuille de route & idées d'évolution
 competences.html         Catalogue « Compétences info » : menu filtrable de cours hors cursus
                          (données : matieres/competences.js)
 flashcards.html          Flashcards à répétition espacée (toutes matières)
+quiz.html                Quiz adaptatif : banque auto (tous les quiz + questions générées)
+labo.html                Labo de visualisations interactives (relations, matrices, gradient…)
 cours.html               Moteur de cours générique (rend les cours Markdown)
 manifest.webmanifest     Manifeste PWA (installable)
 sw.js                    Service worker (consultation hors-ligne)
@@ -24,6 +26,8 @@ assets/
   nav.js                 Navbar commune + Pomodoro + accent + accessibilité (toutes pages)
   course.css / course.js Rendu des cours écrits en Markdown
   markdown.js            Mini-parseur Markdown maison (sans dépendance)
+  quiz.js                Moteur du quiz adaptatif (extraction, génération, pondération)
+  viz.js / viz.css       Visualisations interactives canvas (blocs « ::: viz » + labo.html)
   search-index.js        Index de recherche (généré — ne pas éditer à la main)
   build-search-index.py  Générateur de l'index (Python 3, sans dépendance)
 matieres/

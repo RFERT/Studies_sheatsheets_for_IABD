@@ -153,6 +153,10 @@ add("portal", "page", "À configurer — réglages & déploiements", "parametrag
     "configurer paramétrage réglages déploiement backend github pages api cloudflare worker google apps script clé secret setup à faire côté utilisateur")
 add("portal", "page", "Flashcards — répétition espacée", "flashcards.html",
     "flashcards répétition espacée spaced repetition révision mémorisation SM-2 cartes quiz")
+add("portal", "page", "Quiz adaptatif — toutes les questions des cours", "quiz.html",
+    "quiz adaptatif entraînement QCM points faibles erreurs questions générées automatiquement banque révision partiel")
+add("portal", "page", "Labo — visualisations interactives", "labo.html",
+    "labo visualisation interactive relations binaires matrice transformation valeurs propres descente de gradient régression surapprentissage loi normale gaussienne")
 
 # ---- Catalogue « Compétences info » (matieres/competences.js, un cours par ligne) ----
 add("skills", "page", "Compétences info — catalogue de cours hors cursus", "competences.html",

@@ -2043,6 +2043,24 @@
 "k": "flashcards répétition espacée spaced repetition révision mémorisation SM-2 cartes quiz"
 },
 {
+"s": "Portail",
+"emoji": "🎓",
+"color": "#27e0b0",
+"type": "page",
+"t": "Quiz adaptatif — toutes les questions des cours",
+"u": "quiz.html",
+"k": "quiz adaptatif entraînement QCM points faibles erreurs questions générées automatiquement banque révision partiel"
+},
+{
+"s": "Portail",
+"emoji": "🎓",
+"color": "#27e0b0",
+"type": "page",
+"t": "Labo — visualisations interactives",
+"u": "labo.html",
+"k": "labo visualisation interactive relations binaires matrice transformation valeurs propres descente de gradient régression surapprentissage loi normale gaussienne"
+},
+{
 "s": "Compétences info",
 "emoji": "💼",
 "color": "#ff6b81",

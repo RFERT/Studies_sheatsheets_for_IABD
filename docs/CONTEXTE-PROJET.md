@@ -68,7 +68,7 @@ Périmètre : `index.html`, `assets/*`, `sw.js`, `manifest.webmanifest`, `flashc
 
 Backlog (voir aussi `ameliorations.html`) :
 - **Éditeur de code exécutable** (Pyodide pour Python, Rust Playground pour Rust) — priorité haute.
-- **Visualisations interactives** (graphes, matrices, descente de gradient animée).
+- **Visualisations interactives** ✅ *en place* (`labo.html`, `assets/viz.js`, blocs `::: viz`). Suite : graphes BFS/Dijkstra, k-means, réseau de neurones.
 - **MathJax/KaTeX en local** (supprimer la dépendance CDN pour un vrai hors-ligne).
 - **Design system partagé** : factoriser `style.css`/`app.js` dupliqués entre maths et python (quiz, thème, streak…).
   ✅ *Première brique faite* : moteur de cours Markdown générique (`course.css`/`course.js`) réutilisable.

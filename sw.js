@@ -3,7 +3,7 @@
    Stratégie : cache-first avec mise en cache à la volée.
    Ne fonctionne qu'en https:// ou localhost (pas en file://).
    ========================================================= */
-const CACHE = "esgi-cours-v25";
+const CACHE = "esgi-cours-v26";
 const CORE = [
   "./",
   "./index.html",
@@ -11,6 +11,8 @@ const CORE = [
   "./competences.html",
   "./parametrage.html",
   "./flashcards.html",
+  "./quiz.html",
+  "./labo.html",
   "./cours.html",
   "./aide.html",
   "./manifest.webmanifest",
@@ -22,6 +24,9 @@ const CORE = [
   "./assets/cheatsheet.js",
   "./assets/markdown.js",
   "./assets/share.js",
+  "./assets/quiz.js",
+  "./assets/viz.js",
+  "./assets/viz.css",
   "./assets/nav.js",
   "./assets/ideas-config.js",
   "./assets/search-index.js",

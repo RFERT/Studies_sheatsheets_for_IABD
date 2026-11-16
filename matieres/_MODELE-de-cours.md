@@ -24,6 +24,13 @@ On écrit du texte normal avec **gras**, *italique*, `code en ligne`, ~~barré~~
 Deux aides à la révision : une **carte à trous** ==se révèle au clic== (écris `==texte==`),
 et un terme de **glossaire** affiche sa définition au survol : [[overfitting|le modèle colle trop au jeu d'entraînement et généralise mal]] (écris `[[terme|définition]]`).
 
+Une **visualisation interactive** s'insère avec un bloc `::: viz` (widgets : relation, matrice,
+gradient, regression, normale — voir `labo.html`) :
+
+::: viz regression Monte le degré pour voir apparaître le surapprentissage
+degre: 1
+:::
+
 - Liste à puces
 - Deuxième élément
   - Sous-élément (indenter de 2 espaces)

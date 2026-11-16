@@ -23,10 +23,10 @@
   background: var(--bg-elev); color: var(--text);
   border: 1px solid var(--border); cursor: pointer; text-decoration: none;
 }
-.cheat-actions .btn:hover { border-color: var(--sc, var(--primary)); color: var(--sc, var(--primary)); }
+.cheat-actions .btn:hover { border-color: var(--sc, var(--primary)); color: color-mix(in srgb, var(--sc, var(--primary)) var(--sc-mix), var(--text)); }
 .cheat-actions .btn.primary {
   background: color-mix(in srgb, var(--sc, var(--primary)) 16%, transparent);
-  border-color: var(--sc, var(--primary)); color: var(--sc, var(--primary));
+  border-color: var(--sc, var(--primary)); color: color-mix(in srgb, var(--sc, var(--primary)) var(--sc-mix), var(--text));
 }
 .cheat-actions .btn.ok { border-color: #22c38a; color: #22c38a; }
 
@@ -51,7 +51,7 @@
   margin: 12px 0 8px;
   padding: 0;
   border: 0;
-  color: var(--sc, var(--primary));
+  color: color-mix(in srgb, var(--sc, var(--primary)) var(--sc-mix), var(--text));
 }
 /* densification du contenu dans les cartes */
 .cheat-card .content, .cheat-card.lead .content { font-size: 14.5px; line-height: 1.6; }
@@ -67,7 +67,7 @@
 .cheat-card.lead { column-span: all; border-top-color: transparent; background: transparent; border: 0; padding: 0; margin-bottom: 6px; }
 
 .cheat-foot { margin-top: 20px; color: var(--muted); font-size: 13px; text-align: center; }
-.cheat-foot a { color: var(--sc, var(--primary)); text-decoration: none; }
+.cheat-foot a { color: color-mix(in srgb, var(--sc, var(--primary)) var(--sc-mix), var(--text)); text-decoration: none; }
 
 @media (max-width: 560px) {
   .cheat-grid { columns: 1; }

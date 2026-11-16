@@ -76,6 +76,13 @@ Le livrable principal est donc le **SITE ENRICHI** (fichiers `.md` + manifeste),
    - `::: culture Titre` → encart « Culture & histoire » (histoire, grands noms, liens externes).
    - Maths LaTeX : `\( inline \)` et `\[ bloc \]` (MathJax).
    - **Carte à trous** : `==texte masqué==` (se révèle au clic). **Glossaire** : `[[terme|définition]]` (bulle au survol).
+   - **Visualisation interactive** : `::: viz <widget> <légende>` + options `clé: valeur` + `:::`
+     (widgets `relation`, `matrice`, `gradient`, `regression`, `normale` — détail dans
+     `.github/instructions/creer-un-cours.instructions.md`, galerie `labo.html`). Utilise-les quand une notion
+     se comprend mieux en manipulant (relations binaires, valeurs propres, taux d'apprentissage, surapprentissage, loi normale).
+   - **Quiz adaptatif** (`quiz.html`) : il récupère tous tes `::: quiz` et génère des questions depuis le glossaire,
+     les `::: def Terme`, les listes `- **Terme** : définition`, les tableaux à 2 colonnes et les `==trous==`.
+     Écris ces structures proprement : c'est de la matière d'entraînement gratuite.
    - Code : blocs ` ```python ... ``` ` (langage adapte).
 4. **Manifeste** : ajoute/complete l'entree dans `matieres/cours.js` (`window.COURS.subjects`) :
    `code` unique, `name`, `emoji`, `color`, `desc`, `tags`, et la liste ordonnee des `modules`

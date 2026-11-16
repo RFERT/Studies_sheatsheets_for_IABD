@@ -290,6 +290,7 @@
     if (type === "exo" || type === "exercice") return renderExo(title, buf);
     if (type === "culture") return renderCulture(title, buf);
     if (type === "jobs" || type === "metiers") return renderJobs(title, buf);
+    if (type === "viz") return renderViz(title, buf);
     var c = CALLOUTS[type];
     if (c) {
       var lab = title || c.label;
@@ -304,6 +305,25 @@
   function renderJobs(title, buf) {
     return '<div class="jobs"><div class="jhead">💼 ' + (esc(title) || "Usages & métiers") + "</div>" +
       renderBlocks(buf.join("\n"), null) + "</div>";
+  }
+
+  // ::: viz <widget> <légende>  — corps : options « clé: valeur », le reste = texte d'accompagnement.
+  // Le widget est monté ensuite par assets/viz.js (chargé à la demande).
+  function renderViz(title, buf) {
+    var parts = title.split(/\s+/);
+    var name = (parts.shift() || "").toLowerCase();
+    var caption = parts.join(" ");
+    var opts = {}, text = [];
+    buf.forEach(function (l) {
+      var m = /^\s*([A-Za-z][\w-]*)\s*:\s*(.+?)\s*$/.exec(l);
+      if (m) opts[m[1]] = m[2]; else text.push(l);
+    });
+    var desc = text.join("\n").trim();
+    return '<figure class="viz" data-viz="' + escAttr(name) + '" data-opts="' + escAttr(JSON.stringify(opts)) + '">' +
+      '<div class="viz-fallback">🧪 Visualisation interactive « ' + esc(name) + " » (chargement…)</div>" +
+      (caption || desc ? "<figcaption>" + (caption ? "<strong>" + inline(caption) + "</strong>" : "") +
+        (desc ? renderBlocks(desc, null) : "") + "</figcaption>" : "") +
+      "</figure>";
   }
 
   function renderQuiz(title, buf) {
@@ -321,7 +341,10 @@
       if (!started && l.trim()) q.push(l);
     });
     var optsHtml = opts.map(function (o) {
-      return '<button type="button" class="opt">' + inline(o) + "</button>";
+      // option 100 % formule : MathJax ne fournit pas toujours de nom accessible au bouton
+      var pureMath = /^\s*\\\((?:(?!\\\)).)*\\\)\s*$/.test(o);
+      var aria = pureMath ? ' aria-label="' + escAttr(o.replace(/\\\(|\\\)/g, "").trim()) + '"' : "";
+      return '<button type="button" class="opt"' + aria + ">" + inline(o) + "</button>";
     }).join("");
     return '<div class="quiz" data-answer="' + answer + '">' +
       '<div class="qhead"><span class="ico">❓</span><strong>' + (esc(title) || "Quiz") + "</strong></div>" +

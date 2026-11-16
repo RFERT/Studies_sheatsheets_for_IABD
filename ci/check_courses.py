@@ -10,6 +10,7 @@ vérifie que le cours est « rendable » par le moteur (assets/markdown.js) :
   3. Fences de code ``` en nombre pair (pas de bloc de code non fermé).
   4. Chaque bloc « ::: quiz » a au moins une bonne réponse « - [x] » et ≥ 2 options.
   5. Chaque bloc « ::: exo » contient le séparateur « ?? » (énoncé / solution).
+  6. Chaque bloc « ::: viz <nom> » désigne une visualisation existante (assets/viz.js).
 
 Sort en code 1 si au moins une erreur est trouvée.
 Usage :  python ci/check_courses.py
@@ -21,6 +22,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 errors = []
 checked = 0
+# Widgets acceptés par « ::: viz <nom> » (doit rester aligné sur WIDGETS dans assets/viz.js)
+VIZ_WIDGETS = {"gradient", "matrice", "matrix", "relation", "regression", "normale", "gauss"}
 
 
 def md_paths_from_manifest():
@@ -76,6 +79,11 @@ def check_blocks(rel, text, errs):
                 quiz_buf = []
             elif kind == "exo":
                 exo_buf = []
+            elif kind == "viz":
+                widget = (open_m.group(2).split() or [""])[0].lower()
+                if widget not in VIZ_WIDGETS:
+                    errs.append(f"{rel} : « ::: viz {widget} » — visualisation inconnue "
+                                f"(disponibles : {', '.join(sorted(VIZ_WIDGETS))})")
             continue
         if close_m:
             depth -= 1

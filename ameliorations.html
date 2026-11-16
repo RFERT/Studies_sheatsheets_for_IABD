@@ -18,6 +18,7 @@
     .p1 { background: color-mix(in srgb, #ff6b81 22%, transparent); color:#ff9aa8; border:1px solid #ff6b81 }
     .p2 { background: color-mix(in srgb, #ffb454 22%, transparent); color:#ffcf8f; border:1px solid #ffb454 }
     .p3 { background: color-mix(in srgb, #27e0b0 22%, transparent); color:#6fe9cd; border:1px solid #27e0b0 }
+    [data-theme="light"] .p1 { color:#9e2733 } [data-theme="light"] .p2 { color:#7f4a00 } [data-theme="light"] .p3 { color:#05664f }
     .tagrow { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px }
     .t { font-size:12px; padding:3px 10px; border-radius:999px; background:var(--bg-elev); border:1px solid var(--border); color:var(--text-soft) }
     .idea-form { display:flex; flex-direction:column; gap:10px }
@@ -29,7 +30,7 @@
     .idea-form input:focus, .idea-form select:focus, .idea-form textarea:focus {
       outline:none; border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent) }
     .idea-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap }
-    .btn.primary { background:var(--accent); color:#0f1117; border-color:var(--accent); font-weight:700 }
+    .btn.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); font-weight:700 }
     .btn.primary:hover { filter:brightness(1.08) }
     .idea-msg { font-size:13px; color:var(--accent); font-weight:600 }
     .idea-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:22px 0 10px; flex-wrap:wrap }
@@ -52,10 +53,10 @@
     .feat-filters { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin:0 0 20px }
     .ff-seg { display:inline-flex; background:var(--bg-elev); border:1px solid var(--border); border-radius:10px; padding:3px; gap:2px }
     .ff-s { border:none; background:none; color:var(--text-soft); font:inherit; font-size:13.5px; padding:6px 12px; border-radius:8px; cursor:pointer }
-    .ff-s.on { background:var(--accent); color:#0f1117; font-weight:700 }
+    .ff-s.on { background:var(--accent); color:var(--on-accent); font-weight:700 }
     .ff-prios { display:inline-flex; gap:6px; transition:opacity .15s ease }
     .ff-prios.off { opacity:.35; pointer-events:none }
-    .ff-p { border:1px solid var(--border); background:var(--bg-elev); border-radius:999px; padding:3px 7px; cursor:pointer; opacity:.45; filter:grayscale(.55) }
+    .ff-p { border:1px solid var(--border); background:var(--bg-elev); border-radius:999px; padding:3px 7px; cursor:pointer; opacity:.62; filter:grayscale(.55) }
     .ff-p.on { opacity:1; filter:none }
     .ff-p .prio { margin:0 }
     .ff-count { color:var(--muted); font-size:13px; margin-left:auto }
@@ -123,7 +124,7 @@
     <p class="sub" style="color:var(--muted)">Par défaut, seules les fonctionnalités <b>non encore implémentées</b> s'affichent. Utilise les filtres pour voir aussi celles <b>déjà en place</b>, ou cibler par priorité.</p>
 
     <div class="feat-filters" role="group" aria-label="Filtres des fonctionnalités">
-      <div class="ff-seg" id="ff-status" role="tablist" aria-label="Statut">
+      <div class="ff-seg" id="ff-status" role="group" aria-label="Statut">
         <button type="button" class="ff-s on" data-status="todo" aria-pressed="true">💡 À faire</button>
         <button type="button" class="ff-s" data-status="done" aria-pressed="false">✅ Faites</button>
         <button type="button" class="ff-s" data-status="all" aria-pressed="false">Toutes</button>
@@ -454,9 +455,11 @@
         { g:1, done:true,  t:"<b>Catalogue « Compétences info »</b> : menu filtrable de cours hors cursus (hardware, DevOps, sécurité…) qui s'activent tout seuls" },
         { g:1, p:"haute",   t:"<b>Éditeur de code exécutable</b> (Rust Playground, Pyodide pour Python)" },
         { g:1, p:"haute",   t:"<b>Assistant IA intégré</b> : poser une question sur un cours et obtenir une explication (via API)" },
-        { g:1, p:"moyenne", t:"<b>Quiz adaptatifs</b> : banque dynamique qui insiste sur tes points faibles" },
-        { g:1, p:"moyenne", t:"<b>Génération auto de quiz</b> depuis le Markdown du cours" },
-        { g:1, p:"moyenne", t:"<b>Visualisations interactives</b> (graphes, matrices, descente de gradient animée)" },
+        { g:1, done:true, t:"<b>Quiz adaptatifs</b> : banque dynamique qui insiste sur tes points faibles" },
+        { g:1, done:true, t:"<b>Génération auto de quiz</b> depuis le Markdown du cours" },
+        { g:1, done:true, t:"<b>Visualisations interactives</b> (graphes, matrices, descente de gradient animée)" },
+        { g:1, p:"moyenne", t:"<b>Nouveaux widgets du Labo</b> : parcours de graphes BFS/Dijkstra pas à pas, k‑means animé, petit réseau de neurones, arbre de décision" },
+        { g:1, p:"bonus",   t:"<b>Quiz adaptatif en mode examen</b> : série chronométrée tirée de la banque, note /20 et historique des scores" },
         { g:1, done:true, t:"<b>Lecture audio des fiches</b> (text‑to‑speech, révision mains libres)" },
         { g:1, done:true, t:"<b>Occlusion / cartes à trous</b> : masquer puis révéler les réponses" },
         { g:1, done:true, t:"<b>Glossaire interactif</b> : définition au survol des termes clés" },
@@ -470,7 +473,9 @@
         { g:3, done:true,  t:"<b>Thème clair / sombre + auto</b> (système)" },
         { g:3, done:true,  t:"<b>Couleur d'accent</b> personnalisable" },
         { g:3, done:true,  t:"<b>Accessibilité de base</b> (skip‑link, focus visible)" },
-        { g:3, p:"moyenne", t:"<b>Accessibilité AA complète</b> (contrastes, navigation clavier exhaustive, lecteurs d'écran)" },
+        { g:3, done:true, t:"<b>Accessibilité AA complète</b> (contrastes, navigation clavier exhaustive, lecteurs d'écran) — portail, cours Markdown, antisèches et outils : 0 violation axe‑core" },
+        { g:3, p:"moyenne", t:"<b>Accessibilité AA des pages codées sur‑mesure</b> (maths, Python, SQL, Rust, Pharmacie) : même audit axe‑core et mêmes corrections" },
+        { g:4, p:"bonus",   t:"<b>Audit d'accessibilité automatisé en CI</b> (axe‑core + navigateur sans tête à chaque push)" },
         // 🏗️ Technique & qualité
         { g:4, done:true,  t:"<b>PWA</b> (hors‑ligne, installable)" },
         { g:4, done:true,  t:"<b>Responsive</b> (jusqu'au S26 Ultra)" },

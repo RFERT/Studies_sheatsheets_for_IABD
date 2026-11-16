@@ -1,0 +1,69 @@
+/* viz.css — Visualisations interactives (chargé automatiquement par viz.js) */
+.viz {
+  margin: 22px 0; padding: 14px 16px 12px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: var(--shadow);
+  break-inside: avoid; column-span: all;
+}
+.viz figcaption { margin-top: 10px; color: var(--text-soft); font-size: 0.92em; }
+.viz figcaption p { margin: 6px 0 0; }
+.viz-fallback { color: var(--muted); font-style: italic; padding: 18px 4px; }
+.viz-stage { width: 100%; }
+.viz-canvas { display: block; width: 100%; height: 300px; border-radius: 10px; background: var(--bg-soft); touch-action: manipulation; cursor: crosshair; }
+.viz-ctls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: flex-end; margin-top: 12px; }
+.viz-ctl { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--text-soft); min-width: 140px; }
+.viz-ctl .viz-lbl { font-weight: 600; color: var(--text); }
+.viz-ctl input[type="range"] { width: 160px; accent-color: var(--primary); }
+.viz-ctl input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); }
+.viz-ctl select, .viz-ctl input[type="number"] {
+  font: inherit; font-size: 14px; color: var(--text); background: var(--bg-elev);
+  border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px;
+}
+.viz-val { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; }
+.viz-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.viz-btn {
+  font: inherit; font-size: 13.5px; cursor: pointer; color: var(--text); background: var(--bg-elev);
+  border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; min-height: 38px;
+}
+.viz-btn:hover { border-color: var(--primary); }
+.viz-btn:focus-visible, .viz-ctl :focus-visible, .viz-rel-mat button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.viz-out { margin-top: 12px; font-size: 14px; color: var(--text-soft); }
+.viz-kv { display: flex; flex-wrap: wrap; gap: 6px 16px; font-variant-numeric: tabular-nums; }
+.viz-kv b { color: var(--text); }
+.viz-msg { margin: 8px 0 0; line-height: 1.5; }
+.viz-msg code { font-size: 0.92em; }
+
+/* Matrice 2×2 éditable, avec crochets */
+.viz-matrix {
+  display: grid; grid-template-columns: repeat(2, 72px); gap: 6px; padding: 4px 10px;
+  border-left: 2px solid var(--text-soft); border-right: 2px solid var(--text-soft); border-radius: 6px;
+}
+.viz-matrix input { width: 72px; text-align: center; }
+
+/* Relations binaires : matrice cliquable + graphe côte à côte */
+.viz-rel-top { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
+.viz-rel-mat table { border-collapse: collapse; margin: 0 auto; }
+.viz-rel-mat th { color: var(--text-soft); font-weight: 700; padding: 4px 6px; font-size: 13px; }
+.viz-rel-mat td { padding: 2px; }
+.viz-rel-mat button {
+  width: 38px; height: 38px; border-radius: 8px; cursor: pointer; font: inherit; font-weight: 700;
+  border: 1px solid var(--border); background: var(--bg-elev); color: var(--muted);
+}
+.viz-rel-mat button[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
+.viz-props { display: flex; flex-wrap: wrap; gap: 6px; }
+.viz-prop { border-radius: 999px; padding: 4px 10px; font-size: 13px; border: 1px solid var(--border); }
+.viz-prop.ok { border-color: #22c39a; color: var(--text); background: color-mix(in srgb, #22c39a 16%, transparent); }
+.viz-prop.ko { color: var(--text-soft); }
+.viz-prop small { color: var(--muted); }
+.viz-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .viz { padding: 12px 10px 10px; margin: 18px -4px; }
+  .viz-rel-top { grid-template-columns: 1fr; }
+  .viz-ctl { min-width: 0; flex: 1 1 140px; }
+  .viz-ctl input[type="range"] { width: 100%; }
+  .viz-rel-mat button { width: 36px; height: 36px; }
+}
+@media print {
+  .viz-ctls { display: none; }
+}
