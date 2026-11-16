@@ -47,6 +47,20 @@ powershell -File scripts\integrer-cours.ps1
 > lancer `scripts\integrer-cours.ps1`). Pense à **bumper `CACHE` dans `sw.js`** si le merge
 > a modifié des fichiers CORE (`portal.js`, `nav.js`, etc.) sans que le prof l'ait fait.
 
+### Si une 3ᵉ session modifie `main` en direct (worktree `...-site`, branche `Site`)
+Quand une autre session travaille directement dans le dossier principal, la session SITE
+travaille dans son propre worktree pour ne pas lui marcher dessus :
+```powershell
+git worktree add -b Site ..\Studies_sheatsheets_for_IABD-site main   # une fois
+```
+Elle committe sur `Site` (et pousse `origin/Site` en sauvegarde), puis fusionne dans `main`
+**depuis le dossier principal** une fois que celui-ci est propre :
+`git merge --no-ff Site` → résoudre (index de recherche : régénérer avec
+`py assets\build-search-index.py` ; `sw.js` : prendre la version la plus haute **+1**) →
+valider (`ci\validate_site.py`, `ci\check_courses.py`) → pousser. Enfin réaligner les
+worktrees : `git merge --ff-only main` dans `...-site` et `...-cours`.
+On ne committe jamais le travail d'une autre session sans l'accord de l'utilisateur.
+
 ## Règles pour ne pas se gêner
 - Le **PROF ne touche pas** au périmètre site (`assets/`, `sw.js`, `index.html`, pages HTML…)
   sauf nécessité réelle, qu'il signale.
