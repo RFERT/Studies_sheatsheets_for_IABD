@@ -104,6 +104,22 @@ window.COURS = {
       ],
     },
     {
+      code: "BIGD",
+      name: "Big Data & Distribué",
+      emoji: "🗄️",
+      color: "#ffb454",
+      desc: "Calcul distribué de A à Z : ordres de grandeur, CAP, HDFS et MapReduce, Spark/PySpark, data lake et formats (Parquet, Delta, Iceberg), NoSQL, Kafka et streaming.",
+      tags: ["Spark", "Hadoop", "Kafka", "Parquet", "NoSQL"],
+      aide: "matieres/big-data/md/aide.md",
+      modules: [
+        { id: "fondations", title: "Fondations du Big Data et du calcul distribué", badge: "Module 1", desc: "3V, ordres de grandeur, scale out, partitionnement, réplication, localité, CAP, batch vs streaming.", file: "matieres/big-data/md/0-fondations.md" },
+        { id: "hadoop", title: "Hadoop — HDFS, MapReduce et YARN", badge: "Module 2", desc: "Blocs répliqués, map/shuffle/reduce, combiner, YARN, Hive et limites.", file: "matieres/big-data/md/1-hadoop-mapreduce.md" },
+        { id: "spark", title: "Apache Spark et PySpark", badge: "Module 3", desc: "Driver, partitions, paresse, shuffles, DataFrame, Spark SQL, cache, broadcast, skew.", file: "matieres/big-data/md/2-spark.md" },
+        { id: "stockage", title: "Stocker à grande échelle — data lake, formats et NoSQL", badge: "Module 4", desc: "Warehouse, lake, lakehouse, Parquet, partitionnement, Delta/Iceberg, familles NoSQL.", file: "matieres/big-data/md/3-stockage.md" },
+        { id: "streaming", title: "Streaming — Kafka et traitement de flux", badge: "Module 5", desc: "Topics, partitions, groupes, garanties, temps d'événement, fenêtres, watermarks, Bloom et HLL.", file: "matieres/big-data/md/4-streaming.md" },
+      ],
+    },
+    {
       code: "GIT",
       name: "Git & GitHub",
       emoji: "🔧",
