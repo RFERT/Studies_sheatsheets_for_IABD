@@ -81,7 +81,21 @@ impl Compteur {
 ```
 *Indice : Écriture = &mut self, lecture = &self.*
 ?? Voir la correction
-struct Compteur { n: u32 } impl Compteur { fn incr(&mut self) { // modifie -> emprunt mutable self.n += 1; } fn valeur(&self) -> u32 { // lit seulement -> emprunt immuable self.n } }
+```rust
+struct Compteur {
+    n: u32,
+}
+
+impl Compteur {
+    fn incr(&mut self) {        // modifie -> emprunt mutable
+        self.n += 1;
+    }
+
+    fn valeur(&self) -> u32 {   // lit seulement -> emprunt immuable
+        self.n
+    }
+}
+```
 
 `incr` modifie `self.n` → il faut `&mut self`. `valeur` ne fait que lire → `&self` suffit et permet des appels concurrents en lecture. Le choix du receveur applique les règles d’ownership aux méthodes.
 :::

@@ -153,7 +153,19 @@ fn main() {
 Définis `enum Forme` avec `Cercle(f64)` (rayon) et `Rectangle(f64, f64)`. Écris `fn aire(f: &Forme) -> f64` avec un `match`.
 *Indice : π ≈ 3.14159 ; utilise std::f64::consts::PI si tu veux.*
 ?? Voir la correction
-enum Forme { Cercle(f64), Rectangle(f64, f64), } fn aire(f: &Forme) -> f64 { match f { Forme::Cercle(r) => std::f64::consts::PI * r * r, Forme::Rectangle(l, h) => l * h, } }
+```rust
+enum Forme {
+    Cercle(f64),
+    Rectangle(f64, f64),
+}
+
+fn aire(f: &Forme) -> f64 {
+    match f {                                         // match exhaustif : tous les cas
+        Forme::Cercle(r) => std::f64::consts::PI * r * r,
+        Forme::Rectangle(l, h) => l * h,
+    }
+}
+```
 
 Le `match` déstructure chaque variante et lie ses données (`r`, ou `l` et `h`). Comme les deux variantes sont traitées, le match est exhaustif — pas besoin de `_`.
 :::

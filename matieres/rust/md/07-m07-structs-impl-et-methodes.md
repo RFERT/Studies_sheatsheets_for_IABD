@@ -135,7 +135,22 @@ Erreur E0277 : P doesn’t implement Debug.
 Définis `struct Rectangle { l: u32, h: u32 }` avec une méthode `aire(&self) -> u32` et un constructeur associé `carre(cote: u32) -> Self`.
 *Indice : impl bloc, &self pour aire, Self pour le constructeur.*
 ?? Voir la correction
-struct Rectangle { l: u32, h: u32 } impl Rectangle { fn aire(&self) -> u32 { self.l * self.h } fn carre(cote: u32) -> Self { Self { l: cote, h: cote } } }
+```rust
+struct Rectangle {
+    l: u32,
+    h: u32,
+}
+
+impl Rectangle {
+    fn aire(&self) -> u32 {           // méthode : emprunte self en lecture
+        self.l * self.h
+    }
+
+    fn carre(cote: u32) -> Self {     // fonction associée : Rectangle::carre(3)
+        Self { l: cote, h: cote }
+    }
+}
+```
 
 `aire` lit les champs → `&self`. `carre` ne reçoit pas d’instance → fonction associée renvoyant `Self`. Appels : `Rectangle::carre(4).aire()`.
 :::

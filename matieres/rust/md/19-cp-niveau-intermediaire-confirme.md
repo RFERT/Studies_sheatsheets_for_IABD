@@ -68,7 +68,17 @@ fn afficher_tous<T: Display>(items: &[T]) {
 ```
 *Indice : for + println!("{}", x). Le {} exige Display.*
 ?? Voir la correction
-use std::fmt::Display; fn afficher_tous(items: &[T]) { for x in items { println!("{x}"); } } // Le bound T: Display est requis car le formatage {} n'est // possible que si T sait s'afficher (implémente Display).
+```rust
+use std::fmt::Display;
+
+fn afficher_tous<T: Display>(items: &[T]) {
+    for x in items {
+        println!("{x}");
+    }
+}
+// Le bound T: Display est requis car le formatage {} n'est
+// possible que si T sait s'afficher (implémente Display).
+```
 
 Sans `T: Display`, le compilateur refuse `println!("{x}")` (`E0277`) car un `T` arbitraire ne sait pas forcément se formater. Le trait bound déclare précisément la capacité utilisée.
 :::

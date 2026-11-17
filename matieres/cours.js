@@ -202,6 +202,31 @@ window.COURS = {
         { id: "examen-final", title: "Examen final — Tout le langage", badge: "★ Examen final", desc: "15 questions couvrant l’ensemble du parcours. À la fin : évaluation détaillée et feuille de route.", file: "matieres/rust/md/20-examen-final.md" }
       ]
     },
+    // ---------- Catalogue « Compétences info » (codes identiques à matieres/competences.js) ----------
+    {
+      code: "DOCKER",
+      name: "Docker & conteneurs",
+      emoji: "🐳",
+      color: "#06b6d4",
+      desc: "Conteneur vs VM, images et couches, Dockerfile efficace, volumes, réseaux, variables d'environnement, Docker Compose et images de production.",
+      tags: ["Docker", "Dockerfile", "Compose", "conteneurs"],
+      modules: [
+        { id: "conteneurs", title: "Conteneurs, images et Dockerfile", badge: "Module 1", desc: "Namespaces et cgroups, couches, CLI, Dockerfile et cache de build, registres.", file: "matieres/docker/md/0-conteneurs-images.md" },
+        { id: "compose", title: "Volumes, réseaux et Docker Compose", badge: "Module 2", desc: "Persistance, DNS interne, configuration, stack Compose, multi-stage et sécurité.", file: "matieres/docker/md/1-compose-production.md" },
+      ],
+    },
+    {
+      code: "LINUX",
+      name: "Linux & ligne de commande",
+      emoji: "🐧",
+      color: "#3b82f6",
+      desc: "Être à l'aise dans un terminal : arborescence, fichiers, permissions, sudo, pipes et filtres (grep, sed, awk), processus, services, scripts bash et SSH.",
+      tags: ["bash", "permissions", "grep/sed/awk", "SSH"],
+      modules: [
+        { id: "fichiers", title: "Fichiers, arborescence et permissions", badge: "Module 1", desc: "Chemins, manipulation et recherche de fichiers, droits rwx, octal, utilisateurs et sudo.", file: "matieres/linux/md/0-fichiers-permissions.md" },
+        { id: "pipes", title: "Pipes, processus, scripts bash et SSH", badge: "Module 2", desc: "Redirections, filtres de texte, processus, systemd, scripts robustes, cron, clés SSH.", file: "matieres/linux/md/1-pipes-processus-ssh.md" },
+      ],
+    },
     // Matières codées sur-mesure : seule l'antisèche est générée depuis le Markdown.
     {
       code: "MATH",

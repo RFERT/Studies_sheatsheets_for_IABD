@@ -215,7 +215,7 @@
     var cells = [], cur = "", escp = false;
     for (var k = 0; k < s.length; k++) {
       var ch = s[k];
-      if (escp) { cur += ch; escp = false; continue; }
+      if (escp) { if (ch === "|") cur = cur.slice(0, -1); cur += ch; escp = false; continue; }   // GFM : « \| » = « | » littéral
       if (ch === "\\") { cur += ch; escp = true; continue; }
       if (ch === "|") { cells.push(cur); cur = ""; continue; }
       cur += ch;

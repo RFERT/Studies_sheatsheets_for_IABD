@@ -152,7 +152,15 @@ fn division(a: i32, b: i32) -> Result<i32, String> {
 ```
 *Indice : Un if qui renvoie Err, sinon Ok.*
 ?? Voir la correction
-fn division(a: i32, b: i32) -> Result{ if b == 0 { Err(String::from("division par zéro")) } else { Ok(a / b) } }
+```rust
+fn division(a: i32, b: i32) -> Result<i32, String> {
+    if b == 0 {
+        Err(String::from("division par zéro"))
+    } else {
+        Ok(a / b)
+    }
+}
+```
 
 On renvoie explicitement `Ok` ou `Err` — l’échec fait partie du type de retour, forçant l’appelant à le gérer. L’appelant pourra faire `division(10, x)?` pour propager.
 :::

@@ -150,7 +150,14 @@ fn somme_carres_impairs(v: &[i32]) -> i32 {
 ```
 *Indice : filter puis map puis sum.*
 ?? Voir la correction
-fn somme_carres_impairs(v: &[i32]) -> i32 { v.iter() .filter(|&&x| x % 2 != 0) .map(|&x| x * x) .sum() }
+```rust
+fn somme_carres_impairs(v: &[i32]) -> i32 {
+    v.iter()
+        .filter(|&&x| x % 2 != 0)   // filter reçoit &&i32 : on déstructure deux fois
+        .map(|&x| x * x)            // map reçoit &i32
+        .sum()
+}
+```
 
 `filter` garde les impairs, `map` les élève au carré, `sum` consomme et additionne. Aussi rapide qu’une boucle manuelle (abstraction à coût nul), mais plus lisible.
 :::
