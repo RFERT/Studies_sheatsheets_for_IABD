@@ -143,7 +143,13 @@ fn double_tout(v: &mut Vec<i32>) {
 ```
 *Indice : Itère sur &mut v et déréférence avec *.*
 ?? Voir la correction
-fn double_tout(v: &mut Vec) { for x in v.iter_mut() { *x *= 2; } }
+```rust
+fn double_tout(v: &mut Vec<i32>) {
+    for x in v.iter_mut() {   // x : &mut i32
+        *x *= 2;              // on modifie la valeur pointée (déréférencement)
+    }
+}
+```
 
 `iter_mut()` donne des `&mut i32`. Il faut **déréférencer** avec `*x` pour modifier la valeur pointée. La fonction emprunte le Vec en mutable ; l’appelant le conserve.
 :::

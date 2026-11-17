@@ -76,6 +76,11 @@
         </div>
         <div class="feedback" data-explain="Collision = deux clés DIFFÉRENTES tombent sur la même case. Inévitable dès qu'il y a plus de clés que de cases (principe des tiroirs, Module 7)."></div>
       </div>
+
+      <figure class="viz" data-labo="hash-hachage" data-viz="hachage" data-opts='{"methode": "modulo", "noeuds": "4", "cles": "150"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « hachage » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — Répartir des clés sur des machines</strong><p>Une fonction de hachage répartit les clés uniformément. Mais avec <code>hash mod N</code>, ajouter une machine déplace presque toutes les clés. Compare avec le <b>hachage cohérent</b> (anneau) puis avec des nœuds virtuels.</p></figcaption>
+      </figure>
     </section>
 
     <!-- 2 -->
@@ -260,6 +265,11 @@
         </div>
         <div class="feedback" data-explain="Associativité + commutativité permettent de combiner les résultats partiels dans n'importe quel ordre/regroupement → parallélisme massif. La soustraction/division ne le permettent pas."></div>
       </div>
+
+      <figure class="viz" data-labo="stream-mapreduce" data-viz="mapreduce" data-opts='{"texte": "big", "reducers": "2"}'>
+        <div class="viz-fallback">🧪 Visualisation interactive « mapreduce » (chargement…)</div>
+        <figcaption><strong>🧪 Labo — MapReduce : map, shuffle, reduce</strong><p>Le shuffle route chaque clé vers le reducer <b>hash(clé) mod R</b>. Active le combiner : moins de paires transférées pour le même résultat — mais seulement parce que la somme est associative et commutative.</p></figcaption>
+      </figure>
     </section>
 
     <!-- DATA & MÉTIERS -->

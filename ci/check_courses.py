@@ -25,7 +25,7 @@ checked = 0
 # Widgets acceptés par « ::: viz <nom> » (doit rester aligné sur WIDGETS dans assets/viz.js)
 VIZ_WIDGETS = {"gradient", "matrice", "matrix", "relation", "regression", "normale", "gauss",
                "kmeans", "seuil", "roc", "pascal", "bayes", "graphe", "entropie", "activation",
-               "convolution", "bloom", "ownership", "jointure"}
+               "convolution", "bloom", "ownership", "jointure", "mapreduce", "hachage", "attention", "git"}
 
 
 def md_paths_from_manifest():

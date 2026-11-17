@@ -65,6 +65,12 @@ Pour une séquence de T tokens, quelle est la taille de la matrice des poids d'a
 > Chaque token regarde chaque token : T² scores. Doubler le contexte quadruple ce coût. C'est la raison des contextes limités des premiers modèles et de nombreuses recherches (attention creuse, FlashAttention, fenêtres glissantes).
 :::
 
+::: viz attention Une matrice d'attention en direct
+token: 1
+echelle: 1
+Chaque ligne montre où « regarde » un mot (scores fictifs, choisis pour l'illustration). Baisse le diviseur : la softmax sature et un seul mot reçoit tout le poids. Monte-le : les poids deviennent uniformes. Active le **masque causal** pour voir ce qu'un modèle de type GPT a le droit de regarder.
+:::
+
 ## 3. Multi-head attention
 
 Une seule attention ne peut capturer qu'un type de relation à la fois. On en calcule \(h\) en parallèle (les **têtes**), chacune avec ses propres projections de dimension \(d_{\text{model}}/h\), puis on concatène et on projette :

@@ -104,12 +104,28 @@ window.COURS = {
       ],
     },
     {
+      code: "BIGD",
+      name: "Big Data & Distribué",
+      emoji: "🗄️",
+      color: "#ffb454",
+      desc: "Calcul distribué de A à Z : ordres de grandeur, CAP, HDFS et MapReduce, Spark/PySpark, data lake et formats (Parquet, Delta, Iceberg), NoSQL, Kafka et streaming.",
+      tags: ["Spark", "Hadoop", "Kafka", "Parquet", "NoSQL"],
+      aide: "matieres/big-data/md/aide.md",
+      modules: [
+        { id: "fondations", title: "Fondations du Big Data et du calcul distribué", badge: "Module 1", desc: "3V, ordres de grandeur, scale out, partitionnement, réplication, localité, CAP, batch vs streaming.", file: "matieres/big-data/md/0-fondations.md" },
+        { id: "hadoop", title: "Hadoop — HDFS, MapReduce et YARN", badge: "Module 2", desc: "Blocs répliqués, map/shuffle/reduce, combiner, YARN, Hive et limites.", file: "matieres/big-data/md/1-hadoop-mapreduce.md" },
+        { id: "spark", title: "Apache Spark et PySpark", badge: "Module 3", desc: "Driver, partitions, paresse, shuffles, DataFrame, Spark SQL, cache, broadcast, skew.", file: "matieres/big-data/md/2-spark.md" },
+        { id: "stockage", title: "Stocker à grande échelle — data lake, formats et NoSQL", badge: "Module 4", desc: "Warehouse, lake, lakehouse, Parquet, partitionnement, Delta/Iceberg, familles NoSQL.", file: "matieres/big-data/md/3-stockage.md" },
+        { id: "streaming", title: "Streaming — Kafka et traitement de flux", badge: "Module 5", desc: "Topics, partitions, groupes, garanties, temps d'événement, fenêtres, watermarks, Bloom et HLL.", file: "matieres/big-data/md/4-streaming.md" },
+      ],
+    },
+    {
       code: "GIT",
       name: "Git & GitHub",
       emoji: "🔧",
       color: "#f05133",
-      desc: "Versionner son code comme un pro : dépôts, commits, branches, fusion, remote, GitHub. La compétence socle de tout le travail en équipe.",
-      tags: ["commit", "branch", "merge", "GitHub"],
+      desc: "Versionner son code comme un pro : commits, branches, fusion, rebase et réécriture d'historique, workflows d'équipe, pull requests, revue de code et conflits.",
+      tags: ["commit", "branch", "merge", "rebase", "pull request", "GitHub"],
       aide: "matieres/git/md/aide.md",
       modules: [
         {
@@ -125,6 +141,27 @@ window.COURS = {
           desc: "Travailler en parallèle sans se marcher dessus : branch, merge, conflits.",
           badge: "Module 2",
           file: "matieres/git/md/1-branches.md",
+        },
+        {
+          id: "rebase",
+          title: "Réécrire l'historique — rebase, amend, reset, revert",
+          desc: "Rebase et rebase interactif, reset vs revert, reflog, cherry-pick, stash et bisect.",
+          badge: "Module 3",
+          file: "matieres/git/md/2-rebase.md",
+        },
+        {
+          id: "workflows",
+          title: "Travailler en équipe — workflows, conventions et versions",
+          desc: "GitHub Flow, Git Flow, trunk-based, Conventional Commits, SemVer, secrets et pre-commit.",
+          badge: "Module 4",
+          file: "matieres/git/md/3-workflows.md",
+        },
+        {
+          id: "pull-requests",
+          title: "Pull requests, revue de code et conflits",
+          desc: "Cycle d'une PR, revue, CI GitHub Actions, stratégies de fusion, conflits et forks.",
+          badge: "Module 5",
+          file: "matieres/git/md/4-pull-requests.md",
         },
       ],
     },
@@ -196,6 +233,31 @@ window.COURS = {
         { id: "cp-niveau-intermediaire-confirme", title: "Checkpoint — Niveau Intermédiaire confirmé", badge: "✔ Checkpoint", desc: "Synthèse des modules 11 à 16 : traits, lifetimes, iterators, smart pointers, concurrence, organisation.", file: "matieres/rust/md/19-cp-niveau-intermediaire-confirme.md" },
         { id: "examen-final", title: "Examen final — Tout le langage", badge: "★ Examen final", desc: "15 questions couvrant l’ensemble du parcours. À la fin : évaluation détaillée et feuille de route.", file: "matieres/rust/md/20-examen-final.md" }
       ]
+    },
+    // ---------- Catalogue « Compétences info » (codes identiques à matieres/competences.js) ----------
+    {
+      code: "DOCKER",
+      name: "Docker & conteneurs",
+      emoji: "🐳",
+      color: "#06b6d4",
+      desc: "Conteneur vs VM, images et couches, Dockerfile efficace, volumes, réseaux, variables d'environnement, Docker Compose et images de production.",
+      tags: ["Docker", "Dockerfile", "Compose", "conteneurs"],
+      modules: [
+        { id: "conteneurs", title: "Conteneurs, images et Dockerfile", badge: "Module 1", desc: "Namespaces et cgroups, couches, CLI, Dockerfile et cache de build, registres.", file: "matieres/docker/md/0-conteneurs-images.md" },
+        { id: "compose", title: "Volumes, réseaux et Docker Compose", badge: "Module 2", desc: "Persistance, DNS interne, configuration, stack Compose, multi-stage et sécurité.", file: "matieres/docker/md/1-compose-production.md" },
+      ],
+    },
+    {
+      code: "LINUX",
+      name: "Linux & ligne de commande",
+      emoji: "🐧",
+      color: "#3b82f6",
+      desc: "Être à l'aise dans un terminal : arborescence, fichiers, permissions, sudo, pipes et filtres (grep, sed, awk), processus, services, scripts bash et SSH.",
+      tags: ["bash", "permissions", "grep/sed/awk", "SSH"],
+      modules: [
+        { id: "fichiers", title: "Fichiers, arborescence et permissions", badge: "Module 1", desc: "Chemins, manipulation et recherche de fichiers, droits rwx, octal, utilisateurs et sudo.", file: "matieres/linux/md/0-fichiers-permissions.md" },
+        { id: "pipes", title: "Pipes, processus, scripts bash et SSH", badge: "Module 2", desc: "Redirections, filtres de texte, processus, systemd, scripts robustes, cron, clés SSH.", file: "matieres/linux/md/1-pipes-processus-ssh.md" },
+      ],
     },
     // Matières codées sur-mesure : seule l'antisèche est générée depuis le Markdown.
     {

@@ -148,7 +148,17 @@ fn compter(mots: &[&str]) -> HashMap<&str, i32> {
 ```
 *Indice : Boucle + entry().or_insert(0).*
 ?? Voir la correction
-use std::collections::HashMap; fn compter<'a>(mots: &[&'a str]) -> HashMap<&'a str, i32> { let mut map = HashMap::new(); for &m in mots { *map.entry(m).or_insert(0) += 1; } map }
+```rust
+use std::collections::HashMap;
+
+fn compter<'a>(mots: &[&'a str]) -> HashMap<&'a str, i32> {
+    let mut map = HashMap::new();
+    for &m in mots {
+        *map.entry(m).or_insert(0) += 1;   // API Entry : insère 0 si absent, puis incrémente
+    }
+    map
+}
+```
 
 Le patron `entry(clé).or_insert(0)` renvoie `&mut i32` ; `*... += 1` incrémente. La map est renvoyée par valeur (move) à l’appelant. Note : une annotation de durée de vie `'a` lie les clés empruntées à l’entrée (Module 12).
 :::

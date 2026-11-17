@@ -129,7 +129,9 @@ Texte **gras**, *italique*, `code`, [lien](https://…), listes, tableaux.
   sigmoide|tanh|relu|leaky|gelu|lineaire, `x`), `convolution` (`image` : carre|bord|croix|diagonale|damier,
   `noyau` : identite|flou|sobelx|sobely|nettete|laplacien, `padding`, `stride`, `relu: oui`),
   `ownership` (`exemple` : move|clone|copy|emprunt|realloc|fonction), `jointure` (`type` :
-  inner|left|right|full|cross|anti|semi). Les lignes qui ne sont pas des options deviennent un texte d'accompagnement.
+  inner|left|right|full|cross|anti|semi), `mapreduce` (`texte` : chat|logs|big, `reducers`, `combiner: oui`),
+  `hachage` (`methode` : modulo|coherent|virtuels, `noeuds`, `cles`), `attention` (`token`, `echelle`,
+  `masque: causal`), `git` (`scenario` : merge|ff|rebase|squash|annuler). Les lignes qui ne sont pas des options deviennent un texte d'accompagnement.
   Dans une **page codée** : `<figure class="viz" data-viz="nom" data-opts='{"clé":"valeur"}'>` + charger
   `assets/viz.js` puis appeler `Viz.mount(document)`.
   ```markdown

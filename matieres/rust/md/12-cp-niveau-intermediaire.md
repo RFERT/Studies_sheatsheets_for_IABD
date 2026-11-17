@@ -67,7 +67,19 @@ fn premier_pair(v: &[i32]) -> Option<i32> {
 ```
 *Indice : Boucle + return Some(...), ou iterators (Module 13).*
 ?? Voir la correction
-fn premier_pair(v: &[i32]) -> Option{ for &x in v { if x % 2 == 0 { return Some(x); } } None } // Version idiomatique : v.iter().copied().find(|x| x % 2 == 0)
+```rust
+fn premier_pair(v: &[i32]) -> Option<i32> {
+    for &x in v {
+        if x % 2 == 0 {
+            return Some(x);
+        }
+    }
+    None
+}
+
+// Version idiomatique :
+// v.iter().copied().find(|x| x % 2 == 0)
+```
 
 On renvoie `Some(x)` dès qu’on trouve un pair, sinon `None` à la fin. La version avec `.find(...)` (Module 13) est plus concise et exprime la même chose.
 :::

@@ -67,6 +67,11 @@ Deux cas se présentent :
 Indispensable pour « voir » ce qui se passe.
 :::
 
+::: viz git Merge ou fast-forward ? Le graphe des commits
+scenario: merge
+Avance pas à pas : une branche n'est qu'une étiquette qui pointe vers un commit, et HEAD indique la branche active. Quand les branches ont divergé, `git merge` crée un commit à **deux parents**. Choisis ensuite le scénario « Fast-forward » : sans divergence, Git se contente d'avancer l'étiquette.
+:::
+
 ## 4. Résoudre un conflit
 
 Un **conflit** survient quand deux branches modifient **les mêmes lignes** du même fichier.

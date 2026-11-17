@@ -173,7 +173,19 @@ fn parse_somme(entrees: &[&str]) -> Result<i32, std::num::ParseIntError> {
 ```
 *Indice : Boucle + let n: i32 = s.parse()?; accumulateur.*
 ?? Voir la correction
-fn parse_somme(entrees: &[&str]) -> Result{ let mut total = 0; for s in entrees { let n: i32 = s.parse()?; // propage la 1re erreur total += n; } Ok(total) } // Idiomatique : entrees.iter().map(|s| s.parse::()).sum()
+```rust
+fn parse_somme(entrees: &[&str]) -> Result<i32, std::num::ParseIntError> {
+    let mut total = 0;
+    for s in entrees {
+        let n: i32 = s.parse()?;   // propage la 1re erreur
+        total += n;
+    }
+    Ok(total)
+}
+
+// Idiomatique (Sum est implémenté pour un itérateur de Result) :
+// entrees.iter().map(|s| s.parse::<i32>()).sum()
+```
 
 `?` extrait l’`i32` ou quitte avec l’erreur de parsing. La version avec `.sum()` sur un itérateur de `Result` renvoie directement un `Result` et court-circuite à la première erreur.
 :::

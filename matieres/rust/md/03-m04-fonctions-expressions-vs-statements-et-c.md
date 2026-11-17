@@ -140,7 +140,11 @@ fn max(a: i32, b: i32) -> i32 {
 ```
 *Indice : La dernière expression du corps est la valeur de retour.*
 ?? Voir la correction
-fn max(a: i32, b: i32) -> i32 { if a > b { a } else { b } }
+```rust
+fn max(a: i32, b: i32) -> i32 {
+    if a > b { a } else { b }   // if est une expression : sa valeur est renvoyée (pas de ; ni de return)
+}
+```
 
 Le `if/else` est l’unique expression du corps : sa valeur devient le retour, sans `;` ni `return`. Les deux branches renvoient bien `i32`.
 :::
