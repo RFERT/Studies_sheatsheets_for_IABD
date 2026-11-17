@@ -987,7 +987,7 @@
 "type": "section",
 "t": "Hachage & collisions",
 "u": "matieres/mathematiques/modules/module-9-big-data.html#hash",
-"k": "Module 9 — Maths du Big Data fonction de hachage collision tables de hachage sharding consistent hashing Quiz 1.1"
+"k": "Module 9 — Maths du Big Data fonction de hachage collision tables de hachage sharding consistent hashing Quiz 1.1 🧪 Labo — Répartir des clés sur des machines hash mod N hachage cohérent"
 },
 {
 "s": "Mathématiques",
@@ -1032,7 +1032,7 @@
 "type": "section",
 "t": "Streaming & MapReduce",
 "u": "matieres/mathematiques/modules/module-9-big-data.html#stream",
-"k": "Module 9 — Maths du Big Data flux continu résumé Map Shuffle Reduce associatives et commutatives Quiz 6.1 Quiz 6.2"
+"k": "Module 9 — Maths du Big Data flux continu résumé Map Shuffle Reduce associatives et commutatives Quiz 6.1 Quiz 6.2 🧪 Labo — MapReduce : map, shuffle, reduce hash(clé) mod R"
 },
 {
 "s": "Mathématiques",
