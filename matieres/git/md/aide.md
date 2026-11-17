@@ -138,6 +138,45 @@ data/*.csv
 Déjà suivi par erreur ? `git rm --cached fichier` puis commit.
 :::
 
+## Rebase & réécriture
+
+```bash
+git rebase origin/main         # rejouer ma branche sur main
+git rebase -i HEAD~4           # pick / reword / squash / fixup / drop
+git commit --amend --no-edit   # compléter le dernier commit
+git push --force-with-lease    # après rebase de MA branche
+```
+
+::: warn
+Jamais de rebase ni d'amend sur des commits **déjà partagés** : ils sont recréés avec de nouveaux hash.
+:::
+
+## Annuler proprement
+
+| Situation | Commande |
+|---|---|
+| commit local à refaire | `git reset --soft HEAD~1` |
+| commit local à jeter | `git reset --hard HEAD~1` ⚠️ |
+| commit **déjà poussé** | `git revert <hash>` |
+| commit « perdu » | `git reflog` puis `git branch sauvetage <hash>` |
+| copier un commit | `git cherry-pick <hash>` |
+| trouver le commit fautif | `git bisect start / good / bad` |
+
+## Équipe : conventions
+
+- GitHub Flow : `main` toujours déployable, branches courtes, PR relue, CI verte.
+- Conventional Commits : `feat:` (MINEUR), `fix:` (CORRECTIF), `feat!:` / `BREAKING CHANGE` (MAJEUR).
+- SemVer `MAJEUR.MINEUR.CORRECTIF` ; `git tag -a v1.4.0 -m "…"` puis `git push origin v1.4.0`.
+- Secret poussé = **révoquer** la clé ; données → DVC / stockage objet ; `pre-commit`.
+
+## Pull requests & conflits
+
+- PR petite, un sujet, le **pourquoi** et comment tester ; `Closes #42`.
+- Fusion : merge commit / **squash** / rebase and merge.
+- `git config --global merge.conflictStyle zdiff3` : voir l'ancêtre commun.
+- Conflit : comprendre les deux intentions → combiner → `git add` → **tests** → continuer.
+- Fork : `git remote add upstream <url>` puis `git fetch upstream`.
+
 ## Dépannage express
 
 | Problème | Solution |

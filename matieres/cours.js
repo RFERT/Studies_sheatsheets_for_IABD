@@ -124,8 +124,8 @@ window.COURS = {
       name: "Git & GitHub",
       emoji: "🔧",
       color: "#f05133",
-      desc: "Versionner son code comme un pro : dépôts, commits, branches, fusion, remote, GitHub. La compétence socle de tout le travail en équipe.",
-      tags: ["commit", "branch", "merge", "GitHub"],
+      desc: "Versionner son code comme un pro : commits, branches, fusion, rebase et réécriture d'historique, workflows d'équipe, pull requests, revue de code et conflits.",
+      tags: ["commit", "branch", "merge", "rebase", "pull request", "GitHub"],
       aide: "matieres/git/md/aide.md",
       modules: [
         {
@@ -141,6 +141,27 @@ window.COURS = {
           desc: "Travailler en parallèle sans se marcher dessus : branch, merge, conflits.",
           badge: "Module 2",
           file: "matieres/git/md/1-branches.md",
+        },
+        {
+          id: "rebase",
+          title: "Réécrire l'historique — rebase, amend, reset, revert",
+          desc: "Rebase et rebase interactif, reset vs revert, reflog, cherry-pick, stash et bisect.",
+          badge: "Module 3",
+          file: "matieres/git/md/2-rebase.md",
+        },
+        {
+          id: "workflows",
+          title: "Travailler en équipe — workflows, conventions et versions",
+          desc: "GitHub Flow, Git Flow, trunk-based, Conventional Commits, SemVer, secrets et pre-commit.",
+          badge: "Module 4",
+          file: "matieres/git/md/3-workflows.md",
+        },
+        {
+          id: "pull-requests",
+          title: "Pull requests, revue de code et conflits",
+          desc: "Cycle d'une PR, revue, CI GitHub Actions, stratégies de fusion, conflits et forks.",
+          badge: "Module 5",
+          file: "matieres/git/md/4-pull-requests.md",
         },
       ],
     },

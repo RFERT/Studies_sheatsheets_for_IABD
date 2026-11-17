@@ -1871,13 +1871,92 @@
     return { draw: draw };
   }
 
+  /* =========================================================
+     20. Graphe de commits Git (scénarios pas à pas)
+     Commit : [id, x, voie, parents, "ghost"?] ; branches : {nom: id} ; head : branche active.
+     ========================================================= */
+  var GITS = {
+    merge: ["Merge (commit de fusion)", [
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]]], { main: "B" }, "main", "git commit (×2)", "Deux commits sur <b>main</b>. Une branche n'est qu'une <b>étiquette mobile</b> qui pointe vers un commit."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["D", 2, 1, ["B"]]], { main: "B", feature: "D" }, "feature", "git switch -c feature ; git commit", "Créer une branche est instantané (on écrit 41 octets). HEAD suit <b>feature</b>, qui avance avec le commit D."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["D", 2, 1, ["B"]], ["E", 3, 1, ["D"]]], { main: "B", feature: "E" }, "feature", "git commit", "feature avance encore ; main n'a pas bougé."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["D", 2, 1, ["B"]], ["E", 3, 1, ["D"]], ["C", 2, 0, ["B"]]], { main: "C", feature: "E" }, "main", "git switch main ; git commit", "Pendant ce temps, quelqu'un a ajouté C sur main : les deux branches ont <b>divergé</b>."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["D", 2, 1, ["B"]], ["E", 3, 1, ["D"]], ["C", 2, 0, ["B"]], ["M", 4, 0, ["C", "E"]]], { main: "M", feature: "E" }, "main", "git merge feature", "Fusion à trois points (ancêtre commun B) : un <b>commit de fusion M à deux parents</b>. L'historique réel est conservé, mais il devient non linéaire. En cas de modifications concurrentes des mêmes lignes : <b>conflit</b> à résoudre."]]],
+    ff: ["Fast-forward", [
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["C", 2, 1, ["B"]], ["D", 3, 1, ["C"]]], { main: "B", feature: "D" }, "main", "git switch main", "feature a deux commits d'avance ; main n'a <b>rien</b> de nouveau depuis le point de départ."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["C", 2, 1, ["B"]], ["D", 3, 1, ["C"]]], { main: "D", feature: "D" }, "main", "git merge feature", "Aucune divergence : Git se contente d'<b>avancer l'étiquette</b> main jusqu'à D (fast-forward). Pas de commit de fusion. <code>--no-ff</code> force un commit de fusion pour garder la trace de la branche."]]],
+    rebase: ["Rebase", [
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["D", 2, 1, ["B"]], ["E", 3, 1, ["D"]], ["C", 2, 0, ["B"]]], { main: "C", feature: "E" }, "feature", "git switch feature", "Même divergence que dans le scénario « merge »."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["D", 2, 1, ["B"], 1], ["E", 3, 1, ["D"], 1], ["C", 2, 0, ["B"]], ["D'", 3, 2, ["C"]], ["E'", 4, 2, ["D'"]]], { main: "C", feature: "E'" }, "feature", "git rebase main", "Rebase <b>rejoue</b> D et E au-dessus de C : ce sont de <b>nouveaux commits</b> D′ et E′ (autres identifiants). Les anciens deviennent inaccessibles (en pointillés, récupérables via <code>git reflog</code>)."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["C", 2, 0, ["B"]], ["D'", 3, 2, ["C"]], ["E'", 4, 2, ["D'"]]], { main: "E'", feature: "E'" }, "main", "git switch main ; git merge feature", "main avance en fast-forward : historique <b>linéaire</b>. Règle d'or : ne jamais rebaser des commits déjà <b>poussés et partagés</b> — les autres ont encore D et E."]]],
+    squash: ["Squash merge", [
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["w1", 2, 1, ["B"]], ["w2", 3, 1, ["w1"]], ["w3", 4, 1, ["w2"]]], { main: "B", feature: "w3" }, "main", "git switch main", "feature contient trois petits commits de travail (« wip », « fix typo »…)."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["w1", 2, 1, ["B"]], ["w2", 3, 1, ["w1"]], ["w3", 4, 1, ["w2"]], ["S", 2, 0, ["B"]]], { main: "S", feature: "w3" }, "main", "git merge --squash feature ; git commit", "Toutes les modifications sont regroupées en <b>un seul commit S</b> sur main (un seul parent). Historique propre, mais le détail des commits de feature n'est pas dans main : on supprime ensuite la branche."]]],
+    annuler: ["reset vs revert", [
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["C", 2, 0, ["B"]]], { main: "C" }, "main", "git log", "C contient un bug et a déjà été <b>poussé</b>."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["C", 2, 0, ["B"], 1]], { main: "B" }, "main", "git reset --hard B", "<b>reset</b> recule l'étiquette main sur B : C disparaît de la branche (réécriture d'historique). Acceptable en local ; sur une branche partagée, il faudrait un <code>push --force</code> qui casse le travail des autres."],
+      [[["A", 0, 0, []], ["B", 1, 0, ["A"]], ["C", 2, 0, ["B"]], ["C̄", 3, 0, ["C"]]], { main: "C̄" }, "main", "git revert C", "<b>revert</b> crée un <b>nouveau</b> commit C̄ qui applique l'inverse de C. L'historique n'est pas réécrit : c'est la bonne façon d'annuler un commit déjà partagé."]]]
+  };
+  function GitGraph(body, o) {
+    var key = GITS[o.scenario] ? o.scenario : "merge", idx = 0;
+    var cmd = el("pre", "viz-code");
+    body.appendChild(cmd);
+    var st = Stage(body, 0.36, 260, "Graphe des commits Git avec les branches et HEAD");
+    var P = layout(body);
+    var sS = select(Object.keys(GITS).map(function (k) { return [k, GITS[k][0]]; }), key);
+    var bPrev = btn("◀ Précédent"), bNext = btn("Suivant ▶"), bReset = btn("↺");
+    P.ctls.appendChild(ctl("Scénario", sS));
+    var bar = el("div", "viz-btns"); [bPrev, bNext, bReset].forEach(function (b) { bar.appendChild(b); });
+    P.ctls.appendChild(bar);
+    finish(body, P);
+    function draw() {
+      var S = GITS[key][1][idx];
+      cmd.innerHTML = '<span class="cur">$ ' + S[3].replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span>";
+      P.out.innerHTML = '<div class="viz-kv"><span>Étape <b>' + (idx + 1) + " / " + GITS[key][1].length + '</b></span></div><p class="viz-msg">' + S[4] + "</p>";
+      if (!st.fit()) return;
+      var C = palette(body), ctx = st.ctx, commits = S[0], pos = {};
+      var maxX = Math.max.apply(null, commits.map(function (c) { return c[1]; })), dx = Math.min(110, (st.w - 120) / Math.max(1, maxX)), dy = Math.min(70, (st.h - 50) / 3);
+      commits.forEach(function (c) { pos[c[0]] = { x: 50 + c[1] * dx, y: 34 + c[2] * dy, ghost: !!c[4] }; });
+      commits.forEach(function (c) {
+        c[3].forEach(function (p) {
+          var a = pos[p], b = pos[c[0]]; if (!a) return;
+          ctx.save(); ctx.strokeStyle = b.ghost ? C.muted : C.soft; ctx.lineWidth = 2; if (b.ghost) ctx.setLineDash([5, 4]);
+          ctx.beginPath(); ctx.moveTo(a.x, a.y);
+          if (a.y === b.y) ctx.lineTo(b.x, b.y); else ctx.bezierCurveTo((a.x + b.x) / 2, a.y, (a.x + b.x) / 2, b.y, b.x, b.y);
+          ctx.stroke(); ctx.restore();
+        });
+      });
+      commits.forEach(function (c) {
+        var q = pos[c[0]];
+        ctx.save(); if (q.ghost) { ctx.globalAlpha = 0.45; ctx.setLineDash([4, 3]); }
+        dot(ctx, q.x, q.y, 15, q.ghost ? C.card : (c[3].length > 1 ? C.orange : C.primary), C.text);
+        ctx.restore();
+        txt(ctx, c[0], q.x, q.y + 0.5, q.ghost ? C.muted : "#fff", "bold 12px system-ui, sans-serif");
+      });
+      var stack = {};
+      Object.keys(S[1]).forEach(function (b) {
+        var q = pos[S[1][b]]; if (!q) return;
+        var k = stack[S[1][b]] = (stack[S[1][b]] || 0) + 1, label = b + (S[2] === b ? "  ← HEAD" : "");
+        ctx.font = "bold 12px system-ui, sans-serif"; var w = ctx.measureText(label).width + 14, y = q.y + 22 + (k - 1) * 22;
+        rrect(ctx, q.x - w / 2, y, w, 19, 6); ctx.fillStyle = b === S[2] ? C.green : C.card; ctx.fill(); ctx.strokeStyle = C.border; ctx.stroke();
+        txt(ctx, label, q.x, y + 10, b === S[2] ? "#0b1d16" : C.text, "bold 12px system-ui, sans-serif");
+      });
+    }
+    sS.addEventListener("change", function () { key = sS.value; idx = 0; draw(); });
+    bNext.addEventListener("click", function () { if (idx < GITS[key][1].length - 1) idx++; draw(); });
+    bPrev.addEventListener("click", function () { if (idx > 0) idx--; draw(); });
+    bReset.addEventListener("click", function () { idx = 0; draw(); });
+    draw();
+    return { draw: draw };
+  }
+
   /* ---------- Registre & montage ---------- */
   var WIDGETS = {
     gradient: Gradient, matrice: Matrix, matrix: Matrix, relation: Relation,
     regression: Regression, normale: Normal, gauss: Normal,
     kmeans: KMeans, seuil: Seuil, roc: Seuil, pascal: Pascal, bayes: Bayes, graphe: Graphe, entropie: Entropie,
     activation: Activation, convolution: Convolution, bloom: Bloom, ownership: Ownership, jointure: Jointure,
-    mapreduce: MapReduce, hachage: Hachage, attention: Attention
+    mapreduce: MapReduce, hachage: Hachage, attention: Attention, git: GitGraph
   };
   var CATALOG = [
     { id: "relation", emoji: "🔗", title: "Relations binaires",
@@ -1936,7 +2015,10 @@
       course: { label: "Big Data · Fondations", href: "cours.html?c=BIGD&m=fondations" } },
     { id: "attention", emoji: "👁️", title: "Matrice d'attention",
       desc: "Choisis un mot : ses poids d'attention sur la phrase, l'effet de la division par √d_k sur la softmax (saturation ou uniformité) et le masque causal d'un GPT.",
-      course: { label: "Deep Learning · Transformers", href: "cours.html?c=DL&m=transformers" } }
+      course: { label: "Deep Learning · Transformers", href: "cours.html?c=DL&m=transformers" } },
+    { id: "git", emoji: "🌿", title: "Graphe de commits Git",
+      desc: "Merge, fast-forward, rebase, squash, reset ou revert : vois comment chaque commande déplace les branches et HEAD et transforme l'historique.",
+      course: { label: "Git · Rebase & historique", href: "cours.html?c=GIT&m=rebase" } }
   ];
 
   var live = [];
