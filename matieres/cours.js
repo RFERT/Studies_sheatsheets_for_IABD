@@ -129,6 +129,38 @@ window.COURS = {
       ],
     },
     {
+      code: "LANGC",
+      name: "Langage C",
+      emoji: "🅲",
+      color: "#3d6fd1",
+      desc: "Le C de A à Z, en commençant par un guide pas à pas pour coder, compiler et déboguer en C dans VS Code. Puis types, opérateurs, entrées/sorties, et bientôt pointeurs, mémoire, fichiers et projets.",
+      tags: ["C", "VS Code", "gcc", "printf", "scanf", "mémoire"],
+      aide: "matieres/langage-c/md/aide.md",
+      modules: [
+        {
+          id: "vscode",
+          title: "Coder en C sur VS Code (guide des manips)",
+          desc: "Installer GCC avec MSYS2, configurer tasks.json / launch.json, compiler, exécuter et déboguer.",
+          badge: "Module 0",
+          file: "matieres/langage-c/md/0-vscode.md",
+        },
+        {
+          id: "premiers-programmes",
+          title: "Premiers programmes, types et opérateurs",
+          desc: "Les 4 étapes de compilation, types et tailles, division entière, conversions, dépassements.",
+          badge: "Module 1",
+          file: "matieres/langage-c/md/1-premiers-programmes.md",
+        },
+        {
+          id: "entrees-sorties",
+          title: "Entrées/sorties console : printf, scanf, fgets",
+          desc: "Formats d'affichage, pièges de scanf et du tampon, lecture robuste avec fgets et strtol, EOF, stderr.",
+          badge: "Module 2",
+          file: "matieres/langage-c/md/2-entrees-sorties.md",
+        },
+      ],
+    },
+    {
       code: "RUST",
       name: "Rust",
       emoji: "🦀",

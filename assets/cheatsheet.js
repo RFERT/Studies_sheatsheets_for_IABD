@@ -257,20 +257,22 @@
     python: "and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield True False None",
     bash: "if then else elif fi for while do done case esac function in return export local echo cd",
     sql: "select from where group by order having join left right inner outer on as insert update delete into values create table drop alter index distinct limit union and or not null",
-    js: "var let const function return if else for while do switch case break continue new this typeof instanceof class extends super import export default await async yield true false null undefined"
+    js: "var let const function return if else for while do switch case break continue new this typeof instanceof class extends super import export default await async yield true false null undefined",
+    c: "auto break case char const continue default do double else enum extern float for goto if inline int long register restrict return short signed sizeof static struct switch typedef union unsigned void volatile while bool true false NULL size_t FILE EOF"
   };
   function escHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function highlightCode(host) {
     host.querySelectorAll("pre.code[data-lang]").forEach(function (pre) {
       var lang = (pre.getAttribute("data-lang") || "").toLowerCase();
       var map = { js: "js", javascript: "js", ts: "js", typescript: "js", py: "python", python: "python",
-        rust: "rust", rs: "rust", bash: "bash", sh: "bash", shell: "bash", console: "bash", toml: null, sql: "sql" };
+        rust: "rust", rs: "rust", bash: "bash", sh: "bash", shell: "bash", console: "bash", toml: null, sql: "sql",
+        c: "c", h: "c", json: "js", jsonc: "js", powershell: "bash", ps1: "bash", pwsh: "bash" };
       if (!(lang in map)) return;
       var key = map[lang]; if (!key) return;
       var code = pre.querySelector("code"); if (!code || code.querySelector("span")) return;
-      var comment = (key === "python" || key === "bash") ? "#[^\\n]*" : (key === "sql" ? "--[^\\n]*" : "\\/\\/[^\\n]*");
+      var comment = (key === "python" || key === "bash") ? "#[^\\n]*" : (key === "sql" ? "--[^\\n]*" : "\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/");
       var kw = KEYWORDS[key].split(" ").join("|");
-      var parts = ['"(?:[^"\\\\]|\\\\.)*"', "'(?:[^'\\\\]|\\\\.)*'", comment, "\\b(?:" + kw + ")\\b", "\\b\\d[\\d_.]*\\b", "[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()"];
+      var parts = ['"(?:[^"\\\\]|\\\\.)*"', "'(?:[^'\\\\]|\\\\.)*'", comment, (key === "c" ? "#\\s*[a-z]+\\b|" : "") + "\\b(?:" + kw + ")\\b", "\\b\\d[\\d_.]*\\b", "[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()"];
       var re = new RegExp("(" + parts[0] + "|" + parts[1] + ")|(" + parts[2] + ")|(" + parts[3] + ")|(" + parts[4] + ")|(" + parts[5] + ")", "g");
       code.innerHTML = escHtml(code.textContent).replace(re, function (m, str, com, k, num, fn) {
         if (str !== undefined) return '<span class="tok-str">' + m + "</span>";
